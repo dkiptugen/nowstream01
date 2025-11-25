@@ -1,0 +1,24 @@
+<?php
+	
+	use App\Http\Controllers\API\APIController;
+	use App\Http\Controllers\Callbacks\DPOCallbackController;
+	use Illuminate\Support\Facades\Route;
+	
+	/*
+	|--------------------------------------------------------------------------
+	| API Routes
+	|--------------------------------------------------------------------------
+	|
+	| Here is where you can register API routes for your application. These
+	| routes are loaded by the RouteServiceProvider and all of them will
+	| be assigned to the "api" middleware group. Make something great!
+	|
+	*/
+	
+	Route::post('auth',[APIController::class,'login']);
+	Route::middleware(['auth:sanctum','passkey', 'force_json', 'cors'])->group(function () {
+		Route::post('msisdn_decrypt',[APIController::class,'decrypt_msisdn']);
+		Route::post('user-subscriptions',[APIController::class,'check_user_subscriptions']);
+		Route::get("check-subscription/{identifier}",[APIController::class,'check_specific_subscription']);
+		Route::get("cancel-subscription/{identifier}",[APIController::class,'cancel_subscription']);
+	});

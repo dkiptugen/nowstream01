@@ -1,0 +1,45 @@
+@extends('Backend.auth.layout')
+
+@section('content')
+    <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+        <div class="d-table-cell align-middle">
+
+
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="m-sm-4">
+                        <div class="text-center">
+                            <img src="{{ $logo }}" width="154" alt="">
+                        </div>
+                        <form  method="POST" action="{{ route('save_outlet') }}">
+                            @csrf
+                            <div class="form-group">
+                                <label for="channel">{{ __('Select Outlet') }}</label>
+                                <select class="form-control" name="channel"  id="channel"  autocomplete="channel"  >
+                                    @foreach($product as $value)
+                                        <option value="{{ $value->channel->id }}">{{ $value->channel->name }}</option>
+                                    @endforeach
+
+                                </select>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-block btn-info">Proceed</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @if($message = Session::get('error'))
+                <div class="alert alert-danger alert-block">
+                    <button type="button" class="close" data-d.ismiss="alert">×</button>
+                    <strong>{{ $message }}</strong>
+                </div>
+            @endif
+        </div>
+    </div>
+
+
+
+
+@endsection

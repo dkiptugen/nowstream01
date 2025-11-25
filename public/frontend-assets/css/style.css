@@ -1,0 +1,113 @@
+.ratio16 {
+    aspect-ratio: 16/9;
+    height: auto;
+    object-fit: cover;
+}
+.owl-carousel-category .img-fluid {
+    aspect-ratio: 1/1;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.h400 {
+    height: 400px;
+    object-fit: cover;
+    object-position: top;
+}
+.card-img-overlay {
+    position: absolute;
+    text-align: center;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1.25rem;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        #0000008f,
+        #000000b0,
+        #000000b3,
+        #000000cc
+    );
+}
+.card-img-overlay form {
+    max-width: 400px;
+    margin: auto;
+}
+.plyr--full-ui input[type="range"],
+.plyr--full-ui input[type="range"] {
+    color: #f11010;
+}
+.plyr__control--overlaid {
+    background: #f80a09;
+}
+.channel-sidebar-list ul li img {
+    object-fit: cover;
+}
+.h300 {
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+}
+.logo {
+    height: 40px;
+}
+.badger {
+    width: max-content;
+    padding: 0 12px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 8px;
+}
+.fs-100 {
+    font-size: 130px;
+}
+footer ul {
+    list-style: none;
+}
+footer ul .bx {
+    font-size: 30px;
+}
+footer .menu-title {
+    line-height: 1;
+    font-size: 10px;
+}
+
+
+@media (max-width:768px){
+    .page-footer{
+        padding-bottom: 0;
+    }
+    .widgets-icons-2 {
+        width: 35px;
+        height: 35px;}
+        h5 {
+            font-size: 1rem;
+        }
+        .user-box {
+            border-left: 1px solid rgb(255 255 255 / .15);
+            border-right: none !important;
+            height: auto;
+            padding-right: 0 !important;
+            padding-left: 10px !important;
+        }
+        .user-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 0 solid #e5e5e5;
+            padding: 0;
+        }
+        footer ul .bx {
+            font-size: 25px;
+        }
+}
+.user-box {
+    border-left: 1px solid rgb(255 255 255 / .15);
+    border-right: none !important;
+    height: auto;
+    padding-right: 0 !important;
+    padding-left: 10px !important;
+}

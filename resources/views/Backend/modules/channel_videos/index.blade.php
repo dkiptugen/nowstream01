@@ -1,0 +1,79 @@
+@extends('Backend.includes.layout')
+@section('content')
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body d-flex justify-content-between align-items-center pb-0">
+                    <h3 class="card-title m-0 h5">Channel Videos</h3>
+                    <a href="{{ route('channel.video.create',  $channel->id) }}" class="btn btn-primary m-0 h5">+ Add Video</a>
+
+                </div>
+                <hr>
+
+            	<div class="card-body">
+                    <div class="table-responsive w-100">
+							<table id="channelvideos_dt" class="table table-striped table-condensed">
+								<thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Thumbnail</th>
+                                        <th>Video</th>
+                                        <th>Created Date</th>
+                                        <th>Action</th>
+                                    </tr>
+								</thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Thumbnail</th>
+                                        <th>Video</th>
+                                        <th>Created Date</th>
+                                        <th>Action</th>
+                                    </tr>
+								</tfoot>
+							</table>
+						</div>
+                </div>
+            </div>
+        </div>
+	</div>
+
+@endsection
+@section('header')
+@endsection
+@section('footer')
+    <script>
+            $('#channelvideos_dt').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ route('channel.video.datatable',$channel->id) }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data": {_token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    {"data": "id"},
+                    {"data": "title"},
+                    {"data": "description"},
+                    {"data": "thumbnail", "orderable": false},
+                    {"data": "video", "orderable": false},
+                    {"data":"created_at"},
+                    {"data": "action", "orderable": false}
+                ],
+
+                "createdRow": function(row, data, dataIndex) {
+                    $(row).find('td').css({
+                        "text-align": "left",
+                        "vertical-align": "middle"
+                    });
+                },
+                "order": [[6, "desc"]]
+            });
+        </script>
+@endsection

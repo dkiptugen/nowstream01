@@ -1,0 +1,15 @@
+.wrapper{
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+  /*  overflow: hidden;
+    flex-wrap: nowrap;*/
+}
+
+.wrapper-boxed {
+  max-width: 1440px;
+  margin: 0 auto;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
