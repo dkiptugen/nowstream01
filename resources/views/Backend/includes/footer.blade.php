@@ -12,8 +12,9 @@
 </footer>
 </div>
 </div>
+<script type="module" src="{{ asset('backend_assets/app.js?1') }}"></script>
 
-<script src="{{ asset('backend_assets/js/app.js?'.time()) }}" type="application/javascript"></script>
+
 @yield('footer')
 </body>
 

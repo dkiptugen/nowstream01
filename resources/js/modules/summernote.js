@@ -4,7 +4,8 @@ import jQuery from 'jquery';
 window.$ = $;
 window.jQuery = jQuery;
 
-import summernote from 'script-loader!summernote/dist/summernote-bs4'
+const summernote = require('summernote/dist/summernote-bs4');
+require('summernote/dist/summernote-bs4.css'); // import CSS
 
 window.summernote   =   summernote
 

@@ -8,6 +8,7 @@ export default defineConfig({
     resolve: {
         alias: {
             jquery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
+           // simplebar: path.resolve(__dirname, 'node_modules/simplebar/dist/simplebar.esm.js'),
         },
     },
     plugins: [
@@ -40,6 +41,8 @@ export default defineConfig({
         outDir: 'public/backend_assets', // Match your old Mix output
         rollupOptions: {
             output: {
+                entryFileNames: 'app.js', // single JS output
+                chunkFileNames: '[name].js', // optional: other chunks
                 // CSS goes to backend_assets/css
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name && assetInfo.name.endsWith('.css')) {

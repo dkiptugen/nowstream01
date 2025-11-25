@@ -1,1 +1,1 @@
-import 'script-loader!bootstrap4-tagsinput/tagsinput';
+import 'bootstrap4-tagsinput/tagsinput';
