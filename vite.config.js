@@ -1,13 +1,57 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+import inject from '@rollup/plugin-inject';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
+    resolve: {
+        alias: {
+            jquery: path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js'),
+        },
+    },
     plugins: [
+        // Laravel plugin handles JS & SCSS entry points and HMR
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: [
+                'resources/js/app.js',
+                'resources/scss/app.scss',
+            ],
             refresh: true,
         }),
-        tailwindcss(),
+
+        // Provide jQuery globally (like Webpack ProvidePlugin)
+        inject({
+            $: 'jquery',
+            jQuery: 'jquery',
+        }),
+
+        // Copy fonts & plugins (like Mix .copy)
+        viteStaticCopy({
+            targets: [
+                { src: 'node_modules/@fortawesome/fontawesome-free/webfonts/*', dest: 'webfonts' },
+                { src: 'node_modules/summernote/dist/font/*', dest: 'css/font' },
+                { src: 'node_modules/summernote/dist/plugin/*', dest: 'plugin' },
+            ],
+        }),
     ],
+
+    build: {
+        outDir: 'public/backend_assets', // Match your old Mix output
+        rollupOptions: {
+            output: {
+                // CSS goes to backend_assets/css
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                        return 'css/[name][extname]';
+                    }
+                    // Fonts go to backend_assets/webfonts
+                    if (assetInfo.name && /\.(woff2?|ttf|eot|svg)$/.test(assetInfo.name)) {
+                        return 'webfonts/[name][extname]';
+                    }
+                    return '[name][extname]';
+                },
+            },
+        },
+    },
 });
