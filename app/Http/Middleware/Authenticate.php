@@ -5,13 +5,20 @@ namespace App\Http\Middleware;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\Request;
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class Authenticate extends Middleware
     {
         public function handle($request, Closure $next, ...$guards)
             {
-                return parent::handle($request, $next, ...$guards);
+                foreach ($guards as $guard) {
+                    if (Auth::guard($guard)->check()) {
+                        Auth::shouldUse($guard);
+                        return $next($request);
+                    }
+                }
 
+                return $this->unauthenticated($request, $guards);
 
             }
     /**
@@ -23,8 +30,7 @@ class Authenticate extends Middleware
                 if ($request->expectsJson()) {
                     return null;
                 }
-                dd(request()->route()->gatherMiddleware()['auth']);
-                if (in_array('admin', $this->guards)) {
+                if (Auth::guard('admin')->guest()) {
                     return route('admin.login');
                 }
 
