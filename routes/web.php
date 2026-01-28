@@ -145,5 +145,4 @@ Route::middleware(['detectCountry'])->group(function () {
 
 
 require __DIR__.'/admin.php';
-require __DIR__.'/mpesa.php';
-require __DIR__.'/dpo.php';
+

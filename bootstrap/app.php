@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -10,7 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
-        api: __DIR__.'/../routes/api.php'
+        api: __DIR__.'/../routes/api.php',
+        then: function () {
+
+            Route::group(['prefix'=>'malipo','middleware'=>['api']],function (){
+                     base_path('routes/mpesa.php');
+                    base_path('routes/dpo.php');
+                 });
+
+        },
+
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(\App\Http\Middleware\TrustHosts::class);

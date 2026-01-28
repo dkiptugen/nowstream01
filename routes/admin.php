@@ -31,33 +31,37 @@ use App\Http\Controllers\Backend\VideoController;
 use App\Http\Controllers\Backend\StreamController;
 use Illuminate\Support\Facades\Route;
 
-Route::controller(LoginController::class)->group(function () {
-    Route::get('/login',  'showLoginForm')->middleware('guest:admin')->name('login');
-    Route::post('/login',  'login')->middleware('guest:admin')->name('admin.login')->secure();
-    Route::post('/logout', 'logout')->name('admin.logout');
+
+Route::name('admin.')->middleware(['web'])->group(function () {
+    Route::controller(LoginController::class)->group(function () {
+        Route::get('/login',  'showLoginForm')->middleware('guest:admin')->name('login');
+        Route::post('/login',  'login')->middleware('guest:admin')->name('login')->secure();
+        Route::post('/logout', 'logout')->name('logout');
+    });
+
+    Route::get('social/{social}', [AuthController::class, 'redirectToProvider'])->name('social');
+    Route::get('social/{social}/callback', [AuthController::class, 'handleProviderCallback'])->name('social_callback');
+    Route::any('social/{social}/delete/{id}', [AuthController::class, 'deleteProviderCallback'])->name('social_delete');
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
+
+    Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+    Route::get('email/verify', [VerificationController::class, 'show'])->name('verification.notice');
+    Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
+
+    Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
+    Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
 });
 
-Route::get('social/{social}', [AuthController::class, 'redirectToProvider'])->name('admin.social');
-Route::get('social/{social}/callback', [AuthController::class, 'handleProviderCallback'])->name('admin.social_callback');
-Route::any('social/{social}/delete/{id}', [AuthController::class, 'deleteProviderCallback'])->name('admin.social_delete');
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('admin.register');
-Route::post('register', [RegisterController::class, 'register']);
-
-Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('admin.password.request');
-Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('admin.password.email');
-Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('admin.password.reset');
-Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('admin.password.update');
-
-Route::get('email/verify', [VerificationController::class, 'show'])->name('admin.verification.notice');
-Route::get('email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('admin.verification.verify');
-Route::post('email/resend', [VerificationController::class, 'resend'])->name('admin.verification.resend');
-
-Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('admin.password.confirm');
-Route::post('password/confirm', [ConfirmPasswordController::class, 'admin.confirm']);
-
-Route::prefix('backend')->middleware(['auth:admin'])->group(function () {
-    Route::get('/choose_channel', [OutletController::class, 'selectOutlet'])->name('choose_outlet');
-    Route::post('/select', [OutletController::class, 'saveOutlet'])->name('save_outlet');
+Route::prefix('backend')->group(function () {
+Route::controller(OutletController::class)->middleware(['auth:admin'])->group(function () {
+    Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
+    Route::post('/select',  'saveOutlet')->name('save_outlet');
 });
 
 Route::prefix('backend')->middleware(['auth:admin', 'choose.channel','check.channels'])->group(function () {
@@ -146,4 +150,5 @@ Route::prefix('backend')->middleware(['auth:admin', 'choose.channel','check.chan
 
     Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
     Route::put('profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
+});
 });
