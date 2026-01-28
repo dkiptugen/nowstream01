@@ -131,18 +131,12 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     Route::post('/user/datatable', [UserController::class, 'datatable'])->name('user.datatable');
 
     Route::resource('subscription', SubscriptionController::class);
-    Route::post('/subscription/datatable', [SubscriptionController::class, 'datatable'])->name('subscription.datatable');
+    Route::post('subscription/datatable', [SubscriptionController::class, 'datatable'])->name('subscription.datatable');
 
     Route::resource('transaction', TransactionController::class);
-    Route::post('/transaction/datatable', [TransactionController::class, 'datatable'])->name('transaction.datatable');
+    Route::post('transaction/datatable', [TransactionController::class, 'datatable'])->name('transaction.datatable');
 
-    Route::resource('channel.subscription', SubscriptionController::class);
-    Route::post('channel/{channel}/subscription/datatable', [SubscriptionController::class, 'datatable'])->name('channel.subscription.datatable');
-
-    Route::resource('channel.transaction', TransactionController::class);
-    Route::post('channel/{channel}/transaction/datatable', [TransactionController::class, 'datatable'])->name('channel.transaction.datatable');
-
-    Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
-    Route::put('profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
+    Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile-update', [ProfileController::class, 'update'])->name('profile.update');
 
 });

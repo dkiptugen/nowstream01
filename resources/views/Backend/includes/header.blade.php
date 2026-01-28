@@ -36,16 +36,10 @@
                     </a>
                     <a class="nav-link nav-link-user dropdown-toggle d-none d-sm-inline-block" href="#" id="userDropdown" data-toggle="dropdown">
                         <img src="{{ asset('backend_assets/img/avatar.png') }}" class="avatar img-fluid rounded-circle mr-1" alt="Avatar " />
-                        <span class="text-dark">{{ Auth::user()->name }}</span>
+                        <span class="text-dark">{{ Auth::guard('admin')->user()->name }}</span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="{{ route('admin.profile.index') }}">Profile</a>
-                        @canany(['view_channel','view_specific_channel'])
-
-                                <a href="{{ route('channel.index') }}" class="dropdown-item">
-                                    {{ __('Channels')}}
-                                </a>
-                        @endcanany
+                        <a class="dropdown-item" href="{{ route('backend.profile.index') }}">Profile</a>
                         <a class="dropdown-item" href="{{ route('admin.logout') }}"  onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">{{ __('Sign out') }}</a>
                         <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
