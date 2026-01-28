@@ -1,11 +1,9 @@
 <?php
 
-use App\Http\Middleware\AdminGuardMiddleware;
-use App\Http\Middleware\BelongsToChannel;
+
+use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAppKey;
-use App\Http\Middleware\CheckChannels;
 use App\Http\Middleware\CheckEventPayment;
-use App\Http\Middleware\ChooseChannelMiddleware;
 use App\Http\Middleware\Cors;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
@@ -13,8 +11,6 @@ use App\Http\Middleware\GetRegion;
 use App\Http\Middleware\PasswordExpired;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Http\Middleware\RedirectIfNotAdmin;
-use App\Http\Middleware\RedirectIfNotUser;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustHosts;
 use App\Http\Middleware\TrustProxies;
@@ -82,6 +78,7 @@ return Application::configure(basePath: dirname(__DIR__))
                               VerifyCsrfToken::class,
                               SubstituteBindings::class,
                               AuthenticateSession::class,
+
                           ]);
 
                           $middleware->appendToGroup('api', [
@@ -98,8 +95,6 @@ return Application::configure(basePath: dirname(__DIR__))
                               'passkey'             => CheckAppKey::class,
                               'cors'                => Cors::class,
                               'force_json'          => ForceJsonResponse::class,
-                              'auth.user'           => RedirectIfNotUser::class,
-                              'admin.guard'         => AdminGuardMiddleware::class,
                               'cache.headers'       => SetCacheHeaders::class,
                               'can'                 => Authorize::class,
                               'guest'               => RedirectIfAuthenticated::class,
@@ -108,12 +103,9 @@ return Application::configure(basePath: dirname(__DIR__))
                               'signed'              => ValidateSignature::class,
                               'throttle'            => ThrottleRequests::class,
                               'verified'            => EnsureEmailIsVerified::class,
-                              'check.channels'      => CheckChannels::class,
                               'password.expired'    => PasswordExpired::class,
-                              'belongs.to'          => BelongsToChannel::class,
-                              'choose.channel'      => ChooseChannelMiddleware::class,
-                              'auth.admin'          => RedirectIfNotAdmin::class,
                               'check.event.payment' => CheckEventPayment::class,
+                              'auth'                => Authenticate::class
 
 
                           ]);
