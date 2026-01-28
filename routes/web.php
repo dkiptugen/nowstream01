@@ -125,7 +125,7 @@ Route::middleware(['detectCountry'])->group(function ()
             });
         Route::post('/stream/find', [StreamController::class, 'findStream'])->name('stream.find');
         Route::get('stream/{streamId}/view', [StreamController::class, 'proxy_stream'])->name('stream.view');
-        Route::middleware(['auth:user'])->group(function ()
+        Route::middleware(['auth'])->group(function ()
             {
 
                 Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
