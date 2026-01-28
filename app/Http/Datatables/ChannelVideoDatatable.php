@@ -16,11 +16,10 @@ class ChannelVideoDatatable
      *
      * @return array{draw: int, recordsTotal: mixed, recordsFiltered: mixed, data: array}
      */
-    public function data($request,$channel)
+    public function data($request)
     {
         $columns       = $this->columns;
-        $totalData     = Video::whereChannelId($channel)
-	    ->count();
+        $totalData     = Video::count();
         $totalFiltered = $totalData;
         $limit         = $request->input('length');
         $start         = $request->input('start');
@@ -29,19 +28,16 @@ class ChannelVideoDatatable
 
         if (empty($request->input('search.value')))
         {
-            $posts = Video::whereChannelId($channel)
-                          ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
+            $posts = Video::offset($start)->limit($limit)->orderBy($order, $dir)->get();
         }
         else
         {
             $search = $request->input('search.value');
-            $posts  = Video::whereChannelId($channel)
-	            ->where('title', 'LIKE', "%{$search}%")
+            $posts  = Video::where('title', 'LIKE', "%{$search}%")
 ->orWhere('description', 'LIKE', "%{$search}%")
                 ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
 
-            $totalFiltered = Video::whereChannelId($channel)
-                                  ->where('title', 'LIKE', "%{$search}%")
+            $totalFiltered = Video::where('title', 'LIKE', "%{$search}%")
 ->orWhere('description', 'LIKE', "%{$search}%")
                 ->count();
         }
@@ -52,7 +48,7 @@ class ChannelVideoDatatable
             $post = $start + 1;
             foreach ($posts as $post)
             {
-                $btn                  = $this->button($post, $request,$post->channel->identifier);
+                $btn                  = $this->button($post, $request);
                 $nestedData['id']     = $post;
                 $nestedData['title']   = $post->title;
                 $nestedData['description']  = $post->description;
@@ -62,7 +58,7 @@ class ChannelVideoDatatable
                 $nestedData['action'] = $btn;
 
                 $data[] = $nestedData;
-                
+
             }
         }
 
@@ -82,18 +78,18 @@ class ChannelVideoDatatable
      *
      * @return string
      */
-    private function button($post, $request,$channel)
+    private function button($post, $request)
     {
         $button = null;
         if ($request->user()->can('edit_channel_video'))
         {
-            $button .= '<a class="text text-dark" href="' . route('channel.video.edit', [$channel, $post->id]) . '" data-toggle="tooltip" title="Edit User">
+            $button .= '<a class="text text-dark" href="' . route('video.edit', ['video'=>$post->id]) . '" data-toggle="tooltip" title="Edit User">
                 <i class="fas fa-edit"></i> Edit
                 </a>';
         }
         if ($request->user()->can('destroy_channel_video'))
         {
-            $button .= '<form id="delete-form-' . $post->id . '" action="' . route('channel.video.destroy',[$channel, $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+            $button .= '<form id="delete-form-' . $post->id . '" action="' . route('video.destroy',['video'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>

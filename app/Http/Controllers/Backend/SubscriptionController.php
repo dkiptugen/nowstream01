@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subscription;
+use App\Http\Datatables\ChannelSubscriptionDatatable;
+use App\Models\Channel;
 use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
@@ -11,9 +12,11 @@ class SubscriptionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($channel)
     {
-    
+	    $this->data['channel'] = Channel::whereIdentifier($channel)
+	                                    ->first();
+        return view('Backend.modules.channel_subscription.index',$this->data);
     }
 
     /**
@@ -35,7 +38,7 @@ class SubscriptionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Subscription $subscription)
+    public function show(string $id)
     {
         //
     }
@@ -43,7 +46,7 @@ class SubscriptionController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Subscription $subscription)
+    public function edit(string $id)
     {
         //
     }
@@ -51,7 +54,7 @@ class SubscriptionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subscription $subscription)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -59,8 +62,21 @@ class SubscriptionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subscription $subscription)
+    public function destroy(string $id)
     {
         //
     }
+
+
+    /**
+     * Custom method added for datatable.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function datatable($channel,Request $request, ChannelSubscriptionDatatable $datatable)
+    {
+        $datatable->columns = [0=>'id'];
+        return response()->json($datatable->data($request,$channel));
+    }
+
 }

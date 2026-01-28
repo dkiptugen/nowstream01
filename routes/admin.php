@@ -9,10 +9,10 @@ use App\Http\Controllers\Auth\Admin\OutletController;
 use App\Http\Controllers\Auth\Admin\RegisterController;
 use App\Http\Controllers\Auth\Admin\ResetPasswordController;
 use App\Http\Controllers\Auth\Admin\VerificationController;
-use App\Http\Controllers\Backend\ChannelStreamController;
-use App\Http\Controllers\Backend\ChannelSubscriptionController;
-use App\Http\Controllers\Backend\ChannelTransactionController;
-use App\Http\Controllers\Backend\ChannelVideoController;
+use App\Http\Controllers\Backend\StreamController;
+use App\Http\Controllers\Backend\SubscriptionController;
+use App\Http\Controllers\Backend\TransactionController;
+use App\Http\Controllers\Backend\VideoController;
 use App\Http\Controllers\Backend\EventRateController;
 use App\Http\Controllers\Backend\LogsController;
 use App\Http\Controllers\Backend\ProfileController;
@@ -76,20 +76,20 @@ Route::middleware(['auth:admin'])->prefix('backend')->group(function () {
     Route::post('/channel/datatable', [ChannelController::class, 'datatable'])->name('channel.datatable')->secure();
 
 
-    Route::middleware('belongs.to')->group(function () {
+
         Route::resource('event', EventController::class);
         Route::post('event/datatable', [EventController::class, 'datatable'])->name('event.datatable');
 
-        Route::resource('stream', ChannelStreamController::class);
-        Route::post('stream/datatable', [ChannelStreamController::class, 'datatable'])->name('stream.datatable');
+        Route::resource('stream', StreamController::class);
+        Route::post('stream/datatable', [StreamController::class, 'datatable'])->name('stream.datatable');
 
 
 
-        Route::resource('video', ChannelVideoController::class);
-        Route::post('video/datatable', [ChannelVideoController::class, 'datatable'])->name('video.datatable');
+        Route::resource('video', VideoController::class);
+        Route::post('video/datatable', [VideoController::class, 'datatable'])->name('video.datatable');
 
 
-    });
+
 
 
     Route::resource('event.stream', StreamController::class);
@@ -140,11 +140,11 @@ Route::middleware(['auth:admin'])->prefix('backend')->group(function () {
     Route::resource('transaction', TransactionController::class);
     Route::post('/transaction/datatable', [TransactionController::class, 'datatable'])->name('transaction.datatable');
 
-    Route::resource('channel.subscription', ChannelSubscriptionController::class);
-    Route::post('channel/{channel}/subscription/datatable', [ChannelSubscriptionController::class, 'datatable'])->name('channel.subscription.datatable');
+    Route::resource('channel.subscription', SubscriptionController::class);
+    Route::post('channel/{channel}/subscription/datatable', [SubscriptionController::class, 'datatable'])->name('channel.subscription.datatable');
 
-    Route::resource('channel.transaction', ChannelTransactionController::class);
-    Route::post('channel/{channel}/transaction/datatable', [ChannelTransactionController::class, 'datatable'])->name('channel.transaction.datatable');
+    Route::resource('channel.transaction', TransactionController::class);
+    Route::post('channel/{channel}/transaction/datatable', [TransactionController::class, 'datatable'])->name('channel.transaction.datatable');
 
     Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
     Route::put('profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
