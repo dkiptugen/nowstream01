@@ -23,6 +23,7 @@ class Authenticate extends Middleware
                 if ($request->expectsJson()) {
                     return null;
                 }
+                dd($this->guards);
                 if (in_array('admin', $this->guards)) {
                     return route('admin.login');
                 }
