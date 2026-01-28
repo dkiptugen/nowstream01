@@ -7,6 +7,7 @@
 	use App\Models\User;
 	use App\Rules\NotExecutable;
 	use App\Rules\ValidatePhone;
+    use App\Traits\Meta;
     use App\Traits\SocialLogin;
     use Illuminate\Http\Request;
 	use App\Http\Controllers\Controller;
@@ -28,6 +29,7 @@
 	class AuthsController extends Controller
 		{
             use SocialLogin;
+            use Meta;
 			public function showRegisterForm ()
 				{
 					return view ('Frontend.auth.register');
