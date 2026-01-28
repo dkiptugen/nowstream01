@@ -6,7 +6,7 @@
             <div class="card card-border-blue" id="view-table" aria-labelledby="view-table" >
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title my-0 text-blue">Roles</h5>
-                    <a class="btn btn-secondary btn-sm"  href="{{ route('role.create') }}" >
+                    <a class="btn btn-secondary btn-sm"  href="{{ route('backend.role.create') }}" >
                         <i class="bx bx-plus"></i>Add Role
                     </a>
 
