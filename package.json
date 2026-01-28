@@ -38,7 +38,7 @@
         "jquery-validation": "^1.19.3",
         "jvectormap-next": "3.0.0",
         "laravel-echo": "^1.11.3",
-        "lodash": "^4.17.21",
+        "lodash": "^4.17.23",
         "moment": "^2.30.1",
         "owl.carousel": "^2.2.2",
         "pusher-js": "^7.0.3",
