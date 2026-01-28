@@ -14,7 +14,7 @@
 
             <div id="{{$key}}" class="collapse @if($x == 1)show @endif" aria-labelledby="headingOne" data-parent="#accordion">
               <div class="card-body">
-                  <form action="{{ route('configuration.edit') }}" method="post" class="form form form-horizontal create-form">
+                  <form action="{{ route('backend.configuration.edit') }}" method="post" class="form form form-horizontal create-form">
                       @csrf
                       @foreach($config[$key] as $ob => $val)
                       <div class="form-group">
