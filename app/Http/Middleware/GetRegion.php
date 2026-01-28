@@ -1,13 +1,14 @@
 <?php
-	
+
 	namespace App\Http\Middleware;
-	
+
 	use Closure;
 	use Illuminate\Http\Request;
-	use Stevebauman\Location\Facades\Location;
+
 	use Illuminate\Support\Facades\View;
-	
-	class GetRegion
+    use Stevebauman\Location\Facades\Location;
+
+    class GetRegion
 		{
 		/**
 		 * Handle an incoming request.
@@ -34,7 +35,7 @@
 							                ]);
 						}
 					View::share('country', $country);
-					
+
 					// Share the parameter globally to all routes
 					app()->singleton('country', function () use ($country) {
 						return $country;
