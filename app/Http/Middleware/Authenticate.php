@@ -11,6 +11,7 @@ class Authenticate extends Middleware
     {
         public function handle($request, Closure $next, ...$guards)
             {
+                dd($guards);
                 foreach ($guards as $guard) {
                     if (Auth::guard($guard)->check()) {
                         Auth::shouldUse($guard);
@@ -30,9 +31,10 @@ class Authenticate extends Middleware
                 if ($request->expectsJson()) {
                     return null;
                 }
-                if (Auth::guard('admin')->guest()) {
-                    return route('admin.login');
-                }
+                if (Auth::guard('admin')->guest())
+                    {
+                        return route('admin.login');
+                    }
                 if (Auth::guard('user')->guest() || Auth::guard('web')->guest())
                     {
                         return route('user.login');
