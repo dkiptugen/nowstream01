@@ -1,8 +1,8 @@
 <div class="wrapper">
     <nav class="sidebar sidebar-sticky">
         <span class="sidebar-content  js-simplebar">
-            <a class="sidebar-brand" href="{{ route('admin_dashboard') }}">
-                <img src="{{ asset($logo) }}" alt="Logo" class="" height="50">
+            <a class="sidebar-brand text-center" href="{{ route('admin_dashboard') }}">
+                <img src="{{ asset($logo) }}" alt="Logo" class="img-fluid" width="50" >
             </a>
 
             <ul class="sidebar-nav">
@@ -41,6 +41,7 @@
 
                     </li>
                 @endcan
+
                 <li class="sidebar-header">Revenue</li>
                 @can('view_payment_method')
                     <li class="sidebar-item">

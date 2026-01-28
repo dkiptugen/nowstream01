@@ -12,8 +12,8 @@
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Str;
     use Intervention\Image\Facades\Image;
-  
-    
+
+
     trait Meta
         {
         /**
@@ -26,18 +26,18 @@
                         'name' => 'Now Stream',
                         'title' => 'Now Stream',
                         'description' => 'Explore the limitless possibilities. ',
-                        'logo' => asset('assets/img/logo1.png'),
+                        'logo' => asset('assets/nowstream-light.png'),
                         'image' => asset('assets/img/logo1.png'),
                         'keywords' => 'Now Stream,',
                         'author' => 'Caydeesoft Solutions Limited'
                     ];
 
                 }
-		    
+
 		    function removeSpaces ($input)
 			    {
 				    $result = preg_replace('/[\s-]+/', '', $input);
-				    
+
 				    return $result;
 			    }
 		    function maskPhoneNumber ($phoneNumber, $startVisible = 3, $endVisible = 3, $maskChar = '*')
@@ -48,15 +48,15 @@
 						    // If the phone number is too short to mask, return it as is
 						    return $phoneNumber;
 					    }
-				    
+
 				    $startPart = substr ($phoneNumber, 0, $startVisible);
 				    $endPart   = substr ($phoneNumber, -$endVisible);
-				    
+
 				    $maskedPart = str_repeat ($maskChar, $length - ($startVisible + $endVisible));
-				    
+
 				    return $startPart.$maskedPart.$endPart;
 			    }
-		    
+
 		    public static function success($title, $message, string $redirecturl = "")
                 {
                     return response()->json([
@@ -236,7 +236,7 @@
 
                     return $identifier;
                 }
-		    
+
 		    function isBazeEmail($email)
 			    {
 				    // Regular expression to match email addresses from baze.co.ke

@@ -12,6 +12,9 @@
                 {
                     //dd(Auth::user()->active_channel);
                     $this->data['title'] = 'Dashboard : '. $this->data['title'];
+
+
+                   // dd($this->data);
                     return view( 'Backend.modules.dashboard',$this->data );
                 }
         }

@@ -8,7 +8,6 @@ abstract class Controller
 
         public function __construct()
             {
-                $this->data = config('site');
 
             }
     }
