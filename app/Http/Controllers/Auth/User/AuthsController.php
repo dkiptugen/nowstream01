@@ -119,10 +119,10 @@
 				{
 					$country = $request->country;
 
-					if ($country == 'KE')
+					/*if ($country == 'KE')
 						{
 							return view ('Frontend.auth.phone_login');
-						}
+						}*/
 					return view ('Frontend.auth.login');
 				}
 
