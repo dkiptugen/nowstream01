@@ -19,7 +19,7 @@ class Authenticate extends Middleware
 
                 // Get the first guard used for this route
                 $guard = $this->getGuard($request);
-
+                dd($guard);
                 // Redirect based on guard
                 return match($guard) {
                     'admin' => route('admin.login'),
