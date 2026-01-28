@@ -60,12 +60,14 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
 
 Route::prefix('backend')->group(function () {
 
-Route::controller(OutletController::class)->middleware(['auth:admin'])->group(function () {
-    Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
-    Route::post('/select',  'saveOutlet')->name('save_outlet');
-});
 
-Route::middleware(['auth:admin', 'choose.channel','check.channels'])->group(function () {
+
+Route::middleware(['auth:admin'])->group(function () {
+    Route::controller(OutletController::class)->group(function () {
+        Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
+        Route::post('/select',  'saveOutlet')->name('save_outlet');
+    });
+
     Route::get('/', [DashboardController::class, 'index'])->name('admin_dashboard');
 
     Route::get('/change_channel/{channel}', [OutletController::class, 'outlet_change'])->name('change_channel');
