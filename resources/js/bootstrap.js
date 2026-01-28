@@ -7,10 +7,11 @@ window._ = require('lodash');
  */
 
 window.axios = require('axios');
-window.Echo = require("laravel-echo");
+
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.Popper = require('@popperjs/core').default;
 window.$ = window.jQuery = require('jquery');
+window.Popper = require('@popperjs/core').default;
+
 require('bootstrap');
 require('./custom');
 
