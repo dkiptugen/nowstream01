@@ -70,7 +70,7 @@
                                             <hr />
                                         </div>
                                         <div class="d-grid mt-3">
-                                            <a href="{{route('phonelogin.form')}}" class="btn btn-dark"> Email and
+                                            <a href="{{route('user.login.form')}}" class="btn btn-dark"> Email and
                                                 Password</a>
                                         </div>
                                     </div>
