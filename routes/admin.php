@@ -59,6 +59,7 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
 });
 
 Route::prefix('backend')->group(function () {
+
 Route::controller(OutletController::class)->middleware(['auth:admin'])->group(function () {
     Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
     Route::post('/select',  'saveOutlet')->name('save_outlet');

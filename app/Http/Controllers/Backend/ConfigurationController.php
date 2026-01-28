@@ -5,9 +5,11 @@
     use App\Http\Controllers\Controller;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Log;
+    use App\Traits\Meta;
 
     class ConfigurationController extends Controller
         {
+            use Meta;
         /**
          * Display a listing of the resource.
          *
