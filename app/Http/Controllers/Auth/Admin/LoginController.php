@@ -35,7 +35,7 @@
          *
          * @var string
          */
-            protected $redirectTo = '/admin/backend';
+            protected $redirectTo = 'backend';
 
         /**
          * Create a new controller instance.
