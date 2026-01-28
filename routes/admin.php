@@ -32,7 +32,7 @@ use App\Http\Controllers\Backend\StreamController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::name('admin.')->middleware(['web'])->group(function () {
+Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
     Route::controller(LoginController::class)->group(function () {
         Route::get('/login',  'showLoginForm')->middleware('guest:admin')->name('login.form');
         Route::post('/login',  'login')->middleware('guest:admin')->name('login')->secure();
