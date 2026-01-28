@@ -90,7 +90,7 @@
                                                 Me</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 text-end"> <a href="{{ route('user.password.request') }}">Forgot
+                                    <div class="col-md-6 text-end"> <a href="{{ route('user.password.email') }}">Forgot
                                             Password ?</a>
                                     </div>
                                     <div class="col-12">
