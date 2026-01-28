@@ -53,7 +53,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                "url": "{{ route('user.datatable') }}",
+                "url": "{{ route('backend.user.datatable') }}",
                 "dataType": "json",
                 "type": "POST",
                 "data":{ _token: "{{csrf_token()}}"}
