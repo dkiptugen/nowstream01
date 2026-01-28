@@ -1,88 +1,125 @@
 <?php
 
+use App\Http\Middleware\AdminGuardMiddleware;
+use App\Http\Middleware\BelongsToChannel;
+use App\Http\Middleware\CheckAppKey;
+use App\Http\Middleware\CheckChannels;
+use App\Http\Middleware\CheckEventPayment;
+use App\Http\Middleware\ChooseChannelMiddleware;
+use App\Http\Middleware\Cors;
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\GetRegion;
+use App\Http\Middleware\PasswordExpired;
+use App\Http\Middleware\PreventRequestsDuringMaintenance;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RedirectIfNotAdmin;
+use App\Http\Middleware\RedirectIfNotUser;
+use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\TrustHosts;
+use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\ValidateSignature;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Auth\Middleware\RequirePassword;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Http\Middleware\ValidatePostSize;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        channels: __DIR__.'/../routes/channels.php',
-        health: '/up',
-        api: __DIR__.'/../routes/api.php',
-        then: function () {
+                  ->withRouting(
+                      web     : __DIR__ . '/../routes/web.php',
+                      commands: __DIR__ . '/../routes/console.php',
+                      channels: __DIR__ . '/../routes/channels.php',
+                      health  : '/up',
+                      api     : __DIR__ . '/../routes/api.php',
+                      then    : function ()
+                          {
 
-            Route::prefix('malipo')
-                 ->middleware(['api'])
-                 ->group(base_path('routes/mpesa.php'));
-            Route::prefix('malipo')
-                 ->middleware(['api'])
-                 ->group(base_path('routes/dpo.php'));
+                              Route::prefix('malipo')
+                                   ->middleware(['api'])
+                                   ->group(base_path('routes/mpesa.php'));
 
-        },
+                              Route::prefix('malipo')
+                                   ->middleware(['api'])
+                                   ->group(base_path('routes/dpo.php'));
 
-    )
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\TrustHosts::class);
-        $middleware->append(\App\Http\Middleware\TrustProxies::class);
-        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
-        $middleware->append(\App\Http\Middleware\PreventRequestsDuringMaintenance::class);
-        $middleware->append(\Illuminate\Foundation\Http\Middleware\ValidatePostSize::class);
-        $middleware->append(\App\Http\Middleware\TrimStrings::class);
-        $middleware->append(\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class);
-        $middleware->append(\App\Http\Middleware\Cors::class);
-        $middleware->append(\App\Http\Middleware\GetRegion::class);
+                          },
 
-        // Middleware groups
-        $middleware->appendToGroup('web', [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Illuminate\Session\Middleware\AuthenticateSession::class,
-        ]);
-
-        $middleware->appendToGroup('api', [
-            \App\Http\Middleware\ForceJsonResponse::class,
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\GetRegion::class,
-        ]);
-
-        // Aliases
-        $middleware->alias([
-            'detectCountry' => \App\Http\Middleware\GetRegion::class,
-            'passkey' => \App\Http\Middleware\CheckAppKey::class,
-            'cors' => \App\Http\Middleware\Cors::class,
-            'force_json' => \App\Http\Middleware\ForceJsonResponse::class,
-            'auth.user' => \App\Http\Middleware\RedirectIfNotUser::class,
-            // add the rest of your aliases here...
-            'admin.guard' => \App\Http\Middleware\AdminGuardMiddleware::class,
-            'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-            'can' => \Illuminate\Auth\Middleware\Authorize::class,
-            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-            'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-            'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-            'signed' => \App\Http\Middleware\ValidateSignature::class,
-            'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-            'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-            'check.channels' => \App\Http\Middleware\CheckChannels::class,
-            'password.expired' => \App\Http\Middleware\PasswordExpired::class,
-            'belongs.to' => \App\Http\Middleware\BelongsToChannel::class,
-            'choose.channel' => \App\Http\Middleware\ChooseChannelMiddleware::class,
-            'auth.admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
-
-            'check.event.payment' => \App\Http\Middleware\CheckEventPayment::class,
+                  )
+                  ->withMiddleware(function (Middleware $middleware): void
+                      {
+                          $middleware->append(TrustHosts::class);
+                          $middleware->append(TrustProxies::class);
+                          $middleware->append(HandleCors::class);
+                          $middleware->append(PreventRequestsDuringMaintenance::class);
+                          $middleware->append(ValidatePostSize::class);
+                          $middleware->append(TrimStrings::class);
+                          $middleware->append(ConvertEmptyStringsToNull::class);
+                          $middleware->append(Cors::class);
 
 
-        ]);
+                          // Middleware groups
+                          $middleware->appendToGroup('web', [
+                              EncryptCookies::class,
+                              AddQueuedCookiesToResponse::class,
+                              StartSession::class,
+                              ShareErrorsFromSession::class,
+                              VerifyCsrfToken::class,
+                              SubstituteBindings::class,
+                              AuthenticateSession::class,
+                          ]);
 
-    })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
-    })->create();
+                          $middleware->appendToGroup('api', [
+                              ForceJsonResponse::class,
+                              EnsureFrontendRequestsAreStateful::class,
+                              ThrottleRequests::class . ':api',
+                              SubstituteBindings::class,
+
+                          ]);
+
+                          // Aliases
+                          $middleware->alias([
+                              'detectCountry'       => GetRegion::class,
+                              'passkey'             => CheckAppKey::class,
+                              'cors'                => Cors::class,
+                              'force_json'          => ForceJsonResponse::class,
+                              'auth.user'           => RedirectIfNotUser::class,
+                              'admin.guard'         => AdminGuardMiddleware::class,
+                              'cache.headers'       => SetCacheHeaders::class,
+                              'can'                 => Authorize::class,
+                              'guest'               => RedirectIfAuthenticated::class,
+                              'password.confirm'    => RequirePassword::class,
+                              'precognitive'        => HandlePrecognitiveRequests::class,
+                              'signed'              => ValidateSignature::class,
+                              'throttle'            => ThrottleRequests::class,
+                              'verified'            => EnsureEmailIsVerified::class,
+                              'check.channels'      => CheckChannels::class,
+                              'password.expired'    => PasswordExpired::class,
+                              'belongs.to'          => BelongsToChannel::class,
+                              'choose.channel'      => ChooseChannelMiddleware::class,
+                              'auth.admin'          => RedirectIfNotAdmin::class,
+                              'check.event.payment' => CheckEventPayment::class,
+
+
+                          ]);
+
+                      })
+                  ->withExceptions(function (Exceptions $exceptions): void
+                      {
+                          //
+                      })->create();

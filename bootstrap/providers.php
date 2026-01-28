@@ -4,7 +4,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\BroadcastServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\MacrosServiceProvider;
-use \Stevebauman\Location\LocationServiceProvider;
+use Stevebauman\Location\LocationServiceProvider;
 
 return [
     AppServiceProvider::class,
@@ -12,4 +12,5 @@ return [
     EventServiceProvider::class,
     MacrosServiceProvider::class,
     LocationServiceProvider::class,
+    LocationServiceProvider::class
 ];
