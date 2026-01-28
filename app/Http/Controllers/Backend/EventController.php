@@ -1,7 +1,7 @@
 <?php
-	
+
 	namespace App\Http\Controllers\Backend;
-	
+
 	use App\Http\Controllers\Controller;
 	use App\Http\Datatables\EventDatatable;
 	use App\Http\Requests\StoreEvent;
@@ -15,7 +15,7 @@
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Storage;
 	use Illuminate\Support\Str;
-	
+
 	class EventController extends Controller
 		{
 		/**
@@ -27,7 +27,7 @@
 					$this->data['title']   = 'Events : '.$this->data['title'];
 					return view ('Backend.modules.event.index', $this->data);
 				}
-		
+
 		/**
 		 * Show the form for creating a new resource.
 		 */
@@ -38,7 +38,7 @@
 					$this->data['title']   = 'Events : '.$this->data['title'];
 					return view ('Backend.modules.event.add', $this->data);
 				}
-		
+
 		/**
 		 * Store a newly created resource in storage.
 		 */
@@ -46,10 +46,10 @@
 				{
 					try
 						{
-							
+
 							[$startDateString, $endDateString] = explode (' - ', $request->event_time);
-							
-							
+
+
 							$startDate = Carbon::createFromFormat ('Y/m/d h:i A', $startDateString);
 							$endDate   = Carbon::createFromFormat ('Y/m/d h:i A', $endDateString);
 							$channel   = Channel::whereIdentifier ($channelId)->first ()
@@ -68,11 +68,11 @@
 										{
 											$image              = new UploadService();
 											$upload             = $image->file_upload ($request, 'thumbnail',
-												'event_image', 'public_2');
+												'event_image', 'linode');
 											$event->event_image = $upload['path'];
-											
+
 										}
-									
+
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
 									$event->channel_id     = $channel->id;
@@ -90,9 +90,9 @@
 													$upload                = $image->file_upload ($request,
 														'stream_thumbnail', 'stream_thumbnail', 'public_2');
 													$stream->thumbnail_url = $upload['path'];
-													
+
 												}
-											
+
 											$stream->stream_key        = $streamkey;
 											$stream->stream_url        = config ('custom.STREAM.LIVESTREAM_SERVER');
 											$stream->stream_video_link = config ('custom.STREAM.LIVESTREAM_LINK').'/'.$streamkey.'.m3u8';
@@ -104,7 +104,7 @@
 											return self::success ('event', 'Saved successfully',
 												route ('channel.event.index', $channelId));
 										}
-									return self::fail ('event', 'error encountered when saving, try again later',
+									return self::failed ('event', 'error encountered when saving, try again later',
 										route ('channel.event.index', $channelId));
 								}
 							else
@@ -117,7 +117,7 @@
 							Log::error ($e->getMessage ().$e->getLine ().$e->getTraceAsString ());
 						}
 				}
-		
+
 		/**
 		 * Display the specified resource.
 		 */
@@ -125,7 +125,7 @@
 				{
 					//
 				}
-		
+
 		/**
 		 * Show the form for editing the specified resource.
 		 */
@@ -137,7 +137,7 @@
 					$this->data['title']   = $this->data['event']->title.' Event : '.$this->data['title'];
 					return view ('Backend.modules.event.edit', $this->data);
 				}
-		
+
 		/**
 		 * Update the specified resource in storage.
 		 */
@@ -146,8 +146,8 @@
 					try
 						{
 							[$startDateString, $endDateString] = explode (' - ', $request->event_time);
-							
-							
+
+
 							$startDate = Carbon::createFromFormat ('Y/m/d h:i A', $startDateString);
 							$endDate   = Carbon::createFromFormat ('Y/m/d h:i A', $endDateString);
 							$channel   = Channel::whereIdentifier ($channelId)->first ()
@@ -166,20 +166,20 @@
 										{
 											$image              = new UploadService();
 											$upload             = $image->file_upload ($request, 'thumbnail',
-												'event_image', 'public_2');
+												'event_image', 'linode');
 											$event->event_image = $upload['path'];
-											
+
 										}
-									
+
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
 									$event->channel_id     = $channel->id;
 									$res                   = $event->save ();
 									if ($res)
 										{
-											
+
 											$stream = $event->streams;
-											
+
 											$stream->title       = $event->event_name;
 											$stream->description = $event->description;
 											if ($request->hasFile ('thumbnail'))
@@ -188,7 +188,7 @@
 													$upload                = $image->file_upload ($request,
 														'stream_thumbnail', 'stream_thumbnail', 'public_2');
 													$stream->thumbnail_url = $upload['path'];
-													
+
 												}
 											$stream->start_time     = $startDate;
 											$stream->system_user_id = $request->user ('admin')->id;
@@ -210,16 +210,16 @@
 							Log::error ($e->getMessage ());
 						}
 				}
-		
+
 		/**
 		 * Remove the specified resource from storage.
 		 */
 			public function destroy ($channelId, $id) {}
-			
+
 			public function datatable ($channelId, Request $request, EventDatatable $datatable)
 				{
 					$channel            = Channel::whereIdentifier ($channelId)->first ();
-					
+
 					$datatable->columns = [
 						1 => 'event_name', 2 => 'thumbnail', 7 => 'created_at', 6 => 'status', 8 => 'publish_date'
 					];
