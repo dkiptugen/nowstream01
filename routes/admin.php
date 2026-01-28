@@ -54,7 +54,7 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
     Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
 });
 
-Route::middleware(['auth:admin'])->prefix('backend')->group(function () {
+Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(function () {
 
 
 
