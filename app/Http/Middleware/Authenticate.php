@@ -18,7 +18,7 @@ class Authenticate extends Middleware
                 }
 
                 // 🔑 detect guard
-                if (in_array('admin', $this->guards)) {
+                if (in_array('admin', $this->getGuard())) {
                     return route('admin.login');
                 }
 
