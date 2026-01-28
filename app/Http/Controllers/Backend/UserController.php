@@ -8,6 +8,7 @@ use App\Http\Datatables\SysUserDatatable;
 use App\Http\Requests\EditUser;
 use App\Http\Requests\UpdateProfile;
 use App\Models\Role;
+use App\Models\SystemUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -142,7 +143,7 @@ class UserController extends Controller
      *
      * @return array|\Illuminate\Http\Response
      */
-        public function update(EditUser $request, User $user)
+        public function update(EditUser $request, SystemUser $user)
             {
 
                 $validateddata = $request->validated();
@@ -195,7 +196,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-        public function show($id)
+        public function show(SystemUser $user)
             {
             }
 
@@ -206,7 +207,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
      */
-        public function edit(User $user)
+        public function edit(SystemUser $user)
             {
 
                 $this->data['user'] = $user;
