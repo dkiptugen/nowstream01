@@ -112,7 +112,7 @@
 
 			public function showPhoneLoginForm ()
 				{
-					return view ('Frontend.auth.login');
+					return view ('Frontend.auth.phone_login');
 				}
 
 			public function showLoginForm (Request $request)
