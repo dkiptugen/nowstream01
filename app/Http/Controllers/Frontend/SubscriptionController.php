@@ -1,8 +1,8 @@
 <?php
 
-	
+
 	namespace App\Http\Controllers\Frontend;
-	   
+
 	use App\Events\PaymentFailed;
 	use App\Http\Controllers\Controller;
 	use App\Jobs\VerifyTokenJob;
@@ -13,7 +13,8 @@
 	use App\Models\Region;
 	use App\Models\Subscription;
 	use App\Models\Transaction;
-	use Exception;
+    use App\Traits\Meta;
+    use Exception;
 	use Illuminate\Database\Eloquent\ModelNotFoundException;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Carbon;
@@ -21,24 +22,25 @@
 	use Illuminate\Support\Facades\DB;
 	use Illuminate\Support\Facades\Log;
 	use Mgcodeur\CurrencyConverter\Facades\CurrencyConverter;
-	
+
 	class SubscriptionController extends Controller
 		{
+            use Meta;
 			public function subscribe (Request $request)
 				{
 					// Log the incoming request data
 					//Log::info('Subscription request data:', $request->all());
-					
+
 					// Validate the request data
 					$request->validate ([
 						                    'event_id' => 'required|integer|exists:events,id', 'channel_id' => 'required|integer|exists:channels,id', 'cost' => 'required|numeric', 'user_id' => 'required|integer|exists:users,id', 'payment_method_id' => 'required|integer|in:1,2'
 					                    ]);
-					
+
 					DB::beginTransaction ();
-					
+
 					try
 						{
-							
+
 							// Fetch the cost from the EventRate model
 							$eventRate = EventRate::find ($request->rate_id);
 							if (is_null ($eventRate))
@@ -46,13 +48,13 @@
 									//Log::error('Event rate not found for event_id: ' . $request->event_id);
 									return redirect ()->back ()->with ('error', 'Event rate not found');
 								}
-							
+
 							$cost         = $eventRate->cost;
 							$subscription = Subscription::where ('user_id', $request->user ()->id)
 							                            ->where ('event_id', $request->event_id)
 							                            ->first ();
-							
-							
+
+
 							switch ($request->payment_method_id)
 								{
 								case 1:
@@ -68,7 +70,7 @@
 							$currency = 'KES';
 							if ($request->country != 'KE')
 								{
-									
+
 									if ($paymentmethod == 'dpo')
 										{
 											$cost     = $eventRate->reserved_currency_cost;
@@ -92,8 +94,8 @@
 										                                            'channel_id' => $request->channel_id,
 										                                            'stream_token' => uniqid ()
 									                                            ]);
-									
-									
+
+
 								}
 							else
 								{
@@ -116,13 +118,13 @@
 												                       'cost' => $cost, 'balance' => $balance
 											                       ]);
 										}
-									
-									
+
+
 								}
-							
-							
+
+
 							DB::commit ();
-							
+
 							// Redirect based on the payment method
 							if ($request->payment_method_id == 1)
 								{
@@ -145,17 +147,17 @@
 						}
 				}
 
-			
+
 				public function succeed ($eventId)
 				{
 					$event = Event::find ($eventId);
 					return view ('Frontend.modules.payments.successful', compact ('event'));
 				}
 				public function succeess ()
-					{ 
+					{
 						return view ('Frontend.modules.payments.successful');
 					}
-			
+
 			public function mpesa ($id)
 				{
 					$subscription = Subscription::findOrFail ($id);
@@ -168,8 +170,8 @@
 						}
 					return view ('Frontend.modules.payments.mpesa', compact ('subscription'));
 				}
-		
-			
+
+
 			public function mpesaStk (Request $request)
 				{
 					try
@@ -199,8 +201,8 @@
 											$transaction->subscription_id = $sub->id;
 											$transaction->user_id         = Auth::user ()->id;
 											$transaction->save ();
-											
-											
+
+
 										}
 									$mpesa                 = new Mpesa('production');
 									$mpesa->shortcode      = config ('custom.MPESA.MPESA_SHORTCODE');
@@ -215,8 +217,8 @@
 									$mpesa->desc           = 'payment for streaming service';
 									//Log::info(json_encode($mpesa));
 									$check                 = $mpesa->stkpush ();
-									
-									
+
+
 									$transaction->response = $check;
 									$transaction->save ();
 									$sub->latest_transaction_id = $transaction->id;
@@ -245,7 +247,7 @@
 							return redirect ()->back ()->with ('error', 'Encountered an error');
 						}
 				}
-			
+
 			public function dpo ($id)
 				{
 					try
@@ -273,7 +275,7 @@
 									$transaction->user_id         = $subscription->user_id;
 									$transaction->save ();
 								}
-							
+
 							if (!is_null ($transaction))
 								{
 									$subscription->latest_transaction_id = $transaction->id;
@@ -297,7 +299,7 @@
 									// Handle the response from DPO and update the transaction
 									if ($checkout->status)
 										{
-											
+
 											$transaction->transaction_token = $checkout->token;
 											$transaction->response          = $checkout;
 											$transaction->save ();
@@ -305,7 +307,7 @@
 							VerifyTokenJob::dispatch ((string)$transaction->transaction_token)
 									              ->delay(now ()->addMinutes (3))
 									              ->onQueue ('high');
-									
+
 									return view ('Frontend.modules.payments.dpo',
 									             compact ('subscription', 'transaction', 'checkout'));
 								}
@@ -318,11 +320,11 @@
 						{
 							Log::error ($e->getMessage ().' '.$e->getTraceAsString ());
 						}
-					
+
 				}
-			
+
 			public function saf_content ($id)
 				{
-				
+
 			}
 		}

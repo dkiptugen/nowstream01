@@ -1,0 +1,258 @@
+// dark-mode.scss
+
+.dark-mode {
+  @import "variables";
+
+
+  // Backgrounds
+  $body-bg: #121212;
+  $body-color: #f8f9fa;
+  $white: #121212;
+
+  $sidebar-bg: #121212;
+  $sidebar-link-color: #fff;
+  $sidebar-link-bg :#121212;
+  $body-color: #fff;
+  $sidebar-border:#2A3038;
+
+
+  $background-color: #0F1217;
+  $card-bg: #1A1F25;
+  $border-color: #2A3038;
+  $primary: #FFFFFF;
+  $secondary:#A0A8B3;
+  $blue: #AAAAAA;
+  $success: #16A34A;
+  $info: #3B82F6;
+  $warning: #FACC15;
+  $danger: #EF4444;
+  $light: #E5E9F2;
+  $dark: #1A1F25;
+  $gray-300:#333;
+
+
+  $theme-colors: (
+          "primary": $primary,
+          "secondary": $secondary,
+          "success": $success,
+          "info": $info,
+          "warning": $warning,
+          "danger": $danger,
+          "light": $light,
+          "dark": $dark,
+          "blue":$blue
+  );
+
+
+          // Cards
+  $card-bg: #1A1F25;
+  $card-border-color: #2A3038;
+  $navbar-border-bottom: 1px solid #333;
+
+  // Forms
+  $input-bg: $body-bg;
+  $input-border-color: #3A3F46;
+
+  // Text
+  $text-muted: #A0A8B3;
+  // Rebuild bootstrap components only inside this class
+  :root {
+    --body-bg: #fff;
+    --text-color: #000;
+    --card-bg: #fff;
+  }
+
+  [data-theme="dark"] {
+    --body-bg: $body-bg;
+    --text-color: $white;
+    --card-bg: $card-bg;
+  }
+
+  body {
+    background-color: var(--body-bg);
+    color: var(--text-color);
+  }
+
+  .card {
+    background-color: var(--card-bg);
+  }
+
+  // Bootstrap
+  @import "~bootstrap/scss/bootstrap";
+
+  // Theme mixins
+  @import "mixins/button";
+  @import "mixins/modal";
+  @import "mixins/switch";
+  @import "mixins/tabs";
+  @import "mixins/wizard";
+
+  // 3rd party plugins
+  @import "~toastr/toastr";
+
+  @import "~bootstrap-daterangepicker/daterangepicker";
+  @import "~tempusdominus-bootstrap-4/src/sass/tempusdominus-bootstrap-4";
+  @import "~select2/src/scss/core";
+  /*@import "~bootstrap-markdown/css/bootstrap-markdown.min";
+  @import "~quill/dist/quill.bubble";
+  @import "~quill/dist/quill.snow";*/
+  /*@import "~smartwizard/dist/css/smart_wizard";
+  @import "~smartwizard/dist/css/smart_wizard_theme_arrows";*/
+  @import "~datatables.net-bs4/css/dataTables.bootstrap4";
+  @import "~datatables.net-buttons-bs4/css/buttons.bootstrap4";
+  //@import "~jvectormap-next/jquery-jvectormap";
+  @import "~simplebar/dist/simplebar";
+  @import "~apexcharts/src/assets/apexcharts";
+  @import "~summernote/src/styles/summernote/common";
+  @import "~summernote/src/styles/bs4/summernote-bs4";
+  // 3rd party plugin styles
+  @import "vendor/datetimepicker";
+  @import "vendor/highlight";
+  @import "vendor/markdown";
+  @import "vendor/quill";
+  @import "vendor/toastr";
+  @import "vendor/wizard";
+  @import "vendor/simplebar";
+  @import "vendor/select2";
+
+
+  // Theme utilities
+  @import "utilities/borders";
+  @import "utilities/overflow";
+
+  // Theme components
+  @import "accordion";
+  @import "alert";
+  @import "avatar";
+  @import "badge";
+  @import "buttons";
+  @import "card";
+  @import "chart";
+  @import "dropdown";
+  @import "feather";
+  @import "footer";
+  @import "forms";
+  @import "hamburger";
+  @import "modal";
+  @import "navbar";
+  @import "reboot";
+  @import "progress";
+  @import "sidebar";
+  @import "tables";
+  @import "tabs";
+  @import "timeline";
+  @import "type";
+  @import "wrapper";
+  @import "content";
+  @import "main";
+  @import "ie";
+  @import "summernote";
+  @import "~dropzone/src/dropzone.scss";
+  @import "~bootstrap4-tagsinput/tagsinput.css";
+  @import "vendor/select2";
+  @import "custom";
+  .content{
+    background: #0f1421;
+  }
+  color: #fff;
+  background: $body-bg;
+  .form-control{
+    color: #fff;
+  }
+  .bootstrap-tagsinput
+  {
+    background: $body-bg;
+    $color: #fff;
+    border: 1px solid #333;
+  }
+  .btn-dark{
+    color: #fff;
+    background: $body-bg;
+    border: 1px solid #333;
+  }
+  .note-editor .note-editing-area .note-editable
+  {
+    background: $body-bg;
+  }
+  .note-editor{
+    border: 1px solid $border-color;
+  }
+  textarea{
+    background: $body-bg;
+  }
+  .select2-selection,.select2-container--default .select2-selection--single, .select2-selection__rendered{
+    background: $body-bg !important;
+    border: 1px solid $border-color !important;
+    color: #aaaaaa !important;
+  }
+  .select2-results
+  {
+    background: $body-bg !important;
+    color: $white !important;
+  }
+  .select2-search__field
+  {
+    color: #fff !important;
+  }
+  .card-header{
+    background: $body-bg;
+  }
+  .sidebar-sticky .sidebar-content{
+    border: 1px solid #333 !important;
+  }
+  .footer , .navbar {
+    a{
+      color: #fff !important;
+    }
+
+  }
+  .table{
+    tr, td, th {
+      border-top: 1px solid #333 !important;
+
+    }
+    th{
+      border-bottom: 1px solid #333 !important;
+    }
+  }
+
+  .dataTables_wrapper{
+    color: #ddd;
+  }
+  table.dataTable > thead, tfoot {
+    color: #ddd;
+  }
+  .table{
+    color: #eee !important;
+    :hover{
+      color: #eee !important;
+    }
+  }
+
+  .dataTables_paginate .active .page-link {
+    background-color: $blue;
+  }
+  .dataTables_paginate li:not(.active),li:not(.disabled) > .page-link {
+    border-color:#ddd;
+    color:$blue;
+  }
+  .custom-select{
+    color: #111;
+  }
+  .modal-content{
+    label{
+      color: #111;
+    }
+    .btn{
+      color: #333;
+      background: #ddd;
+      border: 1px solid #333;
+
+    }
+    .form-control{
+      color: #333;
+      background: #ddd;
+      border: 1px solid #333;
+    }
+  }
+}

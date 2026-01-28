@@ -1,4 +1,5 @@
 // Select 2 overrules & settings
+@use "sass:math";
 $s2bs-border-radius-base: $border-radius !default;
 $s2bs-border-radius-large: $border-radius-lg !default;
 $s2bs-border-radius-small: $border-radius-sm !default;
@@ -48,6 +49,7 @@ $s2bs-dropdown-header-font-size: $s2bs-font-size-small !default;
 $s2bs-form-control-default-box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !default;
 $s2bs-form-control-focus-box-shadow: $s2bs-form-control-default-box-shadow, 0 0 8px rgba($s2bs-input-border-focus, 0.6) !default;
 $s2bs-form-control-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s !default;
+
 
 @mixin bootstrap-input-defaults($font-size: $s2bs-font-size-base) {
   @include box-shadow($s2bs-form-control-default-box-shadow);
@@ -347,7 +349,7 @@ $s2bs-form-control-transition: border-color ease-in-out .15s, box-shadow ease-in
       .select2-search__field {
         background: transparent;
         padding: 0 $s2bs-padding-base-horizontal;
-        height:var($s2bs-input-height-base )- 2;
+        height: var($s2bs-input-height-base) - 2;
         line-height: $s2bs-line-height;
         margin-top: 0;
         min-width: 5em;
@@ -376,7 +378,7 @@ $s2bs-form-control-transition: border-color ease-in-out .15s, box-shadow ease-in
   .form-group-sm & .select2-selection--single {
     @include border-radius($s2bs-border-radius-small);
     font-size: $s2bs-font-size-small;
-    height: var($s2bs-input-height-small);
+    height: $s2bs-input-height-small;
     line-height: $s2bs-line-height;
     padding: $s2bs-padding-small-vertical $s2bs-padding-small-horizontal + $s2bs-caret-width-base*3 $s2bs-padding-small-vertical $s2bs-padding-small-horizontal;
 
@@ -388,7 +390,7 @@ $s2bs-form-control-transition: border-color ease-in-out .15s, box-shadow ease-in
   .select2-selection--multiple.input-sm,
   .input-group-sm & .select2-selection--multiple,
   .form-group-sm & .select2-selection--multiple {
-    min-height: var($s2bs-input-height-small);
+    min-height: $s2bs-input-height-small;
     @include border-radius($s2bs-border-radius-small);
 
     .select2-selection__rendered
@@ -406,7 +408,7 @@ $s2bs-form-control-transition: border-color ease-in-out .15s, box-shadow ease-in
     .select2-search--inline .select2-search__field {
       padding: 0 $s2bs-padding-small-horizontal;
       font-size: $s2bs-font-size-small;
-      height: var($s2bs-input-height-small) - 2;
+      height:var( $s2bs-input-height-small) - 2;
       line-height: $s2bs-line-height;
     }
 

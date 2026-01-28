@@ -28,7 +28,7 @@ $grid-breakpoints: (
 $transition-base: all .3s ease-in-out;
 
 // Theme colors
-$blue:    #2979ff;
+$blue:    #111222;
 $indigo:  #3d5afe;
 $purple:  #651fff;
 $pink:    #f50057;
@@ -68,8 +68,9 @@ $theme-colors: (
 "warning": $warning,
 "danger": $danger,
 "light": $light,
-"dark": $dark
-);
+"dark": $dark,
+        "blue":#253d87
+) !default;
 
 // Social colors
 $social-colors: (
@@ -87,8 +88,8 @@ $social-colors: (
 );
 
 // Body
-$body-bg: #FCFCFC;
-$body-color: $gray-700;
+$body-bg: #FCFCFC !default;
+$body-color: $gray-700 !default;
 
 // Common
 $border-width: 1px;
@@ -171,7 +172,7 @@ $dropdown-item-padding-x: 1.5rem;
 
 // Cards
 $card-border-width: 1px;
-$card-border-color: #E5E9F2;
+$card-border-color: #E5E9F2 !default;
 $card-cap-bg: $white;
 
 // Tables
@@ -181,7 +182,7 @@ $table-accent-bg: $gray-100;
 $sidebar-width: 255px;
 $sidebar-transition: all .4s ease-in-out;
 $sidebar-bg: $white;
-$sidebar-border: 1px solid #E5E9F2;
+$sidebar-border: 1px solid #E5E9F2 !default;
 
 // Sidebar brand
 $sidebar-brand-padding-y: 1.15rem;

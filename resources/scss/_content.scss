@@ -1,7 +1,7 @@
 .content {
   padding: $spacer*1.5 $spacer*2.25;
-
-    @include media-breakpoint-down(md) {
+  min-height: calc(100% - 130px);
+  @include media-breakpoint-down(md) {
     width: 100vw;
     max-width: 100vw;
   }
@@ -11,6 +11,3 @@
   }
 }
 
-.content {
-    min-height: calc(100% - 130px);
-}

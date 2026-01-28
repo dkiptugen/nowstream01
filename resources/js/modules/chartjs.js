@@ -1,3 +1,3 @@
-import Chart from 'chart.js';
+import Chart from 'chartjs';
 
 window.Chart = Chart;

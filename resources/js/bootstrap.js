@@ -1,56 +1,52 @@
-// resources/js/bootstrap.js
+window._ = require('lodash');
 
-// Lodash
-import _ from 'lodash';
-window._ = _;
+/**
+ * We'll load the axios HTTP library which allows us to easily issue requests
+ * to our Laravel back-end. This library automatically handles sending the
+ * CSRF token as a header based on the value of the "XSRF" token cookie.
+ */
 
-// Axios
-import axios from 'axios';
-window.axios = axios;
+window.axios = require('axios');
+window.Echo = require("laravel-echo");
+window.SocketIO = require("socket.io-client");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.Popper = require('@popperjs/core').default;
+window.$ = window.jQuery = require('jquery');
+require('bootstrap');
+require('./multiselect.min');
+require('./custom');
+require('./publication');
+window.Wordcloud = require('wordcloud');
+window.Sortable = require('sortablejs');
 
-// Popper.js and jQuery
-import { createPopper } from '@popperjs/core';
+import Echo from "laravel-echo";
+import io from "socket.io-client";
 
-import $ from 'jquery';
-window.Popper = { createPopper };
-window.$ = window.jQuery = $;
+/*
+ // Ensure io is available globally
+ window.io = io;
+ 
+ // Initialize Echo
+ window.Echo = new Echo({
+ broadcaster: "socket.io",
+ host: "https://echo.radioafrica.digital", // Change to your Socket.IO server
+ enabledTransports: ['ws', 'wss'],
+ });
+ */
 
-// Bootstrap
-import 'bootstrap';
+window.Pusher = require('pusher-js');
 
-// Your custom scripts
+window.Echo = new Echo({
+	                       broadcaster: 'pusher',
+	                       key        : process.env.MIX_PUSHER_APP_KEY,
+	                       cluster    : process.env.MIX_PUSHER_APP_CLUSTER,
+	                       forceTLS   : true
+                       });
 
-import './custom';
 
-// SCSS (if you want to import global styles here)
-// import '../scss/app.scss';
+/**
+ * Echo exposes an expressive API for subscribing to channels and listening
+ * for events that are broadcast by Laravel. Echo and event broadcasting
+ * allows your team to easily build robust real-time web applications.
+ */
 
-// Global Modules
-import './modules/moment';
-import './modules/bootstrap';
-import './modules/feather';
-import './modules/font-awesome';
-//import './modules/sidebar';
-import './modules/toastr';
-import './modules/user-agent';
-
-// Forms & UI
-import './modules/select2';
-import './modules/daterangepicker';
-import './modules/datetimepicker';
-import './modules/mask';
-import './modules/validation';
-import './modules/wizard';
-
-// Maps & Editors
-import './modules/vector-maps';
-import './modules/summernote';
-import './modules/tagsinput';
-
-// Tables & Files
-import './modules/datatables';
-import './modules/dropzone';
-
-// Echo (real-time)
-import './echo';

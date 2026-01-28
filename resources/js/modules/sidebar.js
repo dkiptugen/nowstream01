@@ -1,5 +1,4 @@
-import SimpleBar from 'simplebar';
-import 'simplebar/dist/simplebar.css'; // Usage: https://github.com/Grsmto/simplebar
+import SimpleBar from 'simplebar' // Usage: https://github.com/Grsmto/simplebar
 
 $(function(){
   const simpleBarEnabled = document.getElementsByClassName('js-simplebar').length > 0;

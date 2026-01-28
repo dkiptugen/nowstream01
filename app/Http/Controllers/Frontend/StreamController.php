@@ -19,6 +19,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Video;
 use App\Rules\ValidatePhone;
+use App\Traits\Meta;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -34,6 +35,7 @@ use Illuminate\Support\Str;
 
 class StreamController extends Controller
 {
+    use Meta;
 	public function index()
 	{
 		$streams = Stream::where('status', 0)->take(8)->get();

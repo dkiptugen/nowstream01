@@ -1,5 +1,4 @@
 import 'tempusdominus-bootstrap-4'
-
 $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
   icons: {
     time: 'far fa-clock',

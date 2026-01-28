@@ -1,10 +1,4 @@
-// Assign Dropzone globally
-window.Dropzone = require('dropzone');
-
-// Optionally import the CSS
-require('dropzone/dist/dropzone.css');
-
-
+import { Dropzone } from "dropzone";
 if($('#drop').length > 0)
 {
     const link  =   $('#drop').data('link');
