@@ -23,7 +23,7 @@ class Authenticate extends Middleware
                 if ($request->expectsJson()) {
                     return null;
                 }
-                dd($this->guards);
+                dd($this->getGuard($request));
                 if (in_array('admin', $this->guards)) {
                     return route('admin.login');
                 }
@@ -37,9 +37,9 @@ class Authenticate extends Middleware
         protected function getGuard(Request $request): string
             {
                 // The $guards array comes from the middleware call, e.g., 'auth:admin,user'
-                $guards = $this->guards ?? ['web'];
+                $guards = $this->guards;
 
                 // Return the first guard in the list
-                return $guards[0] ?? 'web';
+                return $guards;
             }
     }
