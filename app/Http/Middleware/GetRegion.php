@@ -18,9 +18,9 @@
 			public function handle(Request $request, Closure $next)
 				{
 					$ip = $request->ip();
-					//$position = Location::get($ip);
+					$position = Location::get($ip);
 					//dd($request->ip());
-					/*if ($position)
+					if ($position)
 						{
 							$country=$position->countryCode;
 							$request->merge([
@@ -28,12 +28,12 @@
 							                ]);
 						}
 					else
-						{*/
+						{
 							$country="unknown";
 							$request->merge([
 								                'country' => 'unknown'
 							                ]);
-						//}
+						}
 					View::share('country', $country);
 
 					// Share the parameter globally to all routes

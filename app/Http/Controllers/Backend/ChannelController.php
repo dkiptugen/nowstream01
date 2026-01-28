@@ -1,7 +1,7 @@
 <?php
-	
+
 	namespace App\Http\Controllers\Backend;
-	
+
 	use App\Http\Controllers\Controller;
 	use App\Http\Datatables\ChannelDatatable;
 	use App\Http\Requests\StoreChannel;
@@ -11,30 +11,15 @@
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Storage;
-	
+
 	class ChannelController extends Controller
 		{
 			public function __construct()
 				{
 					parent::__construct();
-					$this->middleware('permission:view_channel');
-					$this->middleware('permission:create_channel', [
-						'only' => [
-							'create',
-							'store'
-						]
-					]);
-					$this->middleware('permission:edit_channel', [
-						'only' => [
-							'edit',
-							'update'
-						]
-					]);
-					$this->middleware('permission:delete_channel', ['only' => ['destroy']]);
-					
-					$this->middleware('permission:assign_user_role', ['only' => ['role_assign', 'role_assign_view']]);
+
 				}
-		
+
 		/**
 		 * Display a listing of the resource.
 		 */
@@ -43,7 +28,7 @@
 					$this->data['title'] = 'Channels : ' . $this->data['title'];
 					return view('Backend.modules.channel.index', $this->data);
 				}
-		
+
 		/**
 		 * Show the form for creating a new resource.
 		 */
@@ -52,7 +37,7 @@
 					$this->data['title'] = 'Add Channel : ' . $this->data['title'];
 					return view('Backend.modules.channel.add', $this->data);
 				}
-		
+
 		/**
 		 * Store a newly created resource in storage.
 		 */
@@ -63,7 +48,7 @@
 							$validated = $request->validated();
 							if ($validated)
 								{
-									
+
 									$channel             = new Channel();
 									$channel->identifier = self::identifer('Channel', 'identifier');
 									$channel->name       = $request->channel_name;
@@ -72,14 +57,14 @@
 											$image              = new UploadService();
 											$upload             = $image->file_upload($request, 'thumbnail', 'channel_thumbnail', 'public_2');
 											$channel->thumbnail = $upload['path'];
-											
+
 										}
 									if ($request->hasFile('cover_image'))
 										{
 											$image                = new UploadService();
 											$upload               = $image->file_upload($request, 'cover_image', 'channel_cover', 'public_2');
 											$channel->cover_image = $upload['path'];
-											
+
 										}
 									$channel->description       = $request->description;
 									$channel->status            = 1;
@@ -101,7 +86,7 @@
 							Log::error($e->getMessage());
 						}
 				}
-		
+
 		/**
 		 * Display the specified resource.
 		 */
@@ -109,7 +94,7 @@
 				{
 					//
 				}
-		
+
 		/**
 		 * Show the form for editing the specified resource.
 		 */
@@ -119,7 +104,7 @@
 					$this->data['channel'] = $channel;
 					return view('Backend.modules.channel.edit', $this->data);
 				}
-		
+
 		/**
 		 * Update the specified resource in storage.
 		 */
@@ -137,14 +122,14 @@
 											$image              = new UploadService();
 											$upload             = $image->file_upload($request, 'thumbnail', 'channel_thumbnail', 'public_2');
 											$channel->thumbnail = $upload['path'];
-											
+
 										}
 									if ($request->hasFile('cover_image'))
 										{
 											$image                = new UploadService();
 											$upload               = $image->file_upload($request, 'cover_image', 'channel_cover', 'public_2');
 											$channel->cover_image = $upload['path'];
-											
+
 										}
 									$channel->description       = $request->description;
 									$channel->status            = 1;
@@ -166,7 +151,7 @@
 							Log::error($e->getMessage());
 						}
 				}
-		
+
 		/**
 		 * Remove the specified resource from storage.
 		 */
@@ -174,13 +159,13 @@
 				{
 					//
 				}
-			
+
 			public function datatable(Request $request, ChannelDatatable $datatable)
 				{
 					$datatable->columns = [
 						1 => 'name', 2 => 'thumbnail', 5 => 'status', 6 => 'created_at'
 					];
-					
+
 					return response()->json($datatable->data($request));
 				}
 		}

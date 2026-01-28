@@ -19,29 +19,9 @@ class RolesController extends Controller
 		public function __construct()
 			{
 				parent::__construct();
-				$this->middleware('permission:view_role');
-				$this->middleware('permission:create_role', [
-					'only' => [
-						'create',
-						'store'
-					]
-				]);
-				$this->middleware('permission:edit_role', [
-					'only' => [
-						'edit',
-						'update'
-					]
-				]);
-				$this->middleware('permission:delete_role', ['only' => ['destroy']]);
-				
-				$this->middleware('permission:add_permission_role', [
-					'only' => [
-						'assign',
-						'assign_view'
-					]
-				]);
+
 			}
-	
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -49,10 +29,10 @@ class RolesController extends Controller
 	 */
 		public function index()
 			{
-				
+
 				return view('Backend.modules.roles.index', $this->data);
 			}
-	
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -60,10 +40,10 @@ class RolesController extends Controller
 	 */
 		public function create()
 			{
-				
+
 				return view('Backend.modules.roles.add', $this->data);
 			}
-	
+
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -83,7 +63,7 @@ class RolesController extends Controller
 							{
 								if (isset($request->perm))
 									{
-										
+
 										foreach ($request->perm as $value)
 											{
 												$pr                = new Permission_Role();
@@ -92,18 +72,18 @@ class RolesController extends Controller
 												$pr->save();
 											}
 									}
-								
+
 								return self::success('Role', 'Success', route('user.roles.index', 0));
 							}
-						
+
 						return self::fail('Role', 'Fail', route('user.roles.index', 0));
-						
+
 					}
-				
+
 				return self::fail('Role', $validateddata, route('user.roles.index', 0));
-				
+
 			}
-	
+
 	/**
 	 * Display the specified resource.
 	 *
@@ -116,18 +96,18 @@ class RolesController extends Controller
 				$this->data['role'] = Role::find($id);
 				return view('Backend.modules.roles.view', $this->data);
 			}
-		
+
 		public function assign_view($id)
 			{
 				$this->data['role']   = Role::find($id);
-				
+
 				$permissions = Permission::get();
 				foreach($permissions as $permission)
 					{
 						$this->data['permission'][$permission->permission_group][] = ['id'=>$permission->id,
 						                                                              'name'=>$permission->name,'display_name'=>$permission->display_name];
 					}
-				
+
 				//dd( $this->data['permission']);
 				return view('Backend.modules.roles.assign', $this->data);
 			}
@@ -141,7 +121,7 @@ class RolesController extends Controller
 					}
 				return self::success('Role Assignment','Successful', route('role.index'));
 			}
-	
+
 	/**
 	 * Show the form for editing the specified resource.
 	 *
@@ -151,10 +131,10 @@ class RolesController extends Controller
 		public function edit($id)
 			{
 				$this->data['role'] = Role::find($id);
-				
+
 				return view('Backend.modules.roles.edit', $this->data);
 			}
-	
+
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -165,7 +145,7 @@ class RolesController extends Controller
 	 */
 		public function update(UpdateRole $request, $id)
 			{
-				
+
 				$validateddata = $request->validated();
 				if ($validateddata)
 					{
@@ -185,14 +165,14 @@ class RolesController extends Controller
 												$pr->save();
 											}
 									}
-								
+
 								return self::success('Role', 'Success', route('user.roles.index', 0));
 							}
 						return self::fail('Role', 'Failed', route('user.roles.index', 0));
 					}
 				return self::fail('Role', $validateddata, route('user.roles.index', 0));
 			}
-	
+
 	/**
 	 * Remove the specified resource from storage.
 	 *

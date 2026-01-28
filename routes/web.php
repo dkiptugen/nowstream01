@@ -96,7 +96,7 @@ Route::middleware(['detectCountry'])->group(function ()
 
                 // Authentication routes
 
-                Route::get('register',  'showRegisterForm')->name('register');
+                Route::get('register',  'showRegisterForm')->name('register.form');
                 Route::post('register',  'register')->name('register');
                 Route::get('login',  'showPhoneLoginForm')->name('phonelogin.form');
                 Route::post('phone-login',  'phoneLogin')->name('phonelogin');
