@@ -52,7 +52,7 @@
         </li>
         <div class="user-box dropdown px-3">
             <a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                @guest 
+                @guest
                 <a href="{{ route('login') }}">
                 <img src="{{ asset('avatar.png') }}" class="user-img" alt="user avatar">
                 <div class="user-info">
@@ -60,7 +60,7 @@
                 </div>
             </a>
                 @else
-               
+
                 <img src="{{ Auth::user()->image ??  asset('avatar.png')}} " class="user-img" alt="user avatar">
                 <div class="user-info">
                     <p class="user-name mb-0">{{ Auth::user()->name }}</p>
@@ -70,7 +70,7 @@
             <ul class="dropdown-menu dropdown-menu-end">
                 @guest
                 @if (Route::has('login'))
-                <li><a class="dropdown-item d-flex align-items-center" href="{{ route('login') }}"><i class="bx bx-log-in-circle fs-5"></i><span>Login</span></a></li>
+                <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.login') }}"><i class="bx bx-log-in-circle fs-5"></i><span>Login</span></a></li>
                 @endif
                 @if (Route::has('register'))
                 <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.register') }}"><i class="bx bx-user-plus fs-5"></i><span>Register</span></a></li>
@@ -81,7 +81,7 @@
                     <div class="dropdown-divider mb-0"></div>
                 </li>
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="bx bx-log-out-circle"></i><span>Logout</span>
                     </a>
                 </li>
@@ -89,7 +89,7 @@
             </ul>
         </div>
 
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
     </ul>
@@ -155,7 +155,7 @@
         encrypted: true,
         authEndpoint: '/pusher/auth',
     });
-    
+
     var channel = pusher.subscribe('login.{{Auth::user()->id}}');
     channel.bind('new_login', function (data) {
        // console.log(data);
@@ -163,11 +163,11 @@
         {
             window.location.reload();
         }
-        
+
     });
     channel.bind('new_payment', function (data) {
         window.location.href=data;
-        
+
     });
     channel.bind('pusher:subscription_count', function (members) {
         //console.log('successfully subscribed!');
