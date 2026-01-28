@@ -53,15 +53,15 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
     Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
     Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
 });
-
+Route::middleware(['auth:admin'])->prefix('backend')->controller(OutletController::class)->group(function () {
+    Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
+    Route::post('/select',  'saveOutlet')->name('save_outlet');
+});
 Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(function () {
 
 
 
-    Route::controller(OutletController::class)->group(function () {
-        Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
-        Route::post('/select',  'saveOutlet')->name('save_outlet');
-    });
+
 
     Route::get('/', [DashboardController::class, 'index'])->name('admin_dashboard');
 
