@@ -18,8 +18,6 @@ use App\Http\Controllers\Backend\LogsController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\StreamPartnerController;
 use App\Http\Controllers\Backend\StreamPartnerRateController;
-use App\Http\Controllers\Backend\SubscriptionController;
-use App\Http\Controllers\Backend\TransactionController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RolesController;
 use App\Http\Controllers\Backend\ChannelController;
@@ -27,8 +25,6 @@ use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EventController;
 use App\Http\Controllers\Backend\ConfigurationController;
 use App\Http\Controllers\Backend\PaymentMethodController;
-use App\Http\Controllers\Backend\VideoController;
-use App\Http\Controllers\Backend\StreamController;
 use Illuminate\Support\Facades\Route;
 
 
