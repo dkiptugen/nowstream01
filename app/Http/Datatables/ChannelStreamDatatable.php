@@ -17,41 +17,37 @@ class ChannelStreamDatatable
      *
      * @return array{draw: int, recordsTotal: mixed, recordsFiltered: mixed, data: array}
      */
-        public function data($request, $channelId)
+        public function data($request)
             {
                 $columns       = $this->columns;
-                $totalData     = Stream::where('channel_id', $channelId)->count();
-                $totalFiltered = $totalData;
+                $query         = Stream::query();
+                $query->where('channel_id', $request->user()->channel_id);
+
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
                 $order         = $columns[$request->input('order.0.column')];
                 $dir           = $request->input('order.0.dir');
+                $totalData     = $query->count();
+                $totalFiltered = $totalData;
 
-                if (empty($request->input('search.value')))
-                    {
-                        $posts = Stream::where('channel_id', $channelId)->offset($start)->limit($limit)->orderBy($order, $dir)->get();
-                    }
-                else
+                if (!empty($request->input('search.value')))
+
                     {
                         $search = $request->input('search.value');
-                        $posts  = Stream::where('channel_id', $channelId)->where('name', 'LIKE', "%{$search}%")
+                        $posts  = $query->where('name', 'LIKE', "%{$search}%")
                                         ->orWhere('title', 'LIKE', "%{$search}%")
-                                        ->orWhere('description', 'LIKE', "%{$search}%")
-                                        ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
+                                        ->orWhere('description', 'LIKE', "%{$search}%");
 
-                        $totalFiltered = Stream::where('channel_id', $channelId)->where('name', 'LIKE', "%{$search}%")
-                                               ->orWhere('title', 'LIKE', "%{$search}%")
-                                               ->orWhere('description', 'LIKE', "%{$search}%")
-                                               ->count();
+                        $totalFiltered = (clone $query)->count();
                     }
-
+                $posts = $query->offset($start)->limit($limit)->orderBy($order, $dir)->get();
                 $data = [];
                 if (!empty($posts))
                     {
                         $pos = $start + 1;
                         foreach ($posts as $post)
                             {
-                                $btn                       = $this->button($post, $request, $channelId);
+                                $btn                       = $this->button($post, $request);
                                 $nestedData['pos']         = $pos;
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
@@ -85,18 +81,18 @@ class ChannelStreamDatatable
      *
      * @return string
      */
-        private function button($post, $request, $channel)
+        private function button($post, $request)
             {
                 $button = null;
                 if ($request->user()->can('edit_channel_stream'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('channel.stream.edit', [$channel, $post->id]) . '" data-toggle="tooltip" title="Edit User">
+                        $button .= '<a class="text text-dark" href="' . route('stream.edit', ['stream'=> $post->id]) . '" data-toggle="tooltip" title="Edit User">
                 <i class="bx bx-pencil"></i> Edit
                 </a>';
                     }
                 if ($request->user()->can('destroy_channel_stream'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('channel.stream.destroy', [$channel, $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Stream"><i class="bx bx-trash"></i> Delete</button>

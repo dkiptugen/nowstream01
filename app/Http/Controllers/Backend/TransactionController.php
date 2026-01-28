@@ -73,10 +73,10 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function datatable($channel,Request $request, ChannelTransactionDatatable $datatable)
+    public function datatable(Request $request, ChannelTransactionDatatable $datatable)
     {
         $datatable->columns = [0=>'id'];
-        return response()->json($datatable->data($request,$channel));
+        return response()->json($datatable->data($request));
     }
 
 }

@@ -12,10 +12,8 @@
 		/**
 		 * Display a listing of the resource.
 		 */
-			public function index($channel)
+			public function index()
 				{
-					$this->data['channel'] = Channel::whereIdentifier($channel)
-					                                ->first();
 					return view('Backend.modules.channel_streams.index', $this->data);
 
 				}
@@ -74,12 +72,12 @@
 		 *
 		 * @return \Illuminate\Http\JsonResponse
 		 */
-			public function datatable($channelId,Request $request, ChannelStreamDatatable $datatable)
+			public function datatable(Request $request, ChannelStreamDatatable $datatable)
 				{
 
 
 					$datatable->columns = [0 => 'id',1=>'title',2=>"description",7=>'start_time',8=>'end_time',9=>'ended'];
-					return response()->json($datatable->data($request,$channelId));
+					return response()->json($datatable->data($request));
 				}
 
 		}

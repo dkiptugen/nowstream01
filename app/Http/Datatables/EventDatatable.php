@@ -7,66 +7,51 @@
     use App\Models\Event;
     use App\Traits\Helper;
     use Illuminate\Support\Facades\Log;
-    
+
     class EventDatatable
         {
             use Helper;
 
             public $columns = [];
 
-            public function data($request,$channelId)
+            public function data($request)
                 {
                     $columns       = $this->columns;
-                    $totalData     = Event::where('channel_id',$channelId)
-                                          ->count();
-                    $totalFiltered = $totalData;
+                    $query         = Event::query();
+                    $query->where('channel_id',$request->user()->guard('admin')->channel_id);
                     $limit         = $request->input('length');
                     $start         = $request->input('start');
                     $order         = $columns[$request->input('order.0.column')];
                     $dir           = $request->input('order.0.dir');
 
-                    if (empty($request->input('search.value')))
-                        {
-                            $posts = Event::where('channel_id',$channelId)
-                                          ->withCount('rates')
-                                          ->withCount('videos')
-                                          ->offset($start)
-                                          ->limit($limit)
-                                          ->orderBy($order, $dir)
-                                          ->get();
-                        }
-                    else
+                    $totalData     = $query->count();
+                    $totalFiltered = $totalData;
+                    $query->withCount('videos')
+                          ->withCount('rates');;
+
+                    if (!empty($request->input('search.value')))
                         {
 
                             $search = $request->input('search.value');
-                            $posts  = Event::where('channel_id',$channelId)
-                                           ->withCount('rates')
-                                            ->withCount('videos')
-                                           ->where('event_name', 'LIKE', "%{$search}%")
+                            $query->where('event_name', 'LIKE', "%{$search}%")
                                            ->orWhere('description', 'LIKE', "%{$search}%")
                                            ->orWhere('status', 'LIKE', "%{$search}%")
-                                           ->offset($start)
-                                           ->limit($limit)
-                                           ->orderBy($order, $dir)
-                                           ->get();
+                                          ;
 
-                            $totalFiltered = Event::where('channel_id',$channelId)
-                                                  ->where('event_name', 'LIKE', "%{$search}%")
-                                                  ->orWhere('description', 'LIKE', "%{$search}%")
-                                                  ->orWhere('status', 'LIKE', "%{$search}%")
-                                                  ->count();
+                            $totalFiltered = (clone $query)->count();
                         }
+                    $posts = $query->offset($start)->limit($limit)->orderBy($order, $dir)->get();
 
                     $data = [];
                     if (!empty($posts))
                         {
-							
+
                             $pos = $start + 1;
                             foreach ($posts as $post)
                                 {
 									Log::info($post->streams);
 
-                                    $btn                        = $this->button($post, $request,$channelId);
+                                    $btn                        = $this->button($post, $request);
                                     $nestedData['pos']          = $pos;
                                     $nestedData['event_name']   = $post->event_name;
                                     $nestedData['thumbnail']    = $this->thumbnail_tag($post->event_image, 'img-fluid', 'height:50px; width:50px;');
@@ -93,19 +78,19 @@
                     return $json_data;
                 }
 
-            private function button($post, $request, $channelId)
+            private function button($post, $request)
                 {
-					$channel = Channel::find($channelId);
+
                     $button = null;
                     if ($request->user()->can('edit_event'))
                         {
-                            $button .= '<a class="text text-dark" href="' . route('channel.event.edit', [$channel->identifier, $post->id]) . '" data-toggle="tooltip" title="Edit Event">
+                            $button .= '<a class="text text-dark" href="' . route('event.edit', ['event'=>$post->id]) . '" data-toggle="tooltip" title="Edit Event">
                                                 <i class="fas fa-edit "></i>
                                                 </a>';
                         }
                     if ($request->user()->can('destroy_event'))
                         {
-                            $button .= '<form id="delete-form-' . $post->id . '" action="' . route('channel.event.destroy', [$channel->identifier, $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                            $button .= '<form id="delete-form-' . $post->id . '" action="' . route('event.destroy', ['event'=>$post->id]) . '" method="POST" class=" create-form my-0 py-0">
                                         <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                         <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                                         <button type="submit" class="btn btn-link text-dark text-decoration-none font-weight-normal"   data-toggle="tooltip" title="Delete Event"><i class="fas fa-trash "></i> </button>

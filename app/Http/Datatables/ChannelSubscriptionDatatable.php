@@ -1,54 +1,46 @@
 <?php
-	
+
 	namespace App\Http\Datatables;
-	
+
 	use App\Models\Event;
 	use App\Traits\Helper;
 	use App\Models\Subscription;
-	
+
 	class ChannelSubscriptionDatatable
 		{
 			use Helper;
-			
+
 			public $columns = [];
-		
+
 		/**
 		 * @param $request
 		 *
 		 * @return array{draw: int, recordsTotal: mixed, recordsFiltered: mixed, data: array}
 		 */
-			public function data($request, $channelId)
+			public function data($request)
 				{
 					$columns       = $this->columns;
-					$totalData     = Subscription::where('channel_id', $channelId)->count();
-					$totalFiltered = $totalData;
+                    $query         = Subscription::query();
+
+
 					$limit         = $request->input('length');
 					$start         = $request->input('start');
 					$order         = $columns[$request->input('order.0.column')];
 					$dir           = $request->input('order.0.dir');
-					
-					if (empty($request->input('search.value')))
-						{
-							$posts = Subscription::where('channel_id', $channelId)
-							                     ->offset($start)
-							                     ->limit($limit)
-							                     ->orderBy($order, $dir)
-							                     ->get();
-						}
-					else
+                    $query->where('channel_id', $request->user()->channel_id);
+                    $totalData     = $query->count();
+                    $totalFiltered = $totalData;
+
+					if (!empty($request->input('search.value')))
+
 						{
 							$search = $request->input('search.value');
-							$posts  = Subscription::where('channel_id', $channelId)
-							                      ->where('type', 'LIKE', "%{$search}%")
-							                      ->orWhere('stream_token', 'LIKE', "%{$search}%")
-							                      ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
-							
-							$totalFiltered = Subscription::where('channel_id', $channelId)
-							                             ->where('type', 'LIKE', "%{$search}%")
-							                             ->orWhere('stream_token', 'LIKE', "%{$search}%")
-							                             ->count();
+                            $query->where('type', 'LIKE', "%{$search}%")
+							                      ->orWhere('stream_token', 'LIKE', "%{$search}%");
+
+							$totalFiltered = (clone $query)->count();
 						}
-					
+					$posts= $query->offset($start)->limit($limit)->orderBy($order, $dir)->get();
 					$data = [];
 					if (!empty($posts))
 						{
@@ -65,22 +57,22 @@
 									$nestedData['event'] = $post->event->event_name;
 									$nestedData['cost'] = $post->cost;
 									$nestedData['action'] = $btn;
-									
+
 									$data[] = $nestedData;
 									$pos++;
 								}
 						}
-					
+
 					$json_data = [
 						'draw'            => (int)$request->input('draw'),
 						'recordsTotal'    => $totalData,
 						'recordsFiltered' => $totalFiltered,
 						'data'            => $data
 					];
-					
+
 					return $json_data;
 				}
-		
+
 		/**
 		 * @param $post
 		 * @param $request
@@ -104,7 +96,7 @@
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
                 </form>';
 						}
-					
+
 					return '<div class="d-flex align-items-center">' . $button . "</div>";
 				}
 		}

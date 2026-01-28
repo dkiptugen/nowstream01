@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Datatables\PaymentMethodDatatable;
 use App\Models\PaymentMethod;
+use App\Traits\Meta;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePaymentMethod;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentMethodController extends Controller
 {
+    use Meta;
     /**
      * Display a listing of the resource.
      *
@@ -68,16 +70,16 @@ class PaymentMethodController extends Controller
                                         return self::success('Payment Method', 'Added successfully', route('payment_method.index'));
                                     }
 
-                                return self::fail('Payment Method', 'failed to create', route('payment_method.index'));
+                                return self::failed('Payment Method', 'failed to create', route('payment_method.index'));
                             }
                         catch (Exception $e)
                             {
-                                return self::fail('Payment Method', $e->getMessage(), route('payment_method.index'));
+                                return self::failed('Payment Method', $e->getMessage(), route('payment_method.index'));
                             }
 
                     }
 
-                return self::fail('Payment Method', $validateddata, route('payment_method.index'));
+                return self::failed('Payment Method', $validateddata, route('payment_method.index'));
             }
 
     /**
@@ -141,16 +143,16 @@ class PaymentMethodController extends Controller
                                         return self::success('Payment Method', 'Added successfully', route('payment_method.index'));
                                     }
 
-                                return self::fail('Payment Method', 'failed to create', route('payment_method.index'));
+                                return self::failed('Payment Method', 'failed to create', route('payment_method.index'));
                             }
                         catch (Exception $e)
                             {
-                                return self::fail('Payment Method', $e->getMessage(), route('payment_method.index'));
+                                return self::failed('Payment Method', $e->getMessage(), route('payment_method.index'));
                             }
 
                     }
 
-                return self::fail('Payment Method', $validateddata, route('payment_method.index'));
+                return self::failed('Payment Method', $validateddata, route('payment_method.index'));
             }
 
     /**

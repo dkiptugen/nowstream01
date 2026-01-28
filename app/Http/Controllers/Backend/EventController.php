@@ -44,7 +44,7 @@
 		/**
 		 * Store a newly created resource in storage.
 		 */
-			public function store ($channelId, StoreEvent $request)
+			public function store ( StoreEvent $request)
 				{
 					try
 						{
@@ -54,8 +54,7 @@
 
 							$startDate = Carbon::createFromFormat ('Y/m/d h:i A', $startDateString);
 							$endDate   = Carbon::createFromFormat ('Y/m/d h:i A', $endDateString);
-							$channel   = Channel::whereIdentifier ($channelId)->first ()
-							;
+
 							$validated = $request->validated ();
 							if ($validated)
 								{
@@ -77,7 +76,7 @@
 
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
-									$event->channel_id     = $channel->id;
+									$event->channel_id     = $request->user ('admin')->channel_id;
 									$res                   = $event->save ();
 									if ($res)
 										{
@@ -101,17 +100,17 @@
 											$stream->start_time        = $startDate;
 											$stream->event_id          = $event->id;
 											$stream->system_user_id    = $request->user ('admin')->id;
-											$stream->channel_id        = $channel->id;
+											$stream->channel_id        = $request->user ('admin')->channel_id;
 											$stream->save ();
 											return self::success ('event', 'Saved successfully',
-												route ('channel.event.index', $channelId));
+												route ('event.index'));
 										}
 									return self::failed ('event', 'error encountered when saving, try again later',
-										route ('channel.event.index', $channelId));
+										route ('event.index'));
 								}
 							else
 								{
-									return self::fail ('event', $validated, route ('channel.event.index', $channelId));
+									return self::failed ('event', $validated, route ('event.index'));
 								}
 						}
 					catch (\Exception $e)
@@ -123,7 +122,7 @@
 		/**
 		 * Display the specified resource.
 		 */
-			public function show ($channelId, Event $event)
+			public function show ( Event $event)
 				{
 					//
 				}
@@ -131,11 +130,10 @@
 		/**
 		 * Show the form for editing the specified resource.
 		 */
-			public function edit ($channelId, int $id)
+			public function edit (Event $event)
 				{
-					$this->data['channel'] = Channel::whereIdentifier ($channelId)->first ()
-					;
-					$this->data['event']   = Event::find ($id);
+
+					$this->data['event']   = $event;
 					$this->data['title']   = $this->data['event']->title.' Event : '.$this->data['title'];
 					return view ('Backend.modules.event.edit', $this->data);
 				}
@@ -143,7 +141,7 @@
 		/**
 		 * Update the specified resource in storage.
 		 */
-			public function update ($channelId, UpdateEvent $request, $id)
+			public function update (UpdateEvent $request, $id)
 				{
 					try
 						{
@@ -152,8 +150,8 @@
 
 							$startDate = Carbon::createFromFormat ('Y/m/d h:i A', $startDateString);
 							$endDate   = Carbon::createFromFormat ('Y/m/d h:i A', $endDateString);
-							$channel   = Channel::whereIdentifier ($channelId)->first ()
-							;
+
+
 							$validated = $request->validated ();
 							if ($validated)
 								{
@@ -175,7 +173,7 @@
 
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
-									$event->channel_id     = $channel->id;
+									$event->channel_id     = $request->user ('admin')->channel_id;
 									$res                   = $event->save ();
 									if ($res)
 										{
@@ -194,17 +192,17 @@
 												}
 											$stream->start_time     = $startDate;
 											$stream->system_user_id = $request->user ('admin')->id;
-											$stream->channel_id     = $channel->id;
+											$stream->channel_id     = $request->user ('admin')->channel_id;
 											$stream->save ();
 											return self::success ('event', 'Saved successfully',
-												route ('channel.event.index', $channelId));
+												route ('event.index'));
 										}
-									return self::fail ('event', 'error encountered when saving, try again later',
-										route ('channel.event.index', $channelId));
+									return self::faileded ('event', 'error encountered when saving, try again later',
+										route ('event.index'));
 								}
 							else
 								{
-									return self::fail ('event', $validated, route ('channel.event.index', $channelId));
+									return self::faileded ('event', $validated, route ('event.index'));
 								}
 						}
 					catch (\Exception $e)
@@ -218,13 +216,13 @@
 		 */
 			public function destroy ($channelId, $id) {}
 
-			public function datatable ($channelId, Request $request, EventDatatable $datatable)
+			public function datatable ( Request $request, EventDatatable $datatable)
 				{
-					$channel            = Channel::whereIdentifier ($channelId)->first ();
+
 
 					$datatable->columns = [
 						1 => 'event_name', 2 => 'thumbnail', 7 => 'created_at', 6 => 'status', 8 => 'publish_date'
 					];
-					return response ()->json ($datatable->data ($request, $channel->id));
+					return response ()->json ($datatable->data ($request));
 				}
 		}

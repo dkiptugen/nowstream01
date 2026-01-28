@@ -8,17 +8,14 @@
 	use App\Http\Requests\UpdateChannel;
 	use App\Http\Services\UploadService;
 	use App\Models\Channel;
-	use Illuminate\Http\Request;
+    use App\Traits\Meta;
+    use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Storage;
 
 	class ChannelController extends Controller
 		{
-			public function __construct()
-				{
-					parent::__construct();
-
-				}
+            use Meta;
 
 		/**
 		 * Display a listing of the resource.
