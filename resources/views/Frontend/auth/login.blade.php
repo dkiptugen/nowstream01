@@ -56,14 +56,14 @@
                             <div class="form-body">
                                 	@if($country == 'KE')
                                         <div class="d-grid mt-3">
-                                            <a href="{{route('user.login')}}" class="btn btn-dark"> One-Tap Phone
+                                            <a href="{{route('user.phonelogin.form')}}" class="btn btn-dark"> One-Tap Phone
                                                 Number Login</a>
                                         </div>
                             <div class="login-separater text-center mb-3"> <span>OR SIGN IN WITH</span>
                                 <hr />
                             </div>
 											@endif
-                                <form class="row g-3" method="post" action="{{ route('new.login') }}">
+                                <form class="row g-3" method="post" action="{{ route('user.login') }}">
                                     @csrf
                                     <div class="col-12">
                                         <label for="inputEmailAddress" class="form-label">
