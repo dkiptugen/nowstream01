@@ -14,10 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         then: function () {
 
-            Route::group(['prefix'=>'malipo','middleware'=>['api']],function (){
-                     base_path('routes/mpesa.php');
-                    base_path('routes/dpo.php');
-                 });
+            Route::prefix('malipo')
+                 ->middleware(['api'])
+                 ->group(base_path('routes/mpesa.php'));
+            Route::prefix('malipo')
+                 ->middleware(['api'])
+                 ->group(base_path('routes/dpo.php'));
 
         },
 
