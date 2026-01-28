@@ -21,6 +21,7 @@ class Authenticate extends Middleware
                             }
                         else
                             {
+                                dd($guard);
                                 if ($guard === 'admin')
                                     {
                                         return route('admin.login');
