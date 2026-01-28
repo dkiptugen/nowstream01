@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
                     <h3 class="card-title m-0 h5">Channel Videos</h3>
-                    <a href="{{ route('channel.video.create',  $channel->id) }}" class="btn btn-primary m-0 h5">+ Add Video</a>
+                    <a href="{{ route('backend.video.create') }}" class="btn btn-primary m-0 h5">+ Add Video</a>
 
                 </div>
                 <hr>
@@ -52,7 +52,7 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('channel.video.datatable',$channel->id) }}",
+                    "url": "{{ route('backend.video.datatable') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}

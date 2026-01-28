@@ -35,7 +35,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('video.store') }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
+                    <form action="{{ route('backend.video.store') }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
     @csrf
 
                         <div class="form-group">

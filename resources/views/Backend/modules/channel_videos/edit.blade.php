@@ -38,7 +38,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('video.update',['video'=>$video->id]) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
+                    <form action="{{ route('backend.video.update',['video'=>$video->id]) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
                         @csrf
                         @method('PUT')
                         <div class="form-group">
