@@ -55,7 +55,7 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('channel.subscription.datatable',$channel->id) }}",
+                    "url": "{{ route('backend.subscription.datatable') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}
