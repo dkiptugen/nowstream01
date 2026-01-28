@@ -16,19 +16,20 @@
 			public function handle (Request $request, Closure $next)
 			: Response
 				{
-                    // Handle preflight requests
-                    if ($request->isMethod('OPTIONS')) {
-                        return response('', 204)
-                            ->header('Access-Control-Allow-Origin', '*')
-                            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                            ->header('Access-Control-Allow-Headers', '*');
-                    }
+					/*  return $next($request)
+						  ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH')
+						  ->header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, X-Token-Auth, Authorization');*/
+					$response = $next($request);
 
-                    $response = $next($request);
+					$response->headers->set ('Access-Control-Allow-Origin', '*');
+					$response->headers->set ('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+					$response->headers->set ('Access-Control-Allow-Headers',
+					                         'x-requested-with, content-type, X-Auth-Token, Authorization, origin, accept');
+					// Handle preflight requests
+					if ($request->getMethod() == "OPTIONS") {
+						$response->setStatusCode(200);
+					}
 
-                    // ALWAYS return a response
-                    return $response->header('Access-Control-Allow-Origin', '*')
-                        ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-                        ->header('Access-Control-Allow-Headers', '*');
-                }
+					return $response;
+				}
 		}
