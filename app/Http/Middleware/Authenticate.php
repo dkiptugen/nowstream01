@@ -21,11 +21,11 @@ class Authenticate extends Middleware
                             }
                         else
                             {
-                                if (Auth::guard('admin')->guest())
+                                if ($guard === 'admin')
                                     {
                                         return route('admin.login');
                                     }
-                                if (Auth::guard('user')->guest() || Auth::guard('web')->guest())
+                                if ($guard ==='user'|| $guard ==='web')
                                     {
                                         return route('user.login');
                                     }
