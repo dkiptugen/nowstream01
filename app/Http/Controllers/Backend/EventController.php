@@ -23,9 +23,9 @@
 		/**
 		 * Display a listing of the resource.
 		 */
-			public function index ($channelId)
+			public function index ()
 				{
-					$this->data['channel'] = $channelId;
+
 					$this->data['title']   = 'Events : '.$this->data['title'];
 					return view ('Backend.modules.event.index', $this->data);
 				}
@@ -33,10 +33,9 @@
 		/**
 		 * Show the form for creating a new resource.
 		 */
-			public function create ($channelId)
+			public function create ()
 				{
-					$this->data['channel'] = Channel::whereIdentifier ($channelId)->first ()
-					;
+
 					$this->data['title']   = 'Events : '.$this->data['title'];
 					return view ('Backend.modules.event.add', $this->data);
 				}
