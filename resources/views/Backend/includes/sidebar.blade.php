@@ -18,7 +18,7 @@
 
                 @canany(['view_event','view_specific_event'])
                     <li class="sidebar-item">
-                        <a href="{{ route('channel.event.index', trim(Auth::user()->active_channel->identifier)) }}" class="  sidebar-link">
+                        <a href="{{ route('channel.event.index') }}" class="  sidebar-link">
                             <i class='fas fa-clock align-middle'></i><span class="align-middle">Events</span>
                         </a>
 
@@ -26,7 +26,7 @@
                 @endcanany
                 @can('view_channel_stream')
                     <li class="sidebar-item">
-                        <a href="{{ route('channel.stream.index', trim(Auth::user()->active_channel->identifier)) }}" class="  sidebar-link">
+                        <a href="{{ route('channel.stream.index') }}" class="  sidebar-link">
                            <i class="fas fa-stream align-middle"></i><span class="align-middle">Streams</span>
                         </a>
 
@@ -34,7 +34,7 @@
                 @endcan
                 @can('view_channel_video')
                     <li class="sidebar-item">
-                        <a href="{{ route('channel.video.index', trim(Auth::user()->active_channel->identifier)) }}" class="  sidebar-link">
+                        <a href="{{ route('channel.video.index') }}" class="  sidebar-link">
                            <i class="fas fa-video align-middle"></i>
                             <span class="align-middle">Videos</span>
                         </a>
@@ -53,7 +53,7 @@
                 @endcan
                 @can('view_subscription')
                     <li class="sidebar-item">
-                        <a href="{{ route('channel.subscription.index', trim(Auth::user()->active_channel->identifier)) }}" class="  sidebar-link">
+                        <a href="{{ route('channel.subscription.index') }}" class="  sidebar-link">
                             <i class='fas fa-box align-middle'></i><span class="align-middle">Subscriptions</span>
                         </a>
                     </li>
@@ -61,7 +61,7 @@
                 @endcan
                 @can('view_transaction')
                     <li class="sidebar-item">
-                        <a href="{{ route('channel.transaction.index',trim(Auth::user()->active_channel->identifier)) }}" class="  sidebar-link">
+                        <a href="{{ route('channel.transaction.index') }}" class="  sidebar-link">
                             <i class='fas fa-dollar-sign  align-middle'></i>
 
                             <span class="align-middle">Transactions</span>
