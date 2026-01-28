@@ -6,7 +6,7 @@
             <h1 class="my-0 h6">Add User</h1>
         </div>
         <div class="card-body">
-            <form action="{{ route('user.store') }}" method="post" class="form form-horizontal create-form">
+            <form action="{{ route('backend.user.store') }}" method="post" class="form form-horizontal create-form">
                 @csrf
                 <div class="form-group row">
                     <div class="col col-md-8">

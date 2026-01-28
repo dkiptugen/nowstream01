@@ -7,7 +7,7 @@
             </h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('role.store') }}" method="post" class="form form-horizontal create-form" enctype="multipart/form-data">
+            <form action="{{ route('backend.role.store') }}" method="post" class="form form-horizontal create-form" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group ">
                     <label for="role" class="control-label">Role Name</label>

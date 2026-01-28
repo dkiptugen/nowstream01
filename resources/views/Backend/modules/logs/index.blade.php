@@ -1,12 +1,12 @@
 @extends('Backend.includes.layout')
 @section('content')
-    
+
     <div class="col-12">
             <div class="table-responsive">
                 <div class="card card-border-nation">
-                  
-                    
-                   
+
+
+
                     <div class="card-body">
                         <h3 class="my-0 card-title h5">Logs</h3>
                         <hr>
@@ -57,7 +57,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "{{ route('logs.datatable') }}",
+                "url": "{{ route('backend.logs.datatable') }}",
                 "dataType": "json",
                 "type": "POST",
                 "data": {_token: "{{csrf_token()}}"}

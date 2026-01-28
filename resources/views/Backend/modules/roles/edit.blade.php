@@ -5,7 +5,7 @@
             <h3 class="card-title my-0 text-blue">Edit Role</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('role.update',$role->id) }}" method="post" class="form form-horizontal create-form" enctype="multipart/form-data">
+            <form action="{{ route('backend.role.update',['role'=>$role->id]) }}" method="post" class="form form-horizontal create-form" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="form-group">

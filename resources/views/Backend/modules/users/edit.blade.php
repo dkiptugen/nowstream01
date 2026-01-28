@@ -6,7 +6,7 @@
                 <h1>Edit User</h1>
             </div>
             <div class="card-body">
-                <form action="{{ route('user.update',$user->id) }}" method="post" class="form form-horizontal create-form">
+                <form action="{{ route('backend.user.update',['user'=>$user->id]) }}" method="post" class="form form-horizontal create-form">
                     @csrf
                     @method('PUT')
                     <div class="form-group form-row">

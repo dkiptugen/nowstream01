@@ -6,12 +6,12 @@
                     <div class="card-header d-flex justify-content-between align-items-center bg-light" >
                         <h3 class="card-title text-blue my-0" data-toggle="collapse" data-target="#collapseOne"
                             aria-expanded="true" aria-controls="collapseOne">Mpesa Paybill</h3>
-                       
+
                     </div>
                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
                             data-parent="#accordion">
                     <div class="card-body">
-                        <form action="{{ route('payment_method.store') }}" method="post"
+                        <form action="{{ route('backend.payment_method.store') }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             <input type="hidden" name="provider" value="mpesa">
@@ -63,7 +63,7 @@
                     </div>
                        </div>
                 </div>
-                
+
                 <div class="card card-border-blue">
                     <div class="card-header bg-light">
                         <h3 class="card-title text-blue my-0" data-toggle="collapse" data-target="#collapseTwo"
@@ -131,7 +131,7 @@
                     </div>
                 </div>
                 </div>
-           
+
                 <div class="card card-border-blue">
                     <div class="card-header bg-light">
                         <h3 class="card-title text-blue my-0" data-toggle="collapse" data-target="#collapseThree"
@@ -191,9 +191,9 @@
                     </div>
                     </div>
                 </div>
-           
-                
-        
+
+
+
 
         </div>
     </div>

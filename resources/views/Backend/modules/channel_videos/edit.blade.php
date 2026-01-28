@@ -1,16 +1,16 @@
 @extends('Backend.includes.layout')
 
-@section('content') 
+@section('content')
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
         <div class="breadcrumb-title pe-3">Channels</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
+                        <a href="{{ route('backend.admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('channel.video.datatable', $video->channel_id) }}">Channels</a>
+                        <a href="{{ route('video.index') }}">Channels</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Edit Video</li>
                 </ol>
@@ -38,9 +38,9 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('channel.video.update',[$channel->identifier, $video->id]) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
+                    <form action="{{ route('video.update',['video'=>$video->id]) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
                         @csrf
-                        @method('PUT') 
+                        @method('PUT')
                         <div class="form-group">
                             <label for="title" class="control-label">Video Title</label>
                             <input type="text" name="title" id="title" class="form-control form-control-sm @error('title') is-invalid @enderror" value="{{ old('title', $video->title) }}">
@@ -48,7 +48,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group mt-2">
                             <label for="description" class="control-label">Description</label>
                             <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="10">{{ old('description', $video->description) }}</textarea>
@@ -82,7 +82,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
+
                         <div class="form-group mt-2">
                             <label for="tags" class="control-label">Tags</label>
                             <select name="tags[]" id="tags" class="form-control form-control-sm @error('tags') is-invalid @enderror" multiple>

@@ -11,7 +11,7 @@
                 <div class="card-body">
 
 
-                    <form action="{{ route('channel.event.store',$channel->identifier) }}" class="form form-horizontal create-form" enctype="multipart/form-data" method="post">
+                    <form action="{{ route('event.store') }}" class="form form-horizontal create-form" enctype="multipart/form-data" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="event_name" class="control-label"> Event Name</label>

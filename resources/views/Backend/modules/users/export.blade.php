@@ -6,16 +6,16 @@
             <h3 class="card-title my-0 text-nation">Add User</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('user.export') }}" method="post" class="form form-horizontal create-form">
+            <form action="{{ route('backend.user.export') }}" method="post" class="form form-horizontal create-form">
                 @csrf
                 <div class="form-group form-row">
                     <div class="col"></div>
                     <div class="col"></div>
-                  
+
                     <label for="" class="control-label"></label>
                    <input type="date" name="" id="">
                 </div>
-               
+
 
             </form>
         </div>

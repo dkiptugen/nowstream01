@@ -7,7 +7,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item">
-                        <a href="{{ route('admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
+                        <a href="{{ route('backend.admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Channels</li>
                 </ol>
@@ -34,10 +34,10 @@
                             {{ session('error') }}
                         </div>
                     @endif
-                    
-                    <form action="{{ route('channel.video.store', $channel->id) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
+
+                    <form action="{{ route('video.store') }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
     @csrf
-                        
+
                         <div class="form-group">
         <label for="title" class="control-label">Video Title</label>
         <input type="text" name="title" id="title" class="form-control form-control-sm @error('title') is-invalid @enderror" value="{{ old('title') }}">
@@ -45,7 +45,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
     </div>
-    
+
     <div class="form-group mt-2">
         <label for="description" class="control-label">Description</label>
         <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="10">{{ old('description') }}</textarea>
@@ -65,7 +65,7 @@
         <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-    
+
     <div class="form-group mt-2">
         <label for="tags" class="control-label">Tags</label>
         <select name="tags[]" id="tags" class="form-control form-control-sm @error('tags') is-invalid @enderror" multiple="multiple">
@@ -75,7 +75,7 @@
         <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
-    
+
             <div class="form-group mt-2 row">
                         <div class="col">
                             <label for="thumbnail" class="control-label">Thumbnail</label>

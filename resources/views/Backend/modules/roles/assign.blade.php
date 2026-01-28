@@ -7,9 +7,9 @@
             </h3>
         </div>
         <div class="card-body bg-light">
-            <form action="{{ route('role.assign',$role->id) }}" class="form create-form" enctype="multipart/form-data" method="post">
+            <form action="{{ route('backend.role.assign',$role->id) }}" class="form create-form" enctype="multipart/form-data" method="post">
              @csrf
-               
+
                 <div class="card-columns">
              @foreach($permission as $key => $value)
                 <div class="card shadow">
@@ -23,7 +23,7 @@
                                 <label for="perm-{{ $perm['id'] }}" class="form-check-label">{{ $perm['display_name'] }}</label>
                             </div>
                         @endforeach
-                    
+
                     </div>
              	</div>
              @endforeach

@@ -6,14 +6,14 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="h5 my-0">Users</h1>
                 <div class="actionbtn">
-                    <a href="{{ route('user.create') }}" class="btn btn-outline-dark btn-sm">
+                    <a href="{{ route('backend.user.create') }}" class="btn btn-outline-dark btn-sm">
                         <i class="fas fa-plus"></i> Add User
                     </a>
-    
+
                 </div>
             </div>
             <hr>
-            
+
             <div class="table-responsive">
                 <table id="userstable" class="table table-striped table-hover table-condensed">
                     <thead>

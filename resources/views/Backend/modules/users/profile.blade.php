@@ -6,7 +6,7 @@
             <h3 class="card-title my-0 text-nation">Profile</h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('profile.update',$user->id) }}" method="post"
+            <form action="{{ route('backend.profile.update',$user->id) }}" method="post"
                   class="form form-horizontal create-form">
                 @csrf
                 @method('put')

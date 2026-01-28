@@ -46,7 +46,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                "url": "{{ route('role.permission.datatable',$userid??0) }}",
+                "url": "{{ route('backend.role.permission.datatable',$userid??0) }}",
                 "dataType": "json",
                 "type": "POST",
                 "data":{ _token: "{{csrf_token()}}"}
