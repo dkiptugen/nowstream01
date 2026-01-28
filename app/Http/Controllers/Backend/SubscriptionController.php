@@ -12,10 +12,9 @@ class SubscriptionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($channel)
+    public function index()
     {
-	    $this->data['channel'] = Channel::whereIdentifier($channel)
-	                                    ->first();
+
         return view('Backend.modules.channel_subscription.index',$this->data);
     }
 
