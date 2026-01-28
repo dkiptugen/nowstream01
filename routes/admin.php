@@ -36,7 +36,7 @@ Route::name('admin.')->middleware(['web'])->group(function () {
     Route::controller(LoginController::class)->group(function () {
         Route::get('/login',  'showLoginForm')->middleware('guest:admin')->name('login');
         Route::post('/login',  'login')->middleware('guest:admin')->name('login')->secure();
-        Route::post('/logout', 'logout')->name('logout');
+        Route::post('/logout', 'logout')->name('logout')->middleware('auth:admin');
     });
 
     Route::get('social/{social}', [AuthController::class, 'redirectToProvider'])->name('social');
