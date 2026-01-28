@@ -90,7 +90,7 @@
 												{
 													$image                 = new UploadService();
 													$upload                = $image->file_upload ($request,
-														'stream_thumbnail', 'stream_thumbnail', 'public_2');
+														'stream_thumbnail', 'stream_thumbnail', 'linode');
 													$stream->thumbnail_url = $upload['path'];
 
 												}
@@ -188,7 +188,7 @@
 												{
 													$image                 = new UploadService();
 													$upload                = $image->file_upload ($request,
-														'stream_thumbnail', 'stream_thumbnail', 'public_2');
+														'stream_thumbnail', 'stream_thumbnail', 'linode');
 													$stream->thumbnail_url = $upload['path'];
 
 												}
