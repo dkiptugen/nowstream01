@@ -15,7 +15,7 @@
                     <div class="text-center">
                         <img src="{{asset('/logo1.png')}}" width="200" alt="">
                     </div>
-                    <h4 class="card-header text-center">{{ __('Reset Password') }}</h4> 
+                    <h4 class="card-header text-center">{{ __('Reset Password') }}</h4>
                     <form method="POST" action="{{ route('password.update') }}">
                         @csrf
                         <div class="my-4">
@@ -31,30 +31,30 @@
                             @enderror
                         </div>
                         <div class="row mx-0 mb-3">
-                            <label for="password" class="form-label">{{ __('Password') }}</label> 
+                            <label for="password" class="form-label">{{ __('Password') }}</label>
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-                                @enderror 
+                                @enderror
                         </div>
 
                         <div class="row mx-0 mb-3">
                             <label for="password-confirm" class="form-label">{{ __('Confirm Password') }}</label>
- 
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password"> 
+
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
                                 {{ __('Reset Password') }}</button>
-                            <a href="{{route('login')}}" class="btn btn-light"><i class="bx bx-arrow-back me-1"></i>Back to Login</a>
+                            <a href="{{route('user.login')}}" class="btn btn-light"><i class="bx bx-arrow-back me-1"></i>Back to Login</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
 @endsection

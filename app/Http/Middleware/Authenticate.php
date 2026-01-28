@@ -24,7 +24,7 @@ class Authenticate extends Middleware
                 return match($guard) {
                     'admin' => route('admin.login'),
                     'user' => route('user.login'),
-                    default => route('login'), // fallback
+                    default => route('user.login'), // fallback
                     };
             }
 

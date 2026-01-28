@@ -9,7 +9,7 @@
  						<div class="align-self-center text-center">
  							@php
  							$comment_user = \App\Models\User::find($comment->user_id);
- 							@endphp 
+ 							@endphp
  							<img src="{{ $comment_user->image ??  asset('avatar.png')}}" height="50" class="w-100 d-block w-100 aspect1" alt="...">
  						</div>
  						<div class="mx-1 mx-md-2">
@@ -52,10 +52,10 @@
  			</div>
  				</form>
 		    @else
-			    <p class="text-center mt-3">Please <a href="{{ route('login') }}">login</a> to post a comment.
+			    <p class="text-center mt-3">Please <a href="{{ route('user.login') }}">login</a> to post a comment.
  				</p>
 		    @endauth
- 	 
+
  		</div>
 
 			</div>

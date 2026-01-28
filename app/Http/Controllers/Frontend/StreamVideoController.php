@@ -152,7 +152,7 @@ class StreamVideoController extends Controller
 				->with('watchable')  // Eager load the watchable relationship
 				->latest('watched_at')
 				->where('watchable_type', 'App\Models\Video')
-				->paginate(10); 
+				->paginate(10);
 
 			$streamWatchHistory = WatchHistory::where('user_id', $user->id)
 				->with('watchable')  // Eager load the watchable relationship
@@ -160,12 +160,12 @@ class StreamVideoController extends Controller
 				->where('watchable_type', 'App\Models\Stream')
 				->paginate(10); // Adjust pagination as needed
 
-				
+
 
 			return view('Frontend.modules.videos.continue', compact('watchHistory', 'streamWatchHistory'));
 		}
 
-		return redirect()->route('login')->with(
+		return redirect()->route('user.login')->with(
 			'error',
 			'You must be logged in to view watched videos.'
 		);

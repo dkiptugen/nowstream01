@@ -32,7 +32,7 @@
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
                                 {{ __('Send Password Reset Link') }}</button>
-                            <a href="{{route('login')}}" class="btn btn-light"><i class="bx bx-arrow-back me-1"></i>Back to Login</a>
+                            <a href="{{route('user.login')}}" class="btn btn-light"><i class="bx bx-arrow-back me-1"></i>Back to Login</a>
                         </div>
                     </form>
                 </div>

@@ -167,7 +167,7 @@
                                 </form>
                             @else
                                 <p class="text-center mt-3">Please
-                                    <a href="{{ route('login') }}">login</a>
+                                    <a href="{{ route('user.login') }}">login</a>
                                     to post a
                                     comment.
                                 </p>
@@ -415,7 +415,7 @@
                 loadVideo(videoUrl);
             });
         </script>
-        <script> 
+        <script>
 
             $(document).ready(function () {
                 $(document).on('submit', '#stream-comment-form', function (e) {

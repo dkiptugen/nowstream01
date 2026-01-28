@@ -52,10 +52,10 @@
  			</div>
  				</form>
 		    @else
-			    <p class="text-center mt-3">Please <a href="{{ route('login') }}">login</a> to post a comment.
+			    <p class="text-center mt-3">Please <a href="{{ route('user.login') }}">login</a> to post a comment.
  				</p>
 		    @endauth
- 	 
+
  		</div>
 
 			</div>

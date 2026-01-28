@@ -36,7 +36,7 @@ class ExpiredPasswordController extends Controller
                                                     'password' => bcrypt($request->password),
                                                     'password_changed_at' => Carbon::now()->toDateTimeString()
                                                 ]);
-                        return self::success('Password Change', 'password changed successfully',route('login'));
+                        return self::success('Password Change', 'password changed successfully',route('user.login'));
                     }
                 else
                     {
