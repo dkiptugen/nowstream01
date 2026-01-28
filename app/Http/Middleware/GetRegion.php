@@ -18,7 +18,7 @@
 			public function handle(Request $request, Closure $next)
 				{
 					$ip = $request->ip();
-					$position = Location::get($ip);
+					//$position = Location::get($ip);
 					//dd($request->ip());
 					/*if ($position)
 						{
