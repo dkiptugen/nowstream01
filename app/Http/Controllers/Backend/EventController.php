@@ -10,7 +10,8 @@
 	use App\Models\Channel;
 	use App\Models\Event;
 	use App\Models\Stream;
-	use Carbon\Carbon;
+    use App\Traits\Meta;
+    use Carbon\Carbon;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,7 @@
 
 	class EventController extends Controller
 		{
+            use Meta;
 		/**
 		 * Display a listing of the resource.
 		 */
