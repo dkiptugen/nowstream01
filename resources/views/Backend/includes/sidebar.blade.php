@@ -1,7 +1,7 @@
 <div class="wrapper">
     <nav class="sidebar sidebar-sticky">
         <span class="sidebar-content  js-simplebar">
-            <a class="sidebar-brand text-center" href="{{ route('admin_dashboard') }}">
+            <a class="sidebar-brand text-center" href="{{ route('backend.admin_dashboard') }}">
                 <img src="{{ asset($logo) }}" alt="Logo" class="img-fluid" width="50" >
             </a>
 
