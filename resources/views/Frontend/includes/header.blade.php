@@ -62,7 +62,7 @@
     </script>
 
     <title>
-        {{ $title ?? 'Baze Live'}}
+        {{ $title ?? 'Nowstream'}}
     </title>
 
 
@@ -82,7 +82,7 @@
 
                         <div class="topbar-logo-header d-flex align-content-center text-left">
                             <a href="{{url('/')}}">
-                                <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                <img src="{{ asset('nowstream-light.png') }}" class="logo-icon" alt="Baze Live Logo">
                             </a>
                         </div>
                         <!-- <div class="mobile-toggle-menu d-block d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"><i class='bx bx-menu'></i></div> -->
