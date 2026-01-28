@@ -29,7 +29,7 @@
     <!-- Bootstrap CSS -->
     <link href="{{ asset('frontend-assets/css/bootstrap.min.cs') }}s" rel="stylesheet">
     <link href="{{ asset('frontend-assets/css/bootstrap-extended.css') }}" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
     <link href="{{ asset('frontend-assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend-assets/css/icons.css') }}" rel="stylesheet">
@@ -70,10 +70,10 @@
 </head>
 
 <body>
-   
+
     <!--wrapper-->
     <div class="wrapper  app-container">
-        
+
         <div class="header-wrapper">
             <!--start header -->
             <header>
@@ -83,7 +83,7 @@
                         <div class="topbar-logo-header d-flex align-content-center text-left">
                             <a href="{{url('/')}}">
                                 <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
-                            </a> 
+                            </a>
                         </div>
                         <!-- <div class="mobile-toggle-menu d-block d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"><i class='bx bx-menu'></i></div> -->
                         <div class="search-bar d-lg-block d-none">
@@ -98,7 +98,7 @@
 
                                         </div>
                                     </div>
-                                </li> 
+                                </li>
                                 <li class="nav-item dark-mode  d-sm-flex">
                                     <a class="nav-link dark-mode-icon moon" href="javascript:">
                                         <i class='bx bx-moon'></i>
@@ -129,7 +129,7 @@
 
                                     <div class="user-info">
                                         <a class="dropdown-item d-flex align-items-center pe-3"
-                                            href="{{ route('login') }}"><i
+                                            href="{{ route('user.login') }}"><i
                                                 class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
                                     </div>
                                 @else
@@ -143,11 +143,11 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @guest
-                                    @if (Route::has('login'))
-                                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('login') }}"><i
+                                    @if (Route::has('user.login'))
+                                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.login') }}"><i
                                                     class="bx bx-log-in-circle fs-5"></i><span>Login</span></a></li>
                                     @endif
-                                    @if (Route::has('register'))
+                                    @if (Route::has('user.register'))
                                         <li><a class="dropdown-item d-flex align-items-center"
                                                 href="{{ route('user.register') }}"><i
                                                     class="bx bx-user-plus fs-5"></i><span>Register</span></a></li>
@@ -160,7 +160,7 @@
                                         <div class="dropdown-divider mb-0"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}"
+                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('user.logout') }}"
                                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             <i class="bx bx-log-out-circle"></i><span>Logout</span>
                                         </a>
@@ -169,7 +169,7 @@
                             </ul>
                         </div>
 
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
 
