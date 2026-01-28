@@ -54,14 +54,14 @@
                                 </p>
                             </div>
                             <div class="form-body">
-                                	@if($country == 'KE') 
+                                	@if($country == 'KE')
                                         <div class="d-grid mt-3">
-                                            <a href="{{route('login')}}" class="btn btn-dark"> One-Tap Phone
+                                            <a href="{{route('user.login')}}" class="btn btn-dark"> One-Tap Phone
                                                 Number Login</a>
                                         </div>
                             <div class="login-separater text-center mb-3"> <span>OR SIGN IN WITH</span>
                                 <hr />
-                            </div> 
+                            </div>
 											@endif
                                 <form class="row g-3" method="post" action="{{ route('new.login') }}">
                                     @csrf
@@ -81,7 +81,7 @@
                                                     class='bx bx-hide'></i></a>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
