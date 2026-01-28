@@ -58,11 +58,10 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
     Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
 });
 
-Route::prefix('backend')->group(function () {
+Route::middleware(['auth:admin'])->prefix('backend')->group(function () {
 
 
 
-Route::middleware(['auth:admin'])->group(function () {
     Route::controller(OutletController::class)->group(function () {
         Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
         Route::post('/select',  'saveOutlet')->name('save_outlet');
@@ -153,5 +152,5 @@ Route::middleware(['auth:admin'])->group(function () {
 
     Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile.index');
     Route::put('profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
-});
+
 });
