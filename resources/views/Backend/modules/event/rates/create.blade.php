@@ -1,15 +1,15 @@
 @extends('Backend.includes.layout')
 @section('content')
-    
+
     <div class="col">
         <div class="card card-border-primary">
             <div class="card-header">
                 <h1 class="card-title my-0 h5 text-primary">Create Event Rate for : {{ $event->event_name }}</h1>
             </div>
             <div class="card-body">
-                <form action="{{ route('event.rates.store', ['event' => $event->id]) }}" method="POST">
+                <form action="{{ route('backend.event.rates.store', ['event' => $event->id]) }}" method="POST">
                     @csrf
-                    
+
                     <input type="hidden" name="event_id" value="{{ $event->id }}">
 
                     <div class="form-group">

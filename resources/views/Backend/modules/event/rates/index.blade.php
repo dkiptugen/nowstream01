@@ -1,19 +1,19 @@
 @extends('Backend.includes.layout')
 @section('content')
 
- 
+
     <div class="row">
         <div class="col">
             <div class="card card-border-primary">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="h5 my-0 card-title text-primary">{{ $event->event_name }} Rates</h3>
                     @can('create_event_rate')
-                        <a href="{{ route('event.rates.create',$event->id) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('backend.event.rates.create',$event->id) }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-plus"></i> Add Event Rate
                         </a>
                     @endcan
                 </div>
-            	<div class="card-body"> 
+            	<div class="card-body">
                     <div class="table-responsive mt-3">
 							<table id="rates_dt" class="table table-striped table-condensed">
 								<thead>
@@ -53,14 +53,14 @@
 @section('header')
 @endsection
 @section('footer')
-    
+
     <script>
         $(document).ready(function() {
             $('#rates_dt').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('event.rate.datatable', $event->id) }}",
+                    "url": "{{ route('backend.event.rate.datatable', $event->id) }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}

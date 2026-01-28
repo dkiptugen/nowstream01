@@ -9,7 +9,7 @@
                 <div class="card-body">
 
 
-                    <form action="{{ route('event.update',['event'=>$event->id]) }}" class="form form-horizontal create-form" enctype="multipart/form-data" method="post">
+                    <form action="{{ route('backend.event.update',['event'=>$event->id]) }}" class="form form-horizontal create-form" enctype="multipart/form-data" method="post">
                         @csrf
                         @method('put')
                         <div class="form-group">

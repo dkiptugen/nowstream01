@@ -7,7 +7,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title my-0 h5 text-primary">Events</h3>
                     @can('create_event')
-                        <a href="{{ route('channel.event.create',$channel) }}" class="btn btn-primary btn-sm">
+                        <a href="{{ route('backend.event.create') }}" class="btn btn-primary btn-sm">
                             <i class="fas fa-plus"></i> Add Event
                         </a>
                     @endcan
@@ -59,7 +59,7 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('event.datatable') }}",
+                    "url": "{{ route('backend.event.datatable') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}

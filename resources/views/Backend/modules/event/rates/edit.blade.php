@@ -7,10 +7,10 @@
             <h1 class="card-title my-0 h5 text-primary">Edit Event event for : {{ $eventRate->name }}</h1>
         </div>
         <div class="card-body">
-            <form action="{{ route('event.rates.update', [ $eventRate->event->id, $eventRate->id]) }}" class="form form-horizontal create-form" method="post">
+            <form action="{{ route('backend.event.rates.update', [ $eventRate->event->id, $eventRate->id]) }}" class="form form-horizontal create-form" method="post">
                 @csrf
                 @method('PUT') <!-- Use PUT method for update -->
-                
+
                 <input type="hidden" name="event_id" value="{{ $eventRate->id }}">
 
                 <div class="form-group">
