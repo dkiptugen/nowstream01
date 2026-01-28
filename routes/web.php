@@ -31,9 +31,6 @@ use Pusher\Pusher;
 	   */
 
 Auth::routes();
-Route::get('/test-route', function() {
-    return 'Routing works!';
-});
 Route::post('/pusher/auth', function (Request $request) {
 	$socketId = $request->input('socket_id');
 	$channelName = $request->input('channel_name');

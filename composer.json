@@ -15,7 +15,8 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
-        "predis/predis": "^3.3"
+        "predis/predis": "^3.3",
+        "spatie/laravel-permission": "^6.24"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -32,7 +33,6 @@
         "laravel/reverb": "^1.6",
         "mgcodeur/laravel-currency-converter": "^1.0",
         "spatie/laravel-activitylog": "^4.10",
-        "spatie/laravel-permission": "^6.23",
         "stevebauman/location": "^7.6"
     },
     "autoload": {

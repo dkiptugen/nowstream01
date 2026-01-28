@@ -29,9 +29,9 @@
 						}
 					else
 						{*/
-							$country="unkown";
+							$country="unknown";
 							$request->merge([
-								                'country' => 'Unknown'
+								                'country' => 'unknown'
 							                ]);
 						//}
 					View::share('country', $country);
