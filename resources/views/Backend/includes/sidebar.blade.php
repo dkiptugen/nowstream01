@@ -10,7 +10,7 @@
                     Main
                 </li>
                 <li class="sidebar-item">
-                    <a href="{{ route('admin_dashboard') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.admin_dashboard') }}" class="  sidebar-link">
                        <i class='fas fa-home align-middle'></i><span class="align-middle">Dashboard</span>
                     </a>
 
@@ -18,7 +18,7 @@
 
                 @canany(['view_event','view_specific_event'])
                     <li class="sidebar-item">
-                        <a href="{{ route('event.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.event.index') }}" class="  sidebar-link">
                             <i class='fas fa-clock align-middle'></i><span class="align-middle">Events</span>
                         </a>
 
@@ -26,7 +26,7 @@
                 @endcanany
                 @can('view_channel_stream')
                     <li class="sidebar-item">
-                        <a href="{{ route('stream.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.stream.index') }}" class="  sidebar-link">
                            <i class="fas fa-stream align-middle"></i><span class="align-middle">Streams</span>
                         </a>
 
@@ -34,7 +34,7 @@
                 @endcan
                 @can('view_channel_video')
                     <li class="sidebar-item">
-                        <a href="{{ route('video.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.video.index') }}" class="  sidebar-link">
                            <i class="fas fa-video align-middle"></i>
                             <span class="align-middle">Videos</span>
                         </a>
@@ -45,7 +45,7 @@
                 <li class="sidebar-header">Revenue</li>
                 @can('view_payment_method')
                     <li class="sidebar-item">
-                        <a href="{{ route('payment_method.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.payment_method.index') }}" class="  sidebar-link">
                             <i class="fas fa-door-open align-middle"></i><span class="align-middle">Payment Methods</span>
                         </a>
 
@@ -53,7 +53,7 @@
                 @endcan
                 @can('view_subscription')
                     <li class="sidebar-item">
-                        <a href="{{ route('subscription.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.subscription.index') }}" class="  sidebar-link">
                             <i class='fas fa-box align-middle'></i><span class="align-middle">Subscriptions</span>
                         </a>
                     </li>
@@ -61,7 +61,7 @@
                 @endcan
                 @can('view_transaction')
                     <li class="sidebar-item">
-                        <a href="{{ route('transaction.index') }}" class="  sidebar-link">
+                        <a href="{{ route('backend.transaction.index') }}" class="  sidebar-link">
                             <i class='fas fa-dollar-sign  align-middle'></i>
 
                             <span class="align-middle">Transactions</span>
@@ -70,14 +70,14 @@
                 @endcan
                 <li class="sidebar-header">Stream Partners</li>
                 <li class="sidebar-item">
-                    <a href="{{ route('stream_partner.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.stream_partner.index') }}" class="  sidebar-link">
                         <i class="fas fa-folder-open align-middle"></i>
 
                         <span class="align-middle">Stream Partner Rates</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="{{ route('stream_partner_rate.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.stream_partner_rate.index') }}" class="  sidebar-link">
                        <i class="fas fa-user-check align-middle"></i>
 
                         <span class=" align-middle">Stream Partners</span>
@@ -86,7 +86,7 @@
                 </li>
                 <li class="sidebar-header">Accounts</li>
                 <li class="sidebar-item">
-                    <a href="{{ route('user.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.user.index') }}" class="  sidebar-link">
                         <i class='fas fa-user  align-middle'></i>
 
                         <span class=" align-middle">Users</span>
@@ -94,7 +94,7 @@
 
                 </li>
                 <li class="sidebar-item">
-                    <a href="{{ route('role.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.role.index') }}" class="  sidebar-link">
                         <i class="fas fa-tools"></i>
 
                         <span class="menu-title">Roles</span>
@@ -102,7 +102,7 @@
 
                 </li>
                 <li class="sidebar-item">
-                    <a href="{{ route('configuration.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.configuration.index') }}" class="  sidebar-link">
                         <i class="fas fa-hammer align-middle"></i>
 
                         <span class="align-middle">Configuration</span>
@@ -112,7 +112,7 @@
                 <li class="sidebar-header">Logs</li>
 
                 <li class="sidebar-item">
-                    <a href="{{ route('logs.index') }}" class="  sidebar-link">
+                    <a href="{{ route('backend.logs.index') }}" class="  sidebar-link">
                         <i class="fas fa-pen align-middle"></i>
 
                         <span class="align-middle">Activity Log</span>
