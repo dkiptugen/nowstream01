@@ -17,12 +17,15 @@ class Authenticate extends Middleware
                     return null;
                 }
 
-                // 🔑 detect guard
-                if (in_array('admin', $this->getGuard())) {
-                    return route('admin.login');
-                }
-
-                return route('user.login');
+                // Get the first guard used for this route
+                $guard = $this->getGuard($request);
+                dd($guard);
+                // Redirect based on guard
+                return match($guard) {
+                    'admin' => route('admin.login'),
+                    'user' => route('user.login'),
+                    default => route('user.login'), // fallback
+                    };
             }
 
     /**
