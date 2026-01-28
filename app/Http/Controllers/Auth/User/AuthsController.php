@@ -56,7 +56,7 @@
 					if ($request->hasFile ('image'))
 						{
 							$image      = new UploadService();
-							$upload     = $image->file_upload ($request, 'image', 'image', 'public_2');
+							$upload     = $image->file_upload ($request, 'image', 'image', 'linode');
 							$uploadPath = $upload['path'];
 						}
 					else
