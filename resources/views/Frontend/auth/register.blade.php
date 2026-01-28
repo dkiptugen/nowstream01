@@ -38,7 +38,7 @@
                         </div>
                     @endif
                                 <div class="mt-3 text-center">
-                                    <img src="{{ asset('logo1.png') }}" width="120" alt="" />
+                                    <img src="{{ asset('nowstream-light.png') }}" width="120" alt="" />
                                 </div>
 
                     <div class="card-body">
