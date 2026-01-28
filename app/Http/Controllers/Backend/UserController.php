@@ -142,14 +142,14 @@ class UserController extends Controller
      *
      * @return array|\Illuminate\Http\Response
      */
-        public function update(EditUser $request, $id)
+        public function update(EditUser $request, User $user)
             {
 
                 $validateddata = $request->validated();
                 if ($validateddata)
                     {
 
-                        $user        = User::find($id);
+
                         $user->email = strtolower($request->email);
                         $user->name  = $request->name;
                         //$user->can_notify = $request->notify;
@@ -206,13 +206,13 @@ class UserController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
      */
-        public function edit($id)
+        public function edit(User $user)
             {
 
-                $this->data['user'] = User::find($id);
+                $this->data['user'] = $user;
                 $this->data['role'] = Role::get();
 
-                return view('modules.users.edit', $this->data);
+                return view('Backend.modules.users.edit', $this->data);
             }
 
     /**
