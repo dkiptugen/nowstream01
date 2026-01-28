@@ -61,7 +61,7 @@
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('channel.transaction.datatable',$channel->id) }}",
+                    "url": "{{ route('backend.transaction.datatable') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}
