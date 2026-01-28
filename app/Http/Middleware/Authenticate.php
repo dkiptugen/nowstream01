@@ -21,7 +21,7 @@ class Authenticate extends Middleware
                             }
                         else
                             {
-                                dd($guard);
+
                                 if ($guard === 'admin')
                                     {
                                         return route('admin.login');
@@ -33,7 +33,7 @@ class Authenticate extends Middleware
                             }
                     }
 
-                return $this->unauthenticated($request, $guards);
+               /// return $this->unauthenticated($request, $guards);
 
             }
 
@@ -42,6 +42,7 @@ class Authenticate extends Middleware
      */
         protected function redirectTo(Request $request): ?string
             {
+                dd($request);
                 // If this is an API request, do not redirect
                 if ($request->expectsJson())
                     {
