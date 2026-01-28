@@ -20,7 +20,7 @@
 					$ip = $request->ip();
 					$position = Location::get($ip);
 					//dd($request->ip());
-					if ($position)
+					/*if ($position)
 						{
 							$country=$position->countryCode;
 							$request->merge([
@@ -28,12 +28,12 @@
 							                ]);
 						}
 					else
-						{
+						{*/
 							$country="unkown";
 							$request->merge([
 								                'country' => 'Unknown'
 							                ]);
-						}
+						//}
 					View::share('country', $country);
 
 					// Share the parameter globally to all routes
