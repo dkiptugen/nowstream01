@@ -71,7 +71,7 @@
                     </div>
                      <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
-                        <form action="{{ route('payment_method.store') }}" method="post"
+                        <form action="{{ route('backend.payment_method.store') }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             <input type="hidden" name="provider" value="mpesa">
@@ -139,7 +139,7 @@
                     </div>
                     <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                     <div class="card-body">
-                        <form action="{{ route('payment_method.store') }}" method="post"
+                        <form action="{{ route('backend.payment_method.store') }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             <input type="hidden" name="provider" value="dpo">

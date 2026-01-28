@@ -8,7 +8,7 @@
                         <h5 class="card-title text-blue my-0">Mpesa Paybill Update</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('payment_method.update',$payment_method->id) }}" method="post"
+                        <form action="{{ route('backend.payment_method.update',$payment_method->id) }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             @method('put')
@@ -80,7 +80,7 @@
                         <h5 class="card-title text-blue my-0">Mpesa Buy Goods Update</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('payment_method.update',$payment_method->id) }}" method="post"
+                        <form action="{{ route('backend.payment_method.update',$payment_method->id) }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             @method('put')
@@ -157,7 +157,7 @@
                         <h5 class="card-title text-blue my-0">DPO Update</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('payment_method.update',$payment_method->id) }}" method="post"
+                        <form action="{{ route('backend.payment_method.update',$payment_method->id) }}" method="post"
                               class="form form-horizontal create-form">
                             @csrf
                             @method('put')
@@ -224,7 +224,7 @@
                         </form>
                     </div>
                 </div>
-       
+
         @endif
 
 

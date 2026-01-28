@@ -6,12 +6,12 @@
                 <h1 class=" h5 my-0 text-blue card-title">Payment Methods</h1>
 
                     <a class="btn btn-secondary btn-sm align-middle"
-                       href="{{ route('payment_method.create') }}">
+                       href="{{ route('backend.payment_method.create') }}">
                     <i class="align-middle fas fa-plus" ></i> Add Payment Method
                 </a>
 
             </div>
-            
+
             <div class="card-body ">
                 <div class="table-responsive">
                     <table class="table table-striped table-condensed" id="payment-method-table">
@@ -51,7 +51,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "{{ route('payment_method.datatable') }}",
+                "url": "{{ route('backend.payment_method.datatable') }}",
                 "dataType": "json",
                 "type": "POST",
                 "data": {_token: "{{csrf_token()}}"}
