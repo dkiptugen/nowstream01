@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class Authenticate extends Middleware
     {
+        public function handle($request, Closure $next, ...$guards)
+            {
+                $this->guards = $guards;
+
+            }
     /**
      * Determine the path to redirect unauthenticated users.
      */
@@ -16,16 +21,11 @@ class Authenticate extends Middleware
                 if ($request->expectsJson()) {
                     return null;
                 }
+                if (in_array('admin', $this->guards)) {
+                    return route('admin.login');
+                }
 
-                // Get the first guard used for this route
-                $guard = $this->getGuard($request);
-                dd($guard);
-                // Redirect based on guard
-                return match($guard) {
-                    'admin' => route('admin.login'),
-                    'user' => route('user.login'),
-                    default => route('user.login'), // fallback
-                    };
+                return route('user.login');
             }
 
     /**
