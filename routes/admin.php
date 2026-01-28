@@ -54,9 +54,7 @@ Route::post('email/resend', [VerificationController::class, 'resend'])->name('ad
 
 Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('admin.password.confirm');
 Route::post('password/confirm', [ConfirmPasswordController::class, 'admin.confirm']);
-Route::get('/',function (){
-	return redirect()->route('admin_dashboard',false,301);
-});
+
 Route::prefix('backend')->middleware(['auth:admin'])->group(function () {
     Route::get('/choose_channel', [OutletController::class, 'selectOutlet'])->name('choose_outlet');
     Route::post('/select', [OutletController::class, 'saveOutlet'])->name('save_outlet');
