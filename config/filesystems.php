@@ -59,6 +59,16 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'linode' => [
+            'driver' => 's3',
+            'key' => env('LINODE_KEY'),
+            'secret' => env('LINODE_SECRET'),
+            'endpoint' => env('LINODE_ENDPOINT'),
+            'region' => env('LINODE_REGION'),
+            'bucket' => env('LINODE_BUCKET'),
+            'url'    => env('LINODE_URL'),
+            'throw' => true
+        ],
 
     ],
 
