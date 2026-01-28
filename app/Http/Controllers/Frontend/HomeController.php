@@ -24,6 +24,7 @@
 					$this->data['channels']      = $this->get_channels ();
 					$this->data['streams']       = $this->get_streams (null, 6);
 					$this->data['events']        = $this->get_events ();
+                    $this->data['event']   = Event::first();
 					$this->data['videos']        =  $this->get_videos ();
 					$this->data['current_event'] = Stream::take (1)->orderBy ("created_at", "asc")->get ();
 
