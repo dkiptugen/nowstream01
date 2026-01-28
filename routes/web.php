@@ -98,7 +98,7 @@ Route::middleware(['detectCountry'])->group(function ()
 
                 Route::get('register',  'showRegisterForm')->name('register.form');
                 Route::post('register',  'register')->name('register');
-                Route::get('login',  'showPhoneLoginForm')->name('phonelogin.form');
+                Route::get('phone-login',  'showPhoneLoginForm')->name('phonelogin.form');
                 Route::post('phone-login',  'phoneLogin')->name('phonelogin');
                 Route::get('phone-resend',  'phoneResend')->name('phoneresend');
                 Route::post('otp_verification',  'otp_verify')->name('otp_verification');
