@@ -77,20 +77,16 @@ Route::middleware(['auth:admin'])->prefix('backend')->group(function () {
 
 
     Route::middleware('belongs.to')->group(function () {
-        Route::resource('channel.event', EventController::class);
-        Route::post('channel/{channel}/event/datatable', [EventController::class, 'datatable'])->name('channel.event.datatable');
+        Route::resource('event', EventController::class);
+        Route::post('event/datatable', [EventController::class, 'datatable'])->name('event.datatable');
 
-        Route::resource('channel.stream', ChannelStreamController::class);
-        Route::post('channel/{channel}/stream/datatable', [ChannelStreamController::class, 'datatable'])->name('channel.stream.datatable');
+        Route::resource('stream', ChannelStreamController::class);
+        Route::post('stream/datatable', [ChannelStreamController::class, 'datatable'])->name('stream.datatable');
 
-        // Route::get('channel/{channelId}/video/create', [ChannelVideoController::class, 'create'])->name('channel.videos.create');
-        // Route::post('channel/{channelId}/video/store', [ChannelVideoController::class, 'store'])->name('channel.videos.store');
-        // Route::get('channel/video/{id}/edit', [ChannelVideoController::class, 'edit'])->name('channel.videos.edit');
-        // Route::put('channel/video/{id}', [ChannelVideoController::class, 'update'])->name('channel.videos.update');
-        // Route::delete('channel/video/{id}', [ChannelVideoController::class, 'destroy'])->name('channel.videos.destroy');
 
-        Route::resource('channel.video', ChannelVideoController::class);
-        Route::post('channel/{channel}/video/datatable', [ChannelVideoController::class, 'datatable'])->name('channel.video.datatable');
+
+        Route::resource('video', ChannelVideoController::class);
+        Route::post('video/datatable', [ChannelVideoController::class, 'datatable'])->name('video.datatable');
 
 
     });
