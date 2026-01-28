@@ -21,25 +21,6 @@
         <a class="sidebar-toggle d-flex mr-3 text-dark">
             <i class="fas fa-bars fa-lg"></i>
         </a>
-        <ul class="navbar-nav align-items-center">
-
-            <a class="nav-link d-flex align-items-center p-0" href="#" id="siteDropdown" data-toggle="dropdown">
-                <img src="{{ Auth::user()->active_channel->thumbnail }}" class="rounded-circle navbar-brand py-0 border " style="object-fit: cover; object-position: center" height="50" width="50" alt="">
-                <div class=" font-14">{{ Auth::user()->active_channel->name }}</div>
-            </a>
-
-            <div class="dropdown-menu" aria-labelledby="siteDropdown">
-                @php($channels =Illuminate\Support\Facades\Cache::get('user_channels_'.Auth::user()->id)) 
-                @if(is_array($channels))
-                    @foreach( $channels as $channel)
-                        <a class="dropdown-item" href="{{ route('change_channel',$channel->identifier) }}">
-                            <img src="{{ $channel->thumbnail }}" class="rounded-circle my-0 py-0"  style="object-fit: cover; object-position: center" height="50" width="50" alt="">
-                            {{ $channel->name }}</a>
-                    @endforeach
-                @endif
-
-            </div>
-        </ul>
 
 
 
