@@ -115,16 +115,16 @@
                                 <hr />
                             </div> -->
                             <!-- <div class="list-inline contacts-social text-center">
-                                <a href="{{ route('auth.social', 'facebook') }}"
+                                <a href="{{ route('user.auth.social', 'facebook') }}"
                                     class="list-inline-item bg-facebook text-white border-0 rounded-3"><i
                                         class="bx bxl-facebook"></i></a>
-                                <a href="{{ route('auth.social', 'twitter') }}"
+                                <a href="{{ route('user.auth.social', 'twitter') }}"
                                     class="list-inline-item bg-twitter text-white border-0 rounded-3"><i
                                         class="bx bxl-twitter"></i></a>
-                                <a href="{{ route('auth.social', 'google') }}"
+                                <a href="{{ route('user.auth.social', 'google') }}"
                                     class="list-inline-item bg-google text-white border-0 rounded-3"><i
                                         class="bx bxl-google"></i></a>
-                                <a href="{{ route('auth.social', 'linkedin') }}"
+                                <a href="{{ route('user.auth.social', 'linkedin') }}"
                                     class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i
                                         class="bx bxl-linkedin"></i></a>
                             </div> -->
