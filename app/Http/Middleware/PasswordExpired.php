@@ -17,7 +17,7 @@
             public function handle(Request $request, Closure $next)
             : Response
                 {
-                    $user                = $request->user();
+                    $user                = $request->user('admin');
                     $password_changed_at = new Carbon(($user->password_changed_at) ? $user->password_changed_at : $user->created_at);
 
                     if (Carbon::now()->diffInDays($password_changed_at) >= (int)config('custom.AUTHENTICATION.PASSWORD_EXPIRY'))

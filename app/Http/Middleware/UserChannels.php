@@ -1,11 +1,13 @@
 <?php
-	
+
 	namespace App\Http\Middleware;
-	
+
 	use Closure;
 	use Illuminate\Http\Request;
-	use Symfony\Component\HttpFoundation\Response;
-	
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Cache;
+    use Symfony\Component\HttpFoundation\Response;
+
 	class UserChannels
 		{
 		/**
@@ -16,10 +18,10 @@
 			public function handle (Request $request, Closure $next)
 			: Response
 				{
-					
-					if (\Auth::check ())
+
+					if (Auth::check ('admin'))
 						{
-							
+
 							if (!Cache::has ('user_channels_'.$request->user ()->id))
 								{
 									if (!is_null ($request->user ()->products))
@@ -28,7 +30,7 @@
 												$request->user ()->channels);
 										}
 								}
-							
+
 						}
 					return $next($request);
 				}
