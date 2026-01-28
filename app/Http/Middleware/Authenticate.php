@@ -34,7 +34,7 @@ class Authenticate extends Middleware
     /**
      * Retrieve the first guard from the middleware call or default to 'web'.
      */
-        protected function getGuard(Request $request): string
+        protected function getGuard(Request $request)
             {
                 // The $guards array comes from the middleware call, e.g., 'auth:admin,user'
                 $guards = $request->user() ? $request->user()->getGuardNames() : ['web'];
