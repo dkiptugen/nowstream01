@@ -1,239 +1,232 @@
 @php use Carbon\Carbon; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
-<!--start page wrapper -->
-<div class="page-wrapper">
-	<div class="page-content">
-		<section>
-			<div class="mb-4 container p-0">
-				<div class="card">
-					<div class="row g-2">
-						<div class="col-md-5">
-							<img src="{{$event->event_image}}" class="img-fluid w-100 h330" alt="...">
+<!-- main-area -->
+<main>
+
+	<!-- movie-details-area -->
+	<section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
+		<div class="container">
+			<div class="row align-items-center position-relative">
+				<div class="col-xl-4 col-lg-4">
+					<div class="movie-details-img">
+						<img src="{{ $event->event_image }}" class="w-100" alt="{{ $event->event_name }}">
+						<a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video">
+							<img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
+						</a>
+					</div>
+				</div>
+				<div class="col-xl-6 col-lg-8">
+					<div class="movie-details-content">
+						<h5>Top Event</h5>
+						<h2> 
+							{{ $event->event_name }} <span>Live</span>
+						</h2>
+						<div class="banner-meta">
+							<ul>
+								<li class="quality">
+									<span>Pg 18</span>
+									<span>hd</span>
+								</li>
+								<li class="category">
+									<a href="#">{{ ucfirst($event->venue) }}</a> 
+								</li>
+								<li class="release-time">
+									@php
+										$startDate = Carbon::parse($event->start_time);
+										$endTime = Carbon::parse($event->end_time);
+									@endphp
+									<span><i class="far fa-calendar-alt"></i> <b>
+											{{ strtoupper($startDate->format('d M, Y')) }}
+										</b></span>
+									<span>
+										<i class="far fa-clock"></i> 
+										{{ $startDate->format('h:i A') }} -
+										 	{{ $endTime->format('h:i A') }}
+									</span>
+								</li>
+							</ul>
 						</div>
-						<div class="col-md-7">
-							<div class="card-body pb-0">
-								<div class="date btn btn-danger float-end d-none d-md-block">
-									<h6 class="card-title mb-1">
-										{{ Carbon::parse($event->start_time)->format('d') }}
-										<sup>
-											{{ strtoupper(Carbon::parse($event->start_time)->format('S')) }}
-										</sup>
-									</h6>
-									<h5 class="card-title mb-0"><b>{{ strtoupper(Carbon::parse($event->start_time)->format('M')) }}</b></h5>
-								</div> 
-								<h1 class="card-title mb-3">
-									{{$event->event_name}}
-								</h1>
-								<div class="text-container d-none d-md-block">
-									<input id="ch" type="checkbox">
-									<label for="ch"></label>
-									<div class="less-text">
-										{!!$event->description !!}
-									</div>
-								</div>
-
-								<small class="text-muted">
-									<i class="bx bx-time"></i>
-									Event Starts at:
-									{{ Carbon::parse($event->start_time)->format('h:i A') }}
-								</small>
-
-								<br>
-								<!-- <small class="text-muted"><i class='bx bx-current-location'></i> Venue:
-									{{$event->venue}}
-								</small> -->
-								<div class="payment d-none">
-									<div class="py-2" style="color: rgba(0,0,0,0); font-size: 1px">re</div>
-									@foreach($rates as $rate) 
-									<div class="custom-control custom-radio first">
-										<input type="radio" name="rate" id="{{ $rate->name }}" value="{{ $rate->id }}"
-											class="custom-control-input custom-radio-size" @if($loop->first) checked
-											@endif onclick="showBuyLink('{{ $rate->id }}');">
-										<label class="custom-control-label mb-1" for="{{ $rate->name }}">
-											{{ $rate->name }} <br> @KES<b class="upp">
-												{{ $rate->cost }}
-											</b>
-											
-{{-- 											<small class="text-muted mb-2">Sale Closes on --}}
-{{-- 												{{ Carbon::parse($event->date_to)->format('M d, Y') }} at --}}
-{{-- 												{{ Carbon::parse($event->date_to)->format('h:i A') }} --}}
-{{-- 											</small> --}}
-										</label>
-									</div>
-									<br>
-									<div class="w-100 buy-link" id="buy-link-{{ $rate->id }}"
-										style="display: @if($loop->first) block @else none @endif;">
-										<a class="btn btn-success rounded-0 my-3 btm-100 px-5"
-											href="{{ route('event.pay', ['eventId' => $event->id, 'rate_id' => $rate->id]) }}">
-											Buy Link <i class='bx bx-link'></i>
-										</a>
-									</div>
-									@endforeach
-
-									<script>
-										function showBuyLink(selectedId) {
-											// Hide all buy links
-											const buyLinks = document.querySelectorAll('.buy-link');
-											buyLinks.forEach(link => link.style.display = 'none');
-
-											// Show the selected buy link
-											const selectedLink = document.getElementById('buy-link-' + selectedId);
-											if (selectedLink) {
-												selectedLink.style.display = 'block';
-											}
-										}
-									</script>
-</div>
-
-<div class="payment pt-2 p-0 mb-3">
-					<div class="card-body p-0 row px-md-3">
-						<table class="table mb-0 table-striped">
-							<thead class="table-dark">
-								<tr>
-									<th scope="col">Ticket</th>
-									<th scope="col">Sub Total</th>
-									<th class="text-end pe-md-3" scope="col">Buy</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach($rates as $rate)
+						<p class="mb-3">
+							{{ $event->description }}
+						</p>
+						<div class="card-body p-0 row px-md-3">
+							<table class="table mb-0 table-striped text-white">
+								<thead class="table-dark">
 									<tr>
-										<td class="align-content-center" scope="row">
-											{{$rate->name}} 
+										<th scope="col">Ticket</th>
+										<th scope="col">Sub Total</th>
+										<th class="text-end pe-md-3" scope="col">Buy</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach($rates as $rate)
+									@php
+										$currency = $country == 'KE' ? 'KES ' . $rate->cost : config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->reserved_currency_cost;
+									@endphp
+									<tr>
+										<td class="align-content-center">
+											{{ ucfirst($rate->name) }}
 										</td>
 										<td class="align-content-center">
-											@if($country == 'KE')
-												KES 	{{$rate->cost}} 
-											@else
-												{{config('custom.BILLING.RESERVED_CURRENCY')." ".$rate->reserved_currency_cost}}
-											@endif
+											{{ $currency }}
 										</td>
 										<td class="align-content-center text-end">
-											<a class="btn btn-sm btn-success ps-2"
-												href="{{ route("event.pay", ['eventId' => $event->id, 'rate_id' => $rate->id]) }}">Buy
-												Link <i class='bx bx-link'></i></a>
+											<a class="btn btn-sm btn-success p-2 pl-3"
+												href="{{ route('event.pay', ['eventId' => $event->id, 'rate_id' => $rate->id]) }}">
+												Buy Link <i class='fas fa-link'></i>
+											</a>
 										</td>
 									</tr>
-								@endforeach
-							</tbody>
-						</table>
-
-						<h6 class="mt-3 px-0">To get <b>5GB</b> Bundles with Somali Nite Stream Access, Dial  <b>*544*46#Ok</b></h6> 
-					</div> 
-								</div>
-							</div>
+									@endforeach
+								</tbody>
+							</table>
+ 
+						</div>
+						<div class="movie-details-prime d-none">
+							<ul>
+								<li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
+								<li class="streaming">
+									<h6>Prime Video</h6>
+									<span>Streaming Channels</span>
+								</li>
+								<li class="watch">
+									<a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i
+											class="fas fa-play"></i> Watch Now</a>
+								</li>
+							</ul>
 						</div>
 					</div>
-
-					<!-- <div class="card-body p-0 p-md-3 mt-3 mt-md-0">
-						<table class="table mb-0 table-striped">
-							<thead class="table-dark">
-								<tr>
-									<th scope="col">Ticket</th>
-									<th scope="col">Sub Total</th>
-									<th scope="col">Buy</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach($rates as $rate)
-									<tr>
-										<td class="align-content-center" scope="row">
-											{{$rate->name}}
-											<br>
-											<small>Closes on
-												{{$rate->date_to}}
-											</small>
-										</td>
-										<td class="align-content-center">
-										@if($country == 'KE')
-										 KSH 	{{$rate->cost}} /=
-										@else
-											{{config('custom.BILLING.RESERVED_CURRENCY')." ".$rate->reserved_currency_cost}}/=
-										@endif
-										</td>
-										<td class="align-content-center">
-											<a class="text-danger"
-												href="{{ route("event.pay", ['eventId' => $event->id, 'rate_id' => $rate->id]) }}">Buy
-												Link <i class='bx bx-link'></i></a>
-										</td>
-									</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div> -->
-
 				</div>
+				<!-- <div class="movie-details-btn">
+					<a href="{{ asset('assets/img/poster/movie_details_img.jpg') }}" class="download-btn"
+						download="">Create Event <img src="fonts/download.svg" alt=""></a>
+				</div> -->
 			</div>
-		</section>
-		@if($events->isNotEmpty())
-			<section class="event">
-				<div class="container p-0 mt-4">
-					<h5 class="my-3">Other Events</h5>
-					<div class="row ">
-						@foreach($events as $event)
-							<div class="col-12 col-lg-4 col-md-12 col-xl-4 col-lg-4 mb-4">
-								@include('Frontend.includes.components.cards.events')
-							</div>
-						@endforeach
+		</div>
+	</section>
+
+	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
+		<div class="container">
+			<h5 class="mb-3 section-title">
+				<!-- Error Alert -->
+				@if (session('success'))
+					You dont Have an active subscription. Pick an Event Below <br>
+
+				@endif 
+			</h5>
+			<div class="row align-items-end mb-60">
+				<div class="col-lg-6">
+					<div class="section-title text-center text-lg-left">
+						<span class="sub-title">.......</span>
+						<h2 class="title">Related <span>Events</span></h2>
 					</div>
 				</div>
-				<!--end row-->
-			</section>
-		@endif 
-		@endsection
-		@section('header')
-		<style>
-			p span {
-				color: inherit !important;
-			}
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row tr-movie-active">
+				@foreach($events as $event)  
+					@include('Frontend.includes.components.cards.events')
+				@endforeach
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="pagination-wrap mt-30">
+						<nav>
+							<ul>
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">Next</a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="episode-area episode-bg" data-background="{{ asset('assets/img/bg/episode_bg.jpg') }}">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="movie-episode-wrap">
+                                <div class="episode-top-wrap">
+                                    <div class="section-title">
+                                        <span class="sub-title">ONLINE STREAMING</span>
+                                        <h2 class="title">Watch Full Episode</h2>
+                                    </div>
+                                    <div class="total-views-count">
+                                        <p>2.7 million <i class="far fa-eye"></i></p>
+                                    </div>
+                                </div>
+                                <div class="episode-watch-wrap">
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="card">
+                                            <div class="card-header" id="headingOne">
+                                                <button class="btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                    <span class="season">Season 2</span>
+                                                    <span class="video-count">5 Full Episodes</span>
+                                                </button>
+                                            </div>
+                                            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
+                                                <div class="card-body">
+                                                    <ul>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 1 - The World Is Purple</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 2 - Meaner Than Evil</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 3 - I Killed a Man Today</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 4 - Cowboys and Dreamers</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 5 - Freight Trains and Monsters</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-header" id="headingTwo">
+                                                <button class="btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                    <span class="season">Season 1</span>
+                                                    <span class="video-count">5 Full Episodes</span>
+                                                </button>
+                                            </div>
+                                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample" style="">
+                                                <div class="card-body">
+                                                    <ul>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 1 - The World Is Purple</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span>
+                                                        </li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 2 - Meaner Than Evil</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 3 - I Killed a Man Today</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span>
+                                                        </li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 4 - Cowboys and Dreamers</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span>
+                                                        </li>
+                                                        <li><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video"><i class="fas fa-play"></i> Episode 5 - Freight Trains and Monsters</a> <span class="duration"><i class="far fa-clock"></i> 28 Min</span></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="episode-img">
+                                <img src="{{ asset('assets/img/images/episode_img.jpg') }}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="movie-history-wrap">
+                                <h3 class="title">About <span>History</span></h3>
+                                <p>{!! $event->description !!}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-			.less-text {
-				height: 50px;
-				overflow: hidden;
-			}
-
-			.text-container {
-				position: relative;
-				margin-bottom: 30px;
-			}
-
-			.text-container label {
-				position: absolute;
-				top: 100%;
-			}
-
-
-			.text-container input {
-				display: none;
-			}
-
-
-			.text-container label:after {
-				content: " ";
-			}  .less-text font{
-    color: inherit;
-}
-
-			.text-container input:checked+label:after {
-				content: "Show Less";
-			}
-
-
-			.text-container input:checked~div {
-				height: 100%;
-			}
-
-			.buy-link {
-				display: block;
-				position: absolute;
-				bottom: 0;
-			}
-			.payment{
-				margin-bottom: 60px;
-			}
-		</style>
-
-		@endsection
-		@section('footer')
-		@endsection
+	@endsection
+	@section('header')
+	@endsection
+	@section('footer')
+	@endsection

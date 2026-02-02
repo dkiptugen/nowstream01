@@ -14,7 +14,7 @@
                 <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
                     <div class="card radius-5 h-100">
                         <div class="image">
-                            <img src="{{ $history->watchable->thumbnail }}" class="w-100 d-block aspect16"
+                            <img src="{{ $history->watchable->thumbnail  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
                                 alt="{{ $history->watchable->title }}">
                             <a href="{{ url("/video/{$history->watchable->id}/{$history->watchable->slug}") }}">
                                 <div class="play fs-40">
@@ -59,7 +59,7 @@
                         <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
                             <div class="card radius-5 h-100">
                                 <div class="image">
-                                    <img src="{{ $history->watchable->thumbnail_url }}" class="w-100 d-block aspect16"
+                                    <img src="{{ $history->watchable->thumbnail_url  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
                                         alt="{{ $history->watchable->title }}">
                                     <a href="{{ url("/stream/{$history->watchable->id}/{$history->watchable->slug}") }}">
                                         <div class="play fs-40">

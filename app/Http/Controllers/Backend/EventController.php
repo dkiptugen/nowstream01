@@ -75,7 +75,7 @@
 
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
-									$event->channel_id     = $request->user ('admin')->channel_id;
+									$event->channel_id     = 1;
 									$res                   = $event->save ();
 									if ($res)
 										{
@@ -99,17 +99,17 @@
 											$stream->start_time        = $startDate;
 											$stream->event_id          = $event->id;
 											$stream->system_user_id    = $request->user ('admin')->id;
-											$stream->channel_id        = $request->user ('admin')->channel_id;
+											$stream->channel_id        = 1;
 											$stream->save ();
 											return self::success ('event', 'Saved successfully',
-												route ('event.index'));
+												route ('backend.event.index'));
 										}
 									return self::failed ('event', 'error encountered when saving, try again later',
-										route ('event.index'));
+										route ('backend.event.index'));
 								}
 							else
 								{
-									return self::failed ('event', $validated, route ('event.index'));
+									return self::failed ('event', $validated, route ('backend.event.index'));
 								}
 						}
 					catch (\Exception $e)
@@ -172,7 +172,7 @@
 
 									$event->system_user_id = $request->user ('admin')->id;
 									$event->status         = 1;
-									$event->channel_id     = $request->user ('admin')->channel_id;
+									$event->channel_id     = 1;
 									$res                   = $event->save ();
 									if ($res)
 										{
@@ -191,17 +191,17 @@
 												}
 											$stream->start_time     = $startDate;
 											$stream->system_user_id = $request->user ('admin')->id;
-											$stream->channel_id     = $request->user ('admin')->channel_id;
+											$stream->channel_id     = 1;
 											$stream->save ();
 											return self::success ('event', 'Saved successfully',
-												route ('event.index'));
+												route ('backend.event.index'));
 										}
 									return self::faileded ('event', 'error encountered when saving, try again later',
-										route ('event.index'));
+										route ('backend.event.index'));
 								}
 							else
 								{
-									return self::faileded ('event', $validated, route ('event.index'));
+									return self::faileded ('event', $validated, route ('backend.event.index'));
 								}
 						}
 					catch (\Exception $e)

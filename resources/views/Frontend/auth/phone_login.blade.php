@@ -47,10 +47,10 @@
                             @endif
 
                             <div class="mb-3 text-center">
-                                <img src="{{ asset('nowstream-light.png') }}" width="150" alt="" />
+                                <img src="{{ asset('logo1.png') }}" width="150" alt="" />
                             </div>
                             <div class="form-body">
-                                <form class="row g-3" method="post" action="{{ route('user.phonelogin') }}">
+                                <form class="row g-3" method="post" action="{{ route('phonelogin') }}">
                                     @csrf
                                     <div class="col-12">
                                         <label for="inputPhoneNumber" class="form-label">
@@ -70,7 +70,7 @@
                                             <hr />
                                         </div>
                                         <div class="d-grid mt-3">
-                                            <a href="{{route('user.login.form')}}" class="btn btn-dark"> Email and
+                                            <a href="{{route('phonelogin.form')}}" class="btn btn-dark"> Email and
                                                 Password</a>
                                         </div>
                                     </div>

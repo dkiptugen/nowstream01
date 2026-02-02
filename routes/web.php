@@ -154,6 +154,20 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
                 Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
             });
+            
+            // Social Auth Routes (Global)
+        Route::get('auth/social/{provider}', [AuthsController::class, 'redirectToProvider'])
+        ->whereIn('provider', ['facebook', 'twitter', 'google', 'linkedin'])
+        ->name('auth.social');
+
+        Route::get('auth/social/{provider}/callback', [AuthsController::class, 'handleProviderCallback'])
+        ->whereIn('provider', ['facebook', 'twitter', 'google', 'linkedin'])
+        ->name('auth.social_callback');
+
+        Route::any('auth/social/{provider}/delete', [AuthsController::class, 'deleteProviderCallback'])
+        ->whereIn('provider', ['facebook', 'twitter', 'google', 'linkedin'])
+        ->name('auth.social_delete');
+
         Route::get('success/{eventId}', [SubscriptionController::class, 'succeed'])->name('success');
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::get('/terms', [HomeController::class, 'terms'])->name('terms');

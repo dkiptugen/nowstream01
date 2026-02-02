@@ -8,7 +8,7 @@
                         <div class="card-body">
                             <div class="p-4">
                                 <div class="mb-4 text-center">
-                                    <img src="{{ asset('nowstream-light.png') }}" width="60" alt="" />
+                                    <img src="{{ asset('logo1.png') }}" width="60" alt="" />
                                 </div>
                                 <div class="text-start mb-4">
                                     <h5 class="">Genrate New Password</h5>

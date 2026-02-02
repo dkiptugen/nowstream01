@@ -47,7 +47,7 @@
                             @endif
 
                             <div class="mb-3 text-center">
-                                <img src="{{ asset('nowstream-light.png') }}" width="90" alt="" />
+                                <img src="{{ asset('logo1.png') }}" width="90" alt="" />
                             </div>
                             <div class="form-body">
                                 <form class="row g-3" method="post" action="{{ route('otp_verification') }}"
@@ -76,7 +76,7 @@
                                             {{ $phone }}
                                         </small> <br>
                                         <div class="mt-3">
-                                            Didn't Receive SMS?
+                                            Didn't Receive SMS? 
                                             <!-- <button type="button" class="btn btn-link p-0"
                                                 onClick="window.location.href=window.location.href">Resend OTP</button> -->
                                                 <a href="{{ route('phoneresend') }}" class="btn btn-link p-0" >Resend OTP</a>
@@ -97,7 +97,7 @@
     .btn {
         font-size: 13px !important;
         font-weight: 400 !important;
-    }
+    } 
     .otp-inputs input {
         width: 40px;
         height: 40px;

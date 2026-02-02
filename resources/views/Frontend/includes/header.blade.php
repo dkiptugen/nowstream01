@@ -15,37 +15,31 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--favicon-->
-    <link rel="icon" href="{{ asset('assets/images/logo-icon.png') }}" type="image/png" />
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/png" />
     @include('Frontend.includes.meta')
     <!--plugins-->
-    <link href="{{ asset('frontend-assets/plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet" />
-    <link href="{{ asset('frontend-assets/plugins/simplebar/css/simplebar.css') }}" rel="stylesheet" />
-    <link href="{{ asset('frontend-assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}" rel="stylesheet" />
-    <link href="{{ asset('frontend-assets/plugins/metismenu/css/metisMenu.min.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
-    <!-- loader-->
-    <link href="{{ asset('frontend-assets/css/pace.min.css') }}" rel="stylesheet" />
-    <script src="{{ asset('frontend-assets/js/pace.min.js') }}"></script>
-    <!-- Bootstrap CSS -->
-    <link href="{{ asset('frontend-assets/css/bootstrap.min.cs') }}s" rel="stylesheet">
-    <link href="{{ asset('frontend-assets/css/bootstrap-extended.css') }}" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
-    <link href="{{ asset('frontend-assets/css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('frontend-assets/css/icons.css') }}" rel="stylesheet">
 
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/animate.min.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/magnific-popup.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/flaticon.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/odometer.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/aos.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/slick.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/default.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/style.css">
+    <link rel="stylesheet" href="{{ asset('assets')}}/css/responsive.css">
     <style>
-        .dark-mode-icon.sun {
-            display: none;
+        .page-wrapper {
+            overflow-y: scroll !important;
         }
     </style>
-    <!-- Theme Style CSS -->
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/dark-theme.css') }}" />
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/semi-dark.css') }}" />
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/header-colors.css') }}" />
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/frontend.css') }}??v46" />
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/main.css') }}" />
-    <link rel="stylesheet" href="{{ asset('frontend-assets/css/style.css') }}" />
 
     @yield('header')
     <script>
@@ -62,7 +56,7 @@
     </script>
 
     <title>
-        {{ $title ?? 'Nowstream'}}
+        {{ $title ?? 'Baze Live'}}
     </title>
 
 
@@ -71,112 +65,157 @@
 
 <body>
 
-    <!--wrapper-->
-    <div class="wrapper  app-container">
-
-        <div class="header-wrapper">
-            <!--start header -->
-            <header>
-                <div class="topbar d-flex align-items-center">
-                    <nav class="navbar navbar-expand gap-3 px-2">
-
-                        <div class="topbar-logo-header d-flex align-content-center text-left">
-                            <a href="{{url('/')}}">
-                                <img src="{{ asset('nowstream-light.png') }}" class="logo-icon py-2" alt="Baze Live Logo">
-                            </a>
-                        </div>
-                        <!-- <div class="mobile-toggle-menu d-block d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"><i class='bx bx-menu'></i></div> -->
-                        <div class="search-bar d-lg-block d-none">
-                            <a href="{{route('search')}}" class="btn d-flex align-items-center"><i
-                                    class='bx bx-search'></i>Search</a>
-                        </div>
-                        <div class="top-menu ms-auto">
-                            <ul class="navbar-nav align-items-center gap-1">
-                                <li class="nav-item dropdown dropdown-app d-none">
-                                    <div class="dropdown-menu dropdown-menu-end p-0">
-                                        <div class="app-container p-2 my-2">
-
-                                        </div>
-                                    </div>
-                                </li>
-                                <li class="nav-item dark-mode  d-sm-flex">
-                                    <a class="nav-link dark-mode-icon moon" href="javascript:">
-                                        <i class='bx bx-moon'></i>
-                                    </a>
-                                </li>
-                                <li class="nav-item dark-mode d-sm-flex">
-                                    <a class="nav-link dark-mode-icon sun" href="javascript:">
-                                        <i class='bx bx-sun'></i>
-                                    </a>
-                                </li>
-                                <li class="nav-item mobile-search-icon d-flex d-lg-none">
-                                    <!-- <a class="nav-link" href="{{route('search')}}"><i class='bx bx-search'></i>
-                                    </a> -->
-                                        @php
-                                        use App\Models\Event;
-                                        $current_event = Event::orderBy('created_at', 'asc')->first();
-                                        @endphp
-                                    <a href="{{ url("/event/{$current_event->id}/{$current_event->slug}") }}" class="btn btn-danger px-2 d-inline-flex align-items-center gap-2"
-                                aria-label="buttons">Buy Ticket</a>
-                                </li>
-
-                            </ul>
-                        </div>
-                        <div class="user-box dropdown px-3 d-none d-md-flex">
-                            <a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret"
-                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                @guest
-
-                                    <div class="user-info">
-                                        <a class="dropdown-item d-flex align-items-center pe-3"
-                                            href="{{ route('user.login') }}"><i
-                                                class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
-                                    </div>
-                                @else
-                                    <img src="{{ Auth::user()->image ??  asset('avatar.png')}} " class="user-img" alt="user avatar">
-                                    <div class="user-info">
-                                        <p class="user-name mb-0">
-                                            {{ Auth::user()->name }}
-                                        </p>
-                                    </div>
-                                @endguest
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @guest
-                                    @if (Route::has('user.login'))
-                                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.login') }}"><i
-                                                    class="bx bx-log-in-circle fs-5"></i><span>Login</span></a></li>
-                                    @endif
-                                    @if (Route::has('user.register'))
-                                        <li><a class="dropdown-item d-flex align-items-center"
-                                                href="{{ route('user.register') }}"><i
-                                                    class="bx bx-user-plus fs-5"></i><span>Register</span></a></li>
-                                    @endif
-                                @else
-                                    <li><a class="dropdown-item d-flex align-items-center"
-                                            href="{{ route('profile.show') }}"><i
-                                                class="bx bx-user fs-5"></i><span>Profile</span></a></li>
-                                    <li>
-                                        <div class="dropdown-divider mb-0"></div>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('user.logout') }}"
-                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="bx bx-log-out-circle"></i><span>Logout</span>
-                                        </a>
-                                    </li>
-                                @endguest
-                            </ul>
-                        </div>
-
-                        <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-
-
-                    </nav>
-                </div>
-            </header>
-            <!--end header -->
-            @include('Frontend.includes.nav')
+    <!-- preloader -->
+    <div id="preloader">
+        <div id="loading-center">
+            <div id="loading-center-absolute">
+                <img src="img/preloader.svg" alt="">
+            </div>
         </div>
+    </div>
+    <!-- preloader-end -->
+
+    <!-- Scroll-top -->
+    <button class="scroll-top scroll-to-target" data-target="html">
+        <i class="fas fa-angle-up"></i>
+    </button>
+    <!-- Scroll-top-end-->
+
+    <!-- header-area -->
+    <header>
+        <div id="sticky-header" class="menu-area transparent-header">
+            <div class="container custom-container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mobile-nav-toggler"><i class="fas fa-bars"></i></div>
+                        <div class="menu-wrap">
+                            <nav class="menu-nav show">
+                                <div class="logo">
+                                    <a href="{{url('/')}}">
+                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                    </a>
+                                </div>
+                                @include('Frontend.includes.nav')
+
+                                <div class="header-action d-none d-md-block">
+                                    <ul>
+                                        <li class="header-search"><a href="#" data-toggle="modal"
+                                                data-target="#search-modal"><i class="fas fa-search"></i></a></li>
+
+                                        <li class="menu-item-has-children header-lang d-none">
+                                            <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"
+                                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                @guest
+
+                                                    <div class="user-info">
+                                                        <a class="dropdown-item d-flex align-items-center pe-3"
+                                                            href="{{ route('user.login') }}">
+                                                            <div class="icon text-white"><i class="flaticon-globe"></i>
+                                                                Login</div>
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <img src="{{ Auth::user()->image ?? asset('avatar.png')}} "
+                                                        class="user-img" alt="user avatar">
+                                                    <div class="user-info">
+                                                        <p class="user-name mb-0">
+                                                            {{ Auth::user()->name }}
+                                                        </p>
+                                                    </div>
+                                                @endguest
+                                            </a>
+                                            <ul class="submenu d-none">
+                                                @guest
+                                                    @if (Route::has('login'))
+                                                        <li><a class="dropdown-item d-flex align-items-center"
+                                                                href="{{ route('user.login') }}"><i
+                                                                    class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
+                                                        </li>
+                                                    @endif
+                                                    @if (Route::has('register'))
+                                                        <li><a class="dropdown-item d-flex align-items-center"
+                                                                href="{{ route('user.register') }}"><i
+                                                                    class="bx bx-user-plus fs-5"></i><span>Register</span></a>
+                                                        </li>
+                                                    @endif
+                                                @else
+                                                    <li><a class="dropdown-item d-flex align-items-center"
+                                                            href="{{ route('profile.show') }}"><i
+                                                                class="bx bx-user fs-5"></i><span>Profile</span></a></li>
+                                                    <li>
+                                                        <div class="dropdown-divider mb-0"></div>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item d-flex align-items-center"
+                                                            href="{{ route('user.logout') }}"
+                                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                            <i class="bx bx-log-out-circle"></i><span>Logout</span>
+                                                        </a>
+                                                    </li>
+                                                @endguest
+                                            </ul>
+                                        </li>
+
+                                        <form id="logout-form" action="{{ route('user.logout') }}" method="POST"
+                                            style="display: none;">
+                                            @csrf
+                                        </form>
+                                        <li class="header-btn"> 
+                                            <a href="{{ route('events') }}"
+                                                class="btn btn-danger btn-sm shadow-sm px-2 d-inline-flex align-items-center gap-2 border-0 rounded-0"
+                                                aria-label="buttons">Buy Ticket</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+ 
+                        <!-- Mobile Menu  -->
+                        <div class="mobile-menu">
+                            <div class="close-btn"><i class="fas fa-times"></i></div>
+
+                            <nav class="menu-box">
+                                <div class="nav-logo"><a href="{{url('/')}}">
+                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                    </a>
+                                </div>
+                                <div class="menu-outer">
+                                    <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->
+                                </div>
+                                <div class="social-links">
+                                    <ul class="clearfix">
+                                        <li><a href="#"><span class="fab fa-twitter"></span></a></li>
+                                        <li><a href="#"><span class="fab fa-facebook-square"></span></a></li>
+                                        <li><a href="#"><span class="fab fa-pinterest-p"></span></a></li>
+                                        <li><a href="#"><span class="fab fa-instagram"></span></a></li>
+                                        <li><a href="#"><span class="fab fa-youtube"></span></a></li>
+                                    </ul>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="menu-backdrop"></div>
+                        <!-- End Mobile Menu -->
+
+                        <!-- Modal Search -->
+                        <div class="modal fade" id="search-modal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <form>
+                                        <input type="text" placeholder="Search here...">
+                                        <button><i class="fas fa-search"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal Search-end -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- header-area-end -->
+
+
+    <!-- main-area -->
+    <main>

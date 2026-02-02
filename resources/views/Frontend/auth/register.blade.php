@@ -38,8 +38,8 @@
                         </div>
                     @endif
                                 <div class="mt-3 text-center">
-                                    <img src="{{ asset('nowstream-light.png') }}" width="120" alt="" />
-                                </div>
+                                    <img src="{{ asset('logo1.png') }}" width="120" alt="" />
+                                </div> 
 
                     <div class="card-body">
                         <div class="text-center mb-4">
@@ -93,9 +93,9 @@
                                 </div>
                                 <div class="col-12">
                                     <div class="text-center">
-                                        <p class="mb-0">Already have an account? <a href="{{ route('user.login.form') }}">Sign in here</a></p>
+                                        <p class="mb-0">Already have an account? <a href="{{ route('user.login') }}">Sign in here</a></p>
                                     </div>
-
+                               
                                     </div>
                             </form>
                         </div>

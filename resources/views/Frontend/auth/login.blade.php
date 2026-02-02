@@ -46,7 +46,7 @@
                             @endif
 
                             <div class="mb-3 text-center">
-                                <img src="{{ asset('nowstream-light.png') }}" width="150" alt="" />
+                                <img src="{{ asset('logo1.png') }}" width="150" alt="" />
                             </div>
                             <div class="text-center mb-4">
                                 <p class="mb-0">
@@ -54,14 +54,14 @@
                                 </p>
                             </div>
                             <div class="form-body">
-                                	@if($country == 'KE')
+                                	@if($country == 'KE') 
                                         <div class="d-grid mt-3">
-                                            <a href="{{route('user.phonelogin.form')}}" class="btn btn-dark"> One-Tap Phone
+                                            <a href="{{route('user.login')}}" class="btn btn-dark"> One-Tap Phone
                                                 Number Login</a>
                                         </div>
                             <div class="login-separater text-center mb-3"> <span>OR SIGN IN WITH</span>
                                 <hr />
-                            </div>
+                            </div> 
 											@endif
                                 <form class="row g-3" method="post" action="{{ route('user.login') }}">
                                     @csrf
@@ -81,7 +81,7 @@
                                                     class='bx bx-hide'></i></a>
                                         </div>
                                     </div>
-
+                                    
                                     <div class="col-md-6">
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked"
@@ -90,7 +90,7 @@
                                                 Me</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 text-end"> <a href="{{ route('user.password.email') }}">Forgot
+                                    <div class="col-md-6 text-end"> <a href="{{ route('admin.password.request') }}">Forgot
                                             Password ?</a>
                                     </div>
                                     <div class="col-12">
@@ -111,23 +111,23 @@
 
                                 </div>
                             </div>
-                            <!-- <div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
+                            <div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
                                 <hr />
-                            </div> -->
-                            <!-- <div class="list-inline contacts-social text-center">
-                                <a href="{{ route('user.auth.social', 'facebook') }}"
+                            </div> 
+                             <div class="list-inline contacts-social text-center">
+                                <a href="{{ route('auth.social', 'facebook') }}"
                                     class="list-inline-item bg-facebook text-white border-0 rounded-3"><i
                                         class="bx bxl-facebook"></i></a>
-                                <a href="{{ route('user.auth.social', 'twitter') }}"
+                                <a href="{{ route('auth.social', 'twitter') }}"
                                     class="list-inline-item bg-twitter text-white border-0 rounded-3"><i
                                         class="bx bxl-twitter"></i></a>
-                                <a href="{{ route('user.auth.social', 'google') }}"
+                                <a href="{{ route('auth.social', 'google') }}"
                                     class="list-inline-item bg-google text-white border-0 rounded-3"><i
                                         class="bx bxl-google"></i></a>
-                                <a href="{{ route('user.auth.social', 'linkedin') }}"
+                                <a href="{{ route('auth.social', 'linkedin') }}"
                                     class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i
                                         class="bx bxl-linkedin"></i></a>
-                            </div> -->
+                            </div>
 
                         </div>
                     </div>

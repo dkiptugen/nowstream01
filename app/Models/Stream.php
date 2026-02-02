@@ -42,6 +42,19 @@
                     $checkRate = EventRate::where([['event_id', $this->attributes['id']], ['status', true ]])->count();
 				    return $checkRate;
 				}
+                public function eventRates()
+                {
+                    return $this->hasMany(EventRate::class, 'event_id', 'event_id');
+                }
+                public function event()
+                {
+                    return $this->belongsTo(Event::class, 'event_id');
+                }
+            
+                public function channel()
+                {
+                    return $this->belongsTo(Channel::class, 'channel_id');
+                }
 		    public function tags ()
 			    {
 				    return $this->morphToMany (Tag::class, 'taggable');

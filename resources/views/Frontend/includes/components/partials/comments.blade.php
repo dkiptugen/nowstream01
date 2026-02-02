@@ -44,7 +44,7 @@
  					@csrf
  			<div class="chat-footer d-flex align-items-center">
  				<div class="flex-grow-1 pe-2">
- 					<div class="input-group">
+ 					<div class="input-group"> 
  						<input type="text" class="form-control"  name="comment" rows="3" placeholder="Type a comment" id="comment-content">
 						<button type="submit" class="input-group-text"><i class="bx bx-send"></i></button>
  					</div>
@@ -55,7 +55,7 @@
  				<p class="text-center mt-3">Please <a href="{{ route('user.login') }}">login</a> to post a comment.
  				</p>
  				@endauth
-
+ 	 
  		</div>
 
  	</div>

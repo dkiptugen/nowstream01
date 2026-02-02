@@ -8,6 +8,9 @@
 			<h5 class="mb-3 section-title">All Streams</h5>
 			<div class="row">
 				@foreach ($streams as $stream)
+					@if ($stream->id == 7)
+						@continue
+					@endif
 					<div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-3">
 						@include('Frontend.includes.components.cards.stream-card')
 					</div>

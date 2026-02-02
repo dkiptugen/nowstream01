@@ -28,12 +28,6 @@ object-assign
  */
 
 /*!
- * ApexCharts v3.54.1
- * (c) 2018-2024 ApexCharts
- * Released under the MIT License.
- */
-
-/*!
  * Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
@@ -57,230 +51,11 @@ object-assign
  */
 
 /*!
- * jQuery UI :data 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Autocomplete 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Button 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Checkboxradio 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Controlgroup 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Datepicker 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Dialog 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Draggable 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Droppable 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Effects 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Effects Blind 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Focusable 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Form Reset Mixin 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Keycode 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Labels 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Legacy jQuery Core patches 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- *
- */
-
-/*!
- * jQuery UI Mouse 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Position 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- *
- * https://api.jqueryui.com/position/
- */
-
-/*!
- * jQuery UI Progressbar 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Resizable 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Spinner 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Tabs 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Tooltip 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery UI Widget 1.14.1
- * https://jqueryui.com
- *
- * Copyright OpenJS Foundation and other contributors
- * Released under the MIT license.
- * https://jquery.org/license
- */
-
-/*!
- * jQuery Validation Plugin v1.22.0
+ * jQuery Validation Plugin v1.20.1
  *
  * https://jqueryvalidation.org/
  *
- * Copyright (c) 2026 Jörn Zaefferer
+ * Copyright (c) 2024 Jörn Zaefferer
  * Released under the MIT license
  */
 
@@ -404,20 +179,20 @@ object-assign
 
 /*! /home/travis/build/feathericons/feather/src/index.js */
 
-/*! @license DOMPurify 3.3.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.1/LICENSE */
+/*! Buttons for DataTables 1.5.4
+ * ©2016-2018 SpryMedia Ltd - datatables.net/license
+ */
 
-/*! Axios v1.13.4 Copyright (c) 2026 Matt Zabriskie and contributors */
+/*! DataTables 1.13.11
+ * ©2008-2024 SpryMedia Ltd - datatables.net/license
+ */
 
 /*! DataTables Bootstrap 4 integration
  * ©2011-2017 SpryMedia Ltd - datatables.net/license
  */
 
-/*! FixedHeader 3.4.0
- * © SpryMedia Ltd - datatables.net/license
- */
-
-/*! Responsive 2.5.0
- * © SpryMedia Ltd - datatables.net/license
+/*! Responsive 2.2.3
+ * 2014-2018 SpryMedia Ltd - datatables.net/license
  */
 
 /*! classnames/dedupe */
@@ -432,22 +207,9 @@ object-assign
 
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
-/*! jQuery UI - v1.14.1 - 2024-10-30
-* https://jqueryui.com
-* Includes: widget.js, position.js, data.js, disable-selection.js, effect.js, effects/effect-blind.js, effects/effect-bounce.js, effects/effect-clip.js, effects/effect-drop.js, effects/effect-explode.js, effects/effect-fade.js, effects/effect-fold.js, effects/effect-highlight.js, effects/effect-puff.js, effects/effect-pulsate.js, effects/effect-scale.js, effects/effect-shake.js, effects/effect-size.js, effects/effect-slide.js, effects/effect-transfer.js, focusable.js, form-reset-mixin.js, jquery-patch.js, keycode.js, labels.js, scroll-parent.js, tabbable.js, unique-id.js, widgets/accordion.js, widgets/autocomplete.js, widgets/button.js, widgets/checkboxradio.js, widgets/controlgroup.js, widgets/datepicker.js, widgets/dialog.js, widgets/draggable.js, widgets/droppable.js, widgets/menu.js, widgets/mouse.js, widgets/progressbar.js, widgets/resizable.js, widgets/selectable.js, widgets/selectmenu.js, widgets/slider.js, widgets/sortable.js, widgets/spinner.js, widgets/tabs.js, widgets/tooltip.js
-* Copyright OpenJS Foundation and other contributors; Licensed MIT */
-
 /*! no static exports found */
 
 /*! scrollbarWidth.js v0.1.3 | felixexter | MIT | https://github.com/felixexter/scrollbarWidth */
-
-/*! svg.draggable.js - v2.2.2 - 2019-01-08
-* https://github.com/svgdotjs/svg.draggable.js
-* Copyright (c) 2019 Wout Fierens; Licensed MIT */
-
-/*! svg.filter.js - v2.0.2 - 2016-02-24
-* https://github.com/wout/svg.filter.js
-* Copyright (c) 2016 Wout Fierens; Licensed MIT */
 
 /*!*********************!*\
   !*** ./src/icon.js ***!

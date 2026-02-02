@@ -1,493 +1,594 @@
 @php use App\Models\Channel; @endphp
-@extends('Frontend.includes.layout')
+@extends('Frontend.includes.layout') 
 @section('content')
 
-<!--start page wrapper -->
-<div class="page-wrapper">
-    <div class="page-content">
-        <section>
-            <div class="row">
-                <div class="col-12 col-lg-8">
-                    <div class="card radius-5 mb-0 mb-md-4">
-                        <div class="fixed-sm-top p-md-0">
+<main>
 
-                            <video id="player" controls playsinline data-poster="{{ $stream->thumbnail_url }}"></video>
+	<section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
+                <div class="container custom-container">
+                    <div class="row align-items-center position-relative g-0">
+					<div class="col-xl-9 col-lg-8">
+					<div id="videoWrap" class="video-wrap">
+													<video id="player" controls playsinline data-poster="{{ $stream->thumbnail }}"></video> 	   </div>
 
-
+@php
+	 $oldvid= $stream;
+	$vid = $stream->id;
+@endphp
                         </div>
-                        <div class="card-body top-margin d-flex justify-content-between align-items-center">
-                            <h2 class="mb-0 d-sm-none d-md-block">
-                                {{$stream->title}}
-                            </h2>
-                            <!-- <p class="text-danger mb-0 mt-1">Entertainment</p>
-					<small class="text-muted">
-						<i class="lni lni-eye"></i> {{ $stream->viewers }} Viewers
-						<i class="lni lni-calendar"></i>
-						Started Streaming
-						{{ $stream->created_at->diffForHumans() }}
-								</small> -->
+						@include('Frontend.includes.components.partials.stream-comments') 
+
+                        <div class="col-xl-7 col-lg-8 mt-4">
+                            <div class="movie-details-content">
+                                <h5>New Episodes</h5>
+                                @php
+    $words = preg_split('/\s+/', trim(ucfirst($stream->title)));
+    $half = (int) ceil(count($words) / 2);
+
+    $firstHalf = implode(' ', array_slice($words, 0, $half));
+    $secondHalf = implode(' ', array_slice($words, $half));
+@endphp
+
+<h2>
+    {{ $firstHalf }}
+    <span>{{ $secondHalf }}</span>
+</h2>
+
+                                <div class="banner-meta">
+                                    <ul>
+                                        <li class="quality">
+                                            <span>Pg 18</span>
+                                            <span>hd</span>
+                                        </li>
+                                        <li class="category">
+                                            <a href="#">Romance,</a>
+                                            <a href="#">Drama</a>
+                                        </li>
+                                        <li class="release-time">
+                                            <span><i class="far fa-calendar-alt"></i> 2021</span>
+                                            <span><i class="far fa-clock"></i> 128 min</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <p>{{ $stream->description }}</p>
+                                <div class="movie-details-prime">
+                                    <ul>
+                                        <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
+                                        <li class="streaming">
+                                            <h6>Prime Video</h6>
+                                            <span>Streaming Channels</span>
+                                        </li>
+                                        <li class="watch"><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i class="fas fa-play"></i> Watch Now</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="movie-details-btn">
+                            <a href="img/poster/movie_details_img.jpg" class="download-btn" download="">Download <img src="fonts/download.svg" alt=""></a>
                         </div>
                     </div>
-                    <div class="card radius-5 single-video-author box mb-3">
-                        <div class="">
-                            <div class="float-right d-flex d-none">
-                                <button class="btn btn-danger btn-sm mx-2" type="button">
-                                    <strong>HD</strong>
-                                </button>
-                                @php
-                                    $channel = Channel::find($stream->channel_id);
-                                @endphp
+                </div>
+            </section>
+		<section class="d-none">
+			<div class="row">
+				<div class="col-12 col-lg-8">
+					<div class="card radius-5 row mx-md-0">
 
-                                @if(Auth::check())
-                                    <div class="d-none" id="subscription-controls-{{ $channel->id }}">
-                                        @if(Auth::user()->subscribedChannels->contains($channel->id))
-                                            <div id="subscribe-btn-{{ $channel->id }}">
-                                                <button class="btn btn-danger btn-sm"
-                                                    onclick="toggleSubscription({{ $channel->id }}, false)">
-                                                    Unsubscribe
-                                                </button>
-                                            </div>
-                                        @else
-                                            <div id="subscribe-btn-{{ $channel->id }}">
-                                                <button class="btn btn-outline-danger btn-sm"
-                                                    onclick="toggleSubscription({{ $channel->id }}, true)">
-                                                    Subscribe
-                                                </button>
-                                            </div>
-                                        @endif
-                                @endif
+						<video id="player" controls playsinline data-poster="{{ $stream->thumbnail }}"></video>
+
+						@php
+						     $oldvid= $stream;
+							$vid = $stream->id;
+						@endphp
+						<div class="card-body">
+							<h2 class="mb-0">
+								{{$stream->title}}
+							</h2>
+							<p class="text-danger mb-0 mt-1">Entertainment</p>
+							<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
+									class="lni lni-calendar"></i>
+								Started Streaming 12min ago </small>
+						</div>
+					</div>
+					<div class="card radius-5 single-video-author box mb-3">
+						<div class="">
+							<div class="float-right d-flex align-items-center">
+
+								@if(Auth::check())
+									<div id="favorite-btn">
+										@if(Auth::user()->favoriteVideos->contains($stream->id))
+											<button class="btn btn-danger btn-sm"
+												onclick="toggleFavorite({{ $stream->id }}, false)">
+												Unlike Video
+											</button>
+										@else
+											<button class="btn btn-outline-primary btn-sm"
+												onclick="toggleFavorite({{ $stream->id }}, true)">
+												Like Video
+											</button>
+										@endif
+									</div>
+								@endif
+								<div class="mx-1">.</div>
+
+								<script>
+									function toggleFavorite(videoId, isFavorite) {
+										const url = isFavorite ?
+											'{{ route("video.favorite", ":id") }}'.replace(':id', videoId) :
+											'{{ route("video.unfavorite", ":id") }}'.replace(':id', videoId);
+
+										$.ajax({
+											url: url,
+											type: 'POST',
+											data: {
+												_token: '{{ csrf_token() }}',
+											},
+											success: function (response) {
+												if (isFavorite) {
+													$('#favorite-btn').html(`
+											<button class="btn btn-danger btn-sm" onclick="toggleFavorite(${videoId}, false)">
+											Unlike Video
+											</button>
+										`);
+												} else {
+													$('#favorite-btn').html(`
+											<button class="btn btn-outline-primary btn-sm" onclick="toggleFavorite(${videoId}, true)">
+												Like
+											</button>
+										`);
+												}
+											},
+											error: function (xhr) {
+												console.error('Error:', xhr.responseText);
+											}
+										});
+									}
+								</script>
+
+
+								@php
+									$channel = Channel::find($stream->channel_id);
+								@endphp
+								@if(Auth::check())
+										<div id="subscription-controls-{{ $channel->id }}">
+											@if(Auth::user()->subscribedChannels->contains($channel->id))
+												<div id="subscribe-btn-{{ $channel->id }}">
+													<button class="btn btn-danger btn-sm"
+														onclick="toggleSubscription({{ $channel->id }}, false)">Unsubscribe</button>
+												</div>
+											@else
+												<div id="subscribe-btn-{{ $channel->id }}">
+													<button class="btn btn-outline-danger btn-sm"
+														onclick="toggleSubscription({{ $channel->id }}, true)">Subscribe</button>
+												</div>
+											@endif
+										</div>
+									</div>
+								@endif
+						</div>
+						<img class="ratio1" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}" alt="">
+						<p><a href="#"><strong>
+
+									{{ $channel ? $channel->name : 'Unknown' }}
+								</strong></a> <span title="" data-placement="top" data-toggle="tooltip"
+								data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
+						</p>
+						<small>Started Streaming 12min ago</small>
+					</div>
+					<div class="card radius-5 box mb-3">
+						<div class="card-body">
+							<h6>Event:</h6>
+							@php
+								$event = \App\Models\Event::find($stream->event_id);
+							@endphp
+							<p>
+								{{ $event ? $event->title : 'Unknown' }}
+							</p>
+							{{-- <h6>Hosts:</h6>
+							<p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
+							<h6>Performances:</h6>
+							<p> Drake , Kelele Takatifu , Khaligraph Jones , Mejja</p>
+							<h6>Category :</h6>
+							<p>Gospel , VVIP Exclusive , Gameplay , 1080p</p>
+							<h6>About :</h6> --}}
+							<p>
+								{!!$stream->description!!}
+							</p>
+							{{-- <h6>Tags :</h6>
+							<p class="tags mb-0">
+								<span><a href="#">Music</a></span>
+								<span><a href="#">Live Concert</a></span>
+								<span><a href="#">Kenyan Local</a></span>
+								<span><a href="#">1080P</a></span>
+								<span><a href="#">Genge</a></span>
+								<span><a href="#">+ 16</a></span>
+							</p> --}}
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</section>
+		 
+
+	
+		@if($channels->isNotEmpty())
+			<section>
+				<h5 class="mb-3">Popular Channels</h5>
+				<div class="d-flex scrolling">
+					@foreach ($channels as $channel)
+						<div class="col-6 col-lg-2 me-3 mb-3">
+							@include('Frontend.includes.components.cards.channels') 
+						</div>
+
+					@endforeach
+				</div>
+				<!--end row-->
+			</section>
+		@endif
+		@endsection
+		@section('header')
+		<style>
+			@media (min-width: 769px) {
+				.page-footer {
+					display: none;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.page-wrapper {
+					margin-top: 30px !important;
+				}
+
+				.comment-top {
+					height: 40vh;
+					overflow-y: scroll;
+				}
+
+				.comment-top {
+					max-height: 30vh;
+					overflow-y: scroll;
+					height: auto;
+				}
+			}
+
+			.plyr--video {
+				padding: 0;
+			}
+
+			#my-video {
+				width: 100%;
+				aspect-ratio: 16 / 9 !important;
+				height: auto;
+			}
+
+			#player {
+				transition: all 0.3s ease-in-out;
+			}
+
+			#player.sticky {
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width: 400px;
+				z-index: 9999;
+				height: max-content;
+			}
+		</style>
+
+<style>
+	.btn-send {
+    padding: 5px;
+    border: 1px solid #2a2b2c;
+}
+	/* Make both columns stretch to same height */
+.video-comments-row {
+  align-items: stretch !important;
+}
+
+/* comments card takes full height of the column */
+.yt-comments-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scroll area */
+.yt-comments-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+    .text-light-50 { color: rgba(255,255,255,.55) !important; }
+
+    .yt-comments-card{
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 14px;
+        background: rgba(10, 10, 10, 0.55);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 10px 30px rgba(0,0,0,.45);
+        overflow: hidden;
+    }
+
+    .yt-comments-header,
+    .yt-comments-footer{
+        background: rgba(0,0,0,.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .yt-comments-body{
+        max-height: 520px;
+        overflow-y: auto;
+    }
+
+    .yt-comments-body::-webkit-scrollbar{ width: 6px; }
+    .yt-comments-body::-webkit-scrollbar-thumb{
+        background: rgba(255,255,255,.15);
+        border-radius: 20px;
+    }
+
+    .yt-comment-input{
+        background: rgba(255,255,255,.06) !important;
+        border: 1px solid rgba(255,255,255,.10) !important;
+        color: #fff !important;
+        border-radius: 10px 0 0 !important;
+        padding: 10px 12px !important;
+    }
+
+    .yt-comment-input::placeholder{ color: rgba(255,255,255,.55) !important; }
+
+    .yt-actions a{
+        color: rgba(255,255,255,.55);
+        text-decoration: none;
+        transition: .2s;
+    }
+    .yt-actions a:hover{
+        color: #fff;
+        text-decoration: none;
+    }
+	#comment-list{
+    max-height: 520px;
+    overflow-y: auto;
+}
+/* Video wrapper uses 16:9 ratio like YouTube */
+.video-wrap{
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    overflow: hidden;
+    border-radius: 10px;
+}
+.video-wrap video,
+.video-wrap iframe,
+.video-wrap .plyr{
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Comments card height must match video height */
+@media (min-width: 1200px) {
+    #commentsCard{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Scroll only the comment list */
+    #comment-list{
+        flex: 1 1 auto;
+        overflow-y: auto;
+        min-height: 0;
+    }
+}
+
+/* Dark translucent */
+.yt-comments-card{
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+}
+.sticky{
+	z-index: 99;
+}
+
+</style>
+		@endsection
+		@section('footer')
+
+		<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const video = document.getElementById('player');
+				const player = new Plyr(video, {
+					// You can customize Plyr options here
+				});
+
+				// Your video URL
+				const videoUrl = '{{ $oldvid->video_path }}';
+
+				// Function to determine video type
+				function getVideoType(url) {
+					const extension = url.split('.').pop();
+					if (extension === 'm3u8') {
+						return 'application/vnd.apple.mpegurl';
+					} else if (extension === 'mp4') {
+						return 'video/mp4';
+					} else if (extension === 'mov') {
+						return 'video/quicktime';
+					} else {
+						return '';
+					}
+				}
+
+				// Function to load video based on its type
+				function loadVideo(url) {
+					const type = getVideoType(url);
+
+					if (type === 'application/vnd.apple.mpegurl') {
+						if (Hls.isSupported()) {
+							const hls = new Hls();
+							hls.loadSource(url);
+							hls.attachMedia(video);
+							hls.on(Hls.Events.MANIFEST_PARSED, () => {
+								video.play();
+							});
+						} else if (video.canPlayType(type)) {
+							video.src = url;
+							video.addEventListener('loadedmetadata', () => {
+								video.play();
+							});
+						} else {
+							console.error('HLS is not supported in this browser');
+						}
+					} else if (video.canPlayType(type)) {
+						video.src = url;
+						video.addEventListener('loadedmetadata', () => {
+							video.play();
+						});
+					} else {
+						console.error('This video format is not supported in this browser');
+					}
+				}
+
+				// Load the video
+				loadVideo(videoUrl);
+			});
+		</script>
+		<script>
+$(document).ready(function () {
+
+    function scrollCommentsToBottom() {
+        let list = $('#comment-list');
+        if (!list.length) return;
+        list.scrollTop(list[0].scrollHeight);
+    }
+
+    // scroll on load
+    scrollCommentsToBottom();
+
+    // submit comment
+    $('#comment-form').on('submit', function (e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let url = form.attr('action');
+        let btn = $('#comment-submit-btn');
+
+        let commentInput = $('#comment-input');
+        let commentText = commentInput.val().trim();
+
+        if (!commentText) return;
+
+        btn.prop('disabled', true);
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: form.serialize(),
+            success: function (res) {
+
+                // if you use broadcast()->toOthers() then we must append manually for sender
+                let name = "{{ auth()->check() ? auth()->user()->name : '' }}";
+                let avatar = "{{ auth()->check() ? (auth()->user()->image ?? asset('avatar.png')) : asset('avatar.png') }}";
+
+                let safeText = $('<div>').text(commentText).html();
+
+                let newComment = `
+                    <div class="media py-3 border-bottom border-dark">
+                        <img src="${avatar}" class="mr-3 rounded-circle"
+                             style="width:42px;height:42px;object-fit:cover;" alt="avatar">
+
+                        <div class="media-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <strong class="mr-2 text-white" style="font-size: 14px;">
+                                        ${name}
+                                    </strong>
+                                    <small class="text-light-50" style="font-size: 12px;">
+                                        just now
+                                    </small>
                                 </div>
                             </div>
 
-                            <img class="ratio1 border bg-light" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}"
-                                alt="">
-                            <p>
-                                <a href="{{ url("/channel/{$channel->id}/{$channel->name}") }}">
-                                    <strong>
-                                        {{$channel->name}}
-                                    </strong>
-                                </a>
-                                <span title="" data-placement="top" data-toggle="tooltip"
-                                    data-original-title="Verified"><i
-                                        class="fas fa-check-circle text-success"></i></span>
-                            </p>
-                            <small class="text-muted">
-                                <!-- <i class="lni lni-eye"></i> {{ $stream->viewers }} Viewers -->
-                                <i class="lni lni-calendar"></i>
-                                Started Streaming
-                                {{ $stream->created_at->diffForHumans() }}
-                            </small>
-                        </div>
-                    </div>
-                    <div class="card d-none d-md-block radius-5 box mb-3">
-                        <div class="card-body">
-                            @php
-                                $event = \App\Models\Event::find($stream->event_id);
-                            @endphp
-                            <p>
-                                {{ $event ? $event->title : 'Unknown' }}
-                            </p>
-                            <h6>About :</h6>
-                            <p>
-                                {!!$stream->description!!}
-                            </p>
-                            {{-- <h6>Tags :</h6>
-                            <p class="tags mb-0">
+                            <div class="mt-1 text-light" style="font-size: 14px; line-height: 1.4;">
+                                ${safeText}
+                            </div>
 
-                                <span><a href="#">Music</a></span>
-                                <span><a href="#">Live Concert</a></span>
-                                <span><a href="#">Kenyan Local</a></span>
-                                <span><a href="#">1080P</a></span>
-                                <span><a href="#">Genge</a></span>
-                                <span><a href="#">+ 16</a></span>
-                            </p> --}}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-4">
-                    <div class="card radius-5 comment sticky-top position-sticky">
-                        <h5 class="p-3 mb-0">Live Comments</h5>
-                        <!-- Comment Section -->
-                        <div class="comment-top" id="comment-list">
-                            <div class="" id="streamcommentlist">
-                                @foreach ($comments as $comment)
-                                                                <div
-                                                                    class="card-body d-flex py-2 border-top px-2 mx-0 w-100 justify-content-between comment-item">
-                                                                    <div class="d-flex">
-                                                                        <div class="align-self-center text-center me-md-2">
-                                                                            @php
-                                                                                $comment_user = \App\Models\User::find($comment->user_id);
-                                                                            @endphp
-                                                                            <img src="{{ $comment_user->image ?? asset('avatar.png') }}" height="50"
-                                                                                class="w-100 d-block w-100 aspect1" alt="...">
-                                                                        </div>
-                                                                        <div class="mx-1 mx-md-2">
-                                                                            <div class="media-body text-align-baseline">
-                                                                                <small class="my-0 text-muted">
-                                                                                    {{ $comment_user->name }}
-                                                                                </small>
-                                                                                <h6 class="mb-0">
-                                                                                    @php
-                                                                                        // Sanitize comment to remove links and phone numbers
-                                                                                        $sanitizedComment = preg_replace([
-                                                                                            '/https?:\/\/\S+/', // Remove URLs
-                                                                                            '/\b\d{10,13}\b/' // Remove phone numbers
-                                                                                        ], '', $comment->comment);
-                                                                                    @endphp
-                                                                                    {{ $sanitizedComment }}
-                                                                                </h6>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <small class="text-muted float-end time-comm">
-                                                                        {{ $comment->created_at->diffForHumans() }}
-                                                                    </small>
-                                                                </div>
-                                @endforeach
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
+                                <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
                             </div>
                         </div>
-
-                        <div class="card-body row border-top px-0 mt-70 mx-0">
-                            @auth
-                                <form id="stream-comment-form"
-                                    action="{{ route('comment.post', ['commentableType' => 'stream', 'commentableId' => $stream->id]) }}"
-                                    method="POST">
-                                    @csrf
-                                    <div class="chat-footer d-flex align-items-center">
-                                        <div class="flex-grow-1">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="comment" rows="3"
-                                                    placeholder="Type a comment">
-                                                <button type="submit" class="input-group-text">
-                                                    <i class="bx bx-send"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            @else
-                                <p class="text-center mt-3">Please
-                                    <a href="{{ route('user.login') }}">login</a>
-                                    to post a
-                                    comment.
-                                </p>
-                            @endauth
-
-                        </div>
-
                     </div>
-                </div>
+                `;
 
-                <div class="d-md-none card radius-5 box mb-3">
-                    <div class="card-body">
-                        <h6>Event:</h6>
-                        @php
-                            $event = \App\Models\Event::find($stream->event_id);
-                        @endphp
-                        <p>
-                            {{ $event ? $event->event_name : 'Unknown' }}
-                        </p>
-                        <h6>About :</h6>
-                        <p>
-                            {!!$stream->description!!}
-                        </p>
-                        <h6>Tags :</h6>
-                        <p class="tags mb-0">
-                            <span><a href="#">Music</a></span>
-                            <span><a href="#">Live Concert</a></span>
-                            <span><a href="#">Kenyan Local</a></span>
-                            <span><a href="#">1080P</a></span>
-                            <span><a href="#">Genge</a></span>
-                            <span><a href="#">+ 16</a></span>
-                        </p>
-                    </div>
-                </div>
+                // IMPORTANT: append to bottom (latest at bottom)
+                $('#commentlist').append(newComment);
 
-            </div>
-        </section>
+                // update count
+                let countEl = $('#comment-count');
+                countEl.text(parseInt(countEl.text() || 0) + 1);
 
-        @if($streams->isNotEmpty())
-            <section>
-                <h5 class="mt-4 section-title mb-3">Continue Watching</h5>
-                <div class="row">
-                    @foreach ($streams as $stream)
-                        <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-3">
-                            @include('Frontend.includes.components.cards.stream-card')
-                        </div>
-                    @endforeach
-                </div>
-                <!--end row-->
-            </section>
-        @endif
+                // clear input
+                commentInput.val('');
 
-        @if($channels->isNotEmpty())
-            <section>
-                <h5 class="mt-4 section-title mb-3">Popular Channels</h5>
-                <div class="d-flex scrolling">
-                    @foreach ($channels as $channel)
-                        <div class="col-6 col-lg-2 me-3">
-                            @include('Frontend.includes.components.cards.channels')
-                        </div>
-                    @endforeach
-                </div>
-                <!--end row-->
-            </section>
-        @endif
-        @endsection
-        @section('header')
-        <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-        <style>
-            @media (min-width: 769px) {
-                .page-footer {
-                    display: none;
-                }
+                // scroll bottom
+                scrollCommentsToBottom();
+            },
+            error: function () {
+                alert('Failed to post comment. Please try again.');
+            },
+            complete: function () {
+                btn.prop('disabled', false);
             }
+        });
+    });
 
-            @media (max-width: 768px) {
-                .page-wrapper {
-                    margin-top: 30px !important;
-                }
+});
+</script>
 
-                .stream-comment-top {
-                    height: 40vh;
-                    overflow-y: scroll;
-                }
+		<!-- <script>
+			document.addEventListener('DOMContentLoaded', function () {
+				const player = document.getElementById('player');
+				const playerOffsetTop = player.offsetTop;
 
-                .stream-comment-top {
-                    max-height: 30vh;
-                    overflow-y: scroll;
-                    height: auto;
-                }
-            }
+				window.addEventListener('scroll', function () {
+					if (window.scrollY > playerOffsetTop) {
+						player.classList.add('sticky');
+					} else {
+						player.classList.remove('sticky');
+					}
+				});
+			});
+		</script> -->
+		 
+<script>
+function syncCommentsHeight(){
+    if (window.innerWidth < 1200) return;
 
-            p span {
-                color: inherit !important;
-            }
+    let videoWrap = document.getElementById('videoWrap');
+    let commentsCard = document.getElementById('commentsCard');
 
-            #my-video {
-                width: 100%;
-                aspect-ratio: 16 / 9 !important;
-                height: auto;
-            }
+    if(!videoWrap || !commentsCard) return;
 
-            .video-js {
-                width: 100%;
-                height: auto;
-            }
+    commentsCard.style.height = videoWrap.offsetHeight + "px";
+}
 
-            font {
-                color: inherit;
-            }
+$(document).ready(function(){
+    syncCommentsHeight();
+    $(window).on('resize', syncCommentsHeight);
 
-            /* Center the play button */
-            .vjs-big-play-centered .vjs-big-play-button {
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                margin-top: initial !important;
-                margin-left: initial !important;
-                background-color: #de1f1f;
+    // delay to allow Plyr render
+    setTimeout(syncCommentsHeight, 300);
+    setTimeout(syncCommentsHeight, 1000);
+});
+</script>
 
-
-            }
-
-            /* Ensure the poster image covers the video area */
-            .video-js .vjs-poster {
-                background-size: cover;
-                background-position: center;
-            }
-
-            /* Fullscreen and rotated styles for mobile */
-            @media (max-width: 768px) {
-                .video-js.fullscreen {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    transform: rotate(90deg);
-                    transform-origin: center center;
-                    z-index: 9999;
-                }
-
-                .comment-top {
-                    height: 30vh;
-                    overflow-y: scroll;
-                }
-            }
-
-            @media (max-width: 767px) {
-                .fixed-sm-top {
-                    z-index: 99999;
-                }
-
-                .d-sm-none {
-                    font-size: 1px;
-                }
-
-                .page-footer {
-                    z-index: 9999;
-                }
-
-                .col-12.col-lg-4,
-                .col-12.col-lg-8 {
-                    padding: 0;
-                }
-            }
-
-            .pace {
-                display: none;
-            }
-
-            #player {
-                transition: all 0.3s ease-in-out;
-            }
-
-            #player.sticky {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                width: 300px;
-                z-index: 9999;
-                height: max-content;
-            }
-        </style>
-        @endsection
-        @section('footer')
-
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-        <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const video = document.getElementById('player');
-                const player = new Plyr(video, {
-                    // You can customize Plyr options here
-                });
-
-                // Your video URL
-                const videoUrl = '{{ $stream->stream_video_link }}';
-
-                // Function to determine video type
-                function getVideoType(url) {
-                    const extension = url.split('.').pop();
-                    if (extension === 'm3u8') {
-                        return 'application/vnd.apple.mpegurl';
-                    } else if (extension === 'mp4') {
-                        return 'video/mp4';
-                    } else if (extension === 'mov') {
-                        return 'video/quicktime';
-                    } else {
-                        return '';
-                    }
-                }
-
-                // Function to load video based on its type
-                function loadVideo(url) {
-                    const type = getVideoType(url);
-
-                    if (type === 'application/vnd.apple.mpegurl') {
-                        if (Hls.isSupported()) {
-                            const hls = new Hls();
-                            hls.loadSource(url);
-                            hls.attachMedia(video);
-                            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                                video.play();
-                            });
-                        } else if (video.canPlayType(type)) {
-                            video.src = url;
-                            video.addEventListener('loadedmetadata', () => {
-                                video.play();
-                            });
-                        } else {
-                            console.error('HLS is not supported in this browser');
-                        }
-                    } else if (video.canPlayType(type)) {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => {
-                            video.play();
-                        });
-                    } else {
-                        console.error('This video format is not supported in this browser');
-                    }
-                }
-
-                // Load the video
-                loadVideo(videoUrl);
-            });
-        </script>
-        <script>
-
-            $(document).ready(function () {
-                $(document).on('submit', '#stream-comment-form', function (e) {
-                    e.preventDefault();
-                    var frm = $(this);
-                    var formData = new FormData(this);  // Use FormData to handle file uploads
-                    $.ajax({
-                        type: 'POST',
-                        url: frm.attr('action'),
-                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                        data: formData,
-                        contentType: false,  // Prevent jQuery from setting the Content-Type
-                        processData: false,
-                        success: function (Mess) {
-                            frm.trigger('reset');
-                        },
-                        error: function (xhr, status, errorThrown) {
-                            console.log(errorThrown);
-                        }
-                    });
-                });
-            });
-
-            Pusher.logToConsole = true;
-            var pusher = new Pusher("cfc4e18a5372052374ee", {
-                cluster: 'mt1',
-                encrypted: true,
-                authEndpoint: '/pusher/auth',
-            });
-
-            var channel = pusher.subscribe('stream_comment.{{$stream->id}}');
-            channel.bind('new_comment', function (data) {
-                console.log(data);
-                var comment = '<div class="card-body d-flex py-2 border-top px-2 mx-0 w-100 justify-content-between comment-item">' +
-                    '<div class="d-flex">' +
-                    ' <div class="align-self-center text-center">' +
-                    ' <img src="' + data.user_img + '" height="50" class="w-100 d-block w-100 aspect1" alt="">' +
-                    '</div>' +
-                    '<div class="mx-1 mx-md-2">' +
-                    '<div class="media-body">' +
-                    '<h6 class="my-0">' +
-                    data.user_name +
-                    ' </h6>' +
-                    '<p class="mb-0">' +
-                    data.comment +
-                    '</p>' +
-                    '</div>' +
-                    ' </div>' +
-                    '</div>' +
-                    ' <small class="text-muted float-end time-comm">' +
-                    data.comment_time +
-                    ' </small>' +
-                    '</div>';
-                $('#streamcommentlist').append(comment);
-                const commentTop = document.querySelector('.comment-top');
-                commentTop.scrollTop = commentTop.scrollHeight;
-
-            });
-
-        </script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const player = document.getElementById('player');
-                const playerOffsetTop = player.offsetTop;
-
-                window.addEventListener('scroll', function () {
-                    if (window.scrollY > playerOffsetTop) {
-                        player.classList.add('sticky');
-                    } else {
-                        player.classList.remove('sticky');
-                    }
-                });
-            });
-        </script>
-        @endsection
+		@endsection

@@ -46,7 +46,7 @@ class VideoController extends Controller
                         'description' => 'required|string',
                         'event_id'    => 'required|exists:events,id',
                         'thumbnail'   => 'nullable|image|max:5120',
-                        'video_path'  => 'required|file|mimetypes:video/avi,video/mpeg,video/mp4|max:0',
+                        'video_path'  => 'required|file|mimes:mp4,mov,avi,mpeg|max:81200',
                         'tags'        => 'nullable|array',
                         'tags.*'      => 'nullable|string|max:50',
                     ]
@@ -68,7 +68,7 @@ class VideoController extends Controller
                     {
                         $uploadService    = new UploadService();
                         $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails',
-                            'public_2'
+                            'linode'
                         );
                         $video->thumbnail = $thumbnailPath['path'];
                     }
@@ -78,7 +78,7 @@ class VideoController extends Controller
                     {
                         $uploadService     = new UploadService();
                         $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos',
-                            'public_2'
+                            'linode'
                         );
                         $video->video_path = $videoPath['path'];
                     }

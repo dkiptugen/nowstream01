@@ -1,28 +1,81 @@
 @php use App\Models\Channel; @endphp
-@extends('Frontend.includes.layout')
+@extends('Frontend.includes.layout') 
 @section('content')
-<!--start page wrapper -->
-<div class="page-wrapper">
-	<div class="page-content">
-		<section>
+
+<main>
+
+	<section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
+                <div class="container custom-container">
+                    <div class="row align-items-center position-relative g-0">
+					<div class="col-xl-9 col-lg-8">
+					<div id="videoWrap" class="video-wrap">
+													<video id="player" controls playsinline data-poster="{{ $video->thumbnail }}"></video> 	   </div>
+
+@php
+	 $oldvid= $video;
+	$vid = $video->id;
+@endphp
+                        </div>
+						@include('Frontend.includes.components.partials.video-comments') 
+
+                        <div class="col-xl-7 col-lg-8 mt-4">
+                            <div class="movie-details-content">
+                                <h5>New Episodes</h5>
+                                @php
+    $words = preg_split('/\s+/', trim(ucfirst($video->title)));
+    $half = (int) ceil(count($words) / 2);
+
+    $firstHalf = implode(' ', array_slice($words, 0, $half));
+    $secondHalf = implode(' ', array_slice($words, $half));
+@endphp
+
+<h2>
+    {{ $firstHalf }}
+    <span>{{ $secondHalf }}</span>
+</h2>
+
+                                <div class="banner-meta">
+                                    <ul>
+                                        <li class="quality">
+                                            <span>Pg 18</span>
+                                            <span>hd</span>
+                                        </li>
+                                        <li class="category">
+                                            <a href="#">Romance,</a>
+                                            <a href="#">Drama</a>
+                                        </li>
+                                        <li class="release-time">
+                                            <span><i class="far fa-calendar-alt"></i> 2021</span>
+                                            <span><i class="far fa-clock"></i> 128 min</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <p>{{ $video->description }}</p>
+                                <div class="movie-details-prime">
+                                    <ul>
+                                        <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
+                                        <li class="streaming">
+                                            <h6>Prime Video</h6>
+                                            <span>Streaming Channels</span>
+                                        </li>
+                                        <li class="watch"><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i class="fas fa-play"></i> Watch Now</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="movie-details-btn">
+                            <a href="img/poster/movie_details_img.jpg" class="download-btn" download="">Download <img src="fonts/download.svg" alt=""></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+		<section class="d-none">
 			<div class="row">
 				<div class="col-12 col-lg-8">
 					<div class="card radius-5 row mx-md-0">
 
-						
+						<video id="player" controls playsinline data-poster="{{ $video->thumbnail }}"></video>
 
-                        <!-- Responsive video container -->
-                        <div class="embed-responsive embed-responsive-16by9" style="position: relative;">
-                            <video id="player" class="embed-responsive-item"  playsinline data-poster="{{ $video->thumbnail }}" controls crossorigin></video>
-                            <!-- IMA Ad overlay -->
-                            <div id="ad-container" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10;"></div>
-                        </div>
-                        <!-- Companion ad container -->
-                        <div id="companion-container" class="mt-3 mx-auto" style="max-width: 300px; height: 250px;"></div>
-                        <!-- Ad container -->
-                        <div id="ad-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
-                        <!-- Companion ad container -->
-                        <div id="companion-container"></div>
 						@php
 						     $oldvid= $video;
 							$vid = $video->id;
@@ -72,17 +125,17 @@
 											},
 											success: function (response) {
 												if (isFavorite) {
-													$('#favorite-btn').html('
+													$('#favorite-btn').html(`
 											<button class="btn btn-danger btn-sm" onclick="toggleFavorite(${videoId}, false)">
 											Unlike Video
 											</button>
-										');
+										`);
 												} else {
-													$('#favorite-btn').html('
+													$('#favorite-btn').html(`
 											<button class="btn btn-outline-primary btn-sm" onclick="toggleFavorite(${videoId}, true)">
 												Like
 											</button>
-										');
+										`);
 												}
 											},
 											error: function (xhr) {
@@ -153,22 +206,39 @@
 						</div>
 					</div>
 				</div>
-				@include('Frontend.includes.components.partials.video-comments')
+				
 			</div>
 		</section>
 		@if($relatedVideos->isNotEmpty())
-			<section>
-				<h5 class="mt-4 section-title mb-3">Continue Watching</h5>
-				<div class="row">
-					@foreach ($relatedVideos as $video)
-						<div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-3">
-							@include('Frontend.includes.components.cards.video-card')
-						</div>
-					@endforeach
+		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
+		<div class="container">
+			<h5 class="mb-3 section-title">
+				<!-- Error Alert -->
+				@if (session('success'))
+					You dont Have an active subscription. Pick an Event Below <br>
+
+				@endif 
+			</h5>
+			<div class="row align-items-end mb-60">
+				<div class="col-lg-6">
+					<div class="section-title text-center text-lg-left">
+						<span class="sub-title">.......</span>
+						<h2 class="title">Continue <span>Watching</span></h2>
+					</div>
 				</div>
-				<!--end row-->
-			</section>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row tr-movie-active">
+				@foreach($relatedVideos as $video)  
+					@include('Frontend.includes.components.cards.video-card')
+				@endforeach
+			</div>
+		</div>
+	</section>
 		@endif
+
+	
 		@if($channels->isNotEmpty())
 			<section>
 				<h5 class="mb-3">Popular Channels</h5>
@@ -184,7 +254,7 @@
 			</section>
 		@endif
 		@endsection
-		@section("header")
+		@section('header')
 		<style>
 			@media (min-width: 769px) {
 				.page-footer {
@@ -211,7 +281,6 @@
 
 			.plyr--video {
 				padding: 0;
-                width: 100%;
 			}
 
 			#my-video {
@@ -222,249 +291,297 @@
 
 			#player {
 				transition: all 0.3s ease-in-out;
-                width: 100%;
 			}
 
 			#player.sticky {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                width: 400px;
-                height: auto;
-                z-index: 9999;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width: 400px;
+				z-index: 9999;
+				height: max-content;
 			}
-            #companion-container {
-                width: 100%;
-                max-width: 300px;
-                height: auto;
-            }
 		</style>
 
+<style>
+	.btn-send {
+    padding: 5px;
+    border: 1px solid #2a2b2c;
+}
+	/* Make both columns stretch to same height */
+.video-comments-row {
+  align-items: stretch !important;
+}
+
+/* comments card takes full height of the column */
+.yt-comments-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* scroll area */
+.yt-comments-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+    .text-light-50 { color: rgba(255,255,255,.55) !important; }
+
+    .yt-comments-card{
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 14px;
+        background: rgba(10, 10, 10, 0.55);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 10px 30px rgba(0,0,0,.45);
+        overflow: hidden;
+    }
+
+    .yt-comments-header,
+    .yt-comments-footer{
+        background: rgba(0,0,0,.35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .yt-comments-body{
+        max-height: 520px;
+        overflow-y: auto;
+    }
+
+    .yt-comments-body::-webkit-scrollbar{ width: 6px; }
+    .yt-comments-body::-webkit-scrollbar-thumb{
+        background: rgba(255,255,255,.15);
+        border-radius: 20px;
+    }
+
+    .yt-comment-input{
+        background: rgba(255,255,255,.06) !important;
+        border: 1px solid rgba(255,255,255,.10) !important;
+        color: #fff !important;
+        border-radius: 10px 0 0 !important;
+        padding: 10px 12px !important;
+    }
+
+    .yt-comment-input::placeholder{ color: rgba(255,255,255,.55) !important; }
+
+    .yt-actions a{
+        color: rgba(255,255,255,.55);
+        text-decoration: none;
+        transition: .2s;
+    }
+    .yt-actions a:hover{
+        color: #fff;
+        text-decoration: none;
+    }
+	#comment-list{
+    max-height: 520px;
+    overflow-y: auto;
+}
+/* Video wrapper uses 16:9 ratio like YouTube */
+.video-wrap{
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    overflow: hidden;
+    border-radius: 10px;
+}
+.video-wrap video,
+.video-wrap iframe,
+.video-wrap .plyr{
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Comments card height must match video height */
+@media (min-width: 1200px) {
+    #commentsCard{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Scroll only the comment list */
+    #comment-list{
+        flex: 1 1 auto;
+        overflow-y: auto;
+        min-height: 0;
+    }
+}
+
+/* Dark translucent */
+.yt-comments-card{
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.08);
+}
+.sticky{
+	z-index: 99;
+}
+
+</style>
 		@endsection
-		@section("footer")
-            <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+		@section('footer')
+
 		<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-
 		<script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const video = document.getElementById('player');
-                const player = new Plyr(video, {});
-
-                const adContainer = document.getElementById('ad-container');
-                const companionContainer = document.getElementById('companion-container');
-
-                const displayContainer = new google.ima.AdDisplayContainer(adContainer, player.media);
-                const adsLoader = new google.ima.AdsLoader(displayContainer);
-
-                // Handle adsManager loaded
-                adsLoader.addEventListener(
-                    google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
-                    (event) => {
-                        const adsManager = event.getAdsManager(player.media);
-
-                        // Pause/resume content events
-                        adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED, () => player.pause());
-                        adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, () => player.play());
-
-                        // Handle ad errors
-                        adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, (err) => {
-                            console.error('AdsManager error', err);
-                            player.play();
-                        });
-
-                        try {
-                            adsManager.init(player.media.clientWidth, player.media.clientHeight, google.ima.ViewMode.NORMAL);
-                            adsManager.start();
-                        } catch (err) {
-                            console.error('AdsManager start error', err);
-                            player.play();
-                        }
-                    },
-                    false
-                );
-
-                adsLoader.addEventListener(
-                    google.ima.AdErrorEvent.Type.AD_ERROR,
-                    (err) => {
-                        console.error('AdsLoader error', err);
-                        player.play();
-                    },
-                    false
-                );
-
-                // Function to generate dynamic VAST tag
-                function generateAdTag(position) {
-                    @php
-                        $station = 'radio47'; // or dynamic value
-                        $videoId = $video->id;
-                        $pageUrl = urlencode(url()->current()); // Current page URL
-                        $cmsId = '12345'; // Replace with your GAM content source ID
-                        $adType = 'audio_video'; // could be 'audio', 'video', or 'audio_video'
-                    @endphp
-
-                    @php
-                        $vastTag = "https://pubads.g.doubleclick.net/gampad/ads?";
-                        $vastTag .= "iu=/22646621568/AudioVideoAdUnit";
-                        $vastTag .= "&description_url={$pageUrl}";
-                        $vastTag .= "&tfcd=1&npa=1";
-                        $vastTag .= "&ad_type={$adType}";
-                        $vastTag .= "&sz=640x480";
-                        $vastTag .= "&ciu_szs=fluid";
-                        $vastTag .= "&cmsid={$cmsId}";
-                        $vastTag .= "&vid={$videoId}";
-                        $vastTag .= "&gdfp_req=1";
-                        $vastTag .= "&unviewed_position_start=1";
-                        $vastTag .= "&output=vast";
-                        $vastTag .= "&env=vp&impl=s";
-                        $vastTag .= "&correlator=" . time(); // optional: use timestamp for uniqueness
-                    @endphp
-                    return "{{ $vastTag }}";
-                }
-
-                function requestAds(position) {
-                    const adsRequest = new google.ima.AdsRequest();
-                    adsRequest.adTagUrl = generateAdTag(position);
-
-                    const rect = video.getBoundingClientRect();
-                    adsRequest.linearAdSlotWidth = rect.width;
-                    adsRequest.linearAdSlotHeight = rect.height;
-                    adsRequest.nonLinearAdSlotWidth = rect.width;
-                    adsRequest.nonLinearAdSlotHeight = rect.height / 3;
-
-                    adsRequest.setAdWillAutoPlay(true);
-                    adsRequest.setAdWillPlayMuted(false);
-
-                    adsLoader.requestAds(adsRequest);
-                }
-
-// Update ad overlay size when window resizes
-                window.addEventListener('resize', () => {
-                    const rect = video.getBoundingClientRect();
-                    adContainer.style.width = rect.width + 'px';
-                    adContainer.style.height = rect.height + 'px';
-                });
-
-                // Determine media type
-                function getMediaType(url) {
-                    const ext = url.split('.').pop().toLowerCase();
-                    if (ext === 'm3u8') return 'hls';
-                    if (ext === 'mp4') return 'video/mp4';
-                    if (ext === 'mp3') return 'audio/mp3';
-                    if (ext === 'mov') return 'video/quicktime';
-                    return '';
-                }
-
-                // Load media dynamically
-                function loadMedia(url) {
-                    const type = getMediaType(url);
-
-                    if (type === 'hls') {
-                        if (Hls.isSupported()) {
-                            const hls = new Hls();
-                            hls.loadSource(url);
-                            hls.attachMedia(video);
-                            hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                            video.src = url;
-                            video.addEventListener('loadedmetadata', () => video.play());
-                        } else console.error('HLS not supported');
-                    } else if (video.canPlayType(type)) {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => video.play());
-                    } else console.error('Unsupported media type');
-                }
-
-                // Example video/live URL
-                const mediaUrl = '{{ $oldvid->video_path }}'; // Replace with dynamic URL
-
-                // Initialize IMA + pre-roll on first play
-                player.on('play', () => {
-                    displayContainer.initialize();
-                    requestAds('pre');
-                });
-
-                loadMedia(mediaUrl);
-
-                // Optional: mid-roll for VOD every 60s/300s
-                const isLive = mediaUrl.endsWith('.m3u8'); // simplistic live detection
-                if (!isLive) {
-                    const cuePoints = [60, 300]; // seconds
-                    player.on('timeupdate', () => {
-                        const currentTime = Math.floor(player.currentTime);
-                        if (cuePoints.includes(currentTime) && !player.adsPlaying) {
-                            requestAds('mid');
-                        }
-                    });
-                } else {
-                    // Live mid-roll example: every 15 min
-                    setInterval(() => {
-                        requestAds('mid');
-                    }, 15 * 60 * 1000);
-                }
-            });
-		</script>
-		<script>
-			$(document).ready(function () {
-				$(document).on('submit', '#comment-form', function (e) {
-					e.preventDefault();
-					var frm = $(this);
-					var formData = new FormData(this);  // Use FormData to handle file uploads
-					$.ajax({
-						type: 'POST',
-						url: frm.attr('action'),
-						headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-						data: formData,
-						contentType: false,  // Prevent jQuery from setting the Content-Type
-						processData: false,
-						success: function (Mess) {
-							frm.trigger('reset');
-						},
-						error: function (xhr, status, errorThrown) {
-							console.log(errorThrown);
-						}
-					});
+			document.addEventListener('DOMContentLoaded', () => {
+				const video = document.getElementById('player');
+				const player = new Plyr(video, {
+					// You can customize Plyr options here
 				});
-			});
 
-			Pusher.logToConsole = true;
-			var pusher = new Pusher("cfc4e18a5372052374ee", {
-				cluster: 'mt1',
-				encrypted: true,
-				authEndpoint: '/pusher/auth',
-			});
+				// Your video URL
+				const videoUrl = '{{ $oldvid->video_path }}';
 
-			var channel = pusher.subscribe('video_comment.{{$vid}}');
-			channel.bind('new_comment', function (data) {
-				console.log(data);
-				var comment = '<div class="card-body d-flex py-2 border-top px-2 mx-0 w-100 justify-content-between comment-item">' +
-					'<div class="d-flex">' +
-					' <div class="align-self-center text-center">' +
-					' <img src="' + data.user_img + '" height="50" class="w-100 d-block w-100 aspect1" alt="">' +
-					'</div>' +
-					'<div class="mx-1 mx-md-2">' +
-					'<div class="media-body">' +
-					'<h6 class="my-0">' +
-					data.user_name +
-					' </h6>' +
-					'<p class="mb-0">' +
-					data.comment +
-					'</p>' +
-					'</div>' +
-					' </div>' +
-					'</div>' +
-					' <small class="text-muted float-end time-comm">' +
-					data.comment_time +
-					' </small>' +
-					'</div>';
-				$('#commentlist').append(comment);
-				const commentTop = document.querySelector('.comment-top');
-				commentTop.scrollTop = commentTop.scrollHeight;
+				// Function to determine video type
+				function getVideoType(url) {
+					const extension = url.split('.').pop();
+					if (extension === 'm3u8') {
+						return 'application/vnd.apple.mpegurl';
+					} else if (extension === 'mp4') {
+						return 'video/mp4';
+					} else if (extension === 'mov') {
+						return 'video/quicktime';
+					} else {
+						return '';
+					}
+				}
 
+				// Function to load video based on its type
+				function loadVideo(url) {
+					const type = getVideoType(url);
+
+					if (type === 'application/vnd.apple.mpegurl') {
+						if (Hls.isSupported()) {
+							const hls = new Hls();
+							hls.loadSource(url);
+							hls.attachMedia(video);
+							hls.on(Hls.Events.MANIFEST_PARSED, () => {
+								video.play();
+							});
+						} else if (video.canPlayType(type)) {
+							video.src = url;
+							video.addEventListener('loadedmetadata', () => {
+								video.play();
+							});
+						} else {
+							console.error('HLS is not supported in this browser');
+						}
+					} else if (video.canPlayType(type)) {
+						video.src = url;
+						video.addEventListener('loadedmetadata', () => {
+							video.play();
+						});
+					} else {
+						console.error('This video format is not supported in this browser');
+					}
+				}
+
+				// Load the video
+				loadVideo(videoUrl);
 			});
 		</script>
 		<script>
+$(document).ready(function () {
+
+    function scrollCommentsToBottom() {
+        let list = $('#comment-list');
+        if (!list.length) return;
+        list.scrollTop(list[0].scrollHeight);
+    }
+
+    // scroll on load
+    scrollCommentsToBottom();
+
+    // submit comment
+    $('#comment-form').on('submit', function (e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let url = form.attr('action');
+        let btn = $('#comment-submit-btn');
+
+        let commentInput = $('#comment-input');
+        let commentText = commentInput.val().trim();
+
+        if (!commentText) return;
+
+        btn.prop('disabled', true);
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: form.serialize(),
+            success: function (res) {
+
+                // if you use broadcast()->toOthers() then we must append manually for sender
+                let name = "{{ auth()->check() ? auth()->user()->name : '' }}";
+                let avatar = "{{ auth()->check() ? (auth()->user()->image ?? asset('avatar.png')) : asset('avatar.png') }}";
+
+                let safeText = $('<div>').text(commentText).html();
+
+                let newComment = `
+                    <div class="media py-3 border-bottom border-dark">
+                        <img src="${avatar}" class="mr-3 rounded-circle"
+                             style="width:42px;height:42px;object-fit:cover;" alt="avatar">
+
+                        <div class="media-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <strong class="mr-2 text-white" style="font-size: 14px;">
+                                        ${name}
+                                    </strong>
+                                    <small class="text-light-50" style="font-size: 12px;">
+                                        just now
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="mt-1 text-light" style="font-size: 14px; line-height: 1.4;">
+                                ${safeText}
+                            </div>
+
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
+                                <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // IMPORTANT: append to bottom (latest at bottom)
+                $('#commentlist').append(newComment);
+
+                // update count
+                let countEl = $('#comment-count');
+                countEl.text(parseInt(countEl.text() || 0) + 1);
+
+                // clear input
+                commentInput.val('');
+
+                // scroll bottom
+                scrollCommentsToBottom();
+            },
+            error: function () {
+                alert('Failed to post comment. Please try again.');
+            },
+            complete: function () {
+                btn.prop('disabled', false);
+            }
+        });
+    });
+
+});
+</script>
+
+		<!-- <script>
 			document.addEventListener('DOMContentLoaded', function () {
 				const player = document.getElementById('player');
 				const playerOffsetTop = player.offsetTop;
@@ -477,6 +594,28 @@
 					}
 				});
 			});
-		</script>
+		</script> -->
+		 
+<script>
+function syncCommentsHeight(){
+    if (window.innerWidth < 1200) return;
+
+    let videoWrap = document.getElementById('videoWrap');
+    let commentsCard = document.getElementById('commentsCard');
+
+    if(!videoWrap || !commentsCard) return;
+
+    commentsCard.style.height = videoWrap.offsetHeight + "px";
+}
+
+$(document).ready(function(){
+    syncCommentsHeight();
+    $(window).on('resize', syncCommentsHeight);
+
+    // delay to allow Plyr render
+    setTimeout(syncCommentsHeight, 300);
+    setTimeout(syncCommentsHeight, 1000);
+});
+</script>
 
 		@endsection

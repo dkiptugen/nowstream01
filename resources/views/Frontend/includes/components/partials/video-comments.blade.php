@@ -1,62 +1,104 @@
- <div class="col-12 col-lg-4">
- 	<div class="card radius-5 comment sticky-top">
- 		<!-- Comment Section -->
- 		<div class="comment-top" id="comment-list">
- 			<div class="" id="commentlist">
- 				@foreach ($comments as $comment)
- 				<div class="card-body d-flex py-2 border-top px-2 mx-0 w-100 justify-content-between comment-item">
- 					<div class="d-flex">
- 						<div class="align-self-center text-center">
- 							@php
- 							$comment_user = \App\Models\User::find($comment->user_id);
- 							@endphp
- 							<img src="{{ $comment_user->image ??  asset('avatar.png')}}" height="50" class="w-100 d-block w-100 aspect1" alt="...">
- 						</div>
- 						<div class="mx-1 mx-md-2">
- 							<div class="media-body">
- 								<h6 class="my-0">
- 									{{ $comment_user->name }}
- 								</h6>
- 								<p class="mb-0">
- 									@php
- 									// Sanitize comment to remove links and phone numbers
- 									$sanitizedComment = preg_replace([
- 									'/https?:\/\/\S+/', // Remove URLs
- 									'/\b\d{10,13}\b/' // Remove phone numbers
- 									], '', $comment->comment);
- 									@endphp
- 									{{ $sanitizedComment }}
- 								</p>
- 							</div>
- 						</div>
- 					</div>
- 					<small class="text-muted float-end time-comm">
- 						{{ $comment->created_at->diffForHumans() }}
- 					</small>
- 				</div>
- 				@endforeach
- 			</div>
- 		</div>
+<div class="col-xl-3 col-lg-8">
+<div class="yt-comments-card card sticky-top" id="commentsCard">
+ 
+        {{-- Header --}}
+        <div class="card-header yt-comments-header border-0 pb-2">
+            <h6 class="mb-0 font-weight-bold text-white">
+                Comments <span class="text-light-50">(<span id="comment-count">{{ $comments->count() }}</span>)</span>
+            </h6>
+        </div>
 
- 		<div class="card-body row border-top px-0 mt-70 mx-0">
- 				@auth
-			    <form id="comment-form" action="{{ route('comment.post', ['commentableType' => 'video', 'commentableId' => $video->id]) }}" method="POST">
- 					@csrf
-				    <div class="chat-footer d-flex align-items-center">
- 				<div class="flex-grow-1 pe-2">
- 					<div class="input-group">
- 						<input type="text" class="form-control"  name="comment" rows="3" placeholder="Type a comment">
-						<button type="submit" class="input-group-text"><i class="bx bx-send"></i></button>
- 					</div>
- 				</div>
- 			</div>
- 				</form>
-		    @else
-			    <p class="text-center mt-3">Please <a href="{{ route('user.login') }}">login</a> to post a comment.
- 				</p>
-		    @endauth
+        {{-- Comment List --}}
+        <div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
+            <div id="commentlist">
 
- 		</div>
+                @forelse ($comments as $comment)
+				@php
+    $comment_user = $comment->user; 
 
-			</div>
-		</div>
+                        $sanitizedComment = preg_replace([
+                            '/https?:\/\/\S+/',   // URLs
+                            '/\b\d{10,13}\b/'     // phone numbers
+                        ], '', $comment->comment);
+                    @endphp
+
+                    <div class="media py-3 border-bottom border-dark">
+                        {{-- Avatar --}}
+                        <img
+                            src="{{ $comment_user->image ?? asset('avatar.png') }}"
+                            class="mr-3 rounded-circle"
+                            style="width:42px;height:42px;object-fit:cover;"
+                            alt="{{ ucfirst($comment_user->name ?? 'Unknown') }}"
+                        >
+
+                        {{-- Content --}}
+                        <div class="media-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center flex-wrap">
+                                    <strong class="mr-2 text-white" style="font-size: 14px;">
+                                        {{ ucfirst($comment_user->name) ?? 'Unknown' }}
+                                    </strong>
+                                    <small class="text-light-50" style="font-size: 12px;">
+                                        {{ $comment->created_at->diffForHumans() }}
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="mt-1 text-light" style="font-size: 14px; line-height: 1.4;">
+                                {{ trim($sanitizedComment) }}
+                            </div>
+
+                            {{-- Actions --}}
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
+                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
+                                <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center text-light-50 py-4">
+                        No comments yet. Be the first to comment.
+                    </div>
+                @endforelse
+
+            </div>
+        </div>
+
+        {{-- Comment Input --}}
+		<div class="card-footer yt-comments-footer border-top border-dark">
+		<form id="comment-form"
+      action="{{ route('comment.post', ['commentableType' => 'video', 'commentableId' => $video->id]) }}"
+      method="POST">
+    @csrf
+
+    <div class="media align-items-start">
+        <img src="{{ auth()->user()->image ?? asset('avatar.png') }}"
+             class="mr-3 rounded-circle"
+             style="width:38px;height:38px;object-fit:cover;"
+             alt="me">
+
+        <div class="media-body">
+            <div class="input-group">
+                <input type="text"
+                       name="comment"
+                       id="comment-input"
+                       class="form-control yt-comment-input"
+                       placeholder="Add a comment..."
+                       required>
+
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-sm btn-send" id="comment-submit-btn">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</div>
+
+
+    </div>
+</div>

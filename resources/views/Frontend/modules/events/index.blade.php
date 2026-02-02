@@ -1,30 +1,73 @@
+@php use Carbon\Carbon; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
-
-<!--start page wrapper -->
-<div class="page-wrapper">
-	<div class="page-content">
-		<section class="event">
-
+<!-- main-area -->
+<main>
+ 
+	<!-- breadcrumb-area -->
+	<section class="breadcrumb-area breadcrumb-bg" data-background="{{ asset('assets/img')}}/bg/breadcrumb_bg.jpg">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="breadcrumb-content">
+						<h2 class="title">Our <span>Events</span></h2>
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="{{'/'}}">Home</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Events</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- breadcrumb-area-end -->
+	<!-- movie-area -->
+	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
+		<div class="container">
 			<h5 class="mb-3 section-title">
 				<!-- Error Alert -->
 				@if (session('success'))
 					You dont Have an active subscription. Pick an Event Below <br>
-				@else
-					All Events
+
 				@endif 
 			</h5>
-			<div class="row ">
-				@foreach($events as $event) 
-					<div class="col-12 col-lg-3 col-md-12 col-xl-3 col-lg-3 col-xxl-3 mb-4">
-						@include('Frontend.includes.components.cards.events')
+			<div class="row align-items-end mb-60">
+				<div class="col-lg-6">
+					<div class="section-title text-center text-lg-left">
+						<span class="sub-title">.......</span>
+						<h2 class="title">Latest Videos</h2>
 					</div>
+				</div>
+				<div class="col-lg-6">
+				</div>
+			</div>
+			<div class="row tr-movie-active">
+				@foreach($events as $event)  
+					@include('Frontend.includes.components.cards.events')
 				@endforeach
 			</div>
-			<!--end row-->
-		</section> 
-		@endsection
-		@section('header')
-		@endsection
-		@section('footer')
-		@endsection
+			<div class="row">
+				<div class="col-12">
+					<div class="pagination-wrap mt-30">
+						<nav>
+							<ul>
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">Next</a></li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- movie-area-end -->
+	@endsection
+	@section('header')
+	@endsection
+	@section('footer')
+	@endsection
