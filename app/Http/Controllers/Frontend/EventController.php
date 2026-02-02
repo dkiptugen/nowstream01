@@ -26,8 +26,11 @@
 				 
 					
 					// Add the fetched events to the data array
-					$this->data['events'] = Cache::rememberOnce('events',now()->addDay(),$this->get_events ());
-					return view('Frontend.modules.events.index', $this->data);
+					$events = Event::with(['eventRates' => function($q){
+						$q->where('status', true)->orderBy('cost', 'asc');
+					}])->where('status', 1)->get();
+					
+					return view('Frontend.modules.events.index', compact('events'));
 				}
 			
 			public function pay(Request $request, $id, $rate_id)

@@ -84,6 +84,15 @@
 					return Attribute::make (get: fn($value) => $stream);
 					
 				}
+                public function eventRates()
+                {
+                    return $this->hasMany(EventRate::class, 'event_id', 'event_id');
+                }
+                public function event()
+                {
+                    return $this->belongsTo(Event::class, 'event_id');
+                }
+             
 		 
 			public function getStartTimeAttribute($value)
 				{
