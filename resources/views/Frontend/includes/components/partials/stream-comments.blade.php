@@ -24,12 +24,25 @@
 
                     <div class="media py-3 border-bottom border-dark">
                         {{-- Avatar --}}
-                        <img
-                            src="{{ $comment_user->image ?? asset('avatar.png') }}"
-                            class="mr-3 rounded-circle"
-                            style="width:42px;height:42px;object-fit:cover;"
-                            alt="{{ ucfirst($comment_user->name ?? 'Unknown') }}"
-                        >
+                        @php
+    $commentUser = $comment_user;
+    $initials = collect(explode(' ', $commentUser->name ?? 'U'))->map(fn($word) => strtoupper(substr($word, 0, 1)))->join('');
+@endphp
+
+@if($commentUser->image)
+    <img
+        src="{{ asset($commentUser->image) }}"
+        class="mr-3 rounded-circle"
+        style="width:42px;height:42px;object-fit:cover;"
+        alt="{{ ucfirst($commentUser->name ?? 'Unknown') }}"
+    >
+@else
+    <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+         style="width:42px;height:42px;font-weight:bold;">
+        {{ $initials }}
+    </div>
+@endif
+
 
                         {{-- Content --}}
                         <div class="media-body">
@@ -68,15 +81,28 @@
         {{-- Comment Input --}}
 		<div class="card-footer yt-comments-footer border-top border-dark">
 		<form id="comment-form"
-      action="{{ route('comment.post', ['commentableType' => 'video', 'commentableId' => $stream->id]) }}"
+      action="{{ route('comment.post', ['commentableType' => 'stream', 'commentableId' => $stream->id]) }}"
       method="POST">
     @csrf
 
     <div class="media align-items-start">
-        <img src="{{ auth()->user()->image ?? asset('avatar.png') }}"
-             class="mr-3 rounded-circle"
-             style="width:38px;height:38px;object-fit:cover;"
-             alt="me">
+	@php
+    $user = auth()->user();
+    $initials = collect(explode(' ', $user->name))->map(fn($word) => strtoupper(substr($word, 0, 1)))->join('');
+@endphp
+
+@if($user->image)
+    <img src="{{ asset($user->image) }}" 
+         alt="{{ $user->name }}" 
+         class="rounded-circle" 
+         style="width:42px;height:42px;object-fit:cover;">
+@else
+    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" 
+         style="width:42px;height:42px;font-weight:bold;">
+        {{ $initials }}
+    </div>
+@endif
+
 
         <div class="media-body">
             <div class="input-group">
