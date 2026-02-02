@@ -172,7 +172,11 @@ Route::middleware(['detectCountry'])->group(function ()
         Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
     });
-
+    Route::middleware('auth')->group(function () {
+        Route::post('comment/{comment}/like', [CommentController::class, 'like'])->name('comment.like');
+        Route::post('comment/{comment}/dislike', [CommentController::class, 'dislike'])->name('comment.dislike');
+    });
+    
 
 require __DIR__ . '/admin.php';
 

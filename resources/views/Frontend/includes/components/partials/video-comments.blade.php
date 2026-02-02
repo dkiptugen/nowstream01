@@ -62,11 +62,18 @@
                             </div>
 
                             {{-- Actions --}}
-                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
-                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
-                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
-                                <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
-                            </div>
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;" data-comment-id="{{ $comment->id }}">
+    <a href="javascript:void(0)" class="mr-3">
+        <i class="fa fa-thumbs-up"></i> Like
+        <span class="likes-count">{{ $comment->likes()->where('type','like')->count() }}</span>
+    </a>
+    <a href="javascript:void(0)" class="mr-3">
+        <i class="fa fa-thumbs-down"></i> Dislike
+        <span class="dislikes-count">{{ $comment->likes()->where('type','dislike')->count() }}</span>
+    </a>
+    <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
+</div>
+
                         </div>
                     </div>
                 @empty
@@ -127,3 +134,37 @@
 
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.yt-actions a').forEach(el => {
+        el.addEventListener('click', function () {
+            const commentEl = el.closest('.media');
+            const commentId = commentEl.dataset.commentId;
+            let url = '';
+
+            if (el.querySelector('i').classList.contains('fa-thumbs-up')) {
+                url = `/comment/${commentId}/like`;
+            } else if (el.querySelector('i').classList.contains('fa-thumbs-down')) {
+                url = `/comment/${commentId}/dislike`;
+            }
+
+            if (url) {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(res => res.json())
+                .then(data => {
+                    // Update counts
+                    el.closest('.yt-actions').querySelector('.likes-count')?.remove();
+                    el.insertAdjacentHTML('beforeend', ` <span class="likes-count ml-1">${data.likes || 0}</span>`);
+                });
+            }
+        });
+    });
+});
+
+</script>

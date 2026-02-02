@@ -19,4 +19,14 @@ class Comment extends Model
     {
         return $this->morphTo();
     }
+    public function likes()
+{
+    return $this->hasMany(CommentLike::class);
+}
+
+public function userLiked($userId)
+{
+    return $this->likes()->where('user_id', $userId)->first();
+}
+
 }
