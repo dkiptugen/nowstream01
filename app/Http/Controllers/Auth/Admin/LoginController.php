@@ -150,17 +150,6 @@
             protected function authenticated(Request $request, $user)
                 {
 
-                    if ($user->type == 'owner')
-                        {
-                            Cache::put('user_channels_' . $user->id, Channel::orderBy('created_at', 'desc')->limit(10)->get());
-                        }
-                    else
-                        {
-                            if (!is_null($user->channels))
-                                {
-                                    Cache::put('user_channels_' . $user->id, $user->channels);
-                                }
-                        }
 
 
                 }

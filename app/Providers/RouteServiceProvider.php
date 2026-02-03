@@ -18,7 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      * @var string
      */
     public const HOME = '/home';
-    public const BACKEND = '/Administration';
+    public const BACKEND = '/backend';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -37,14 +37,14 @@ class RouteServiceProvider extends ServiceProvider
 	        Route::middleware('api')
 	             ->prefix('malipo')
 	             ->group(base_path('routes/mpesa.php'));
-	        
+
 	        Route::middleware('dpo')
 	             ->prefix('dpo')
 	             ->group(base_path('routes/dpo.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-            
+
 			Route::middleware(['web','admin.guard'])
                 ->prefix('admin')
                  ->group(base_path('routes/admin.php'));
