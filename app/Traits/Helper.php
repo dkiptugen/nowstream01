@@ -4,6 +4,7 @@
 
 
     use Illuminate\Support\Facades\Http;
+	use Illuminate\Support\Facades\Storage;
 
 
     trait Helper
@@ -131,7 +132,7 @@
 		    public function thumbnail_tag($thumbnail, $class, $style = "")
                 {
                     return '<div class="w-100 h-100">
-								<img src="' . asset($thumbnail) . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
+								<img src="' . Storage::disk(config('filesystems.default'))->url($thumbnail) . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
 							</div>';
                 }
 	    

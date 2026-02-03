@@ -27,7 +27,7 @@
 					
 					// Add the fetched events to the data array
 					$events = Event::with(['eventRates' => function($q){
-						$q->where('status', true)->orderBy('cost', 'asc');
+						$q->where('status', 1)->orderBy('cost', 'asc');
 					}])->where('status', 1)->get();
 					
 					return view('Frontend.modules.events.index', compact('events'));

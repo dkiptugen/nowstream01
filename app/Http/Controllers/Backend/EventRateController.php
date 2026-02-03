@@ -44,7 +44,7 @@
 				{
 					$request->validate([
 						                   'name'                   => 'required|string|max:255',
-						                   ''                       => 'nullable|numeric',
+						                   'cost'                       => 'nullable|numeric',
 						                   'date_from'              => 'required|string|max:255',
 						                   'date_to'                => 'required|string|max:255',
 						                   'reserved_currency_cost' => 'nullable|numeric',
@@ -53,9 +53,10 @@
 					
 					$eventRate           = new EventRate($request->all());
 					$eventRate->event_id = $event;
+					$eventRate->visible = 1;
 					$eventRate->save();
 					
-					return redirect()->route('event.rates.index', ['event' => $event])->with('success', 'Event rate created successfully.');
+					return redirect()->route('backend.event.rates.index', ['event' => $event])->with('success', 'Event rate created successfully.');
 				}
 		
 		/**

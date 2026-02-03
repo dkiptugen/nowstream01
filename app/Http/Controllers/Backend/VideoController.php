@@ -68,7 +68,7 @@ class VideoController extends Controller
                     {
                         $uploadService    = new UploadService();
                         $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails',
-                            'linode'
+                            'public_2'
                         );
                         $video->thumbnail = $thumbnailPath['path'];
                     }
@@ -78,7 +78,7 @@ class VideoController extends Controller
                     {
                         $uploadService     = new UploadService();
                         $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos',
-                            'linode'
+                            'public_2'
                         );
                         $video->video_path = $videoPath['path'];
                     }
