@@ -56,11 +56,11 @@
                                     $nestedData['event_name']   = $post->event_name;
                                     $nestedData['thumbnail']    = $this->thumbnail_tag($post->event_image, 'img-fluid', 'height:50px; width:50px;');
                                     $nestedData['stream_key']   = $this->anchor_link (optional($post->streams)
-	                                    ->stream_key, route('event.stream.index', $post->id));
+	                                    ->stream_key, route('backend.event.stream.index', $post->id));
 									$nestedData['publish_date'] = $post->publish_date->toDayDateTimeString();
-									$nestedData['videos']       = $this->anchor_link($post->videos_count, route('event.video.index', $post->id));
+									$nestedData['videos']       = $this->anchor_link($post->videos_count, route('backend.event.video.index', $post->id));
                                     $nestedData['created_at']   = $post->created_at->toDayDateTimeString();
-                                    $nestedData['rates']        = $this->anchor_link($post->rates_count, route('event.rates.index', $post->id));
+                                    $nestedData['rates']        = $this->anchor_link($post->rates_count, route('backend.event.rates.index', $post->id));
                                     $nestedData['status']       = ActivityStatus::from($post->status)->name;
                                     $nestedData['action']       = $btn;
                                     $data[]                     = $nestedData;
