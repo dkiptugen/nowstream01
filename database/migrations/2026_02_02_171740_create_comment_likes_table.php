@@ -18,7 +18,6 @@ return new class extends Migration
             $table->enum('type', ['like', 'dislike']);
             $table->unique(['comment_id', 'user_id']);
             $table->timestamps();
-            $table->unique(['comment_id', 'user_id']); 
         });
         
     }
