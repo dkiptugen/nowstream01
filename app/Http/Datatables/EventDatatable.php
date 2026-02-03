@@ -18,7 +18,7 @@
                 {
                     $columns       = $this->columns;
                     $query         = Event::query();
-                    $query->where('channel_id',$request->user()->guard('admin')->channel_id);
+                    //$query->where('channel_id',$request->user()->channel_id);
                     $limit         = $request->input('length');
                     $start         = $request->input('start');
                     $order         = $columns[$request->input('order.0.column')];
