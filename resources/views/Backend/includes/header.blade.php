@@ -10,6 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ ucfirst($name) }} : {{ $title }}</title>
     <link href="{{ asset('backend_assets/css/app.css?'.time())}}" rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css">
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}" type="image/png" />
     @yield('header')
 </head>

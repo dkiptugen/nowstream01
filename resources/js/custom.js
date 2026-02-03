@@ -5,7 +5,6 @@ import './modules/font-awesome'
 import './modules/sidebar'
 import './modules/toastr'
 import './modules/user-agent'
-import './modules/apexcharts'
 import './modules/chartjs'
 import './modules/select2'
 import './modules/daterangepicker'
@@ -18,10 +17,60 @@ import './modules/datatables'
 import './modules/dropzone'
 
 
+
+
 import * as $ from "jquery";
 import {document} from "postcss";
 
 $('#multiselect').multiselect();
+$(function () {
+    const inputs = $('.otp-input');
+    const hiddenOtp = $('#otp');
+
+    inputs.on('input', function () {
+        this.value = this.value.replace(/\D/g, '');
+
+        if (this.value && $(this).next('.otp-input').length) {
+            $(this).next('.otp-input').focus();
+        }
+
+        updateOtp();
+    });
+
+    inputs.on('keydown', function (e) {
+        if (e.key === 'Backspace' && !this.value && $(this).prev('.otp-input').length) {
+            $(this).prev('.otp-input').focus();
+        }
+    });
+
+    inputs.on('paste', function (e) {
+        const paste = e.originalEvent.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        if (!paste) return;
+
+        inputs.each(function (i) {
+            this.value = paste[i] || '';
+        });
+
+        updateOtp();
+        inputs.eq(paste.length - 1).focus();
+    });
+
+    function updateOtp() {
+        let otp = '';
+        inputs.each(function () {
+            otp += this.value || '';
+        });
+        hiddenOtp.val(otp);
+
+        // auto submit
+        if (otp.length === 6) {
+            $('#otp-form').submit();
+        }
+    }
+
+    // focus first box on load
+    inputs.first().focus();
+});
 $(document).ready(function () {
     $(document).on('submit', '#image-search', function (e) {
         e.preventDefault();
@@ -73,62 +122,71 @@ $(document).ready(function () {
 
     });
     $(document).on('change', '.file-input', function () {
-        const $input = $(this);
-        const files = $input[0].files;
-        const filesCount = files.length;
-        const $textbox = $input.prev();
-        const $progressBarContainer = $('#progressBarContainer');
-        const $progressBar = $('#uploadProgressBar');
-        const formName = $input.attr('name');
+        var filesCount = $(this)[0].files.length;
+        var textbox = $(this).prev();
+        var progressBarContainer = $('#progressBarContainer');
+        var progressBar = $('#uploadProgressBar');
+        progressBar.removeClass('d-none');
 
-        $textbox.text(filesCount === 1 ? files[0].name : `${filesCount} files selected`);
-        $("#err").hide().empty();
-        $progressBarContainer.show();
-        $progressBar.removeClass('d-none').css('width', '0%').attr('aria-valuenow', 0);
+        if (filesCount === 1) {
+            var fileName = $(this).val().split('\\').pop();
+            textbox.text(fileName);
+        } else {
+            textbox.text(filesCount + ' files selected');
+        }
 
-        const data = new FormData();
-        Array.from(files).forEach(file => data.append(formName, file));
+        var data = new FormData();
 
+        $.each($(this)[0].files, function (obj, v) {
+            data.append('images', v);
+        });
+
+        // Display the progress bar container
+        progressBarContainer.show();
+
+        // Perform file upload with progress bar
         $.ajax({
-            url: $input.data('url'),
-            type: 'POST',
-            data,
+            url: $(this).data('url'),
+            type: "POST",
+            data: data,
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             contentType: false,
             cache: false,
             processData: false,
             xhr: function () {
-                const xhr = new window.XMLHttpRequest();
+                var xhr = new window.XMLHttpRequest();
+
+                // Listen to the progress event
                 xhr.upload.addEventListener("progress", function (evt) {
                     if (evt.lengthComputable) {
-                        const percentComplete = Math.round((evt.loaded / evt.total) * 100);
-                        $progressBar.css('width', `${percentComplete}%`);
-                        $progressBar.attr('aria-valuenow', percentComplete);
+                        var percentComplete = (evt.loaded / evt.total) * 100;
+                        progressBar.width(percentComplete + '%');
+                        progressBar.attr('aria-valuenow', percentComplete);
                     }
                 }, false);
+
                 return xhr;
             },
             success: function (data) {
                 if (data === 'invalid') {
+                    // invalid file format.
                     $("#err").html("Invalid File!").fadeIn();
                 } else {
+                    //console.log(data);
+                    // view uploaded file.
                     $(".upload").addClass('d-none').fadeOut();
                     $("#image").attr('src', data.imageloc);
                     $("#imgname").val(data.imgname);
                     $("#size").val(data.size);
                     $("#mime").val(data.mime);
                     $("#content-preview").removeClass('d-none').addClass('d-flex').fadeIn();
+
+                    // Reset progress bar after successful upload
+                    progressBar.width('0');
                 }
-                $progressBar.css('width', '0%').attr('aria-valuenow', 0);
             },
-            error: function (xhr) {
-                let errMsg = "Upload failed.";
-                if (xhr.responseJSON?.message) {
-                    errMsg = xhr.responseJSON.message;
-                } else if (xhr.responseText) {
-                    errMsg = xhr.responseText;
-                }
-                $("#err").html(errMsg).fadeIn();
+            error: function (e) {
+                $("#err").html(e).fadeIn();
             }
         });
     });
@@ -309,15 +367,13 @@ $(document).ready(function () {
                     ['para', ['ul', 'ol', 'paragraph', 'style', 'height', 'color']],
                     ['insert', ['extendedLink', 'table', 'mapEmbed', 'dynamicInsert']],
                     ['custom', ['imageLibrary', 'audioLibrary', 'videoLibrary', 'fileLibrary']],
-                    ['social', ['magicEmbed']],
+                    ['social', ['twitterEmbed', "insertYoutube", 'insertFacebook', 'instagramEmbed', 'tiktokEmbed', 'spotifyEmbed']],
                     ['misc', ['undo', 'redo', 'clear']],
-                    ['view', ['fullscreen', 'codeview', 'help']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
 
                 ],
-                fileFetchUrl: '/api/files', // API to fetch
-                                            // files
-                fileUploadUrl: '/api/upload', // API to
-                                              // upload files
+                fileFetchUrl: '/api/files', // API to fetch files
+                fileUploadUrl: '/api/upload', // API to upload files
                 TEXT_NODE: {
                     onImageUpload: function (image) {
 
@@ -329,54 +385,39 @@ $(document).ready(function () {
                     onPaste: function (e) {
                         e.preventDefault();
 
-                        // Get clipboard data
+                        // Get the plain text and HTML from the clipboard
                         var clipboardData = (e.originalEvent || e).clipboardData || window.clipboardData;
                         var html = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
 
-                        // Debugging: Check clipboard
-                        // content
+                        // Debugging: Check if clipboard data is retrieved
                         console.log("Clipboard HTML:", html);
 
-                        if (!html) return; // Exit if no
-                                           // content
-
-                        // Create a temporary container
-                        // to parse the HTML
+                        // Create a temporary container to parse the HTML
                         var $tempContainer = $('<div>').html(html);
 
-                        // **1. Prevent Pasted Images**
-                        $tempContainer.find('img').remove();
+                        // Remove all tags except <p>, <a>, <h1>-<h6>, and remove attributes from these tags
+                        //$tempContainer.find('*').not('p, a, h1, h2, h3, h4, h5, h6').remove();
+                        $tempContainer.find('p, a, h1, h2, h3, h4, h5, h6, ol, ul, li,strong,span,div').removeAttr('style').removeAttr('class');
 
-                        // **2. Remove all tags except
-                        // allowed ones & remove
-                        // attributes**
-                        $tempContainer.find('p, a, h1, h2, h3, h4, h5, h6, ol, ul, li, strong, span, div')
-                            .removeAttr('style')
-                            .removeAttr('class');
+                        // Remove empty <p> tags and <p><br/></p> tags
+                        $tempContainer.find('p:empty, p:has(> br), div:empty').remove();
 
-                        // **3. Remove empty <p> and
-                        // <div> tags**
-                        // $tempContainer.find('p:empty, p:has(> br), div:empty').remove();
-
-                        // **4. Get cleaned HTML content**
+                        // Get the cleaned HTML
                         var cleanedHTML = $tempContainer.html();
 
-                        // Debugging: Check cleaned HTML
+                        // Debugging: Check the cleaned HTML before inserting it
                         console.log("Cleaned HTML:", cleanedHTML);
 
-                        // **5. Insert cleaned HTML into
-                        // the editor**
+                        // Insert the cleaned HTML into the editor
                         $(this).summernote('pasteHTML', cleanedHTML);
 
-                        // Debugging: Confirm content was
-                        // inserted correctly
+                        // Debugging: Confirm the cleaned HTML was inserted
                         setTimeout(() => {
                             console.log("Editor content after paste:", $(this).summernote('code'));
                         }, 500);
                     },
                     onChange: function (contents) {
-                        // Debounced autosave for
-                        // specific Summernote editor
+                        // Debounced autosave for specific Summernote editor
                         clearTimeout(this.autosaveTimer);
                         this.autosaveTimer = setTimeout(() => {
                             autosaveSpecificSummernote(editor, autosaveUrl);
@@ -391,9 +432,7 @@ $(document).ready(function () {
             });
 
             function autosaveSpecificSummernote(editor, url) {
-                const formData = $('#post-form').serialize(); // Serialize
-                                                              // the form
-                                                              // data
+                const formData = $('#post-form').serialize(); // Serialize the form data
 
                 $.ajax({
                     url: url,  // Dynamic autosave URL
@@ -469,16 +508,27 @@ $(document).ready(function () {
     $(document).on('submit', '.create-form', function (e) {
         e.preventDefault();
 
-        var frm = $(this);
-        var formData = new FormData(this);
+        const frm = $(this);
+        const button = e.originalEvent.submitter;
+        const $button = $(button); // 👈 important
+        const btnText = $button.html();
+
+        const formData = new FormData(this);
+
+        $button
+            .prop('disabled', true)
+            .html('<i class="fa fa-spinner fa-spin"></i> Processing...');
 
         $.ajax({
             type: 'POST',
             url: frm.attr('action'),
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             data: formData,
             processData: false,
             contentType: false,
+
             success: function (Mess) {
                 if (Mess.status === true) {
                     toastr.success(Mess.msg, Mess.header, {
@@ -497,11 +547,14 @@ $(document).ready(function () {
                         progressBar: true,
                         newestOnTop: true,
                         onHidden: function () {
-                            // window.location = Mess.url;
+                            $button
+                                .prop('disabled', false)
+                                .html(btnText);
                         }
                     });
                 }
             },
+
             error: function (xhr, status, errorThrown) {
                 toastr.error(errorThrown, xhr.responseText, {
                     timeOut: 1000,
@@ -509,7 +562,9 @@ $(document).ready(function () {
                     progressBar: true,
                     newestOnTop: true,
                     onHidden: function () {
-                        //window.location.reload();
+                        $button
+                            .prop('disabled', false)
+                            .html(btnText);
                     }
                 });
             }
@@ -520,44 +575,98 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
+    let debounceTimeout;
     const $tagsInput = $('.tags-input');
-    const restrictedTags = ['the star',
-        'star news',
-        'the star online',
-        'thestaronline',
-        'the star kenya',
-        'thestar',
-        'thestardigital',
-        'the star digital',
-        'star',
-        'the star newspaper',
-        'star news kenya',
-        'the star news',
-        'the star',
-        'mpasho'
-
-    ]; // Tags to block
-
+    const $suggestions = $('#suggestions');
     $tagsInput.tagsinput({
-        tagClass: 'badge badge-primary mr-2',
+        tagClass: 'badge badge-blue mr-2 mb-2',
+
     });
 
-    // Listen for 'beforeItemAdd' event to restrict certain tags
-    $tagsInput.on('beforeItemAdd', function (event) {
-        const tag = event.item.toLowerCase().trim(); // Normalize case and trim whitespace
+    // Debounce function
+    /* function debounce(func, delay) {
+         let timeout;
+         return function (...args) {
+             clearTimeout(timeout);
+             timeout = setTimeout(() => func.apply(this, args), delay);
+         };
+     }
 
-        if (restrictedTags.includes(tag)) {
-            event.cancel = true; // Prevent the tag from being added
-            alert(`The tag "${tag}" is not allowed.`);
-        }
-        if (tag.includes('star')) {
-            event.cancel = true; // Prevent the tag from being added
-            alert(`Tags containing the word "star" are not allowed.`);
-        }
-    });
+     // Fetch suggestions
+     function fetchSuggestions(query) {
+         $.ajax({
+             url: '/api/suggest-tags',
+             method: 'GET',
+             cache: true,
+             data: {query: query},
+             success: function (data) {
+                 if (data.suggestions.length > 0) {
+                     displaySuggestions(data.suggestions);
+                 } else {
+                     $suggestions.empty(); // Clear suggestions if no results
+                 }
+             }
+         });
+     }
 
+     // Display suggestions
+     function displaySuggestions(suggestions) {
+         $suggestions.empty();
+         const suggestionItems = suggestions.map(suggestion =>
+             `<div class="autocomplete-suggestion">${suggestion}</div>`
+         ).join(''); // Join suggestions into a single string
+         $suggestions.html(suggestionItems); // Update the DOM once
+     }
 
+     // Handle input changes
+     $tagsInput.on('input', function () {
+         const query = $(this).val().trim();
+         if (query.length > 0) {
+             debounce(fetchSuggestions, 100)(query);
+         } else {
+             $suggestions.empty();
+         }*/
 });
+
+// Handle suggestion clicks
+/* $suggestions.on('click', '.autocomplete-suggestion', function () {
+	 const selectedTag = $(this).text();
+	 addTag(selectedTag);
+	 $tagsInput.val('').trigger('input'); // Clear input and trigger input event to refresh suggestions
+	 $suggestions.empty();
+ });*/
+
+// Add tag to the input and check database
+/*function addTag(tag) {
+	$tagsInput.tagsinput('add', tag);
+
+	$.ajax({
+		url: '/api/check-tag', // Your API endpoint to check if the tag exists
+		method: 'POST',
+		data: {tag: tag},
+		success: function (response) {
+			if (!response.exists) {
+				// Add the tag to the database
+				$.ajax({
+					url: '/api/add-tag', // Your API endpoint to add a new tag
+					method: 'POST',
+					data: {tag: tag},
+					success: function () {
+						console.log('Tag added to the database');
+					}
+				});
+			}
+		}
+	});
+}*/
+
+// Hide suggestions on click outside
+/* $(document).on('click', function (event) {
+	 if (!$(event.target).closest('#tags-input').length) {
+		 $suggestions.empty();
+	 }
+ });
+});*/
 
 
 $(document).on('click', '#thumbnail', function (e) {
@@ -580,7 +689,10 @@ $(document).ready(function (event) {
 
 $(document).ready(function (event) {
 
-
+    // Daterangepicker
+    $('input[name="daterange"]').daterangepicker({
+        opens: 'left'
+    });
     $('input[name="datetimes"], .datetimes').daterangepicker({
         timePicker: true,
         opens: 'left',
@@ -598,45 +710,6 @@ $(document).ready(function (event) {
         startDate: moment(),
         locale: {
             format: 'Y-MM-DD HH:mm:ss'
-        }
-    });
-    $('#schedule_date').daterangepicker({
-        timePicker: false,
-        opens: 'left',
-        singleDatePicker: true,
-        showDropdowns: true,
-        locale: {
-            format: 'Y-MM-DD'
-        }
-    });
-    $('.starttime').datetimepicker({
-        format: 'HH:mm', // 24-hour time format
-        stepping: 15,    // optional minute interval
-        icons: {
-            time: 'far fa-clock',
-            date: 'far fa-calendar',
-            up: 'fas fa-arrow-up',
-            down: 'fas fa-arrow-down',
-            previous: 'fas fa-chevron-left',
-            next: 'fas fa-chevron-right',
-            today: 'far fa-calendar-check',
-            clear: 'fas fa-trash',
-            close: 'fas fa-times'
-        }
-    });
-    $('.endtime').datetimepicker({
-        format: 'HH:mm', // 24-hour time format
-        stepping: 15,    // optional minute interval
-        icons: {
-            time: 'far fa-clock',
-            date: 'far fa-calendar',
-            up: 'fas fa-arrow-up',
-            down: 'fas fa-arrow-down',
-            previous: 'fas fa-chevron-left',
-            next: 'fas fa-chevron-right',
-            today: 'far fa-calendar-check',
-            clear: 'fas fa-trash',
-            close: 'fas fa-times'
         }
     });
     var start = moment().subtract(29, 'days');
@@ -659,35 +732,4 @@ $(document).ready(function (event) {
         }
     }, cb);
     cb(start, end);
-});
-$(document).ready(function () {
-
-    const toggleBtn = $("#theme-toggle");
-
-    function applyTheme(theme) {
-        $('html').attr("data-theme", theme);
-        localStorage.setItem("theme", theme);
-
-        $('body').toggleClass('dark-mode', theme === "dark");
-    }
-
-    // Load saved theme or use system preference
-    let saved = localStorage.getItem("theme");
-
-    if (!saved) {
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        saved = prefersDark ? "dark" : "light";
-    }
-
-    applyTheme(saved);
-
-    // Toggle
-    toggleBtn.on("click", function (e) {
-        e.preventDefault();
-        console.log("Theme toggle clicked");
-
-        const newTheme = $('body').hasClass('dark-mode') ? 'light' : 'dark';
-        applyTheme(newTheme);
-    });
-
 });

@@ -19592,3 +19592,11 @@ th {
 .action-links a i, .action-links button i {
   margin-right: 5px;
 }
+
+@media (prefers-color-scheme: dark) {
+  .otp-boxes span {
+    background: #111827;
+    border-color: #374151;
+    color: #fff;
+  }
+}

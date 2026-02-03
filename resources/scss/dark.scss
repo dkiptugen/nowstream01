@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,500,700');
 
 // Theme variables
-@import "variables";
+@import "dark_variables";
 
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
@@ -77,3 +77,10 @@
 @import "~bootstrap4-tagsinput/tagsinput.css";
 @import "vendor/select2";
 @import "custom";
+@media (prefers-color-scheme: dark) {
+    .otp-boxes span {
+        background: #111827;
+        border-color: #374151;
+        color: #fff;
+    }
+}

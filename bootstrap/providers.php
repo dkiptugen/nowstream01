@@ -11,6 +11,5 @@ return [
     BroadcastServiceProvider::class,
     EventServiceProvider::class,
     MacrosServiceProvider::class,
-    LocationServiceProvider::class,
     LocationServiceProvider::class
 ];

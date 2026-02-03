@@ -4,8 +4,6 @@ import "bootstrap"; // Ensure Bootstrap's JS is included
 var FileLibraryButton = function (context) {
     var ui = $.summernote.ui;
 
-    let fileUploadUrl = $('.editor').data('fileuploadurl'); //
-    console.log(fileUploadUrl);
     var button = ui.button({
         contents: '<i class="fas fa-file"></i>',
         tooltip: 'Insert File',
@@ -33,11 +31,11 @@ var FileLibraryButton = function (context) {
                 '<form id="uploadFileForm" method="post" enctype="multipart/form-data">' +
                 '<div class="form-group">' +
                 '<label for="uploadFileName" class="control-label">Name:</label>' +
-                '<input type="text" id="uploadFileName" name="filename" class="form-control"/>' +
+                '<input type="filename" id="uploadFileName" name="filename" class="form-control"/>' +
                 '</div>' +
                 '<div class="form-group">' +
                 '<label for="uploadFileInput" class="control-label">Upload File:</label>' +
-                '<input type="file" id="uploadFileInput" name="document" class="form-control-file"/>' +
+                '<input type="file" id="uploadFileInput" name="file" class="form-control-file"/>' +
                 '</div>' +
                 '<button type="submit" class="btn btn-primary">Upload</button>' +
                 '</form>' +
@@ -65,40 +63,18 @@ var FileLibraryButton = function (context) {
                 e.preventDefault();
                 var formData = new FormData(this);
                 $.ajax({
-                    url: fileUploadUrl, // Replace with your upload URL
+                    url: '/', // Replace with your upload URL
                     type: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function (response) {
-                        if (response.file_location)
-                        {
-                        var range = context.invoke('editor.createRange'); // Capture the current caret position
-                        console.log(range); // Debugging: Log the range object
+                        var fileUrl = response.fileUrl;
+                        var fileName = response.fileName;
+                        var fileNode = $('<a>').attr('href', fileUrl).attr('target', '_blank').text(fileName);
+                        context.invoke('editor.insertNode', fileNode[0]);
                         resetAndHideModal();
-                        if (range) {
-                            range.deleteContents(); // Remove any selected content (optional)
-
-                            var fileUrl = response.file_location;
-                            var fileName = response.title || 'Download File';
-                            var fileNode = $('<a>')
-                                .attr('href', fileUrl)
-                                .attr('target', '_blank')
-                                .addClass('file-link')
-                                .attr('download', fileName) // Optional: Add download attribute
-                                .text(fileName); // Ensure it is a DOM node
-
-
-                            range.insertNode(fileNode.get(0));
-
-                                    // Ensure the editor remains focused after insertion
-                                    context.invoke('editor.focus');
-
-                                }
-                        } else {
-                            alert('Invalid response. No file location provided.');
-                        }
                     },
                     error: function () {
                         alert('File upload failed. Please try again.');

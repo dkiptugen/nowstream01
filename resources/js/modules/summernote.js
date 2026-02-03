@@ -22,7 +22,6 @@ import './summernote/spotify'
 import './summernote/custom_link'
 import './summernote/wordcount'
 import './summernote/file_manager'
-import './summernote/magic-embed'
 
 window.summernote   =   summernote
 window.DOMPurify =DOMPurify

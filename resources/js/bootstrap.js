@@ -9,36 +9,12 @@ window._ = require('lodash');
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.$ = window.jQuery = require('jquery');
 window.Popper = require('@popperjs/core').default;
-
+window.$ = window.jQuery = require('jquery');
 require('bootstrap');
+require('./multiselect.min');
 require('./custom');
-
-
-import Echo from "laravel-echo";
-import io from "socket.io-client";
-
-/*
- // Ensure io is available globally
- window.io = io;
-
- // Initialize Echo
- window.Echo = new Echo({
- broadcaster: "socket.io",
- host: "https://echo.radioafrica.digital", // Change to your Socket.IO server
- enabledTransports: ['ws', 'wss'],
- });
- */
-/*
-window.Pusher = require('pusher-js');
-
-window.Echo = new Echo({
-	                       broadcaster: 'pusher',
-	                       key        : process.env.MIX_PUSHER_APP_KEY,
-	                       cluster    : process.env.MIX_PUSHER_APP_CLUSTER,
-	                       forceTLS   : true
-                       });*/
+require('./publication');
 
 
 /**

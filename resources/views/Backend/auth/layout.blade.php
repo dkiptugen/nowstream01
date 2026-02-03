@@ -15,20 +15,20 @@
     <meta name="robots" content="noindex">
     <meta name="googlebot" content="noindex">
     <!-- Styles -->
-    <link href="{{ secure_asset('backend_assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ secure_asset('backend_assets/css/app.css?'.time()) }}" rel="stylesheet">
 
 
 </head>
 <body>
-<main class="main h-100 w-100">
-    <div class="container h-100">
-        <div class="row h-100">
-            @yield('content')
+    <main class="main h-100 w-100">
+        <div class="container h-100">
+            <div class="row h-100">
+                @yield('content')
+            </div>
         </div>
-    </div>
-</main>.
+    </main>
     <!-- Scripts -->
-    <script src="{{ secure_asset('backend_assets/js/app.js') }}" defer></script>
+    <script src="{{ secure_asset('backend_assets/js/app.js?'.time()) }}" ></script>
 
 </body>
 </html>

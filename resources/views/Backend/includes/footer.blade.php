@@ -12,8 +12,9 @@
 </footer>
 </div>
 </div>
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
 <script type="module" src="{{ asset('backend_assets/js/app.js?'.time()) }}"></script>
-
+<script src="//cdn.datatables.net/2.3.7/js/dataTables.min.js"></script>
 
 @yield('footer')
 </body>
