@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Channel;
 use App\Models\SystemUserChannel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,6 +14,7 @@ class SystemUserChannelSeeder extends Seeder
      */
     public function run(): void
     {
-        SystemUserChannel::firstOrCreate(['channel_id'=>1,'system_user_id'=>1,'created_by'=>1]);
+        $channel = Channel::first();
+        SystemUserChannel::firstOrCreate(['channel_id'=>$channel->uuid,'system_user_id'=>1,'created_by'=>1]);
     }
 }
