@@ -74,7 +74,7 @@ class SubscriptionController extends Controller
      */
     public function datatable(Request $request, ChannelSubscriptionDatatable $datatable)
     {
-        $datatable->columns = [0=>'id'];
+        $datatable->columns = [0=>'uuid'];
         return response()->json($datatable->data($request));
     }
 

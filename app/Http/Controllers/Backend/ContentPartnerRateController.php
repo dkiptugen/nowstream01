@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ContentPartnerRate;
 use Illuminate\Http\Request;
 
-class StreamPartnerRateController extends Controller
+class ContentPartnerRateController extends Controller
 {
     /**
      * Display a listing of the resource.

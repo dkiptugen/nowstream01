@@ -74,7 +74,7 @@ class TransactionController extends Controller
      */
     public function datatable(Request $request, ChannelTransactionDatatable $datatable)
     {
-        $datatable->columns = [0=>'id'];
+        $datatable->columns = [0=>'uuid'];
         return response()->json($datatable->data($request));
     }
 

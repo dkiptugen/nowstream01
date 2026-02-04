@@ -9,15 +9,15 @@ use App\Http\Controllers\Auth\Admin\OutletController;
 use App\Http\Controllers\Auth\Admin\RegisterController;
 use App\Http\Controllers\Auth\Admin\ResetPasswordController;
 use App\Http\Controllers\Auth\Admin\VerificationController;
-use App\Http\Controllers\Backend\StreamController;
+use App\Http\Controllers\Backend\ContentController;
 use App\Http\Controllers\Backend\SubscriptionController;
 use App\Http\Controllers\Backend\TransactionController;
 use App\Http\Controllers\Backend\VideoController;
 use App\Http\Controllers\Backend\EventRateController;
 use App\Http\Controllers\Backend\LogsController;
 use App\Http\Controllers\Backend\ProfileController;
-use App\Http\Controllers\Backend\StreamPartnerController;
-use App\Http\Controllers\Backend\StreamPartnerRateController;
+use App\Http\Controllers\Backend\ContentPartnerController;
+use App\Http\Controllers\Backend\ContentPartnerRateController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RolesController;
 use App\Http\Controllers\Backend\ChannelController;
@@ -76,8 +76,8 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
         Route::resource('event', EventController::class);
         Route::post('event/datatable', [EventController::class, 'datatable'])->name('event.datatable');
 
-        Route::resource('stream', StreamController::class);
-        Route::post('stream/datatable', [StreamController::class, 'datatable'])->name('stream.datatable');
+        Route::resource('stream', ContentController::class);
+        Route::post('stream/datatable', [ContentController::class, 'datatable'])->name('stream.datatable');
 
 
 
@@ -88,8 +88,8 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
 
 
 
-    Route::resource('event.stream', StreamController::class);
-    Route::post('event/{evenId}/stream/datatable', [StreamController::class, 'datatable'])->name('event.stream.datatable');
+    Route::resource('event.stream', ContentController::class);
+    Route::post('event/{evenId}/stream/datatable', [ContentController::class, 'datatable'])->name('event.stream.datatable');
 
     Route::resource('event.rates', EventRateController::class);
     Route::post('event/{evenId}/rate/datatable', [EventRateController::class, 'datatable'])->name('event.rate.datatable');
@@ -121,11 +121,11 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     Route::resource('logs', LogsController::class);
     Route::post('/logs/datatable', [LogsController::class, 'datatable'])->name('logs.datatable');
 
-    Route::resource('stream_partner', StreamPartnerController::class);
-    Route::post('/stream_partner/datatable', [StreamPartnerController::class, 'datatable'])->name('stream_partner.datatable');
+    Route::resource('stream_partner', ContentPartnerController::class);
+    Route::post('/stream_partner/datatable', [ContentPartnerController::class, 'datatable'])->name('stream_partner.datatable');
 
-    Route::resource('stream_partner_rate', StreamPartnerRateController::class);
-    Route::post('/stream_partner_rate/datatable', [StreamPartnerRateController::class, 'datatable'])->name('stream_partner_rate.datatable');
+    Route::resource('stream_partner_rate', ContentPartnerRateController::class);
+    Route::post('/stream_partner_rate/datatable', [ContentPartnerRateController::class, 'datatable'])->name('stream_partner_rate.datatable');
 
     Route::resource('user', UserController::class);
     Route::post('/user/datatable', [UserController::class, 'datatable'])->name('user.datatable');

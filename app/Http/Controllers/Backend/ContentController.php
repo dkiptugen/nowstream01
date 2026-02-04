@@ -7,7 +7,7 @@
 	use App\Models\Channel;
 	use Illuminate\Http\Request;
 
-	class StreamController extends Controller
+	class ContentController extends Controller
 		{
 		/**
 		 * Display a listing of the resource.
@@ -76,7 +76,7 @@
 				{
 
 
-					$datatable->columns = [0 => 'id',1=>'title',2=>"description",7=>'start_time',8=>'end_time',9=>'ended'];
+					$datatable->columns = [0 => 'uuid',1=>'title',2=>"description",7=>'start_time',8=>'end_time',9=>'ended'];
 					return response()->json($datatable->data($request));
 				}
 
