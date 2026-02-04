@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stream_views', function (Blueprint $table) {
             $table->id();
-            $table->morphs('watchable');
+            $table->morphs('watchable','uuid');
             $table->bigInteger('watch_count');
             $table->timestamps();
         });

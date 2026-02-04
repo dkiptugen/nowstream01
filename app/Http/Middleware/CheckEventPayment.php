@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Stream;
+use App\Models\Content;
 use App\Models\Subscription;
 use Closure;
 use Illuminate\Http\Request;
@@ -21,7 +21,7 @@ class CheckEventPayment
 		if(Auth::check())
 			{
 				$eventId = $request->route('eventId');
-				
+
 				$subscription = Subscription::with(['event'])
 				                            ->where('event_id',$eventId)
 				                            ->where('user_id',$request->user()->id)
@@ -30,15 +30,15 @@ class CheckEventPayment
 					{
 						if($subscription->status == 1)
 							{
-								$stream = Stream::select(['id','slug'])->whereEventId($subscription->event_id)
-									            ->first();
+								$stream = Content::select(['id', 'slug'])->whereEventId($subscription->event_id)
+                                                 ->first();
 								//dd(route('stream.show',[$stream->id,$stream->slug]));
 								return redirect()->route('stream.show',[$stream->id,$stream->slug]);
 							}
 					}
-			
+
 			}
-	   
+
         return $next($request);
     }
 }

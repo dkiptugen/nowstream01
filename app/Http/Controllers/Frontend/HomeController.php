@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Channel;
 use App\Models\Event;
 use App\Models\EventRate;
-use App\Models\Stream;
+use App\Models\Content;
 use App\Models\Video;
 use App\Traits\CacheHelper;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +24,7 @@ class HomeController extends Controller
         $this->data['streams'] = Cache::rememberOnce('streams_not_6', now()->addDay(), $this->get_streams(null, 6));
         $this->data['events'] = Cache::rememberOnce('events', now()->addDay(), $this->get_events());
         $this->data['videos'] = Cache::rememberOnce('videos', now()->addDay(), $this->get_videos());
-        $this->data['current_event'] = Stream::latest()->take(1)->get();
+        $this->data['current_event'] = Content::latest()->take(1)->get();
         $this->data['top_videos'] = Video::orderBy('views', 'DESC')->take(4)->get();
 
         return view('Frontend.index', $this->data);
@@ -55,7 +55,7 @@ class HomeController extends Controller
     public function israel()
     {
         $this->data['channels'] = Channel::where('status', 1)->take(12)->get();
-        $this->data['streams'] = Stream::latest()->take(4)->get();
+        $this->data['streams'] = Content::latest()->take(4)->get();
         $this->data['events'] = Event::where('status', 1)->take(4)->get();
         $this->data['videos'] = Video::take(4)->get();
 

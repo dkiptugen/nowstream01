@@ -73,7 +73,7 @@
                         </a>
 
                     </li>
-                </ul> 
+                </ul>
                @php
 use App\Models\Event;
 
@@ -84,7 +84,7 @@ $current_event = Event::orderBy('created_at', 'asc')->first();
                                 aria-label="buttons">
                                <i class="lni lni-ticket"></i> Buy Ticket</a>
                 <!-- <div class="user-info">
-                    <a class="nav-link d-flex align-items-center pe-3" href="{{ url('/admin/register') }}"><i class="bx bx-camera-movie fs-5"></i> <span>Stream With Us</span></a>
+                    <a class="nav-link d-flex align-items-center pe-3" href="{{ url('/admin/register') }}"><i class="bx bx-camera-movie fs-5"></i> <span>Content With Us</span></a>
                 </div> -->
             </div>
         </div>

@@ -38,7 +38,7 @@ class StreamKeyNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Stream Token')
+            ->subject('Your Content Token')
             ->line('Thank you for completing your payments for Somali Nite Live Event.')
             ->line('Your stream token is: ' . $this->subscription->stream_token . '. Click https://live.baze.co.ke/somalinite and use the streaming key')
             ->line('to access and watch the Event.')

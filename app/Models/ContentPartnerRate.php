@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StreamPartnerRate extends Model
+class ContentPartnerRate extends Model
 {
     use HasFactory;
 }

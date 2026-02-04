@@ -1,7 +1,7 @@
 <?php
-	
+
 	namespace App\Http\Controllers\API;
-	
+
 	use App\Http\Resources\SubscriptionResource;
 	use App\Models\Subscription;
 	use App\Models\SystemUser;
@@ -11,11 +11,11 @@
 	use Illuminate\Support\Facades\Hash;
 	use Illuminate\Support\Facades\Log;
 	use Illuminate\Support\Facades\Validator;
-	
+
 	class APIController
 		{
 			use Helper;
-			
+
 			public function login (Request $request)
 				{
 					$validator = Validator::make ($request->all (), [
@@ -35,14 +35,14 @@
 									if ($user->status == 1)
 										{
 											$token = $user->createToken ('authToken');
-											
-											
+
+
 											$response = ['token' => $token->plainTextToken];
-											
+
 											return response ()->json (["status"  => "True", "responseCode" => 200,
 											                           "message" => "User ", "data" => $response
 											]);
-											
+
 										}
 									return response ()->json (["status"  => "False", "responseCode" => 422,
 									                           "message" => "User not active", "data" => []
@@ -57,7 +57,7 @@
 						}
 					else
 						{
-						
+
 							return response ()->json (["status"  => "False", "responseCode" => 422,
 							                           "message" => "User does not exist", "data" => []
 							]);
@@ -72,7 +72,7 @@
 								                        'error'  => 'Msisdn is required'
 							                        ]);
 						}
-					
+
 					$decrypted = $this->decrypt ($request->msisdn,config('custom.APP.ENCRYPTION_KEY'),config('custom.APP.ENCRYPTION_SALT'));
 					//dd($decrypted);
 					if(is_null($decrypted))
@@ -98,7 +98,7 @@
 						{
 							return $this->check_specific_subscription ($request->account);
 						}
-					
+
 					$user = User::where('phone',$request->msisdn)
 								->orWhere('email',$request->email)
 								->first();
@@ -147,15 +147,15 @@
 							$subscription->amount_paid = 0;
 							$subscription->balance = $subscription->cost;
 							$subscription->save();
-							
-							
+
+
 							return response ()->json (["status"  => True, "responseCode" => 200,
-							                           "message" => "Stream token cancelled"
+							                           "message" => "Content token cancelled"
 							                          ]);
 						}
 					return response ()->json (["status"  => False, "responseCode" => 422,
 					                           "message" => "subscriptions not found"
 					                          ]);
 				}
-			
+
 		}

@@ -14,7 +14,7 @@ use App\Models\Comment;
 use App\Models\Event;
 use App\Models\EventRate;
 use App\Models\Rate;
-use App\Models\Stream;
+use App\Models\Content;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Video;
@@ -38,7 +38,7 @@ class StreamController extends Controller
     use Meta;
 	public function index()
 	{
-		$streams = Stream::where('status', 0)->take(8)->get();
+		$streams = Content::where('status', 0)->take(8)->get();
 		$this->data['streams'] = $streams;
 		return view('Frontend.modules.channels.streams.index', $this->data);
 	}
@@ -46,7 +46,7 @@ class StreamController extends Controller
 
 	public function proxyStream(int $streamId)
 	{
-		$stream = Stream::find($streamId);
+		$stream = Content::find($streamId);
 		if (!$stream) {
 			abort(404);
 
@@ -144,7 +144,7 @@ class StreamController extends Controller
 	// 								Auth::loginUsingId($subscription->user_id);
 	// 							}
 	// 						// Find the corresponding stream
-	// 						$stream = Stream::where('event_id', $eventId)->first();
+	// 						$stream = Content::where('event_id', $eventId)->first();
 	// 						if ($subscription->status == 1)
 	// 							{
 	// 								if ($stream)
@@ -154,7 +154,7 @@ class StreamController extends Controller
 	// 									}
 	// 								else
 	// 									{
-	// 										return redirect()->back()->with('error', 'Stream not found for the given event ID.');
+	// 										return redirect()->back()->with('error', 'Content not found for the given event ID.');
 	// 									}
 	// 							}
 	// 						else
@@ -271,7 +271,7 @@ class StreamController extends Controller
 			->first();
 		//dd($checkSub);
 
-		$stream = Stream::where('event_id', $eventID)->first();
+		$stream = Content::where('event_id', $eventID)->first();
 		if (!is_null($checkSub)) {
 			if ($checkSub->status == 1) {
 				if ($stream) {
@@ -327,13 +327,13 @@ class StreamController extends Controller
 			if (!Auth::check()) {
 				Auth::loginUsingId($subscription->user_id);
 			}
-			$stream = Stream::where('event_id', $subscription->event_id)->first();
+			$stream = Content::where('event_id', $subscription->event_id)->first();
 
 			if ($subscription->status == 1) {
 				if ($stream) {
 					return redirect()->route('stream.show', ['streamId' => $stream->id, 'slug' => $stream->slug]);
 				} else {
-					return redirect()->back()->with('error', 'Stream not found for the given event ID.');
+					return redirect()->back()->with('error', 'Content not found for the given event ID.');
 				}
 			} else {
 				return redirect()->route('event.pay', [$subscription->event_id, $subscription->event_rate_id]);
@@ -358,7 +358,7 @@ class StreamController extends Controller
 {
     try {
         // Find the stream or throw a 404 error
-        $stream = Cache::rememberOnce('stream_'.$id,now()->addDay(),Stream::findOrFail($id));
+        $stream = Cache::rememberOnce('stream_'.$id,now()->addDay(),Content::findOrFail($id));
 
         // Attempt to get the authenticated user, if any
         $user = Auth::user();
@@ -392,7 +392,7 @@ class StreamController extends Controller
         }
 
         // Fetch related data
-        $streams = Stream::where('status', 1)->where('id', '<>', $id)->take(4)->get();
+        $streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
         $channels = Channel::where('status', 1)->take(8)->get();
         $videos = Video::take(12)->get();
         $comments = $stream->comments()->with('user')->get();
@@ -409,10 +409,10 @@ class StreamController extends Controller
         return view('Frontend.modules.channels.streams.stream', $data);
     } catch (Exception $e) {
         // Log the exception for debugging
-        Log::error('Stream not found: ' . $e->getMessage());
+        Log::error('Content not found: ' . $e->getMessage());
 
         // Return a 404 error
-        abort(404, 'Stream not found');
+        abort(404, 'Content not found');
     }
 }
 
@@ -421,7 +421,7 @@ class StreamController extends Controller
 
 		try {
 			// Find the stream or throw a 404 error
-			$stream = Stream::findOrFail($id);
+			$stream = Content::findOrFail($id);
 
 			// Check if the current user has an active subscription for the event
 			$user = Auth::user();
@@ -464,7 +464,7 @@ class StreamController extends Controller
 
 
 			// Fetch related data
-			$streams = Stream::where('status', 1)->where('id', '<>', $id)->take(4)->get();
+			$streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
 			$channels = Channel::where('status', 1)->take(8)->get();
 			$videos = Video::take(12)->get();
 			$comments = $stream->comments()->with('user')->get();
@@ -481,10 +481,10 @@ class StreamController extends Controller
 			return view('Frontend.modules.channels.streams.stream', $data);
 		} catch (Exception $e) {
 			// Log the exception for debugging
-			Log::error('Stream not found: ' . $e->getMessage());
+			Log::error('Content not found: ' . $e->getMessage());
 
 			// Return a 404 error
-			abort(404, 'Stream not found');
+			abort(404, 'Content not found');
 		}
 	}
 

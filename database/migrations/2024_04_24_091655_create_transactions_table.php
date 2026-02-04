@@ -1,9 +1,9 @@
 <?php
-    
+
     use Illuminate\Database\Migrations\Migration;
     use Illuminate\Database\Schema\Blueprint;
     use Illuminate\Support\Facades\Schema;
-    
+
     return new class extends Migration
         {
         /**
@@ -21,17 +21,17 @@
                         $table->decimal('cost');
 	                    $table->string('transaction_token')->nullable();
 	                    $table->string('subscription_token')->nullable();
-                        $table->unsignedBigInteger('subscription_id');
-	                    $table->string('receipt')->unique('receipt')->nullable (); 
+                        $table->uuid('subscription_id')->index();
+	                    $table->string('receipt')->unique('receipt')->nullable ();
                         $table->decimal('amount_paid')->nullable ();
-                        $table->unsignedBigInteger('event_id')->index();
-	                    $table->unsignedBigInteger('channel_id')->index();
+                        $table->uuid('event_id')->index()->nullable();
+	                    $table->uuid('channel_id')->index()->nullable();;
 						$table->dateTime('date_paid')->nullable();
 						$table->text('response')->nullable();
                         $table->timestamps();
                     });
             }
-        
+
         /**
          * Reverse the migrations.
          */

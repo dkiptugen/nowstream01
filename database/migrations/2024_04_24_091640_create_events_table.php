@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
-            $table->id();
+            $table->uuid()->primary();
             $table->string('slug')->unique();
             $table->string('event_name');
             $table->text('description')->nullable();
@@ -23,7 +23,7 @@ return new class extends Migration
 	        $table->dateTime('end_time');
             $table->tinyInteger('status')->default(0);
             $table->unsignedInteger('system_user_id');
-            $table->unsignedInteger('channel_id');
+            $table->uuid('channel_id')->index();
 			$table->tinyInteger ('is_featured')->default (0);
             $table->timestamps();
         });

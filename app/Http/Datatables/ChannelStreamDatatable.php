@@ -4,7 +4,7 @@ namespace App\Http\Datatables;
 
 use App\Models\Event;
 use App\Traits\Helper;
-use App\Models\Stream;
+use App\Models\Content;
 
 class ChannelStreamDatatable
     {
@@ -20,7 +20,7 @@ class ChannelStreamDatatable
         public function data($request)
             {
                 $columns       = $this->columns;
-                $query         = Stream::query();
+                $query         = Content::query();
                 $query->where('channel_id', $request->user()->channel_id);
 
                 $limit         = $request->input('length');
@@ -95,7 +95,7 @@ class ChannelStreamDatatable
                         $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Stream"><i class="bx bx-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
                 </form>';
                     }
 

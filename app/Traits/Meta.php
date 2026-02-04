@@ -23,12 +23,12 @@
             : array
                 {
                     return [
-                        'name' => 'Now Stream',
-                        'title' => 'Now Stream',
+                        'name' => 'Now Content',
+                        'title' => 'Now Content',
                         'description' => 'Explore the limitless possibilities. ',
                         'logo' => asset('assets/nowstream-light.png'),
                         'image' => asset('assets/img/logo1.png'),
-                        'keywords' => 'Now Stream,',
+                        'keywords' => 'Now Content,',
                         'author' => 'Caydeesoft Solutions Limited'
                     ];
 

@@ -4,7 +4,7 @@ namespace App\Http\Datatables;
 
 use App\Models\Event;
 use App\Traits\Helper;
-use App\Models\Stream;
+use App\Models\Content;
 class StreamDatatable
 {
     use Helper;
@@ -19,7 +19,7 @@ class StreamDatatable
     public function data($request)
     {
         $columns       = $this->columns;
-        $totalData     = Stream::count();
+        $totalData     = Content::count();
         $totalFiltered = $totalData;
         $limit         = $request->input('length');
         $start         = $request->input('start');
@@ -28,18 +28,18 @@ class StreamDatatable
 
         if (empty($request->input('search.value')))
         {
-            $posts = Stream::offset($start)->limit($limit)->orderBy($order, $dir)->get();
+            $posts = Content::offset($start)->limit($limit)->orderBy($order, $dir)->get();
         }
         else
         {
             $search = $request->input('search.value');
-            $posts  = Stream::where('name', 'LIKE', "%{$search}%")
-                 
-                ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
+            $posts  = Content::where('name', 'LIKE', "%{$search}%")
 
-            $totalFiltered = Stream::where('name', 'LIKE', "%{$search}%")
-                 
-                ->count();
+                             ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
+
+            $totalFiltered = Content::where('name', 'LIKE', "%{$search}%")
+
+                                    ->count();
         }
 
         $data = [];

@@ -1,13 +1,13 @@
 <?php
-	
+
 	namespace App\Traits;
-	
+
 	use App\Models\Channel;
 	use App\Models\Event;
 	use App\Models\EventRate;
-	use App\Models\Stream;
+	use App\Models\Content;
 	use App\Models\Video;
-	
+
 	trait CacheHelper
 		{
 			public function get_channels ($id = null)
@@ -22,10 +22,10 @@
 						{
 							$channels = Channel::with (['streams', 'videos'])->find ($id);
 						}
-					
+
 					return $channels;
 				}
-			
+
 			public function get_events ($id = null, $not = 0)
 				{
 					if (is_null ($id))
@@ -42,7 +42,7 @@
 						}
 					return $events;
 				}
-			
+
 			public function get_videos ($id = null)
 				{
 					if (is_null ($id))
@@ -55,7 +55,7 @@
 						}
 					return $video;
 				}
-			
+
 			public function get_event_rates ($eventId, $eventRateId = null)
 				{
 					if (is_null ($eventRateId))
@@ -69,12 +69,12 @@
 						}
 					return $rates;
 				}
-			
+
 			public function get_streams ($id = null, $not = 0)
 				{
 					if (is_null ($id))
 						{
-							$stream = Stream::when ($not != 0, function ($query) use ($not)
+							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
 									return $query->where ('id', '!=', $not);
 								})->orderBy ("created_at", "asc")->get ()
@@ -82,7 +82,7 @@
 						}
 					else
 						{
-							$stream = Stream::find ($id);
+							$stream = Content::find ($id);
 						}
 					return $stream;
 				}

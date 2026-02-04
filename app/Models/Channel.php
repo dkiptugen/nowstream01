@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Channel extends Model
 {
     use HasFactory;
+    use HasUuid;
+    protected $keyType = 'string';
+    public $incrementing = false;
+    protected $primaryKey='uuid';
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
@@ -18,7 +23,7 @@ class Channel extends Model
     }
     public function streams()
     {
-        return $this->hasMany(Stream::class);
+        return $this->hasMany(Content::class);
     }
     public function videos()
     {

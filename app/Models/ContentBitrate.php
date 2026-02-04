@@ -5,20 +5,20 @@
     use Illuminate\Database\Eloquent\Factories\HasFactory;
     use Illuminate\Database\Eloquent\Model;
 
-    class StreamBitrate extends Model
+    class ContentBitrate extends Model
         {
             use HasFactory;
 
             protected $fillable
                 = [
-                    'stream_id',
+                    'content_id',
                     'resolution',
                     'bitrate',
                     'url',
                 ];
 
-            public function stream()
+            public function content()
                 {
-                    return $this->belongsTo( Stream::class );
+                    return $this->belongsTo( Content::class, 'content_id','uuid' );
                 }
         }

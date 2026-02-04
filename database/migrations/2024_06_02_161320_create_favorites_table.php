@@ -10,7 +10,7 @@ class CreateFavoritesTable extends Migration
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('video_id')->constrained()->onDelete('cascade');
+            $table->uuid('content_id')->comment('video_id, playlist_id, channel_id  ');
             $table->timestamps();
         });
     }

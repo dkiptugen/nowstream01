@@ -13,7 +13,7 @@ class SystemUserChannel extends Pivot
         protected $fillable = ['created_by'];
         public function channel()
             {
-                return $this->belongsTo(Channel::class);
+                return $this->belongsTo(Channel::class,'channel_id','uuid');
             }
         public function system_user()
             {

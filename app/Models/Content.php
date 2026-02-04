@@ -2,16 +2,21 @@
 
     namespace App\Models;
 
+    use App\Traits\HasUuid;
     use Cviebrock\EloquentSluggable\Sluggable;
     use Illuminate\Database\Eloquent\Factories\HasFactory;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Eloquent\SoftDeletes;
-    
-    class Stream extends Model
+
+    class Content extends Model
         {
             use HasFactory;
 			use Sluggable;
 			use SoftDeletes;
+            use HasUuid;
+            protected $keyType = 'string';
+            public $incrementing = false;
+            protected $primaryKey='uuid';
 		    public function sluggable(): array
 			    {
 				    return [
@@ -22,7 +27,7 @@
 			    }
             public function bitrates(  )
                 {
-                    return $this->hasMany(StreamBitrate::class, 'stream_id');
+                    return $this->hasMany(ContentBitrate::class, 'stream_id');
             }
             public function comments()
             {
@@ -30,9 +35,9 @@
             }
 		    public function stream()
 			    {
-					return $this->belongsTo (Stream::class);
+					return $this->belongsTo (Content::class);
 			    }
-		    
+
                 public function watch ()
 			    {
 				    return $this->morphMany (WatchHistory::class,'watchable');
@@ -50,7 +55,7 @@
                 {
                     return $this->belongsTo(Event::class, 'event_id');
                 }
-            
+
                 public function channel()
                 {
                     return $this->belongsTo(Channel::class, 'channel_id');

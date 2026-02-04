@@ -13,8 +13,7 @@
             : void
             {
 	            Schema::create('subscriptions', function (Blueprint $table) {
-		            $table->id();
-                    $table->string('identifier')->unique('identifier');
+		            $table->uuid()->primary();
 		            $table->string('stream_token');
 		            $table->unsignedBigInteger('user_id');
 		            $table->enum('type', ['video', 'stream']);
@@ -22,9 +21,8 @@
                     $table->decimal('amount_paid')->nullable ();
                     $table->decimal('balance')->nullable ();
 		            $table->tinyInteger('status');
-		           
-		            $table->unsignedBigInteger('event_id')->index();
-		            $table->unsignedBigInteger('channel_id')->index();
+                    $table->uuid('event_id')->index();
+		            $table->uuid('channel_id')->index();
 		            $table->unsignedBigInteger('activated_by')->nullable();
 		            $table->text('activation_reason')->nullable();
 		            $table->timestamps();

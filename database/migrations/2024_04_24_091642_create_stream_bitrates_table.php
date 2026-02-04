@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('stream_bitrates', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('stream_id');
+        Schema::create('content_bitrates', function (Blueprint $table) {
+            $table->uuid()->primary();
+            $table->uuid('content_id');
             $table->string('resolution');
             $table->integer('bitrate');
             $table->string('url');
             $table->timestamps();
-            $table->foreign('stream_id')->references('id')->on('streams')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('content_id')->references('uuid')->on('contents')->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('stream_bitrates');
+        Schema::dropIfExists('content_bitrates');
     }
 };

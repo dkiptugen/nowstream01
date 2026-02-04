@@ -15,7 +15,7 @@
                 Schema::create('event_rates', function (Blueprint $table)
                     {
                         $table->id();
-                        $table->unsignedBigInteger('event_id');
+                        $table->uuid('event_id')->index();
                         $table->string('name');
                         $table->decimal('cost')->nullable();
 	                    $table->string('reserved_currency')->nullable();
@@ -25,7 +25,7 @@
 						$table->dateTime('date_to')->nullable();
                         $table->timestamps();
                         $table->foreign('event_id')
-                              ->references('id')
+                              ->references('uuid')
                                  ->on('events')
                                 ->cascadeOnUpdate()
                                 ->cascadeOnDelete();

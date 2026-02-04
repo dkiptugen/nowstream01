@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('event_assets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('event_id');
+            $table->uuid('event_id');
             $table->decimal('asset_costs');
             $table->json('assets')->nullable();
             $table->timestamps();

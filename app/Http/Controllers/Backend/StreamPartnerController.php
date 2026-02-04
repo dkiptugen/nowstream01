@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\StreamPartner;
+use App\Models\ContentPartner;
 use Illuminate\Http\Request;
 
 class StreamPartnerController extends Controller
@@ -35,7 +35,7 @@ class StreamPartnerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(StreamPartner $streamPartner)
+    public function show(ContentPartner $streamPartner)
     {
         //
     }
@@ -43,7 +43,7 @@ class StreamPartnerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(StreamPartner $streamPartner)
+    public function edit(ContentPartner $streamPartner)
     {
         //
     }
@@ -51,7 +51,7 @@ class StreamPartnerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, StreamPartner $streamPartner)
+    public function update(Request $request, ContentPartner $streamPartner)
     {
         //
     }
@@ -59,7 +59,7 @@ class StreamPartnerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StreamPartner $streamPartner)
+    public function destroy(ContentPartner $streamPartner)
     {
         //
     }

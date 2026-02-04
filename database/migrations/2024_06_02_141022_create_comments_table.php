@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('comment');
-            $table->morphs('commentable');
+            $table->morphs('commentable','uuid');
             $table->timestamps();
         });
-        
+
     }
 
     /**

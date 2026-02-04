@@ -6,7 +6,7 @@
         'description' => env( 'SITE_DESCRIPTION','The best Streaming platform in town' ),
         'logo'        => env( 'SITE_URL'). 'nowstream.png' ,
         'image'       =>env( 'SITE_URL'). 'backend-assets/images/logo-icon.png',
-        'keywords'    => 'Stream,broadcast, kenya, events',
+        'keywords'    => 'Content,broadcast, kenya, events',
         'author'      => 'Caydeesoft Solution Limited',
         'twitter_handle'=>'',
         'social'      => [

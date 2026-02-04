@@ -2,15 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\StreamPartner;
+use App\Models\ContentPartner;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StreamPartner>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ContentPartner>
  */
 class StreamPartnerFactory extends Factory
 {
-    protected $model = StreamPartner::class;
+    protected $model = ContentPartner::class;
     /**
      * Define the model's default state.
      *

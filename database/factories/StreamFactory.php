@@ -7,7 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Stream>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Content>
  */
 class StreamFactory extends Factory
 {
@@ -45,13 +45,13 @@ class StreamFactory extends Factory
         if (!is_int($width) || !is_int($height) || $width <= 0 || $height <= 0) {
             throw new InvalidArgumentException("Width and height must be positive integers.");
         }
-    
+
         // Base URL for Picsum photos
         $url = "https://picsum.photos/{$width}/{$height}";
-    
+
         // Add a random query parameter to ensure a random image
         $url .= '?random=' . rand(1, 1000);
-    
+
         // Return the constructed URL
         return $url;
 			}

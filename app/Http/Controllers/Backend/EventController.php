@@ -9,7 +9,7 @@
 	use App\Http\Services\UploadService;
 	use App\Models\Channel;
 	use App\Models\Event;
-	use App\Models\Stream;
+	use App\Models\Content;
     use App\Traits\Meta;
     use Carbon\Carbon;
 	use Illuminate\Http\Request;
@@ -80,8 +80,8 @@
 									if ($res)
 										{
 											$streamkey           = Str::ulid ();
-											$stream              = new Stream();
-											$stream->identifier  = self::identifer ('Stream', 'identifier');
+											$stream              = new Content();
+											$stream->identifier  = self::identifer ('Content', 'identifier');
 											$stream->title       = $event->event_name;
 											$stream->description = $request->event_description;
 											if ($request->hasFile ('thumbnail'))

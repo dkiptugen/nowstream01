@@ -30,7 +30,7 @@ class StreamVideoController extends Controller
     public function index()
     {
         $topVideos = Video::orderBy('views', 'DESC')->take(4)->get();
-        $videos = Video::skip(4)->paginate(12); 
+        $videos = Video::skip(4)->paginate(12);
 		$channels = Channel::all();
 
         return view('Frontend.modules.videos.index', [
@@ -64,7 +64,7 @@ class StreamVideoController extends Controller
     }
 
     /**
-     * Stream video file to authenticated users
+     * Content video file to authenticated users
      */
     public function get_video(string $filename)
     {
@@ -103,26 +103,26 @@ class StreamVideoController extends Controller
         try {
             // Load the video with comments and user relationship
             $video = Video::with(['comments.user' => function ($q) {
-                $q->oldest();  
+                $q->oldest();
             }])->findOrFail($id);
-            
-            $comments = $video->comments;  
+
+            $comments = $video->comments;
             // Increment the views count
             $video->increment('views');
-    
+
             // Load additional data
             $channels = Channel::where('status', 1)->take(8)->get();
-            $relatedVideos = Video::where('id', '!=', $id)->take(4)->get(); 
-            
+            $relatedVideos = Video::where('id', '!=', $id)->take(4)->get();
+
             // Record watch history (assuming you have a service for it)
             $this->watchHistoryService->record($video);
-    
+
             return view('Frontend.modules.videos.video', compact('video', 'channels', 'relatedVideos', 'comments'));
         } catch (ModelNotFoundException) {
             abort(404, 'Video not found.');
         }
     }
-    
+
     /**
      * Post a comment to a video or stream
      */
@@ -151,7 +151,7 @@ class StreamVideoController extends Controller
             'success' => true,
             'message' => 'Comment posted',
         ]);
-        
+
     }
 
     /**
@@ -171,7 +171,7 @@ class StreamVideoController extends Controller
     public function watchedVideos()
     {
         $videoHistory = $this->watchHistoryService->getUserHistory(Video::class);
-        $streamHistory = $this->watchHistoryService->getUserHistory('App\Models\Stream');
+        $streamHistory = $this->watchHistoryService->getUserHistory('App\Models\Content');
 
         if (!$videoHistory && !$streamHistory) {
             return redirect()->route('login')
@@ -197,7 +197,7 @@ class StreamVideoController extends Controller
         ->with('user')
         ->orderBy('created_at', 'asc') // oldest first, newest last
         ->get();
-    
+
 
         return view('Frontend.modules.videos.video', compact('comments'))->render();
     }

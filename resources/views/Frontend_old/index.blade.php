@@ -22,7 +22,7 @@
         </div>
         <div class="text p-3">
 
-            <!-- <h1 class=" my-4">Stream every show <br>
+            <!-- <h1 class=" my-4">Content every show <br>
                                      Every concert <br>  Every gig in Africa</h1> -->
 
             <div class="form-group w-100">
@@ -78,7 +78,7 @@
                 <div class="alert alert-danger mt-4">
                     {{ session('error') }}
                 </div>
-            @endif 
+            @endif
             <form action="{{ route('stream.find') }}" method="POST" class="form-inline w-100 mb-5">
                 @csrf
                 <div class="input-group">

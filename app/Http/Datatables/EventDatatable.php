@@ -111,7 +111,7 @@
 		                }
                    /* if ($request->user()->can('view_stream'))
                         {
-                            $button .= '<a class="text text-dark mr-2" href="' . route('event.stream.show', [$post->id, optional($post->streams)->id]) . '" data-toggle="tooltip" title="Show Stream">
+                            $button .= '<a class="text text-dark mr-2" href="' . route('event.stream.show', [$post->id, optional($post->streams)->id]) . '" data-toggle="tooltip" title="Show Content">
                                                 <i class="fas fa-eye"></i>
                                                 </a>';
                         }*/

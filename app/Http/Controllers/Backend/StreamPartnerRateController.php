@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\StreamPartnerRate;
+use App\Models\ContentPartnerRate;
 use Illuminate\Http\Request;
 
 class StreamPartnerRateController extends Controller
@@ -35,7 +35,7 @@ class StreamPartnerRateController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(StreamPartnerRate $streamPartnerRate)
+    public function show(ContentPartnerRate $streamPartnerRate)
     {
         //
     }
@@ -43,7 +43,7 @@ class StreamPartnerRateController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(StreamPartnerRate $streamPartnerRate)
+    public function edit(ContentPartnerRate $streamPartnerRate)
     {
         //
     }
@@ -51,7 +51,7 @@ class StreamPartnerRateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, StreamPartnerRate $streamPartnerRate)
+    public function update(Request $request, ContentPartnerRate $streamPartnerRate)
     {
         //
     }
@@ -59,7 +59,7 @@ class StreamPartnerRateController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StreamPartnerRate $streamPartnerRate)
+    public function destroy(ContentPartnerRate $streamPartnerRate)
     {
         //
     }

@@ -14,7 +14,7 @@
             {
                 Schema::create('channels', function (Blueprint $table)
                     {
-                        $table->id();
+                        $table->uuid()->primary();
                         $table->ulid('identifier')->index('ulid');
                         $table->string('name');
                         $table->longText ('thumbnail');
