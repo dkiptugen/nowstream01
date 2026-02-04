@@ -13,6 +13,7 @@ class EventRate extends Model
         'name',
         'cost',
         'date_from',
+        'visible',
         'date_to',
         'reserved_currency_cost',
         'status',

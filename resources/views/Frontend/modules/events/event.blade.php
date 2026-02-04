@@ -19,7 +19,7 @@
 				<div class="col-xl-6 col-lg-8">
 					<div class="movie-details-content">
 						<h5>Top Event</h5>
-						<h2> 
+						<h2>  
 							{{ $event->event_name }} <span>Live</span>
 						</h2>
 						<div class="banner-meta">
