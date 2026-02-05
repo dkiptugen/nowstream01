@@ -196,12 +196,12 @@
 											return self::success ('event', 'Saved successfully',
 												route ('backend.event.index'));
 										}
-									return self::faileded ('event', 'error encountered when saving, try again later',
+									return self::failed ('event', 'error encountered when saving, try again later',
 										route ('backend.event.index'));
 								}
 							else
 								{
-									return self::faileded ('event', $validated, route ('backend.event.index'));
+									return self::failed ('event', $validated, route ('backend.event.index'));
 								}
 						}
 					catch (\Exception $e)

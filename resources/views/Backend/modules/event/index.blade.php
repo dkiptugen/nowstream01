@@ -21,28 +21,28 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Thumbnail</th>
-                                    <th>Stream Key</th>
-                                    <th>Videos</th>
+                                    <th>Description</th>
                                     <th>Status</th>
                                     <th>Publish Date</th>
-                                    <th>Date Created</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
                                     <th>Rates</th>
                                     <th>Action</th>
 									</tr>
 								</thead>
                                 <tfoot>
                                 <tr>
-									<th>#</th>
-									<th>Name</th>
-									<th>Thumbnail</th>
-                                    <th>Stream Key</th>
-                                    <th>Videos</th>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Thumbnail</th>
+                                    <th>Description</th>
                                     <th>Status</th>
                                     <th>Publish Date</th>
-                                    <th>Date Created</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
                                     <th>Rates</th>
-									<th>Action</th>
-									</tr>
+                                    <th>Action</th>
+                                </tr>
 								</tfoot>
 							</table>
 						</div>
@@ -68,11 +68,11 @@
                     {"data": "pos"},
                     {"data": "event_name"},
                     {"data": "thumbnail"},
-                    {"data": "stream_key","orderable":false},
-                    {"data": "videos","orderable":false},
+                    {"data": "description"},
                     {"data": "status"},
                     {"data": "publish_date"},
-                    {"data": "created_at"},
+                    {"data": "start_date"},
+                    {"data": "end_date"},
                     {"data": "rates"},
                     {"data": "action", "orderable": false}
                 ],
