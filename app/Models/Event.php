@@ -56,7 +56,7 @@
 
 			public function rates ()
 				{
-					return $this->hasMany (EventRate::class);
+					return $this->hasMany (EventRate::class, 'event_id','uuid');
 				}
 
 		/**
