@@ -22,8 +22,8 @@ return new class extends Migration
 			$table->dateTime('start_time');
 	        $table->dateTime('end_time');
             $table->tinyInteger('status')->default(0);
+            $table->string('timezone')->default('Africa/Nairobi');
             $table->unsignedInteger('system_user_id');
-            $table->uuid('channel_id')->index();
 			$table->tinyInteger ('is_featured')->default (0);
             $table->timestamps();
         });

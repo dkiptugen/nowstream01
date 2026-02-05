@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Datatables\ChannelVideoDatatable;
 use App\Http\Services\UploadService;
-
 use App\Models\Event;
 use App\Models\Tag;
-use App\Models\Video;
 use App\Traits\Meta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +23,7 @@ class VideoController extends Controller
      */
         public function index()
             {
-                return view('Backend.modules.channel_videos.index', $this->data);
+                return view('Backend.modules.videos.index', $this->data);
             }
 
     /**
@@ -36,7 +34,7 @@ class VideoController extends Controller
 
                 $this->data['events'] = Event::all();
 
-                return view('Backend.modules.channel_videos.add', $this->data);
+                return view('Backend.modules.videos.add', $this->data);
             }
 
         public function store(Request $request)
@@ -135,7 +133,7 @@ class VideoController extends Controller
                 $this->data['selectedTagIds'] = Tag::whereIn('id', $tagIdsArray ?? [])->pluck('id')->toArray();
 
 
-                return view('Backend.modules.channel_videos.edit', $this->data);
+                return view('Backend.modules.videos.edit', $this->data);
             }
 
     /**

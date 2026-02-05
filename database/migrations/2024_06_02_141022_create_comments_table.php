@@ -16,6 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('comment');
             $table->morphs('commentable','uuid');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->enum('type', ['comment', 'reply'])->default('comment');
+            $table->boolean('is_approved')->default(true);
+            $table->tinyInteger('is_pinned')->default(0);
             $table->timestamps();
         });
 

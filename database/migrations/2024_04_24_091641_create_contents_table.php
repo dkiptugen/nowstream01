@@ -29,9 +29,9 @@
                         $table->text('content_path')->nullable();
                         $table->dateTime('start_time')->nullable();
                         $table->dateTime('end_time')->nullable();
-                        $table->uuid('event_id')->index();
+                        $table->uuid('event_id')->index()->nullable();
                         $table->unsignedBigInteger('system_user_id');
-                        $table->unsignedBigInteger('channel_id')->index();
+                        $table->uuid('channel_id')->index()->nullable();
 						$table->tinyInteger ('status')->default(0);
                         $table->foreign('system_user_id')->references('id')->on('system_users')->cascadeOnDelete()->cascadeOnUpdate();
                         $table->unsignedInteger('viewers')->default(0);

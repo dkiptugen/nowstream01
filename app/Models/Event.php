@@ -59,14 +59,6 @@
 					return $this->hasMany (EventRate::class, 'event_id','uuid');
 				}
 
-		/**
-		 * Get the videos for the event's streams.
-		 */
-			public function videos ()
-			{
-				return $this->hasMany (Video::class);
-			}
-
 			public function system_user_id ()
 			: Attribute
 				{

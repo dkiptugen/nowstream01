@@ -15,7 +15,7 @@ class TransactionController extends Controller
     public function index()
     {
 
-	    return view('Backend.modules.channel_transaction.index',$this->data);
+	    return view('Backend.modules.transactions.index',$this->data);
     }
 
     /**

@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
     public function index()
     {
 
-        return view('Backend.modules.channel_subscription.index',$this->data);
+        return view('Backend.modules.subscriptions.index',$this->data);
     }
 
     /**

@@ -2,15 +2,12 @@
 
 @section('content')
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Channels</div>
+        <div class="breadcrumb-title pe-3">Videos</div>
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
                     <li class="breadcrumb-item">
                         <a href="{{ route('backend.admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('video.index') }}">Channels</a>
                     </li>
                     <li class="breadcrumb-item active" aria-current="page">Edit Video</li>
                 </ol>

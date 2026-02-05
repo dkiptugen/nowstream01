@@ -14,7 +14,7 @@
 		 */
 			public function index()
 				{
-					return view('Backend.modules.channel_streams.index', $this->data);
+					return view('Backend.modules.streams.index', $this->data);
 
 				}
 

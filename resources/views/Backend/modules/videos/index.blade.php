@@ -5,7 +5,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5">Channel Videos</h3>
+                    <h3 class="card-title m-0 h5">Videos</h3>
                     <a href="{{ route('backend.video.create') }}" class="btn btn-primary m-0 h5">+ Add Video</a>
 
                 </div>
@@ -13,7 +13,7 @@
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="channelvideos_dt" class="table table-striped table-condensed">
+							<table id="videos" class="table table-striped table-condensed">
 								<thead>
                                     <tr>
                                         <th>#</th>
@@ -48,7 +48,7 @@
 @endsection
 @section('footer')
     <script>
-            $('#channelvideos_dt').DataTable({
+            $('#videos').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -66,7 +66,6 @@
                     {"data":"created_at"},
                     {"data": "action", "orderable": false}
                 ],
-
                 "createdRow": function(row, data, dataIndex) {
                     $(row).find('td').css({
                         "text-align": "left",

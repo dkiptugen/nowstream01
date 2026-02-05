@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\EventAsset;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
 
-class EventAssetController extends Controller
+class OrganizerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +34,7 @@ class EventAssetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(EventAsset $eventAsset)
+    public function show(Organizer $organizer)
     {
         //
     }
@@ -43,7 +42,7 @@ class EventAssetController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(EventAsset $eventAsset)
+    public function edit(Organizer $organizer)
     {
         //
     }
@@ -51,7 +50,7 @@ class EventAssetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, EventAsset $eventAsset)
+    public function update(Request $request, Organizer $organizer)
     {
         //
     }
@@ -59,7 +58,7 @@ class EventAssetController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EventAsset $eventAsset)
+    public function destroy(Organizer $organizer)
     {
         //
     }

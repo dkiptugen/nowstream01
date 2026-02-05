@@ -12,7 +12,7 @@
             public function up()
             : void
             {
-                Schema::create('rates', function (Blueprint $table)
+                Schema::create('content_rates', function (Blueprint $table)
                     {
                         $table->id();
                         $table->string('name');
@@ -31,6 +31,6 @@
             public function down()
             : void
             {
-                Schema::dropIfExists('rates');
+                Schema::dropIfExists('content_rates');
             }
         };

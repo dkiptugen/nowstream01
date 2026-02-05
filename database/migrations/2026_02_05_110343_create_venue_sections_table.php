@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_assets', function (Blueprint $table) {
+        Schema::create('venue_sections', function (Blueprint $table) {
             $table->id();
-            $table->uuid('event_id');
-            $table->decimal('asset_costs');
-            $table->json('assets')->nullable();
+            $table->foreignId('venue_id')->constrained()->cascadeOnDelete();
+            $table->string('name'); // VIP, Regular
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_assets');
+        Schema::dropIfExists('venue_sections');
     }
 };

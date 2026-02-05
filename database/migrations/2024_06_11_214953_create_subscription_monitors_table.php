@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('subscription_monitors', function (Blueprint $table) {
             $table->id();
-			$table->unsignedBigInteger('subscription_id');
+			$table->unsignedBigInteger('order_id');
 			$table->string('ip_address');
 			$table->longText('user_agent');
 	        $table->string('device')->nullable();
