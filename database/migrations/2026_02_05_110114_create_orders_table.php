@@ -22,9 +22,13 @@ return new class extends Migration
             $table->decimal('total_amount', 10, 2);
             $table->string('currency', 3)->default('KES');
             $table->tinyInteger('is_subscribable')->default(0);
+            $table->tinyInteger('is_recurrent')->default(0);
+            $table->dateTime('next_payment')->nullable();
             $table->dateTime('subscription_start_at')->nullable();
             $table->dateTime('subscription_end_at')->nullable();
             $table->enum('payment_status', ['pending','paid','failed','refunded'])->default('pending');
+            $table->unsignedBigInteger('latest_transaction_id')->nullable();
+            $table->string('subscription_token')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
         });

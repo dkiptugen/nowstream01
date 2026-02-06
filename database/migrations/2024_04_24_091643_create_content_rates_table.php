@@ -19,6 +19,9 @@
                         $table->longText('description');
                         $table->decimal('cost')->nullable();
                         $table->decimal('reserved_currency_cost')->nullable();
+                        $table->tinyInteger ('has_stream')->default (1);
+                        $table->tinyInteger ('has_video')->default (0);
+                        $table->tinyInteger ('visible')->default (0);
                         $table->uuid('content_id');
                         $table->foreign('content_id')->references('uuid')->on('contents')->CascadeOnDelete()->CascadeOnUpdate();
                         $table->timestamps();

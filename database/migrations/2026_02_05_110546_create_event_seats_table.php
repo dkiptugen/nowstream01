@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('event_seats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->uuid('event_id');
             $table->foreignId('seat_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['available','reserved','sold'])->default('available');
             $table->timestamps();
             $table->unique(['event_id', 'seat_id']);
+            $table->foreign('event_id')->references('uuid')->on('events')->cascadeOnDelete();
         });
     }
 

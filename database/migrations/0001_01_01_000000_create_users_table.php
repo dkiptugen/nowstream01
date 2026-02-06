@@ -19,10 +19,12 @@
                         $table->string('email')->unique()->index();
                         $table->timestamp('email_verified_at')->nullable();
                         $table->tinyInteger('status')->default(0);
-                        $table->string('phone')->unique()->nullable(); 
-                        $table->text('image')->nullable(); 
+                        $table->string('phone')->unique()->nullable();
+                        $table->text('image')->nullable();
                         $table->string('password');
                         $table->timestamp('password_changed_at')->nullable();
+                        $table->string('stream_auth')->nullable();
+                        $table->string('verification_key')->nullable();
                         $table->rememberToken();
                         $table->timestamps();
                     });

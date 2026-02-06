@@ -20,8 +20,9 @@
                         $table->string('payment_method');
                         $table->decimal('cost');
 	                    $table->string('transaction_token')->nullable();
-	                    $table->string('subscription_token')->nullable();
                         $table->uuid('order_id')->index();
+                        $table->string('currency',5);
+                        $table->text('msisdn')->nullable();
 	                    $table->string('receipt')->unique('receipt')->nullable ();
                         $table->decimal('amount_paid')->nullable ();
                         $table->uuid('event_id')->index()->nullable();

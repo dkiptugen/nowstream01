@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organizer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('event_id')->nullable()->constrained()->nullOnDelete();
+            $table->uuid('event_id')->nullable()->index();
             $table->enum('type', ['ticket','merch','package']);
             $table->integer('free_pass')->default(0);;
             $table->string('name');
