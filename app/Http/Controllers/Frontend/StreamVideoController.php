@@ -8,6 +8,7 @@ use App\Models\WatchHistory;
 use App\Models\Video;
 use App\Models\Channel;
 use App\Models\Comment;
+use App\Models\Content;
 use App\Services\WatchHistoryService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
