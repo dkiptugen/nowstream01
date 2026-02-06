@@ -29,8 +29,8 @@ class StreamVideoController extends Controller
      */
     public function index()
     {
-        $topVideos = Video::orderBy('views', 'DESC')->take(4)->get();
-        $videos = Video::skip(4)->paginate(12);
+        $topVideos = Content::where('type', 'video')->orderBy('views', 'DESC')->take(4)->get();
+        $videos = Content::where('type', 'video')->skip(4)->paginate(12);
 		$channels = Channel::all();
 
         return view('Frontend.modules.videos.index', [
@@ -102,7 +102,7 @@ class StreamVideoController extends Controller
     {
         try {
             // Load the video with comments and user relationship
-            $video = Video::with(['comments.user' => function ($q) {
+            $video = Content::where('type', 'video')->with(['comments.user' => function ($q) {
                 $q->oldest();
             }])->findOrFail($id);
 
@@ -112,7 +112,7 @@ class StreamVideoController extends Controller
 
             // Load additional data
             $channels = Channel::where('status', 1)->take(8)->get();
-            $relatedVideos = Video::where('id', '!=', $id)->take(4)->get();
+            $relatedVideos = Content::where('type', 'video')->where('id', '!=', $id)->take(4)->get();
 
             // Record watch history (assuming you have a service for it)
             $this->watchHistoryService->record($video);
@@ -159,7 +159,7 @@ class StreamVideoController extends Controller
      */
     public function recordWatchHistoryAjax(Request $request)
     {
-        $video = Video::findOrFail($request->input('video_id'));
+        $video = Content::where('type', 'video')->findOrFail($request->input('video_id'));
         $this->watchHistoryService->record($video, $request->input('watch_duration', 0));
 
         return response()->json(['success' => true]);
@@ -170,7 +170,7 @@ class StreamVideoController extends Controller
      */
     public function watchedVideos()
     {
-        $videoHistory = $this->watchHistoryService->getUserHistory(Video::class);
+        $videoHistory = $this->watchHistoryService->getUserHistory(Content::where('type', 'video')->class);
         $streamHistory = $this->watchHistoryService->getUserHistory('App\Models\Content');
 
         if (!$videoHistory && !$streamHistory) {

@@ -12,7 +12,7 @@
 			public function favorite($videoId)
 				{
 					$user  = Auth::user();
-					$video = Video::findOrFail($videoId);
+					$video = Content::where('type', 'video')->findOrFail($videoId);
 					
 					$user->favoriteVideos()->attach($video->id);
 					
@@ -30,7 +30,7 @@
 			public function unfavorite($videoId)
 				{
 					$user  = Auth::user();
-					$video = Video::findOrFail($videoId);
+					$video = Content::where('type', 'video')->findOrFail($videoId);
 					
 					$user->favoriteVideos()->detach($video->id);
 					

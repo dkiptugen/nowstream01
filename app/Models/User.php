@@ -54,6 +54,6 @@ class User extends Authenticatable
     }
     public function favoriteVideos()
     {
-        return $this->belongsToMany(Video::class, 'favorites')->withTimestamps();
+        return $this->belongsToMany(Content::where('type', 'video')->class, 'favorites')->withTimestamps();
     }
 }

@@ -19,7 +19,7 @@ class ChannelVideoDatatable
     public function data($request)
     {
         $columns       = $this->columns;
-        $totalData     = Video::count();
+        $totalData     = Content::where('type', 'video')->count();
         $totalFiltered = $totalData;
         $limit         = $request->input('length');
         $start         = $request->input('start');
@@ -28,16 +28,16 @@ class ChannelVideoDatatable
 
         if (empty($request->input('search.value')))
         {
-            $posts = Video::offset($start)->limit($limit)->orderBy($order, $dir)->get();
+            $posts = Content::where('type', 'video')->offset($start)->limit($limit)->orderBy($order, $dir)->get();
         }
         else
         {
             $search = $request->input('search.value');
-            $posts  = Video::where('title', 'LIKE', "%{$search}%")
+            $posts  = Content::where('type', 'video')->where('title', 'LIKE', "%{$search}%")
 ->orWhere('description', 'LIKE', "%{$search}%")
                 ->offset($start)->limit($limit)->orderBy($order, $dir)->get();
 
-            $totalFiltered = Video::where('title', 'LIKE', "%{$search}%")
+            $totalFiltered = Content::where('type', 'video')->where('title', 'LIKE', "%{$search}%")
 ->orWhere('description', 'LIKE', "%{$search}%")
                 ->count();
         }

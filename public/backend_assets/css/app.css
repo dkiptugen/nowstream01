@@ -14263,7 +14263,7 @@ html .note-fullscreen-body, body .note-fullscreen-body {
   content: "\ea37";
 }
 
-.note-icon-video::before {
+.note-icon-Content::where('type', 'video')->before {
   content: "\ea38";
 }
 

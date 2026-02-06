@@ -12691,7 +12691,7 @@ icons
 
 }
 
-.lni-video::before {
+.lni-Content::where('type', 'video')->before {
 
 	content: "\ebe2";
 

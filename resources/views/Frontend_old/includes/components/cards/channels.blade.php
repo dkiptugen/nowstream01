@@ -29,7 +29,7 @@
         <small class="text-muted">
             <i class="lni lni-video"></i>
             @php
-                $videoCount = \App\Models\Video::where('channel_id', $channel->id)->count();
+                $videoCount = \App\Models\Content::where('type', 'video')->where('channel_id', $channel->id)->count();
             @endphp
             {{ $videoCount }} Videos
 

@@ -15,9 +15,9 @@
 		{
 			public function index()
 				{
-					$videos                   = Video::skip(4)->take(14)->get();
+					$videos                   = Content::where('type', 'video')->skip(4)->take(14)->get();
 					$this->data['videos']     = $videos;
-					$top_videos               = Video::take(4)->get();
+					$top_videos               = Content::where('type', 'video')->take(4)->get();
 					$this->data['top_videos'] = $top_videos;
 					return view('Frontend.modules.videos.index', $this->data);
 				}
@@ -39,11 +39,11 @@
 						{
 							try
 								{
-									$this->data['video'] =  Video::where('id', $id)->first();
+									$this->data['video'] =  Content::where('type', 'video')->where('id', $id)->first();
 
 
 									$this->data['channels']      = Channel::where('status', 1)->take(8)->get();
-									$this->data['relatedVideos'] = Video::where('id', '!=', $id)->take(4)->get();
+									$this->data['relatedVideos'] = Content::where('type', 'video')->where('id', '!=', $id)->take(4)->get();
 									$this->data['comments']      = $this->data['video']->comments()->with('user')->get();
 
 									// Record watch history
@@ -78,7 +78,7 @@
 
 					if ($user)
 						{
-							$video = Video::findOrFail($request->input('video_id'));
+							$video = Content::where('type', 'video')->findOrFail($request->input('video_id'));
 
 							WatchHistory::updateOrCreate(
 								[

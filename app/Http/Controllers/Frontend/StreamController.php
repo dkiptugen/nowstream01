@@ -394,7 +394,7 @@ class StreamController extends Controller
         // Fetch related data
         $streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
         $channels = Channel::where('status', 1)->take(8)->get();
-        $videos = Video::take(12)->get();
+        $videos = Content::where('type', 'video')->take(12)->get();
         $comments = $stream->comments()->with('user')->get();
 
         // Prepare data to pass to the view
@@ -466,7 +466,7 @@ class StreamController extends Controller
 			// Fetch related data
 			$streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
 			$channels = Channel::where('status', 1)->take(8)->get();
-			$videos = Video::take(12)->get();
+			$videos = Content::where('type', 'video')->take(12)->get();
 			$comments = $stream->comments()->with('user')->get();
 
 			// Prepare data to pass to the view
