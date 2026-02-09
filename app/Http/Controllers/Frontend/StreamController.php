@@ -12,7 +12,7 @@ use App\Libs\SafaricomContent;
 use App\Models\Channel;
 use App\Models\Comment;
 use App\Models\Event;
-use App\Models\EventRate;
+use App\Models\ContentRate;
 use App\Models\Rate;
 use App\Models\Content;
 use App\Models\Subscription;
@@ -223,7 +223,7 @@ class StreamController extends Controller
 			foreach ($check->data->body as $data) {
 				$def = $safContent->products($data->ProductId);
 
-				$rate = EventRate::updateOrCreate([
+				$rate = ContentRate::updateOrCreate([
 					'event_id' => $eventID,
 					'name' => $data->ProductId,
 					'cost' => $data->ProductPrice,

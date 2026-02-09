@@ -44,12 +44,12 @@
 				}
                 public function getEventRateAttribute()
 			    {
-                    $checkRate = EventRate::where([['event_id', $this->attributes['id']], ['status', true ]])->count();
+                    $checkRate = ContentRate::where([['event_id', $this->attributes['id']], ['status', true ]])->count();
 				    return $checkRate;
 				}
                 public function eventRates()
                 {
-                    return $this->hasMany(EventRate::class, 'event_id', 'event_id');
+                    return $this->hasMany(ContentRate::class, 'event_id', 'event_id');
                 }
                 public function event()
                 {

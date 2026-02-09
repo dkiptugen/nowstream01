@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Channel;
 use App\Models\Event;
-use App\Models\EventRate;
+use App\Models\ContentRate;
 use App\Models\Content;
 use App\Models\Video;
 use App\Traits\CacheHelper;
@@ -62,7 +62,7 @@ class HomeController extends Controller
         $currentEvent = Event::find(7);
         $this->data['current_event'] = $currentEvent;
         $this->data['rates'] = $currentEvent
-            ? EventRate::where('event_id', $currentEvent->id)->take(5)->get()
+            ? ContentRate::where('event_id', $currentEvent->id)->take(5)->get()
             : collect();
 
         return view('Frontend.israel', $this->data);

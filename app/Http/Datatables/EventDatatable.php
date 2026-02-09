@@ -27,7 +27,7 @@ class EventDatatable
 
                 $totalData     = $query->count();
                 $totalFiltered = $totalData;
-                $query->withCount('rates');
+                //$query->withCount('rates');
 
                 if (!empty($request->input('search.value')))
                     {

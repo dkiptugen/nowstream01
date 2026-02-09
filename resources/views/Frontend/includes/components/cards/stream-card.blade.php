@@ -1,8 +1,8 @@
 <div class="card radius-5 h-100">
     <div class="image">
-        @php 
-            use App\Models\EventRate;
-            $checkRate = EventRate::where([['event_id', $stream->event_id], ['status', true]])->count();
+        @php
+            use App\Models\ContentRate;
+            $checkRate = ContentRate::where([['event_id', $stream->event_id], ['status', true]])->count();
             $freeStream = $checkRate == 0;
         @endphp
 
@@ -24,7 +24,7 @@
                     <i class="fadeIn animated bx bx-play-circle"></i>
                 </div>
             </a>
-        @endif   
+        @endif
         @php
             $event = \App\Models\Event::find($stream->event_id);
             use Carbon\Carbon;
@@ -48,7 +48,7 @@
             <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
                 <h6 class="mb-0">{{$stream->title}}</h6>
             </a>
-        @endif  
+        @endif
         @php
             $channel = \App\Models\Channel::find($stream->channel_id);
         @endphp

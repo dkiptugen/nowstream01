@@ -9,7 +9,7 @@
 	use App\Libs\DPO;
 	use App\Libs\Mpesa;
 	use App\Models\Event;
-	use App\Models\EventRate;
+	use App\Models\ContentRate;
 	use App\Models\Region;
 	use App\Models\Subscription;
 	use App\Models\Transaction;
@@ -41,8 +41,8 @@
 					try
 						{
 
-							// Fetch the cost from the EventRate model
-							$eventRate = EventRate::find ($request->rate_id);
+							// Fetch the cost from the ContentRate model
+							$eventRate = ContentRate::find ($request->rate_id);
 							if (is_null ($eventRate))
 								{
 									//Log::error('Event rate not found for event_id: ' . $request->event_id);
@@ -184,7 +184,7 @@
 										{
 											if ($sub->currency == 'USD')
 												{
-													$eventRate = EventRate::find ($sub->event_rate_id);
+													$eventRate = ContentRate::find ($sub->event_rate_id);
 													$sub       = Subscription::create ([
 														                                   'user_id' => Auth::user ()->id, 'identifier' => $this->identifer ('Subscription',
 														                                                                                                     'identifier',

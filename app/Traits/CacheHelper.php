@@ -4,7 +4,7 @@
 
 	use App\Models\Channel;
 	use App\Models\Event;
-	use App\Models\EventRate;
+	use App\Models\ContentRate;
 	use App\Models\Content;
 	use App\Models\Video;
 
@@ -60,12 +60,12 @@
 				{
 					if (is_null ($eventRateId))
 						{
-							$rates = EventRate::where ('event_id', $eventId)->where ('visible', 1)->get ()
+							$rates = ContentRate::where ('event_id', $eventId)->where ('visible', 1)->get ()
 							;
 						}
 					else
 						{
-							$rates = EventRate::find ($eventRateId);
+							$rates = ContentRate::find ($eventRateId);
 						}
 					return $rates;
 				}

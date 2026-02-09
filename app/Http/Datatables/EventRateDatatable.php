@@ -4,7 +4,7 @@ namespace App\Http\Datatables;
 
 use App\Models\Event;
 use App\Traits\Helper;
-use App\Models\EventRate;
+use App\Models\ContentRate;
 use Illuminate\Support\Carbon;
 
 class EventRateDatatable
@@ -21,7 +21,7 @@ class EventRateDatatable
     public function data($request,$event)
     {
         $columns       = $this->columns;
-        $totalData     = EventRate::whereEventId($event)->count();
+        $totalData     = ContentRate::whereEventId($event)->count();
         $totalFiltered = $totalData;
         $limit         = $request->input('length');
         $start         = $request->input('start');
@@ -30,34 +30,34 @@ class EventRateDatatable
 
         if (empty($request->input('search.value')))
         {
-            $posts = EventRate::whereEventId($event)->offset($start)->limit($limit)->orderBy($order, $dir)->get();
+            $posts = ContentRate::whereEventId($event)->offset($start)->limit($limit)->orderBy($order, $dir)->get();
         }
         else
         {
             $search = $request->input('search.value');
-            $posts  = EventRate::whereEventId($event)
-	                          ->where(function ($query)use($search){
+            $posts  = ContentRate::whereEventId($event)
+                                 ->where(function ($query)use($search){
 								  return $query  ->where('name', 'LIKE', "%{$search}%")
 								          ->orWhere('date_from', 'LIKE', "%{$search}%")
 								          ->orWhere('date_to', 'LIKE', "%{$search}%")
 								          ->orWhere('reserved_currency_cost', 'LIKE', "%{$search}%")
 								          ->orWhere('cost', 'LIKE', "%{$search}%");
 	                          })
-                           
-                ->offset($start)
-                ->limit($limit)
+
+                                 ->offset($start)
+                                 ->limit($limit)
                 ->orderBy($order, $dir)
                 ->get();
 
-            $totalFiltered = EventRate::whereEventId($event)
-                                      ->where(function ($query)use($search){
+            $totalFiltered = ContentRate::whereEventId($event)
+                                        ->where(function ($query)use($search){
 	                                      return $query  ->where('name', 'LIKE', "%{$search}%")
 	                                                     ->orWhere('date_from', 'LIKE', "%{$search}%")
 	                                                     ->orWhere('date_to', 'LIKE', "%{$search}%")
 	                                                     ->orWhere('reserved_currency_cost', 'LIKE', "%{$search}%")
 	                                                     ->orWhere('cost', 'LIKE', "%{$search}%");
                                       })
-                                ->count();
+                                        ->count();
         }
 
         $data = [];

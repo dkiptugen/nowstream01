@@ -56,7 +56,7 @@
 
 			public function rates ()
 				{
-					return $this->hasMany (EventRate::class, 'event_id','uuid');
+					return $this->hasMany (ContentRate::class, 'event_id','uuid');
 				}
 
 			public function system_user_id ()
@@ -82,7 +82,7 @@
 				}
                 public function eventRates()
                 {
-                    return $this->hasMany(EventRate::class, 'event_id', 'event_id');
+                    return $this->hasMany(ContentRate::class, 'event_id', 'event_id');
                 }
                 public function event()
                 {
