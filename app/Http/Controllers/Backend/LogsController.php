@@ -6,12 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Datatables\LogDatatable;
 use App\Models\Activity;
 use App\Models\Product;
+use App\Traits\Meta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class LogsController extends Controller
     {
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
 		/**
          * Display a listing of the resource.
          *

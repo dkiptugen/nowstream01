@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Http\Datatables\ChannelVideoDatatable;
 use App\Http\Services\UploadService;
+use App\Models\Content;
 use App\Models\Event;
 use App\Models\Tag;
 use App\Traits\Meta;
@@ -17,6 +18,11 @@ use Illuminate\Support\Str;
 class VideoController extends Controller
     {
         use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
 
     /**
      * Display a listing of the resource.
@@ -122,7 +128,7 @@ class VideoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-        public function edit(Video $video)
+        public function edit(Content $video)
             {
                 $this->data['video']  = $video->load('tags');
                 $this->data['tags']   = Tag::all();
@@ -139,7 +145,7 @@ class VideoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-        public function update(Request $request, Video $video)
+        public function update(Request $request, Content $video)
             {
 
 
@@ -230,7 +236,7 @@ class VideoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-        public function destroy(Video $video)
+        public function destroy(Content $video)
             {
                 $result = $video->delete();
                 if ($result)

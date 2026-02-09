@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Organizer;
+use App\Traits\Meta;
 use Illuminate\Http\Request;
 
 class OrganizerController extends Controller
 {
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
     /**
      * Display a listing of the resource.
      */

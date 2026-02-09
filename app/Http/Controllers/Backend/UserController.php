@@ -10,10 +10,17 @@ use App\Http\Requests\UpdateProfile;
 use App\Models\Role;
 use App\Models\SystemUser;
 use App\Models\User;
+use App\Traits\Meta;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\View\View
      */

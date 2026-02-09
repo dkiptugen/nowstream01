@@ -5,12 +5,19 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Traits\Meta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Psy\Util\Json;
 
 class CategoryController extends Controller
 {
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
     /**
      * Display a listing of the resource.
      *
