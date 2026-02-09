@@ -18,7 +18,7 @@ class CategoryController extends Controller
      */
         public function index()
             {
-                return view('modules.category.index',$this->data);
+                return view('Backend.modules.category.index',$this->data);
             }
 
     /**
@@ -29,7 +29,7 @@ class CategoryController extends Controller
         public function create()
             {
                 $this->data['cat']  =   Category::get();
-                return view('modules.category.add',$this->data);
+                return view('Backend.modules.category.add',$this->data);
             }
 
     /**
@@ -71,17 +71,7 @@ class CategoryController extends Controller
                 return self::failed('Category', $validateddata,route('category.index'));
             }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
-     */
-        public function show($id)
-            {
-                $this->data['category'] =   Category::with('keyword')->find($id);
-                return view('modules.category.view',$this->data);
-            }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -94,7 +84,7 @@ class CategoryController extends Controller
                 $this->data['cat']      =   Category::get();
                 $this->data['category'] =   Category::with('tags')->find($id);
                 $this->data['keywords'] =  implode(',',$this->data['category']->tags->pluck('name')->toArray())   ;
-                return view('modules.category.edit',$this->data);
+                return view('Backend.modules.category.edit',$this->data);
             }
 
     /**

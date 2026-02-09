@@ -1,4 +1,4 @@
-@extends('includes.body')
+@extends('Backend.includes.layout')
 @section('content')
     <div class="col-12">
         <div class="card ">
@@ -7,7 +7,7 @@
             </div>
             <div class="card-body">
 
-                <form action="{{ route('category.update',$category->id) }}" class="form form-horizontal create-form" method="post" id="updateCat" >
+                <form action="{{ route('backend.category.update',$category->id) }}" class="form form-horizontal create-form" method="post" id="updateCat" >
                     @csrf
                     @method('put')
                     <div class="form-group form-row">

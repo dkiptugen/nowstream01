@@ -1,4 +1,4 @@
-@extends('includes.body')
+@extends('Backend.includes.layout')
 @section('content')
 <div class="col-12">
     <div class="card">
