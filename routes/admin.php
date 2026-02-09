@@ -68,22 +68,22 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     Route::get('/change_channel/{channel}', [OutletController::class, 'outlet_change'])->name('change_channel');
 
     Route::controller(CategoryController::class)->group( function () {
-        Route::resource('category', 'CategoryController')->except(['show']);
+        Route::resource('category', CategoryController::class)->except(['show']);
         Route::post('category/datatable',  'datatable')->name('category.datatable');
     });
 
     Route::controller(TvController::class)->group( function () {
-        Route::resource('tv', 'TvController')->except(['show']);
+        Route::resource('tv', TvController::class)->except(['show']);
         Route::post('tv/datatable',  'datatable')->name('tv.datatable');
     });
 
     Route::controller(RadioController::class)->group( function () {
-        Route::resource('radio', 'RadioController')->except(['show']);
+        Route::resource('radio', RadioController::class)->except(['show']);
         Route::post('radio/datatable', 'datatable')->name('radio.datatable');
     });
 
     Route::controller(PodcastController::class)->group( function () {
-        Route::resource('podcast', 'PodcastController')->except(['show']);
+        Route::resource('podcast', PodcastController::class)->except(['show']);
         Route::post('podcast/datatable',  'datatable')->name('podcast.datatable');
     });
 
@@ -163,17 +163,10 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     Route::resource('logs', LogsController::class);
     Route::post('/logs/datatable', [LogsController::class, 'datatable'])->name('logs.datatable');
 
-    Route::resource('stream_partner', ContentPartnerController::class);
-    Route::post('/stream_partner/datatable', [ContentPartnerController::class, 'datatable'])->name('stream_partner.datatable');
-
-    Route::resource('stream_partner_rate', ContentPartnerRateController::class);
-    Route::post('/stream_partner_rate/datatable', [ContentPartnerRateController::class, 'datatable'])->name('stream_partner_rate.datatable');
 
     Route::resource('user', UserController::class);
     Route::post('/user/datatable', [UserController::class, 'datatable'])->name('user.datatable');
 
-    Route::resource('subscription', SubscriptionController::class);
-    Route::post('subscription/datatable', [SubscriptionController::class, 'datatable'])->name('subscription.datatable');
 
     Route::resource('transaction', TransactionController::class);
     Route::post('transaction/datatable', [TransactionController::class, 'datatable'])->name('transaction.datatable');
