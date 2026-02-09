@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Models\ProductVariant;
+use App\Http\Controllers\Controller;
+use App\Models\Organizer;
 use Illuminate\Http\Request;
 
-class ProductVariantController extends Controller
+class OrganizerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class ProductVariantController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProductVariant $productVariant)
+    public function show(Organizer $organizer)
     {
         //
     }
@@ -42,7 +43,7 @@ class ProductVariantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProductVariant $productVariant)
+    public function edit(Organizer $organizer)
     {
         //
     }
@@ -50,7 +51,7 @@ class ProductVariantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductVariant $productVariant)
+    public function update(Request $request, Organizer $organizer)
     {
         //
     }
@@ -58,7 +59,7 @@ class ProductVariantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductVariant $productVariant)
+    public function destroy(Organizer $organizer)
     {
         //
     }

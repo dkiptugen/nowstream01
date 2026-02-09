@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Models\Settlement;
+use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class SettlementController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class SettlementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Settlement $settlement)
+    public function show(Category $category)
     {
         //
     }
@@ -42,7 +43,7 @@ class SettlementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Settlement $settlement)
+    public function edit(Category $category)
     {
         //
     }
@@ -50,7 +51,7 @@ class SettlementController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Settlement $settlement)
+    public function update(Request $request, Category $category)
     {
         //
     }
@@ -58,7 +59,7 @@ class SettlementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Settlement $settlement)
+    public function destroy(Category $category)
     {
         //
     }

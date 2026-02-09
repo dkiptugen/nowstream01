@@ -5,7 +5,7 @@
         <div class="col">
             <div class="card">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5">Channel Streams</h3>
+                    <h3 class="card-title m-0 h5">Streams</h3>
 
                 </div>
                 <hr>

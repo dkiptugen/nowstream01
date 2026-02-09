@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Models\Seat;
+use App\Http\Controllers\Controller;
+use App\Models\Settlement;
 use Illuminate\Http\Request;
 
-class SeatController extends Controller
+class SettlementController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class SeatController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Seat $seat)
+    public function show(Settlement $settlement)
     {
         //
     }
@@ -42,7 +43,7 @@ class SeatController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Seat $seat)
+    public function edit(Settlement $settlement)
     {
         //
     }
@@ -50,7 +51,7 @@ class SeatController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Seat $seat)
+    public function update(Request $request, Settlement $settlement)
     {
         //
     }
@@ -58,7 +59,7 @@ class SeatController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Seat $seat)
+    public function destroy(Settlement $settlement)
     {
         //
     }

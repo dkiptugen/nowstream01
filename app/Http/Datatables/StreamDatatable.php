@@ -62,7 +62,6 @@ class StreamDatatable
                                 $nestedData['end_time']    = $post->end_time->format('d-m-Y');
                                 $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px; width:50px');
                                 $nestedData['action']      = $btn;
-
                                 $data[] = $nestedData;
                                 $pos++;
                             }

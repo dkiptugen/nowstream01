@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Models\Product;
+use App\Http\Controllers\Controller;
+use App\Models\VenueSection;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class VenueSectionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(VenueSection $venueSection)
     {
         //
     }
@@ -42,7 +43,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit(VenueSection $venueSection)
     {
         //
     }
@@ -50,7 +51,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, VenueSection $venueSection)
     {
         //
     }
@@ -58,7 +59,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(VenueSection $venueSection)
     {
         //
     }

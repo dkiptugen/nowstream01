@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Backend;
 
-use App\Models\RevenueShare;
+use App\Http\Controllers\Controller;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 
-class RevenueShareController extends Controller
+class OrderItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +35,7 @@ class RevenueShareController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RevenueShare $revenueShare)
+    public function show(OrderItem $orderItem)
     {
         //
     }
@@ -42,7 +43,7 @@ class RevenueShareController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RevenueShare $revenueShare)
+    public function edit(OrderItem $orderItem)
     {
         //
     }
@@ -50,7 +51,7 @@ class RevenueShareController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RevenueShare $revenueShare)
+    public function update(Request $request, OrderItem $orderItem)
     {
         //
     }
@@ -58,7 +59,7 @@ class RevenueShareController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RevenueShare $revenueShare)
+    public function destroy(OrderItem $orderItem)
     {
         //
     }
