@@ -98,7 +98,7 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     });
 
     Route::controller(StreamController::class)->group( function (){
-        Route::resource('stream', ContentController::class);
+        Route::resource('stream', StreamController::class);
         Route::post('stream/datatable',  'datatable')->name('stream.datatable');
     });
 
