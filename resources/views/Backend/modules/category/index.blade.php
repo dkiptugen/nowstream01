@@ -5,10 +5,10 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title">Categories</h5>
             <div class="actbtn">
-                @if(\Illuminate\Support\Facades\Auth::user()->permission->contains('name','category.create'))
-                <a href="{{ route('category.create') }}" class="btn btn-sm btn-outline-dark">
-                   <i class="fas fa-plus"></i> Add Category
-                </a>
+                @if(\Illuminate\Support\Facades\Auth::user()->can('create_category'))
+                    <a href="{{ route('backend.category.create') }}" class="btn btn-sm btn-outline-dark">
+                       <i class="fas fa-plus"></i> Add Category
+                    </a>
                 @endif
             </div>
         </div>
@@ -23,7 +23,6 @@
                         <th>Position</th>
                         <th>Description</th>
                         <th>Top Menu</th>
-
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -39,7 +38,6 @@
                             <th>Position</th>
                             <th>Description</th>
                             <th>Top Menu</th>
-
                             <th>Action</th>
                         </tr>
                     </tfoot>
@@ -62,7 +60,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                "url": "{{ route('category.datatable') }}",
+                "url": "{{ route('backend.category.datatable') }}",
                 "dataType": "json",
                 "type": "POST",
                 "data":{ _token: "{{csrf_token()}}"}
