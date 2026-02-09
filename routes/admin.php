@@ -11,8 +11,11 @@ use App\Http\Controllers\Auth\Admin\ResetPasswordController;
 use App\Http\Controllers\Auth\Admin\VerificationController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContentController;
+use App\Http\Controllers\Backend\PodcastController;
+use App\Http\Controllers\Backend\RadioController;
 use App\Http\Controllers\Backend\SubscriptionController;
 use App\Http\Controllers\Backend\TransactionController;
+use App\Http\Controllers\Backend\TvController;
 use App\Http\Controllers\Backend\VideoController;
 use App\Http\Controllers\Backend\EventRateController;
 use App\Http\Controllers\Backend\LogsController;
@@ -70,7 +73,20 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
 
     Route::controller(CategoryController::class)->group( function () {
         Route::resource('category', 'CategoryController')->except(['show']);
-        Route::post('category/datatable', [CategoryController::class, 'datatable'])->name('category.datatable');
+        Route::post('category/datatable',  'datatable')->name('category.datatable');
+    });
+
+    Route::controller(TvController::class)->group( function () {
+        Route::resource('tv', 'TvController')->except(['show']);
+        Route::post('tv/datatable',  'datatable')->name('tv.datatable');
+    });
+    Route::controller(RadioController::class)->group( function () {
+        Route::resource('radio', 'RadioController')->except(['show']);
+        Route::post('radio/datatable', 'datatable')->name('radio.datatable');
+    });
+    Route::controller(PodcastController::class)->group( function () {
+        Route::resource('podcast', 'PodcastController')->except(['show']);
+        Route::post('podcast/datatable',  'datatable')->name('podcast.datatable');
     });
 
 
