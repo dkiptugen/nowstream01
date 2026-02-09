@@ -83,13 +83,13 @@ class EventDatatable
                 $button = null;
                 if ($request->user()->can('edit_event'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.event.edit', ['event' => $post->id]) . '" data-toggle="tooltip" title="Edit Event">
+                        $button .= '<a class="text text-dark" href="' . route('backend.event.edit', ['event' => $post->uuid]) . '" data-toggle="tooltip" title="Edit Event">
                                                 <i class="fas fa-edit "></i>
                                                 </a>';
                     }
                 if ($request->user()->can('destroy_event'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.event.destroy', ['event' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.event.destroy', ['event' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                                         <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                         <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                                         <button type="submit" class="btn btn-link text-dark text-decoration-none font-weight-normal"   data-toggle="tooltip" title="Delete Event"><i class="fas fa-trash "></i> </button>
@@ -97,13 +97,13 @@ class EventDatatable
                     }
                 if ($request->user()->can('view_event_subscription'))
                     {
-                        $button .= '<a class="text text-dark mr-2" href="' . route('backend.event.subscription.index', $post->id) . '" data-toggle="tooltip" title="Show Subscriptions">
+                        $button .= '<a class="text text-dark mr-2" href="' . route('backend.event.subscription.index', $post->uuid) . '" data-toggle="tooltip" title="Show Subscriptions">
                                                 <i class="fas fa-paperclip"></i>
                                                 </a>';
                     }
                 if ($request->user()->can('view_event_transaction'))
                     {
-                        $button .= '<a class="text text-dark mr-2" href="' . route('backend.event.transaction.index', $post->id) . '" data-toggle="tooltip" title="Show Transactions">
+                        $button .= '<a class="text text-dark mr-2" href="' . route('backend.event.transaction.index', $post->uuid) . '" data-toggle="tooltip" title="Show Transactions">
                                                 <i class="fas fa-credit-card"></i>
                                                 </a>';
                     }
@@ -115,7 +115,7 @@ class EventDatatable
                      }*/
                 if ($request->user()->can('create_video'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.event.video.create', $post->id) . '" data-toggle="tooltip" title="Upload Video">
+                        $button .= '<a class="text text-dark" href="' . route('backend.event.video.create', $post->uuid) . '" data-toggle="tooltip" title="Upload Video">
                                                 <i class="fas fa-upload"></i>
                                                 </a>';
                     }
