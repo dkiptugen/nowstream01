@@ -51,9 +51,11 @@
 
                             <label class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" name="featured" value="1">
-                                <span class="form-check-label">
-                                Is Featured
-                            </span>
+                                <span class="form-check-label">Is Featured</span>
+                            </label>
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="has_stream" value="1">
+                                <span class="form-check-label">Has Stream</span>
                             </label>
 
                         </div>
