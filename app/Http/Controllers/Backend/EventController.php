@@ -82,7 +82,6 @@
                                                 {
                                                     $streamkey           = Str::ulid ();
                                                     $stream              = new Content();
-                                                    $stream->identifier  = self::identifer ('Content', 'identifier');
                                                     $stream->title       = $event->event_name;
                                                     $stream->description = $request->event_description;
                                                     if ($request->hasFile ('thumbnail'))
