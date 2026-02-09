@@ -34,7 +34,7 @@
 
 			public function videos()
 				{
-					return $this->morphedByMany(Video::class, 'taggable', 'taggables', 'tag_id');
+					return $this->morphedByMany(Content::where('type', 'video')->class, 'taggable', 'taggables', 'tag_id');
 				}
 
 			public function taggable()

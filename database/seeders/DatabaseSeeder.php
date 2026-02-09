@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         /*ContentPartner::factory(300)->create();
         Channel::factory(1500)->create();
         Event::factory(1500)->create();
-		Video::factory(3000)->create();
+		Content::where('type', 'video')->factory(3000)->create();
 		Content::factory (3000)->create();*/
 
     }

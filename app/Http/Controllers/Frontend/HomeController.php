@@ -25,7 +25,7 @@ class HomeController extends Controller
         $this->data['events'] = Cache::rememberOnce('events', now()->addDay(), $this->get_events());
         $this->data['videos'] = Cache::rememberOnce('videos', now()->addDay(), $this->get_videos());
         $this->data['current_event'] = Content::latest()->take(1)->get();
-        $this->data['top_videos'] = Video::orderBy('views', 'DESC')->take(4)->get();
+        $this->data['top_videos'] = Content::where('type', 'video')->orderBy('views', 'DESC')->take(4)->get();
 
         return view('Frontend.index', $this->data);
     }
@@ -57,7 +57,7 @@ class HomeController extends Controller
         $this->data['channels'] = Channel::where('status', 1)->take(12)->get();
         $this->data['streams'] = Content::latest()->take(4)->get();
         $this->data['events'] = Event::where('status', 1)->take(4)->get();
-        $this->data['videos'] = Video::take(4)->get();
+        $this->data['videos'] = Content::where('type', 'video')->take(4)->get();
 
         $currentEvent = Event::find(7);
         $this->data['current_event'] = $currentEvent;

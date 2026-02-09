@@ -25,6 +25,6 @@ class WatchHistory extends Model
 
     public function video()
     {
-        return $this->belongsTo(Video::class)->withDefault();
+        return $this->belongsTo(Content::where('type', 'video')->class)->withDefault();
     }
 }

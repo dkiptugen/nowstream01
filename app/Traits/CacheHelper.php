@@ -14,13 +14,13 @@
 				{
 					if (is_null ($id))
 						{
-							$channels = Channel::with (['streams', 'videos'])->where ('status', 1)->orderBy ("id",
+							$channels = Channel::with (['streams', 'contents'])->where ('status', 1)->orderBy ("created_at",
 							                                                                                 "desc")->get ()
 							;
 						}
 					else
 						{
-							$channels = Channel::with (['streams', 'videos'])->find ($id);
+							$channels = Channel::with (['streams', 'contents'])->find ($id);
 						}
 
 					return $channels;
@@ -47,11 +47,11 @@
 				{
 					if (is_null ($id))
 						{
-							$video = Video::get ();
+							$video = Content::where('type', 'video')->get ();
 						}
 					else
 						{
-							$video = Video::find ($id);
+							$video = Content::where('type', 'video')->find ($id);
 						}
 					return $video;
 				}
@@ -76,7 +76,7 @@
 						{
 							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
-									return $query->where ('id', '!=', $not);
+									return $query->where ('uuid', '!=', $not);
 								})->orderBy ("created_at", "asc")->get ()
 							;
 						}

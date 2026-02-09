@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class VideoFactory extends Factory
 {
-	protected $model= Video::class;
+	protected $model= Content::where('type', 'video')->class;
 
     /**
      * Define the model's default state.

@@ -21,13 +21,15 @@ class Channel extends Model
     {
         return $this->hasMany(Event::class);
     }
+  
     public function streams()
     {
-        return $this->hasMany(Content::class);
+        return $this->hasMany(Content::class, 'channel_id', 'uuid');
     }
-    public function videos()
+
+    public function contents()
     {
-        return $this->hasMany(Video::class);
+        return $this->hasMany(Content::class, 'channel_id', 'uuid');
     }
     public function system_users()
     {
@@ -35,7 +37,12 @@ class Channel extends Model
     }
     public function subscribers()
     {
-        return $this->belongsToMany(User::class, 'channel_user');
+        return $this->belongsToMany(User::class,
+        'channel_user',
+        'channel_id',  
+        'user_id',     
+        'uuid',       
+        'id' );
     }
     public function getSubscriberCountAttribute()
     {

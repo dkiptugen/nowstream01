@@ -63,7 +63,7 @@
 							$name  = $file->getFilename ();
 							$filex = explode ('.', $name);
 							//dd ($filex);
-							Video::updateOrCreate (['title' => $filex[0]], [
+							Content::where('type', 'video')->updateOrCreate (['title' => $filex[0]], [
 								                                             'channel_id'     => 1,
 								                                             'event_id'       => 1,
 								                                             'description'    => $name,

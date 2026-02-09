@@ -16,7 +16,7 @@
 
 					$channels = Channel::where('name', 'like', "%$query%")->take(5)->get();
 					$streams  = Content::where('title', 'like', "%$query%")->take(5)->get();
-					$videos   = Video::where('title', 'like', "%$query%")->take(5)->get();
+					$videos   = Content::where('type', 'video')->where('title', 'like', "%$query%")->take(5)->get();
 
 					return view('Frontend.search', compact('channels', 'streams', 'videos'))->render();
 				}
