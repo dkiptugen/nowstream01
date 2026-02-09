@@ -33,8 +33,7 @@ class EventDatatable
                     {
 
                         $search = $request->input('search.value');
-                        $query
-                            ->where('event_name', 'LIKE', "%{$search}%")
+                        $query->where('event_name', 'LIKE', "%{$search}%")
                             ->orWhere('description', 'LIKE', "%{$search}%")
                             ->orWhere('status', 'LIKE', "%{$search}%");
 
