@@ -29,7 +29,7 @@
              @endforeach
          </div>
                 <div class="d-flex">
-                    <a href="{{ route('role.index') }}" class="btn btn-dark  ml-auto">Close</a>
+                    <a href="{{ route('backend.role.index') }}" class="btn btn-dark  ml-auto">Close</a>
                     <button type="submit" class="btn btn-blue ml-3">Assign Permissions</button>
                 </div>
                 </form>
