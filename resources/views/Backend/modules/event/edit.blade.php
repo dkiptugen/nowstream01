@@ -30,7 +30,7 @@
 
                             </div>
                             <div class="col d-flex align-items-center">
-                                <img src="{{ $event->streams->thumbnail_url }}" class="mr-2" height="50">
+                                <img src="{{ optional($event->streams)->thumbnail_url }}" class="mr-2" height="50">
                                 <span>
                                     <label for="stream_thumbnail" class="control-label">Stream Thumbnail</label>
                                     <input type="file" name="stream_thumbnail" id="stream_thumbnail" class="form-control-file" accept="image/*">
