@@ -6,12 +6,19 @@
     use App\Models\Channel;
     use App\Models\SystemUserChannel;
     use App\Models\UserProduct;
+    use App\Traits\Meta;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Cache;
 
     class OutletController extends Controller
         {
+            use Meta;
+            public $data = [];
+            public function __construct()
+                {
+                    $this->data = self::product_def();
+                }
             public function selectOutlet(Request $request)
                 {
                     $this->data['product'] = SystemUserChannel::with([
@@ -31,10 +38,10 @@
 							$user                      = Auth::user();
 							$user->user_active_channel = $channel->identifier;
 							$user->save();
-							
+
 							return redirect()->route('admin_dashboard');
 						}
-                
+
                 }
 
             public function outlet_change($identifier)

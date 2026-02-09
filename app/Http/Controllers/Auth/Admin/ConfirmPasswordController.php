@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Traits\Meta;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
 
 class ConfirmPasswordController extends Controller
@@ -32,8 +33,10 @@ class ConfirmPasswordController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth:admin');
-    }
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
 }

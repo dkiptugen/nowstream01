@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\Meta;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -35,10 +36,12 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('guest');
-    }
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
 
     /**
      * Get a validator for an incoming registration request.
