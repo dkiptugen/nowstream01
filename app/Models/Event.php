@@ -76,7 +76,7 @@
 				}
 			public function streams() :Attribute
 				{
-					$stream = Content::whereEventId($this->attributes['id'])->first();
+					$stream = Content::whereEventId($this->attributes['uuid'])->first();
 					return Attribute::make (get: fn($value) => $stream);
 
 				}
