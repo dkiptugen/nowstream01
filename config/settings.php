@@ -18,18 +18,7 @@
                 "destroy_event_rate",
                 "view_event_rate",
             ],
-            "stream"          => [
-                "create_stream",
-                "edit_stream",
-                "destroy_stream",
-                "view_stream",
-            ],
-            "video"          => [
-                "create_video",
-                "edit_video",
-                "destroy_video",
-                "view_video",
-            ],
+
             "user"              => [
                 "create_user",
                 "edit_user",
@@ -71,17 +60,41 @@
                 "view_payment_method",
             ],
 
-            "channel_video"    => [
-                "create_channel_video",
-                "edit_channel_video",
-                "destroy_channel_video",
-                "view_channel_video",
+            "video"    => [
+                "create_video",
+                "edit_video",
+                "destroy_video",
+                "view_video",
             ],
-            "channel_stream"    => [
-                "create_channel_stream",
-                "edit_channel_stream",
-                "destroy_channel_stream",
-                "view_channel_stream",
+            "stream"    => [
+                "create_stream",
+                "edit_stream",
+                "destroy_stream",
+                "view_stream",
+            ],
+            "podcast"    => [
+                "create_podcast",
+                "edit_podcast",
+                "destroy_podcast",
+                "view_podcast",
+            ],
+            "radio"    => [
+                "create_radio",
+                "edit_radio",
+                "destroy_radio",
+                "view_radio",
+            ],
+            "tv"    => [
+                "create_tv",
+                "edit_tv",
+                "destroy_tv",
+                "view_tv",
+            ],
+            "category"    => [
+                "create_category",
+                "edit_category",
+                "destroy_category",
+                "view_category",
             ],
         ]
     ];

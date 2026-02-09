@@ -24,7 +24,15 @@
 
                     </li>
                 @endcanany
-                @can('view_channel_stream')
+                @can('view_category')
+                    <li class="sidebar-item">
+                        <a href="{{ route('backend.category.index') }}" class="  sidebar-link">
+                           <i class="fas fa-folder-open align-middle"></i>
+                            <span class="align-middle">Categories</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view_stream')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.stream.index') }}" class="  sidebar-link">
                            <i class="fas fa-stream align-middle"></i><span class="align-middle">Streams</span>
@@ -32,11 +40,38 @@
 
                     </li>
                 @endcan
-                @can('view_channel_video')
+                @can('view_video')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.video.index') }}" class="  sidebar-link">
                            <i class="fas fa-video align-middle"></i>
                             <span class="align-middle">Videos</span>
+                        </a>
+
+                    </li>
+                @endcan
+                @can('view_tv')
+                    <li class="sidebar-item">
+                        <a href="{{ route('backend.tv.index') }}" class="  sidebar-link">
+                           <i class="fas fa-screen align-middle"></i>
+                            <span class="align-middle">TVs</span>
+                        </a>
+
+                    </li>
+                @endcan
+                @can('view_radio')
+                    <li class="sidebar-item">
+                        <a href="{{ route('backend.radio.index') }}" class="  sidebar-link">
+                           <i class="fas fa-radio align-middle"></i>
+                            <span class="align-middle">Radios</span>
+                        </a>
+
+                    </li>
+                @endcan
+                @can('view_podcast')
+                    <li class="sidebar-item">
+                        <a href="{{ route('backend.podcast.index') }}" class="  sidebar-link">
+                           <i class="fas fa-screen align-middle"></i>
+                            <span class="align-middle">Podcasts</span>
                         </a>
 
                     </li>
