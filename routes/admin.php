@@ -11,8 +11,11 @@ use App\Http\Controllers\Auth\Admin\ResetPasswordController;
 use App\Http\Controllers\Auth\Admin\VerificationController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContentController;
+use App\Http\Controllers\Backend\EventStreamController;
+use App\Http\Controllers\Backend\EventVideoController;
 use App\Http\Controllers\Backend\PodcastController;
 use App\Http\Controllers\Backend\RadioController;
+use App\Http\Controllers\Backend\StreamController;
 use App\Http\Controllers\Backend\SubscriptionController;
 use App\Http\Controllers\Backend\TransactionController;
 use App\Http\Controllers\Backend\TvController;
@@ -63,10 +66,6 @@ Route::middleware(['auth:admin'])->prefix('backend')->controller(OutletControlle
 });
 Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(function () {
 
-
-
-
-
     Route::get('/', [DashboardController::class, 'index'])->name('admin_dashboard');
 
     Route::get('/change_channel/{channel}', [OutletController::class, 'outlet_change'])->name('change_channel');
@@ -80,46 +79,70 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
         Route::resource('tv', 'TvController')->except(['show']);
         Route::post('tv/datatable',  'datatable')->name('tv.datatable');
     });
+
     Route::controller(RadioController::class)->group( function () {
         Route::resource('radio', 'RadioController')->except(['show']);
         Route::post('radio/datatable', 'datatable')->name('radio.datatable');
     });
+
     Route::controller(PodcastController::class)->group( function () {
         Route::resource('podcast', 'PodcastController')->except(['show']);
         Route::post('podcast/datatable',  'datatable')->name('podcast.datatable');
     });
 
+    Route::controller(ChannelController::class)->group( function () {
+        Route::resource('/channel', ChannelController::class)->except(['show']);
+        Route::post('/channel/datatable',  'datatable')->name('channel.datatable');
+    });
 
-    Route::resource('/channel', ChannelController::class)->except(['show']);
-    Route::post('/channel/datatable', [ChannelController::class, 'datatable'])->name('channel.datatable')->secure();
-
-
-
+    Route::controller(EventController::class)->group( function (){
         Route::resource('event', EventController::class);
-        Route::post('event/datatable', [EventController::class, 'datatable'])->name('event.datatable');
+        Route::post('event/datatable',  'datatable')->name('event.datatable');
+    });
 
+    Route::controller(StreamController::class)->group( function (){
         Route::resource('stream', ContentController::class);
-        Route::post('stream/datatable', [ContentController::class, 'datatable'])->name('stream.datatable');
+        Route::post('stream/datatable',  'datatable')->name('stream.datatable');
+    });
 
-
-
+    Route::controller(VideoController::class)->group( function (){
         Route::resource('video', VideoController::class);
-        Route::post('video/datatable', [VideoController::class, 'datatable'])->name('video.datatable');
+        Route::post('video/datatable', 'datatable')->name('video.datatable');
+    });
+    Route::name('event.')->prefix('event')->group(function (){
+        Route::controller(EventStreamController::class)->group( function (){
+            Route::resource('stream', EventStreamController::class);
+            Route::post('{event}/stream/datatable', 'datatable')->name('stream.datatable');
+        });
+
+        Route::controller(EventRateController::class)->group( function (){
+            Route::resource('rate', EventRateController::class);
+            Route::post('{event}/rate/datatable',  'datatable')->name('rate.datatable');
+        });
+        Route::controller(EventVideoController::class)->group( function (){
+            Route::resource('video', EventVideoController::class);
+            Route::post('{event}/video/datatable',  'datatable')->name('video.datatable');
+        });
+    });
 
 
 
 
 
-    Route::resource('event.stream', ContentController::class);
-    Route::post('event/{evenId}/stream/datatable', [ContentController::class, 'datatable'])->name('event.stream.datatable');
 
-    Route::resource('event.rates', EventRateController::class);
-    Route::post('event/{evenId}/rate/datatable', [EventRateController::class, 'datatable'])->name('event.rate.datatable');
 
-    Route::get('event/{evenId}/rate/edit', [EventRateController::class, 'edit'])->name('event.rate.edit');
 
-    Route::resource('event.video', VideoController::class);
-    Route::post('event/{evenId}/video/datatable', [VideoController::class, 'datatable'])->name('event.video.datatable');
+
+
+
+
+
+
+
+
+
+
+
 
     Route::get('/configuration', [ConfigurationController::class, 'index'])->name('configuration.index');
     Route::post('/configuration/edit', [ConfigurationController::class, 'edit'])->name('configuration.edit');
