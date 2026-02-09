@@ -59,7 +59,7 @@ class EventDatatable
                                 $nestedData['publish_date'] = Carbon::parse($post->publish_date)->toDayDateTimeString();
                                 $nestedData['start_date']   = Carbon::parse($post->start_date)->toDayDateTimeString();
                                 $nestedData['end_date']     = Carbon::parse($post->end_date)->toDayDateTimeString();
-                                $nestedData['rates']        = $this->anchor_link($post->rates_count, route('backend.event.rates.index', $post->id));
+                                $nestedData['rates']        = $this->anchor_link($post->rates_count, route('backend.event.rates.index', $post->uuid));
                                 $nestedData['status']       = ActivityStatus::from($post->status)->name;
                                 $nestedData['action']       = $btn;
                                 $data[]                     = $nestedData;
