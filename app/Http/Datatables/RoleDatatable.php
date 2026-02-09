@@ -81,20 +81,20 @@ class RoleDatatable
         $button = null;
         if($request->user()->can('add_permission_role'))
             {
-                $button .= '<a class="text text-dark" href="'.route('role.assign_view',$post->id).'" data-toggle="tooltip" title="Assign Permissions to Role">
+                $button .= '<a class="text text-dark" href="'.route('backend.role.assign_view',$post->id).'" data-toggle="tooltip" title="Assign Permissions to Role">
                                                 <i class="bx bx-plus-circle"></i> Assign Permissions
                                                 </a>';
             }
         if($request->user()->can('edit_role'))
             {
-                $button .= '<a class="text text-dark" href="'.route('role.edit',$post->id).'" data-toggle="tooltip" title="Edit Role">
+                $button .= '<a class="text text-dark" href="'.route('backend.role.edit',$post->id).'" data-toggle="tooltip" title="Edit Role">
                                                 <i class="bx bx-pencil"></i> Edit
                                                 </a>';
             }
 
         if($request->user()->can('destroy_role'))
             {
-                $button .='<form id="delete-form-' . $post->id . '" action="' . route('role.destroy',$post->id) . '" method="POST" class=" create-form m-0 p-0">
+                $button .='<form id="delete-form-' . $post->id . '" action="' . route('backend.role.destroy',$post->id) . '" method="POST" class=" create-form m-0 p-0">
                                         <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                         <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                                         <button type="submit" class="btn btn-link text-dark m-0" data-toggle="tooltip" title="Delete Role"><i class="bx bx-trash m-0"></i> Delete</button>
