@@ -86,14 +86,7 @@
 
                     </li>
                 @endcan
-                @can('view_subscription')
-                    <li class="sidebar-item">
-                        <a href="{{ route('backend.subscription.index') }}" class="  sidebar-link">
-                            <i class='fas fa-box align-middle'></i><span class="align-middle">Subscriptions</span>
-                        </a>
-                    </li>
 
-                @endcan
                 @can('view_transaction')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.transaction.index') }}" class="  sidebar-link">
@@ -103,22 +96,7 @@
                         </a>
                     </li>
                 @endcan
-                <li class="sidebar-header">Stream Partners</li>
-                <li class="sidebar-item">
-                    <a href="{{ route('backend.stream_partner.index') }}" class="  sidebar-link">
-                        <i class="fas fa-folder-open align-middle"></i>
 
-                        <span class="align-middle">Stream Partner Rates</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a href="{{ route('backend.stream_partner_rate.index') }}" class="  sidebar-link">
-                       <i class="fas fa-user-check align-middle"></i>
-
-                        <span class=" align-middle">Stream Partners</span>
-                    </a>
-
-                </li>
                 <li class="sidebar-header">Accounts</li>
                 <li class="sidebar-item">
                     <a href="{{ route('backend.user.index') }}" class="  sidebar-link">
