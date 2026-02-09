@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\Admin\OutletController;
 use App\Http\Controllers\Auth\Admin\RegisterController;
 use App\Http\Controllers\Auth\Admin\ResetPasswordController;
 use App\Http\Controllers\Auth\Admin\VerificationController;
+use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContentController;
 use App\Http\Controllers\Backend\SubscriptionController;
 use App\Http\Controllers\Backend\TransactionController;
@@ -66,6 +67,11 @@ Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(fu
     Route::get('/', [DashboardController::class, 'index'])->name('admin_dashboard');
 
     Route::get('/change_channel/{channel}', [OutletController::class, 'outlet_change'])->name('change_channel');
+
+    Route::controller(CategoryController::class)->group( function () {
+        Route::resource('category', 'CategoryController')->except(['show']);
+        Route::post('category/datatable', [CategoryController::class, 'datatable'])->name('category.datatable');
+    });
 
 
     Route::resource('/channel', ChannelController::class)->except(['show']);
