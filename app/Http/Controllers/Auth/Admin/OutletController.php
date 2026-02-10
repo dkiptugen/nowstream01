@@ -3,6 +3,8 @@
     namespace App\Http\Controllers\Auth\Admin;
 
     use App\Http\Controllers\Controller;
+    use App\Http\Requests\CreateChannel;
+    use App\Http\Services\UploadService;
     use App\Models\Channel;
     use App\Models\SystemUserChannel;
     use App\Models\UserProduct;
@@ -14,110 +16,93 @@
     class OutletController extends Controller
         {
             use Meta;
+
             public $data = [];
+
             public function __construct()
                 {
                     $this->data = self::product_def();
                 }
-            public function selectOutlet(Request $request)
+
+            public function choose_channel(Request $request)
                 {
                     $this->data['product'] = SystemUserChannel::with([
-                                                                   'channel'
-                                                               ])->where('system_user_id', $request->user()->id)->get();
+                                                                         'channel'
+                                                                     ])->where('system_user_id', $request->user()->id)->get();
 
                     //dd( $this->data['product']);
 
-                    return view('Backend.auth.outlet', $this->data);
+                    return view('Backend.auth.choose_channel', $this->data);
                 }
 
-            public function saveOutlet(Request $request)
+            public function select_channel(Request $request)
                 {
-                    $channel                   = Channel::find($request->channel);
-					if(!is_null($channel))
-						{
-							$user                      = Auth::user();
-							$user->user_active_channel = $channel->identifier;
-							$user->save();
 
-							return redirect()->route('admin_dashboard');
-						}
+                    $validated = $request->validate([
+                                                        'channel' => ['string', 'required']
+                                                    ]);
+
+                    if ($validated)
+                        {
+                            $user             = Auth::user();
+                            $user->channel_id = $request->channel;
+                            $user->save();
+                            return redirect()->route('backend.admin_dashboard');
+                        }
 
                 }
 
-            public function outlet_change($identifier)
+            public function channel_change(Channel $channel)
                 {
-                    $user                      = Auth::guard('admin')->user();
-                    if ($user->type == 'owner')
+                    $user = Auth::guard('admin')->user();
+                    $user->channel_id = $channel->uuid;
+                    $sav              = $user->save();
+                    if ($sav)
                         {
-                            $channel = Channel::where('identifier', $identifier)
-                                              ->first();
+                            return redirect()->route('backend.admin_dashboard');
                         }
-                    else
+                }
+            public function create_channel_view()
+                {
+                    return view('Backend.auth.create_channel',$this->data);
+                }
+            public function store_channel(CreateChannel $request)
+                {
+                    $validateddata = $request->validated();
+                    if($validateddata)
                         {
-                            $syschannel = SystemUserChannel::with(['channel'])
-                                                        ->where('system_user_id', $user->id)
-                                                        ->whereHas('channel', function ($query) use ($identifier) {
-                                                            $query->where('identifier', $identifier);
-                                                        })
-                                                        ->first();
-                            if(!is_null($syschannel))
+                            $channel             = new Channel();
+                            $channel->name       = $validateddata['channel_name'];
+                            if ($request->hasFile('thumbnail'))
                                 {
-                                    $channel = $syschannel->channel;
+                                    $image              = new UploadService();
+                                    $upload             = $image->file_upload($request, 'thumbnail', 'channel_thumbnail');
+                                    $channel->thumbnail = $upload['path'];
+
                                 }
-
-                        }
-
-                    //dd($channel);
-
-                    if (!is_null($channel))
-                        {
-
-                            $user->user_active_channel = $channel->identifier;
-                            $sav =$user->save();
-                            if($sav)
+                            if ($request->hasFile('cover_image'))
                                 {
-                                    Cache::delete('user_channels_'.$user->id);
+                                    $image                = new UploadService();
+                                    $upload               = $image->file_upload($request, 'cover_image', 'channel_cover');
+                                    $channel->cover_image = $upload['path'];
 
-                                    if ($user->type == 'owner')
-                                        {
-                                            Cache::put('user_channels_' . $user->id, Channel::where('identifier','<>',$user->user_active_channel)->orderBy('created_at', 'desc')->limit(10)->get());
-                                        }
-                                    else
-                                        {
-                                            if (!is_null($user->channels))
-                                                {
-                                                    Cache::put('user_channels_' . $user->id, $user->channels->filter(function ($item) use ($user) {
-                                                        return $item['identifier'] !== $user->user_active_channel;
-                                                    }));
-                                                }
-                                        }
                                 }
-                        }
-                    else
-                        {
-                            Cache::delete('user_channels_'.$user->id);
-
-                            if ($user->type == 'owner')
+                            $channel->description       = $validateddata['channel_description'];
+                            $channel->status            = 1;
+                            $res                        = $channel->save();
+                            if ($res)
                                 {
-                                    Cache::put('user_channels_' . $user->id, Channel::where('identifier','<>',$user->user_active_channel)->orderBy('created_at', 'desc')->limit(10)->get());
-                                    $user->user_active_channel = Cache::get('user_channels_' . $user->id)->first()->identifier;
+                                    $user = $request->user();
+                                    $user->channel_id = $channel->id;
                                     $user->save();
+                                    return self::success('channel', 'Saved successfully', route('backend.admin_dashboard'));
                                 }
-                            else
-                                {
-                                    if (!is_null($user->channels))
-                                        {
-                                            $user->user_active_channel = $user->channels->first()->identifier;
-                                            $user->save();
-                                            Cache::put('user_channels_' . $user->id, $user->channels->filter(function ($item) use ($user) {
-                                                return $item['identifier'] !== $user->user_active_channel;
-                                            }));
-                                        }
-                                }
+                            return self::failed('channel', 'error encountered when saving, try again later', route('backend.admin_dashboard'));
 
                         }
-
-
-                    return redirect()->route('admin_dashboard');
+                    else
+                        {
+                            return self::failed('channel', $validateddata, route('backend.admin_dashboard'));
+                        }
                 }
         }

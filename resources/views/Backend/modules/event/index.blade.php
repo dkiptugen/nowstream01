@@ -55,6 +55,7 @@
 @endsection
 @section('footer')
     <script>
+
             $('#events_dt').DataTable({
                 "processing": true,
                 "serverSide": true,

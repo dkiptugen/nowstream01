@@ -4,7 +4,8 @@
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAppKey;
 use App\Http\Middleware\CheckEventPayment;
-use App\Http\Middleware\Cors;
+    use App\Http\Middleware\ChooseChannel;
+    use App\Http\Middleware\Cors;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\GetRegion;
@@ -105,7 +106,8 @@ return Application::configure(basePath: dirname(__DIR__))
                               'verified'            => EnsureEmailIsVerified::class,
                               'password.expired'    => PasswordExpired::class,
                               'check.event.payment' => CheckEventPayment::class,
-                              'auth'                => Authenticate::class
+                              'auth'                => Authenticate::class,
+                              'choose.channel'      => ChooseChannel::class,
 
 
                           ]);

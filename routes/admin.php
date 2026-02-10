@@ -56,16 +56,20 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
 
     Route::get('password/confirm', [ConfirmPasswordController::class, 'showConfirmForm'])->name('password.confirm');
     Route::post('password/confirm', [ConfirmPasswordController::class, 'confirm']);
+
+
 });
-Route::middleware(['auth:admin'])->prefix('backend')->controller(OutletController::class)->group(function () {
-    Route::get('/choose_channel',  'selectOutlet')->name('choose_outlet');
-    Route::post('/select',  'saveOutlet')->name('save_outlet');
+Route::middleware(['auth:admin'])->name('backend.')->prefix('backend')->controller(OutletController::class)->group(function () {
+    Route::get('/choose-channel',  'choose_channel')->name('choose_channel');
+    Route::post('/select-channel',  'select_channel')->name('select_channel');
+    Route::get('/create-channel',  'create_channel_view')->name('create_channel');
+    Route::post('/create-channel',  'store_channel')->name('store_channel');
 });
-Route::middleware(['auth:admin'])->prefix('backend')->name('backend.')->group(function () {
+Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('backend.')->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('admin_dashboard');
 
-    Route::get('/change_channel/{channel}', [OutletController::class, 'outlet_change'])->name('change_channel');
+    Route::get('/change_channel/{channel}', [OutletController::class, 'channel_change'])->name('change_channel');
 
     Route::controller(CategoryController::class)->group( function () {
         Route::resource('category', CategoryController::class)->except(['show']);

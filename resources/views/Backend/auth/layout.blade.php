@@ -15,7 +15,7 @@
     <meta name="robots" content="noindex">
     <meta name="googlebot" content="noindex">
     <!-- Styles -->
-    <link href="{{ secure_asset('backend_assets/css/app.css?'.time()) }}" rel="stylesheet">
+    <link href="{{ asset('backend_assets/css/app.css?'.time()) }}" rel="stylesheet">
 
 
 </head>
@@ -28,7 +28,7 @@
         </div>
     </main>
     <!-- Scripts -->
-    <script src="{{ secure_asset('backend_assets/js/app.js?'.time()) }}" ></script>
+    <script src="{{ asset('backend_assets/js/app.js?'.time()) }}" ></script>
 
 </body>
 </html>
