@@ -71,11 +71,11 @@ class CategoryController extends Controller
                         if ($res)
                             {
 
-                                return self::success('Category', 'addition success', route('category.index'));
+                                return self::success('Category', 'addition success', route('backend.category.index'));
                             }
-                        return self::failed('Category', 'addition failed', route('category.index'));
+                        return self::failed('Category', 'addition failed', route('backend.category.index'));
                     }
-                return self::failed('Category', $validateddata, route('category.index'));
+                return self::failed('Category', $validateddata, route('backend.category.index'));
             }
 
 
@@ -117,11 +117,11 @@ class CategoryController extends Controller
                         $res = $category->save();
                         if ($res)
                             {
-                                return self::success('Category', 'Update success', route('category.index'));
+                                return self::success('Category', 'Update success', route('backend.category.index'));
                             }
-                        return self::failed('Category', 'Update failed', route('category.index'));
+                        return self::failed('Category', 'Update failed', route('backend.category.index'));
                     }
-                return self::failed('Category', $validateddata, route('category.index'));
+                return self::failed('Category', $validateddata, route('backend.category.index'));
             }
 
     /**
@@ -139,9 +139,9 @@ class CategoryController extends Controller
                 if ($res)
                     {
                         $category->tags()->delete();
-                        return self::success('Category', 'Delete successful', route('category.index'));
+                        return self::success('Category', 'Delete successful', route('backend.category.index'));
                     }
-                return self::failed('Category', 'Delete failed', route('category.index'));
+                return self::failed('Category', 'Delete failed', route('backend.category.index'));
 
             }
 
