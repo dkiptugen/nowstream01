@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Datatables\ChannelTransactionDatatable;
+use App\Http\Datatables\TransactionDatatable;
 use App\Models\Channel;
 use App\Traits\Meta;
 use Illuminate\Http\Request;
@@ -79,7 +79,7 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function datatable(Request $request, ChannelTransactionDatatable $datatable)
+    public function datatable(Request $request, TransactionDatatable $datatable)
     {
         $datatable->columns = [0=>'uuid'];
         return response()->json($datatable->data($request));

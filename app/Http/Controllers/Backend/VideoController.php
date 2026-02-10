@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Datatables\ChannelVideoDatatable;
+use App\Http\Datatables\VideoDatatable;
 use App\Http\Services\UploadService;
 use App\Models\Content;
 use App\Models\Event;
@@ -57,12 +57,12 @@ class VideoController extends Controller
                 );
 
 
-                $event = Event::findOrFail($validatedData['event_id']);
+                //$event = Event::findOrFail($validatedData['event_id']);
 
 
-                $video              = new Video();
-                $video->channel_id  = Auth::user()->channel_id;
-                $video->event_id    = $event->id;
+                $video              = new Content();
+                $video->channel_id  = Auth::user()->channel_id??0;
+                //$video->event_id    = $event->id;
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
                 $video->description = $validatedData['description'];
@@ -72,9 +72,9 @@ class VideoController extends Controller
                     {
                         $uploadService    = new UploadService();
                         $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails',
-                            'public_2'
+                            'linode'
                         );
-                        $video->thumbnail = $thumbnailPath['path'];
+                        $video->thumbnail_url = $thumbnailPath['path'];
                     }
 
                 // Handle video upload
@@ -82,9 +82,9 @@ class VideoController extends Controller
                     {
                         $uploadService     = new UploadService();
                         $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos',
-                            'public_2'
+                            'linode'
                         );
-                        $video->video_path = $videoPath['path'];
+                        $video->content_path = $videoPath['path'];
                     }
 
                 $video->system_user_id = $request->user('admin')->id;
@@ -182,7 +182,7 @@ class VideoController extends Controller
                         );
                         if ($thumbnailUpload)
                             {
-                                $video->thumbnail = $thumbnailUpload['path'];
+                                $video->thumbnail_url = $thumbnailUpload['path'];
                             }
                         else
                             {
@@ -197,7 +197,7 @@ class VideoController extends Controller
                         $videoUpload   = $uploadService->file_upload($request, 'video_path', 'videos', 'linode');
                         if ($videoUpload)
                             {
-                                $video->video_path = $videoUpload['path'];
+                                $video->content_path = $videoUpload['path'];
                             }
                         else
                             {
@@ -228,7 +228,7 @@ class VideoController extends Controller
                 else
                     {
                         Log::error('Video update failed', ['video' => $video]);
-                        return self::fail('Channel videos', 'Video not updated.', route('video.index'));
+                        return self::failed('Channel videos', 'Video not updated.', route('video.index'));
                     }
             }
 
@@ -260,7 +260,7 @@ class VideoController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-        public function datatable(Request $request, ChannelVideoDatatable $datatable)
+        public function datatable(Request $request, VideoDatatable $datatable)
             {
                 $datatable->columns = [
                     0 => 'id',

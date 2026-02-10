@@ -4,9 +4,9 @@ namespace App\Http\Datatables;
 
 use App\Models\Event;
 use App\Traits\Helper;
-use App\Models\Content;
+use App\Models\Transaction;
 
-class ChannelStreamDatatable
+class TransactionDatatable
     {
         use Helper;
 
@@ -19,8 +19,9 @@ class ChannelStreamDatatable
      */
         public function data($request)
             {
-                $columns       = $this->columns;
-                $query         = Content::query();
+                $columns = $this->columns;
+                $query   = Transaction::query();
+                $query->with('event');
                 $query->where('channel_id', $request->user()->channel_id);
 
                 $limit         = $request->input('length');
@@ -31,34 +32,33 @@ class ChannelStreamDatatable
                 $totalFiltered = $totalData;
 
                 if (!empty($request->input('search.value')))
-
                     {
                         $search = $request->input('search.value');
-                        $posts  = $query->where('name', 'LIKE', "%{$search}%")
-                                        ->orWhere('title', 'LIKE', "%{$search}%")
-                                        ->orWhere('description', 'LIKE', "%{$search}%");
+                        $query->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('stream_token', 'LIKE', "%{$search}%");
 
                         $totalFiltered = (clone $query)->count();
                     }
                 $posts = $query->offset($start)->limit($limit)->orderBy($order, $dir)->get();
-                $data = [];
+                $data  = [];
                 if (!empty($posts))
                     {
                         $pos = $start + 1;
                         foreach ($posts as $post)
                             {
-                                $btn                       = $this->button($post, $request);
-                                $nestedData['pos']         = $pos;
-                                $nestedData['title']       = $post->title;
-                                $nestedData['description'] = $post->description;
-                                $nestedData['stream_key']  = $post->stream_key;
-                                $nestedData['stream_url']  = $post->stream_url;
-                                $nestedData['stream_link'] = $post->stream_video_link;
-                                $nestedData["thumbnail"]   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px; width:50px');
-                                $nestedData['start_time']  = $post->start_time;
-                                $nestedData['end_time']    = $post->end_time;
-                                $nestedData['is_ended']    = (bool)$post->ended;
-                                $nestedData['action']      = $btn;
+                                $btn                          = $this->button($post, $request);
+                                $nestedData['id']             = $pos;
+                                $nestedData['receipt']        = $post->receipt;
+                                $nestedData['payment_method'] = $post->payment_method;
+                                $nestedData['status']         = ($post->status == 1) ? 'Active' : 'inactive';
+                                $nestedData['event']          = $post->event->event_name;
+                                $nestedData['cost']           = $post->cost;
+                                $nestedData['amount_paid']    = $post->amount_paid;
+                                $nestedData['balance']        = $post->balance;
+                                $nestedData['date_paid']      = $post->date_paid;
+                                $nestedData['name']           = $post->user->name;
+                                $nestedData['email']          = $post->user->email;
+                                $nestedData['action']         = $btn;
 
                                 $data[] = $nestedData;
                                 $pos++;
@@ -84,18 +84,18 @@ class ChannelStreamDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_channel_stream'))
+                if ($request->user()->can('edit_event'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('stream.edit', ['stream'=> $post->id]) . '" data-toggle="tooltip" title="Edit User">
-                <i class="bx bx-pencil"></i> Edit
+                        $button .= '<a class="text text-dark" href="' . route('user.edit', $post->id) . '" data-toggle="tooltip" title="Edit User">
+                <i class="fas fa-edit"></i> Edit
                 </a>';
                     }
-                if ($request->user()->can('destroy_channel_stream'))
+                if ($request->user()->can('destroy_event'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('user.destroy', $post->id) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
                 </form>';
                     }
 

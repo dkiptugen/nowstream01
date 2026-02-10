@@ -24,7 +24,6 @@
                         $table->unsignedBigInteger('stream_partner_id');
                         $table->softDeletes();
                         $table->timestamps();
-                        //$table->foreign('stream_partner_id')->references('id')->on('stream_partners')->cascadeOnDelete()->cascadeOnUpdate();
 
                     });
             }
