@@ -50,7 +50,7 @@ class CategoryController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return array|\CodeIgniter\HTTP\RedirectResponse|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
+     * @return array|\CodeIgniter\HTTP\RedirectResponse|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
      */
         public function store(StoreCategory $request)
             {
@@ -70,13 +70,7 @@ class CategoryController extends Controller
                         $res               = $category->save();
                         if ($res)
                             {
-                                $keywords = explode(',', $request->keywords);
-                                foreach ($keywords as $value)
-                                    {
-                                        $tag       = new Tag();
-                                        $tag->name = $value;
-                                        $category->tags()->save($tag);
-                                    }
+
                                 return self::success('Category', 'addition success', route('category.index'));
                             }
                         return self::failed('Category', 'addition failed', route('category.index'));
@@ -106,7 +100,7 @@ class CategoryController extends Controller
      * @param \Illuminate\Http\Request $request
      * @param int $id
      *
-     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
+     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
      */
         public function update(UpdateCategory $request, Category $category)
             {
@@ -123,20 +117,6 @@ class CategoryController extends Controller
                         $res = $category->save();
                         if ($res)
                             {
-                                $new = collect(explode(',', $request->keywords));
-                                $old = $category->tags->pluck('name');
-                                $add = collect($new->diff($old)->all());
-                                $rem = collect($old->diff($new)->all());
-                                foreach ($add as $value)
-                                    {
-                                        $tag       = new Tag();
-                                        $tag->name = $value;
-                                        $category->tags()->save($tag);
-                                    }
-                                foreach ($rem as $val)
-                                    {
-                                        $category->tags()->where(['name' => $val])->delete();
-                                    }
                                 return self::success('Category', 'Update success', route('category.index'));
                             }
                         return self::failed('Category', 'Update failed', route('category.index'));
@@ -149,7 +129,7 @@ class CategoryController extends Controller
      *
      * @param int $id
      *
-     * @return array|\Illuminate\Http\Response
+     * @return array|\Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
         public function destroy($id)
             {
