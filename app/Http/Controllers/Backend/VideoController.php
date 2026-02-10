@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Datatables\ChannelVideoDatatable;
+use App\Http\Datatables\VideoDatatable;
 use App\Http\Services\UploadService;
 use App\Models\Content;
 use App\Models\Event;
@@ -57,12 +57,12 @@ class VideoController extends Controller
                 );
 
 
-                $event = Event::findOrFail($validatedData['event_id']);
+                //$event = Event::findOrFail($validatedData['event_id']);
 
 
-                $video              = new Video();
+                $video              = new Content();
                 $video->channel_id  = Auth::user()->channel_id;
-                $video->event_id    = $event->id;
+                //$video->event_id    = $event->id;
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
                 $video->description = $validatedData['description'];
@@ -260,7 +260,7 @@ class VideoController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-        public function datatable(Request $request, ChannelVideoDatatable $datatable)
+        public function datatable(Request $request, VideoDatatable $datatable)
             {
                 $datatable->columns = [
                     0 => 'id',

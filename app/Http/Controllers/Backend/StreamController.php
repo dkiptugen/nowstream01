@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Datatables\ChannelStreamDatatable;
+use App\Http\Datatables\StreamDatatable;
 use App\Traits\Meta;
 use Illuminate\Http\Request;
 
@@ -78,7 +78,7 @@ class StreamController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-        public function datatable(Request $request, ChannelStreamDatatable $datatable)
+        public function datatable(Request $request, StreamDatatable $datatable)
             {
 
 

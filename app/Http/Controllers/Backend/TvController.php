@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Datatables\ChannelStreamDatatable;
+use App\Http\Datatables\StreamDatatable;
 use App\Http\Datatables\TvDatatable;
 use App\Traits\Meta;
 use Illuminate\Http\Request;

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->longText('thumburl')->nullable();
             $table->text('type')->nullable();
             $table->integer('position')->default(0);
-            $table->unsignedBigInteger('user_id')->default(0);
+            $table->unsignedBigInteger('system_user_id')->default(0);
             $table->timestamps();
         });
     }
