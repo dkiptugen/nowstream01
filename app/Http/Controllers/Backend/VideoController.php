@@ -61,7 +61,7 @@ class VideoController extends Controller
 
 
                 $video              = new Content();
-                $video->channel_id  = Auth::user()->channel_id;
+                $video->channel_id  = Auth::user()->channel_id??0;
                 //$video->event_id    = $event->id;
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
@@ -72,9 +72,9 @@ class VideoController extends Controller
                     {
                         $uploadService    = new UploadService();
                         $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails',
-                            'public_2'
+                            'linode'
                         );
-                        $video->thumbnail = $thumbnailPath['path'];
+                        $video->thumbnail_url = $thumbnailPath['path'];
                     }
 
                 // Handle video upload
@@ -82,9 +82,9 @@ class VideoController extends Controller
                     {
                         $uploadService     = new UploadService();
                         $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos',
-                            'public_2'
+                            'linode'
                         );
-                        $video->video_path = $videoPath['path'];
+                        $video->content_path = $videoPath['path'];
                     }
 
                 $video->system_user_id = $request->user('admin')->id;
@@ -182,7 +182,7 @@ class VideoController extends Controller
                         );
                         if ($thumbnailUpload)
                             {
-                                $video->thumbnail = $thumbnailUpload['path'];
+                                $video->thumbnail_url = $thumbnailUpload['path'];
                             }
                         else
                             {
@@ -197,7 +197,7 @@ class VideoController extends Controller
                         $videoUpload   = $uploadService->file_upload($request, 'video_path', 'videos', 'linode');
                         if ($videoUpload)
                             {
-                                $video->video_path = $videoUpload['path'];
+                                $video->content_path = $videoUpload['path'];
                             }
                         else
                             {
@@ -228,7 +228,7 @@ class VideoController extends Controller
                 else
                     {
                         Log::error('Video update failed', ['video' => $video]);
-                        return self::fail('Channel videos', 'Video not updated.', route('video.index'));
+                        return self::failed('Channel videos', 'Video not updated.', route('video.index'));
                     }
             }
 
