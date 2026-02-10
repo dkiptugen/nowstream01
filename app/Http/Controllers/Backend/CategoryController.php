@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Datatables\CategoryDatatable;
+use App\Http\Requests\StoreCategory;
+use App\Http\Requests\UpdateCategory;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Traits\Meta;
@@ -89,10 +91,11 @@ class CategoryController extends Controller
      * @param int $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response|\Illuminate\View\View
      */
-        public function edit($id)
+        public function edit(Category $category)
             {
                 $this->data['cat']      = Category::get();
-                $this->data['category'] = Category::with('tags')->find($id);
+                $category->load('keyword');
+                $this->data['category'] = $category;
                 $this->data['keywords'] = implode(',', $this->data['category']->tags->pluck('name')->toArray());
                 return view('Backend.modules.category.edit', $this->data);
             }
@@ -105,13 +108,12 @@ class CategoryController extends Controller
      *
      * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
      */
-        public function update(UpdateCategory $request, $id)
+        public function update(UpdateCategory $request, Category $category)
             {
 
                 $validateddata = $request->validated();
                 if ($validateddata)
                     {
-                        $category              = Category::find($id);
                         $category->name        = $request->cat_name;
                         $category->description = $request->description;
                         $category->top_menu    = $request->topmenu ?? 0;
