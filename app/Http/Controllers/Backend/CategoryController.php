@@ -66,7 +66,7 @@ class CategoryController extends Controller
                         $category->parent_id = $request->p_cat;
                         $category->position  = $request->list_order;
 //                        $category->status           =   $request->status;
-                        $category->user_id = Auth::user()->id;
+                        $category->system_user_id = Auth::user()->id;
                         $res               = $category->save();
                         if ($res)
                             {
