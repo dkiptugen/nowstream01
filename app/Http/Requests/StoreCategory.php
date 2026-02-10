@@ -22,9 +22,9 @@ class StoreCategory extends FormRequest
     public function rules(): array
     {
         return [
-            'category_name'=>['required','unique:categories,name'],
+            'cat_name'=>['required','unique:categories,name'],
             'description'=> 'nullable',
-            'position' => ['nullable','numeric'],
+            'list_order' => ['nullable','numeric'],
             'status' => ['nullable','numeric'],
             'parent_id' => ['nullable','numeric']
 
