@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Auth\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordExpiredRequest;
+use App\Traits\Meta;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class ExpiredPasswordController extends Controller
     {
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
         public function expired()
             {
                 $this->data['title'] = 'Reset Expired Password';

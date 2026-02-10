@@ -4,6 +4,7 @@
 
     use App\Http\Controllers\Controller;
     use App\Models\Channel;
+    use App\Traits\Meta;
     use Exception;
     use Illuminate\Contracts\Validation\Factory;
     use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -37,15 +38,11 @@
          */
             protected $redirectTo = 'backend';
 
-        /**
-         * Create a new controller instance.
-         *
-         * @return void
-         */
+            use Meta;
+            public $data = [];
             public function __construct()
                 {
-                    parent::__construct();
-
+                    $this->data = self::product_def();
                 }
 
             public function showLoginForm()

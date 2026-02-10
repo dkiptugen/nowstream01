@@ -10,6 +10,11 @@
     class ConfigurationController extends Controller
         {
             use Meta;
+            public $data = [];
+            public function __construct()
+                {
+                    $this->data = self::product_def();
+                }
         /**
          * Display a listing of the resource.
          *

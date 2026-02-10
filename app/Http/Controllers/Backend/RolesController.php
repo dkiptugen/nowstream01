@@ -16,9 +16,11 @@ class RolesController extends Controller
     {
 
 
+        use Meta;
+        public $data = [];
         public function __construct()
             {
-                parent::__construct();
+                $this->data = self::product_def();
             }
 
     /**

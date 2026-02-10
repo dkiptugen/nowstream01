@@ -6,11 +6,18 @@
 	use App\Http\Datatables\EventRateDatatable;
 	use App\Models\ContentRate;
 	use App\Models\Event;
-	use Illuminate\Http\Request;
+    use App\Traits\Meta;
+    use Illuminate\Http\Request;
 	use App\Http\Controllers\Controller;
 
 	class EventRateController extends Controller
 		{
+            use Meta;
+            public $data = [];
+            public function __construct()
+                {
+                    $this->data = self::product_def();
+                }
 		/**
 		 * Display a listing of the resource.
 		 */

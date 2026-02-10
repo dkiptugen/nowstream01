@@ -16,7 +16,13 @@ use Illuminate\Support\Facades\Auth;
 
 class PaymentMethodController extends Controller
 {
-    use Meta;
+
+        use Meta;
+        public $data = [];
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
     /**
      * Display a listing of the resource.
      *
