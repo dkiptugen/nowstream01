@@ -78,7 +78,7 @@
 
 						@php
 						     $oldvid= $stream;
-							$vid = $stream->id;
+							$vid = $stream->uuid;
 						@endphp
 						<div class="card-body">
 							<h2 class="mb-0">
@@ -94,28 +94,14 @@
 						<div class="">
 							<div class="float-right d-flex align-items-center">
 
-								@if(Auth::check())
-									<div id="favorite-btn">
-										@if(Auth::user()->favoriteVideos->contains($stream->id))
-											<button class="btn btn-danger btn-sm"
-												onclick="toggleFavorite({{ $stream->id }}, false)">
-												Unlike Video
-											</button>
-										@else
-											<button class="btn btn-outline-primary btn-sm"
-												onclick="toggleFavorite({{ $stream->id }}, true)">
-												Like Video
-											</button>
-										@endif
-									</div>
-								@endif
+							
 								<div class="mx-1">.</div>
 
 								<script>
 									function toggleFavorite(videoId, isFavorite) {
 										const url = isFavorite ?
-											'{{ route("video.favorite", ":id") }}'.replace(':id', videoId) :
-											'{{ route("video.unfavorite", ":id") }}'.replace(':id', videoId);
+											'{{ route("video.favorite", ":uuid") }}'.replace(':uuid', videoId) :
+											'{{ route("video.unfavorite", ":uuid") }}'.replace(':uuid', videoId);
 
 										$.ajax({
 											url: url,
@@ -147,23 +133,10 @@
 
 
 								@php
-									$channel = Channel::find($stream->channel_id);
-								@endphp
+									$channel = Channel::find('4ebc64f9-7e5d-4e72-89e2-8e24b9b0e9d5');
+								@endphp 
 								@if(Auth::check())
-										<div id="subscription-controls-{{ $channel->id }}">
-											@if(Auth::user()->subscribedChannels->contains($channel->id))
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, false)">Unsubscribe</button>
-												</div>
-											@else
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-outline-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, true)">Subscribe</button>
-												</div>
-											@endif
-										</div>
-									</div>
+									
 								@endif
 						</div>
 						<img class="ratio1" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}" alt="">

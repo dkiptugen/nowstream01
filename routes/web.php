@@ -133,8 +133,11 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
                 Route::get('/profile/password', [ProfileController::class, 'passwordEdit'])->name('profile.password.edit');
                 Route::post('/profile/password', [ProfileController::class, 'passwordUpdate'])->name('profile.password.update');
-                Route::get('/stream/{streamId}/{slug}', [StreamController::class, 'show'])->name('stream.show');
-                Route::get('/stream/free/{id}/{slug?}', [StreamController::class, 'freeShow'])->name('free.show');
+                Route::get('/stream/free/{stream}/{slug?}', [StreamController::class, 'freeShow'])
+    ->name('free.show');
+
+Route::get('/stream/{stream}/{slug}', [StreamController::class, 'show'])
+    ->name('stream.show');
 
                 Route::post('/video/{video}/favorite', [VideoFavoriteController::class, 'favorite'])->name('video.favorite');
                 Route::post('/video/{video}/unfavorite', [VideoFavoriteController::class, 'unfavorite'])->name('video.unfavorite');
@@ -156,7 +159,8 @@ Route::middleware(['detectCountry'])->group(function ()
             });
             
             // Social Auth Routes (Global)
-        Route::get('auth/social/{provider}', [AuthsController::class, 'redirectToProvider'])
+        
+            Route::get('auth/social/{provider}', [AuthsController::class, 'redirectToProvider'])
         ->whereIn('provider', ['facebook', 'twitter', 'google', 'linkedin'])
         ->name('auth.social');
 

@@ -97,15 +97,10 @@
             </div>
         </div>
         <div class="ucm-active owl-carousel">
-            @foreach($streams as $stream)
-                        @if ($stream->id == 7)
-                            @continue
-                        @endif
-
+            @foreach($streams as $stream)  
                         @php
-                            $checkRate = $stream->eventRates()->where('status', true)->count();
+                            $checkRate = 0;
                             $freeStream = $checkRate == 0;
-                            $event = $stream->event;
                             $channel = $stream->channel;
                             $current_time = \Carbon\Carbon::now();
                         @endphp
@@ -113,13 +108,17 @@
                         <div class="movie-item mb-50">
                             <div class="movie-poster">
                                 <a
-                                    href="{{ url($freeStream ? "/stream/free/{$stream->id}/{$stream->slug}" : "/stream/{$stream->id}/{$stream->slug}") }}">
+                                href="{{ $freeStream
+    ? route('free.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug])
+    : route('stream.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug])
+}}"
+>
                                     <img src="{{$stream->thumbnail_url}}" class="w-100 d-block aspect16" alt="{{ $stream->title }}">
                                 </a>
                             </div>
 
                             <a
-                                href="{{ url($freeStream ? "/stream/free/{$stream->id}/{$stream->slug}" : "/stream/{$stream->id}/{$stream->slug}") }}">
+                                href="{{ url($freeStream ? "/stream/free{$stream->id}/{$stream->slug}" : "/stream/{$stream->id}/{$stream->slug}") }}">
                                 <div class="play fs-40">
                                     <i class="fadeIn animated bx bx-play-circle"></i>
                                 </div>
@@ -128,7 +127,7 @@
                             <div class="movie-content">
                                 <div class="top">
                                     <h5 class="title">
-                                        <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
+                                        <a href="{{ url("/stream/free{$stream->id}/{$stream->slug}") }}">
                                             {{ $stream->title }}
                                         </a>
                                     </h5>

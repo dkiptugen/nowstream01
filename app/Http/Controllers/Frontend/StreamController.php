@@ -365,7 +365,7 @@ class StreamController extends Controller
 
         // Generate a unique key for the user and stream combination, if a user is logged in
         if ($user) {
-            $uniqueViewKey = "stream_view_{$stream->id}_{$user->id}";
+            $uniqueViewKey = "stream_view_{$stream->uuid}_{$user->id}";
 
             // Check if the key exists in the cache
             if (!Cache::has($uniqueViewKey)) {
@@ -392,11 +392,11 @@ class StreamController extends Controller
         }
 
         // Fetch related data
-        $streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
+        $streams = Content::where('status', 1)->where('uuid', '<>', $id)->take(4)->get();
         $channels = Channel::where('status', 1)->take(8)->get();
         $videos = Content::where('type', 'video')->take(12)->get();
         $comments = $stream->comments()->with('user')->get();
-
+		//dd($stream);
         // Prepare data to pass to the view
         $data = [
             'stream' => $stream,
@@ -404,7 +404,7 @@ class StreamController extends Controller
             'channels' => $channels,
             'videos' => $videos,
             'comments' => $comments
-        ];
+        ]; 
 
         return view('Frontend.modules.channels.streams.stream', $data);
     } catch (Exception $e) {

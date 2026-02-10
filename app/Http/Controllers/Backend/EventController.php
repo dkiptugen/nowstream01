@@ -99,7 +99,7 @@
                                                     $stream->start_time        = $startDate;
                                                     $stream->event_id          = $event->id;
                                                     $stream->system_user_id    = $request->user ('admin')->id;
-                                                    $stream->channel_id        = 1;
+                                                    $stream->channel_id        = $request->channel_id;
                                                     $stream->save ();
                                                 }
 
