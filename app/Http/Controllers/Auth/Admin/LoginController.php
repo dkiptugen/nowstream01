@@ -116,7 +116,7 @@
                     try
                         {
                             $user                      = $this->guard()->user();
-                            $user->user_active_channel = null;
+                            $user->channel_id          = null;
                             $user->save();
                         }
                     catch (Exception $e)
@@ -136,7 +136,7 @@
 
                     return $request->wantsJson()
                         ? new JsonResponse([], 204)
-                        : redirect('/');
+                        : redirect().route('admin.login');
                 }
 
             protected function guard()

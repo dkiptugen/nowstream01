@@ -21,7 +21,10 @@ class StreamDatatable
             {
                 $columns       = $this->columns;
                 $query         = Content::query();
-                $query->where('channel_id', $request->user()->channel_id);
+                $query
+                    ->where('channel_id', $request->user()->channel_id)
+                      //->where('content_group', 'stream')
+                ;
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
