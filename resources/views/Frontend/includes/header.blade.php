@@ -56,7 +56,7 @@
     </script>
 
     <title>
-        {{ $title ?? 'Baze Live'}}
+        {{ $title ?? 'Streamer'}}
     </title>
 
 
@@ -92,7 +92,7 @@
                             <nav class="menu-nav show">
                                 <div class="logo">
                                     <a href="{{url('/')}}">
-                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Streamer Logo">
                                     </a>
                                 </div>
                                 @include('Frontend.includes.nav')
@@ -176,7 +176,7 @@
 
                             <nav class="menu-box">
                                 <div class="nav-logo"><a href="{{url('/')}}">
-                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Streamer Logo">
                                     </a>
                                 </div>
                                 <div class="menu-outer">

@@ -11,7 +11,7 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-8">
                         <div class="banner-content">
-                            <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Baze Live</h6>
+                            <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
                             <h2 class="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1.8s">Buy
                                 {{$event->title}} Access By <span><a class=""
                                         href="{{ url("/event/{$event->id}/{$event->slug}") }}">Clicking Here</a></span>.
