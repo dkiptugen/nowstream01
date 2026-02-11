@@ -116,7 +116,7 @@
                     try
                         {
                             $user                      = $this->guard()->user();
-                            $user->user_active_channel = null;
+                            $user->channel_id          = null;
                             $user->save();
                         }
                     catch (Exception $e)
