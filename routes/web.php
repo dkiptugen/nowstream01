@@ -136,7 +136,7 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::get('/stream/free/{stream}/{slug?}', [StreamController::class, 'freeShow'])
     ->name('free.show');
 
-Route::get('/stream/{stream}/{slug}', [StreamController::class, 'show'])
+Route::get('/stream/{uuid}/{slug}', [StreamController::class, 'show'])
     ->name('stream.show');
 
                 Route::post('/video/{video}/favorite', [VideoFavoriteController::class, 'favorite'])->name('video.favorite');

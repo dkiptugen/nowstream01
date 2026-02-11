@@ -107,10 +107,11 @@
 
                         <div class="movie-item mb-50">
                             <div class="movie-poster">
-                                <a
-                                href="{{ url($freeStream 
-    ? "/stream/free{$stream->id}/{$stream->slug}" 
-    : "/stream/{$stream->id}/{$stream->slug}") }}">
+                            <a href="{{ $freeStream
+    ? route('free.show', ['stream' => $stream->uuid, 'slug' => $stream->slug])
+    : route('stream.show', ['streamId' => $stream->uuid, 'slug' => $stream->slug])
+}}">
+
                                     <img src="{{$stream->thumbnail_url}}" class="w-100 d-block aspect16" alt="{{ $stream->title }}">
                                 </a>
                             </div>
