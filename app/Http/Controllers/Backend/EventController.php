@@ -100,7 +100,7 @@ class EventController extends Controller
                                                     {
                                                         $image                 = new UploadService();
                                                         $upload                = $image->file_upload($request,
-                                                            'stream_thumbnail', 'stream_thumbnail', 'linode');
+                                                            'stream_thumbnail', 'stream_thumbnail');
                                                         $stream->thumbnail_url = $upload['path'];
 
                                                     }
@@ -200,7 +200,7 @@ class EventController extends Controller
                                             {
                                                 $image                 = new UploadService();
                                                 $upload                = $image->file_upload($request,
-                                                    'stream_thumbnail', 'stream_thumbnail', 'linode');
+                                                    'stream_thumbnail', 'stream_thumbnail');
                                                 $stream->thumbnail_url = $upload['path'];
 
                                             }
