@@ -25,6 +25,7 @@
 					    ]
 				    ];
 			    }
+           protected $fillable = ['title','parent_id','content_group','slug','description','thumbnail','channel_id','event_id','source','type'];
             public function bitrates(  )
                 {
                     return $this->hasMany(ContentBitrate::class, 'stream_id');
