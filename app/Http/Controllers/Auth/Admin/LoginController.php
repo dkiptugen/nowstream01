@@ -136,7 +136,7 @@
 
                     return $request->wantsJson()
                         ? new JsonResponse([], 204)
-                        : redirect('/');
+                        : redirect().route('admin.login');
                 }
 
             protected function guard()
