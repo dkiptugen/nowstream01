@@ -87,37 +87,36 @@ class EventController extends Controller
                                 $event->status = 1;
                                 $res           = $event->save();
                                 if ($res)
-                                    {
-                                        dd($request->user());
+                                    { 
 
-                                        if ($request->has('has_stream'))
-                                            { 
-                                                $streamkey             = Str::ulid();
-                                                $stream                = new Content();
-                                                $stream->title         = $event->event_name;
-                                                $stream->description   = $request->event_description;
-                                                $stream->content_group = 'stream';
-                                                $stream->type          = 'application/x-mpegURL';
-                                                if ($request->hasFile('thumbnail'))
-                                                    {
-                                                        $image                 = new UploadService();
-                                                        $upload                = $image->file_upload($request,
-                                                            'stream_thumbnail', 'stream_thumbnail');
-                                                        $stream->thumbnail_url = $upload['path'];
+                                        if ($request->boolean('has_stream')) {
 
-                                                    }
+    $streamkey = Str::ulid();
 
-                                                $stream->stream_key        = $streamkey;
-                                                $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
-                                                $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamkey . '.m3u8';
-                                                $stream->start_time        = $startDate;
-                                                $stream->event_id          = $event->id;
-                                                $stream->system_user_id    = $request->user()->id;
-                                                $stream->channel_id        = $request->user()->channel_id;
-                                                $stream->status            = 1;
-                                                dd($stream);
-                                                $stream->save();
-                                            }
+    $stream = new Content();
+    $stream->title         = $event->event_name;
+    $stream->description   = $request->event_description;
+    $stream->content_group = 'stream';
+    $stream->type          = 'application/x-mpegURL';
+
+    if ($request->hasFile('stream_thumbnail')) {
+        $image  = new UploadService();
+        $upload = $image->file_upload($request, 'stream_thumbnail', 'stream_thumbnail');
+        $stream->thumbnail_url = $upload['path'];
+    }
+
+    $stream->stream_key        = $streamkey;
+    $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
+    $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamkey . '.m3u8';
+    $stream->start_time        = $startDate;
+    $stream->event_id          = $event->id;
+    $stream->system_user_id    = $request->user()->id;
+    $stream->channel_id        = $request->user()->channel_id ?? 1;
+    $stream->status            = 1;
+
+    $stream->save();
+}
+
 
                                         return self::success('event', 'Saved successfully',
                                             route('backend.event.index'));
