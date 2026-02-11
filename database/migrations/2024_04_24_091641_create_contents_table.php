@@ -16,6 +16,7 @@
                     {
                         $table->uuid()->primary();
                         $table->uuid('parent_id')->index()->nullable();
+                        $table->string('old_id')->nullable();
                         $table->string('slug')->unique();
                         $table->string('title');
                         $table->longText('description');
@@ -31,6 +32,8 @@
                         $table->dateTime('end_time')->nullable();
                         $table->uuid('event_id')->index()->nullable();
                         $table->unsignedBigInteger('system_user_id');
+                        $table->unsignedBigInteger('language_id')->index('language_id')->nullable();
+                        $table->unsignedBigInteger('region_id')->index('region_id')->nullable();
                         $table->uuid('category_id')->index()->nullable();
                         $table->uuid('channel_id')->index()->nullable();
 						$table->tinyInteger ('status')->default(0);
