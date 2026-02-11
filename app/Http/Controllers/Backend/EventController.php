@@ -83,13 +83,15 @@ class EventController extends Controller
                                     }
 
                                 $event->system_user_id = $request->user('admin')->id;
-                                //$event->channel_id     = $request->user()->channel_id;;
+                                // $event->channel_id     = $request->user()->channel_id;
                                 $event->status = 1;
                                 $res           = $event->save();
                                 if ($res)
                                     {
+                                        dd($request->user());
+
                                         if ($request->has('has_stream'))
-                                            {
+                                            { 
                                                 $streamkey             = Str::ulid();
                                                 $stream                = new Content();
                                                 $stream->title         = $event->event_name;
@@ -113,6 +115,7 @@ class EventController extends Controller
                                                 $stream->system_user_id    = $request->user()->id;
                                                 $stream->channel_id        = $request->user()->channel_id;
                                                 $stream->status            = 1;
+                                                dd($stream);
                                                 $stream->save();
                                             }
 
