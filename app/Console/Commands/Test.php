@@ -43,7 +43,7 @@
 					$this->info(substr ($test,-9,3));*/
 
 					$at = new AfricasTalking();
-					$mes= $at->send_sms ('','0713154085','Test Message from baze live');
+					$mes= $at->send_sms ('baze','0713154085','Test Message from baze live 108');
 					$this->info($mes);
 					/*$user = (new SystemUser())->updateOrCreate ([
 																	'email' => 'info@bazelive.co.ke'

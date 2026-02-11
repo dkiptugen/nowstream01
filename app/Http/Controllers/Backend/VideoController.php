@@ -48,7 +48,7 @@ class VideoController extends Controller
                 $validatedData = $request->validate([
                         'title'       => 'required|string|max:255',
                         'description' => 'required|string',
-                        'event_id'    => 'required|exists:events,id',
+                        'event_id'    => 'required|exists:events,uuid',
                         'thumbnail'   => 'nullable|image|max:5120',
                         'video_path'  => 'required|file|mimes:mp4,mov,avi,mpeg|max:81200',
                         'tags'        => 'nullable|array',
@@ -62,7 +62,7 @@ class VideoController extends Controller
 
                 $video              = new Content();
                 $video->channel_id  = Auth::user()->channel_id??0;
-                //$video->event_id    = $event->id;
+                $video->event_id    = $validatedData['event_id'];
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
                 $video->description = $validatedData['description'];
@@ -71,9 +71,7 @@ class VideoController extends Controller
                 if ($request->hasFile('thumbnail'))
                     {
                         $uploadService    = new UploadService();
-                        $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails',
-                            'linode'
-                        );
+                        $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails');
                         $video->thumbnail_url = $thumbnailPath['path'];
                     }
 
@@ -81,9 +79,7 @@ class VideoController extends Controller
                 if ($request->hasFile('video_path'))
                     {
                         $uploadService     = new UploadService();
-                        $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos',
-                            'linode'
-                        );
+                        $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos');
                         $video->content_path = $videoPath['path'];
                     }
 
@@ -153,7 +149,7 @@ class VideoController extends Controller
                 $validatedData = $request->validate([
                         'title'       => 'required|string|max:255',
                         'description' => 'required|string',
-                        'event_id'    => 'required|exists:events,id',
+                        'event_id'    => 'required|exists:events,uuid',
                         'thumbnail'   => 'nullable|image|max:5120',
                         'video_path'  => 'nullable|file|mimetypes:video/avi,video/mpeg,video/mp4|max:50000',
                         'tags'        => 'nullable|array',
@@ -177,9 +173,7 @@ class VideoController extends Controller
                 if ($request->hasFile('thumbnail'))
                     {
                         $uploadService   = new UploadService();
-                        $thumbnailUpload = $uploadService->file_upload($request, 'thumbnail', 'video_thumbnail',
-                            'linode'
-                        );
+                        $thumbnailUpload = $uploadService->file_upload($request, 'thumbnail', 'video_thumbnail');
                         if ($thumbnailUpload)
                             {
                                 $video->thumbnail_url = $thumbnailUpload['path'];
@@ -194,7 +188,7 @@ class VideoController extends Controller
                 if ($request->hasFile('video_path'))
                     {
                         $uploadService = new UploadService();
-                        $videoUpload   = $uploadService->file_upload($request, 'video_path', 'videos', 'linode');
+                        $videoUpload   = $uploadService->file_upload($request, 'video_path', 'videos');
                         if ($videoUpload)
                             {
                                 $video->content_path = $videoUpload['path'];

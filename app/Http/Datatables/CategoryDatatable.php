@@ -77,13 +77,13 @@ class CategoryDatatable
                 $button = null;
                 if ($request->user()->can('edit_category'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('category.edit', ['category' => $post->id]) . '" data-toggle="tooltip" title="Edit User">
+                        $button .= '<a class="text text-dark" href="' . route('backend.category.edit', ['category' => $post->uuid]) . '" data-toggle="tooltip" title="Edit User">
                 <i class="fas fa-edit"></i> Edit
                 </a>';
                     }
                 if ($request->user()->can('destroy_event'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('category.destroy', ['category' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.category.destroy', ['category' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>

@@ -8,8 +8,12 @@
 
     class UploadService
         {
-            public function file_upload($request, $name, $type, $disk)
+            public function file_upload($request, $name, $type, $disk=null)
                 {
+                    if(is_null($disk))
+                        {
+                            $disk =config('filesystems.default');
+                        }
                     $file     = $request->file($name);
                     $filename = $file->getClientOriginalName();
                     $mime     = $file->getClientMimeType();

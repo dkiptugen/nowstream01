@@ -15,13 +15,11 @@
                 Schema::create('channels', function (Blueprint $table)
                     {
                         $table->uuid()->primary();
-                        $table->ulid('identifier')->index('ulid');
                         $table->string('name');
                         $table->longText ('thumbnail');
 						$table->longText('cover_image');
                         $table->longText('description');
                         $table->tinyInteger('status');
-                        $table->unsignedBigInteger('stream_partner_id');
                         $table->softDeletes();
                         $table->timestamps();
 

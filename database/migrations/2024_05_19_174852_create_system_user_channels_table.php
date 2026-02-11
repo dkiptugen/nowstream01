@@ -17,10 +17,17 @@
 							$table->id ();
 							$table->unsignedBigInteger ('system_user_id');
 							$table->uuid ('channel_id')->index()->nullable();
-							$table->foreign ('system_user_id')->references ('id')->on ('system_users')->cascadeOnDelete ()->cascadeOnUpdate ()
-							;
-							$table->foreign ('channel_id')->references ('uuid')->on ('channels')->cascadeOnDelete ()->cascadeOnUpdate ()
-							;
+							$table->foreign ('system_user_id')
+                                  ->references ('id')
+                                  ->on ('system_users')
+                                  ->cascadeOnDelete ()
+                                  ->cascadeOnUpdate ();
+							$table->foreign ('channel_id')
+                                  ->references ('uuid')
+                                  ->on ('channels')
+                                  ->cascadeOnDelete ()
+                                  ->cascadeOnUpdate ();
+                            $table->unsignedBigInteger('role_id')->index();
 							$table->unsignedBigInteger ('created_by')->index ();
 							$table->timestamps ();
 						});
