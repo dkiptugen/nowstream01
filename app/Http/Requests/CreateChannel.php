@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategory extends FormRequest
+class CreateChannel extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user('admin')->can('create_category');
+        return true;
     }
 
     /**
@@ -22,12 +22,8 @@ class StoreCategory extends FormRequest
     public function rules(): array
     {
         return [
-            'cat_name'=>['required','unique:categories,name'],
-            'description'=> 'nullable',
-            'list_order' => ['nullable','numeric'],
-            'status' => ['nullable','numeric'],
-            'parent_id' => ['nullable','numeric']
-
+            'channel_name' => ['required', 'string','min:3','unique:channels,name'],
+            'channel_description' => ['nullable', 'string']
         ];
     }
 }

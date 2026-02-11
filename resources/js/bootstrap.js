@@ -7,14 +7,13 @@ window._ = require('lodash');
  */
 
 window.axios = require('axios');
-
+window.$ = window.jQuery = require('jquery');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Popper = require('@popperjs/core').default;
-window.$ = window.jQuery = require('jquery');
+
 require('bootstrap');
-require('./multiselect.min');
+
 require('./custom');
-require('./publication');
 
 
 /**

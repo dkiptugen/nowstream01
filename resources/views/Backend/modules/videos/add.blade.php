@@ -56,9 +56,9 @@
 
     <div class="form-group mt-2">
         <label for="event_id" class="control-label">Event</label>
-        <select name="event_id" id="event_id" class="form-control form-control-sm @error('event_id') is-invalid @enderror">
+        <select name="event_id" id="event_id" class="form-control  @error('event_id') is-invalid @enderror select2">
             @foreach($events as $event)
-                <option value="{{ $event->id }}" {{ old('event_id') == $event->id ? 'selected' : '' }}>{{ $event->event_name }}</option>
+                <option value="{{ $event->uuid }}" {{ old('event_id') == $event->uuid ? 'selected' : '' }}>{{ $event->event_name }}</option>
             @endforeach
         </select>
         @error('event_id')

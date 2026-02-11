@@ -6,6 +6,7 @@ import './modules/sidebar'
 import './modules/toastr'
 import './modules/user-agent'
 import './modules/chartjs'
+import './modules/datatables'
 import './modules/select2'
 import './modules/daterangepicker'
 import './modules/datetimepicker'
@@ -13,16 +14,13 @@ import './modules/validation'
 import './modules/wizard'
 import './modules/summernote'
 import './modules/tagsinput'
-import './modules/datatables'
+
 import './modules/dropzone'
 
 
 
 
-import * as $ from "jquery";
-import {document} from "postcss";
 
-$('#multiselect').multiselect();
 $(function () {
     const inputs = $('.otp-input');
     const hiddenOtp = $('#otp');
@@ -246,92 +244,20 @@ $(document).ready(function () {
 
 
         var editor = $('.editor');
-        var basic_editor = $('.basic-editor');
-        var summary = $('#summary');
-        var code = $('.code');
-        var glancefact = $('.glancefact');
-        if (summary.length) {
-            summary.summernote({
-                placeholder: "Summary",
-                tabsize: 2,
-                height: 100,
-                wordcount: false,
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline', 'clear']],
-                    ['font', ['strikethrough', 'superscript', 'subscript', 'fontname']],
-                    ['para', ['ul', 'ol']]
-                ]
-            });
-        }
-        if (glancefact.length) {
-            glancefact.summernote({
-                placeholder: "Glancefact",
-                tabsize: 2,
-                height: 100,
-                wordcount: false,
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline']],
-                    ['para', ['ul', 'ol']]
-                ]
-            });
-        }
-        if (basic_editor.length) {
-            basic_editor.summernote({
-                dialogsInBody: true,
-                dialogsFade: true,
-                lineHeights: ['0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1.0', '1.2', '1.4', '1.5', '2.0', '3.0'],
-                fontSizeUnits: ['px', 'pt'],
-                placeholder: basic_editor.data('placeholder'),
-                tabsize: 2,
-                height: 100,
-                wordcount: false,
-                popover: {
-                    image: [
-                        ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
-                        ['float', ['floatLeft', 'floatRight', 'floatNone']],
-                        ['remove', ['removeMedia']]
-                    ],
-                    link: [
-                        ['link', ['linkDialogShow', 'unlink']]
-                    ],
-                    table: [
-                        ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
-                        ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
-                    ],
-                    air: [
-                        ['color', ['color']],
-                        ['font', ['bold', 'underline', 'clear']],
-                        ['para', ['ul', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture']]
-                    ]
-                },
 
-
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline', 'caseConverter']],
-                    ['color', ['color']],
-                    ['para', ['ul', 'ol', 'paragraph', 'style']],
-                    ['font', ['strikethrough', 'superscript', 'subscript', 'fontname']],
-                    ['fontsize', ['fontsize']]
-                ]
-            });
-        }
 
         if (editor.length) {
-            const autosaveUrl = editor.data('autosave-url');
 
             editor.summernote({
-                dialogsInBody: true,
-                dialogsFade: true,
+
+
                 lineHeights: ['0.2', '0.3', '0.4', '0.5', '0.6', '0.8', '1.0', '1.2', '1.4', '1.5', '2.0', '3.0'],
                 fontSizeUnits: ['px', 'pt'],
                 placeholder: editor.data('placeholder'),
                 airMode: false,
-                height: 600,
+                height: 100,
                 tabsize: 2,
                 lineHeight: 1.3,
-                wordcount: true,
                 popover: {
                     image: [
                         ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
@@ -345,134 +271,36 @@ $(document).ready(function () {
                         ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
                         ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
                     ],
-                    air: [
-                        ['color', ['color']],
-                        ['font', ['bold', 'underline', 'clear']],
-                        ['para', ['ul', 'paragraph']],
-                        ['table', ['table']],
-                        ['insert', ['link', 'picture']]
-                    ],
-                    insertYoutube: ['delete', ['delete']],
-                    videoLibrary: ['remove', ['removeMedia']]
+
 
                 },
                 styleTags: [
                     'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
                 ],
                 toolbar: [
-                    // [groupName, [list of button]]
-
                     ['style', ['bold', 'italic', 'underline', 'caseConverter']],
                     ['font', ['superscript', 'subscript', 'fontsize']],
                     ['para', ['ul', 'ol', 'paragraph', 'style', 'height', 'color']],
-                    ['insert', ['extendedLink', 'table', 'mapEmbed', 'dynamicInsert']],
+                    ['insert', [ 'table']],
                     ['custom', ['imageLibrary', 'audioLibrary', 'videoLibrary', 'fileLibrary']],
-                    ['social', ['twitterEmbed', "insertYoutube", 'insertFacebook', 'instagramEmbed', 'tiktokEmbed', 'spotifyEmbed']],
                     ['misc', ['undo', 'redo', 'clear']],
                     ['view', ['fullscreen', 'codeview', 'help']]
 
                 ],
-                fileFetchUrl: '/api/files', // API to fetch files
-                fileUploadUrl: '/api/upload', // API to upload files
                 TEXT_NODE: {
                     onImageUpload: function (image) {
 
                         uploadImage(image[0], $(this));
 
                     }
-                },
-                callbacks: {
-                    onPaste: function (e) {
-                        e.preventDefault();
-
-                        // Get the plain text and HTML from the clipboard
-                        var clipboardData = (e.originalEvent || e).clipboardData || window.clipboardData;
-                        var html = clipboardData.getData('text/html') || clipboardData.getData('text/plain');
-
-                        // Debugging: Check if clipboard data is retrieved
-                        console.log("Clipboard HTML:", html);
-
-                        // Create a temporary container to parse the HTML
-                        var $tempContainer = $('<div>').html(html);
-
-                        // Remove all tags except <p>, <a>, <h1>-<h6>, and remove attributes from these tags
-                        //$tempContainer.find('*').not('p, a, h1, h2, h3, h4, h5, h6').remove();
-                        $tempContainer.find('p, a, h1, h2, h3, h4, h5, h6, ol, ul, li,strong,span,div').removeAttr('style').removeAttr('class');
-
-                        // Remove empty <p> tags and <p><br/></p> tags
-                        $tempContainer.find('p:empty, p:has(> br), div:empty').remove();
-
-                        // Get the cleaned HTML
-                        var cleanedHTML = $tempContainer.html();
-
-                        // Debugging: Check the cleaned HTML before inserting it
-                        console.log("Cleaned HTML:", cleanedHTML);
-
-                        // Insert the cleaned HTML into the editor
-                        $(this).summernote('pasteHTML', cleanedHTML);
-
-                        // Debugging: Confirm the cleaned HTML was inserted
-                        setTimeout(() => {
-                            console.log("Editor content after paste:", $(this).summernote('code'));
-                        }, 500);
-                    },
-                    onChange: function (contents) {
-                        // Debounced autosave for specific Summernote editor
-                        clearTimeout(this.autosaveTimer);
-                        this.autosaveTimer = setTimeout(() => {
-                            autosaveSpecificSummernote(editor, autosaveUrl);
-                        }, 5000); // Save after 1 second of inactivity
-                        console.log(autosaveUrl);
-                    }
                 }
 
-            }).on('summernote.change', function (we, contents, $editable) {
-                $(this).val(contents);
 
             });
 
-            function autosaveSpecificSummernote(editor, url) {
-                const formData = $('#post-form').serialize(); // Serialize the form data
 
-                $.ajax({
-                    url: url,  // Dynamic autosave URL
-                    method: 'PUT',
-                    data: formData,
-                    success: function (response) {
-                        $('#statusText').removeClass('text-danger').addClass('text-success').text('Content saved at ' + new Date().toLocaleTimeString());
-                        $('#statusIcon').removeClass('failed').addClass('saved');
-                    },
-                    error: function (e) {
-                        console.log(e.responseText);
-                        $('#statusText').removeClass('text-success').addClass('text-danger').text('Failed to save content');
-                        $('#statusIcon').removeClass('saved').addClass('failed');
-                    }
-                });
-            }
         }
-        if (code.length) {
-            code.on('summernote.init', function () {
-                code.summernote('codeview.activate');
-            }).summernote({
-                height: 300,
-                toolbar: false,
-                placeholder: 'Paste content here...',
-                codemirror: {
-                    theme: 'monokai',
-                    mode: 'text/html',
-                    htmlMode: true,
-                    lineNumbers: true
-                }
-            });
-            $(code.closest("form")).on("submit", function (e) {
-                if (code.summernote('codeview.isActivated')) {
-                    code.val(code.summernote());
-                    //console.log(code.summernote('code'));
-                    return true;
-                }
-                return true;
-            });
-        }
+
 
         function uploadImage(image, $summernote) {
             var dat = new FormData();
@@ -583,107 +411,14 @@ $(document).ready(function () {
 
     });
 
-    // Debounce function
-    /* function debounce(func, delay) {
-         let timeout;
-         return function (...args) {
-             clearTimeout(timeout);
-             timeout = setTimeout(() => func.apply(this, args), delay);
-         };
-     }
 
-     // Fetch suggestions
-     function fetchSuggestions(query) {
-         $.ajax({
-             url: '/api/suggest-tags',
-             method: 'GET',
-             cache: true,
-             data: {query: query},
-             success: function (data) {
-                 if (data.suggestions.length > 0) {
-                     displaySuggestions(data.suggestions);
-                 } else {
-                     $suggestions.empty(); // Clear suggestions if no results
-                 }
-             }
-         });
-     }
-
-     // Display suggestions
-     function displaySuggestions(suggestions) {
-         $suggestions.empty();
-         const suggestionItems = suggestions.map(suggestion =>
-             `<div class="autocomplete-suggestion">${suggestion}</div>`
-         ).join(''); // Join suggestions into a single string
-         $suggestions.html(suggestionItems); // Update the DOM once
-     }
-
-     // Handle input changes
-     $tagsInput.on('input', function () {
-         const query = $(this).val().trim();
-         if (query.length > 0) {
-             debounce(fetchSuggestions, 100)(query);
-         } else {
-             $suggestions.empty();
-         }*/
 });
 
-// Handle suggestion clicks
-/* $suggestions.on('click', '.autocomplete-suggestion', function () {
-	 const selectedTag = $(this).text();
-	 addTag(selectedTag);
-	 $tagsInput.val('').trigger('input'); // Clear input and trigger input event to refresh suggestions
-	 $suggestions.empty();
- });*/
-
-// Add tag to the input and check database
-/*function addTag(tag) {
-	$tagsInput.tagsinput('add', tag);
-
-	$.ajax({
-		url: '/api/check-tag', // Your API endpoint to check if the tag exists
-		method: 'POST',
-		data: {tag: tag},
-		success: function (response) {
-			if (!response.exists) {
-				// Add the tag to the database
-				$.ajax({
-					url: '/api/add-tag', // Your API endpoint to add a new tag
-					method: 'POST',
-					data: {tag: tag},
-					success: function () {
-						console.log('Tag added to the database');
-					}
-				});
-			}
-		}
-	});
-}*/
-
-// Hide suggestions on click outside
-/* $(document).on('click', function (event) {
-	 if (!$(event.target).closest('#tags-input').length) {
-		 $suggestions.empty();
-	 }
- });
-});*/
 
 
 $(document).on('click', '#thumbnail', function (e) {
     e.preventDefault();
     $('#image-modal').modal('show');
-});
-$(document).ready(function (event) {
-    // Select2
-    $('.select2').each(function () {
-        $(this)
-            .wrap('<div class="position-relative"></div>')
-            .select2({
-                dropdownParent: $(this).parent(),
-                tags: true
-
-            });
-    });
 });
 
 

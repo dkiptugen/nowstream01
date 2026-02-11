@@ -11,7 +11,7 @@ class UpdateCategory extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user('admin')->can('create_category');
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateCategory extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'=>['required'],
+            'description'=> 'nullable',
+            'position' => ['nullable','numeric'],
+            'status' => ['nullable','numeric'],
+            'parent_id' => ['nullable','numeric']
         ];
     }
 }

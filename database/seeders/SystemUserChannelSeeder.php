@@ -15,6 +15,6 @@ class SystemUserChannelSeeder extends Seeder
     public function run(): void
     {
         $channel = Channel::first();
-        SystemUserChannel::firstOrCreate(['channel_id'=>$channel->uuid,'system_user_id'=>1,'created_by'=>1]);
+        SystemUserChannel::firstOrCreate(['channel_id'=>$channel->uuid,'system_user_id'=>1,'created_by'=>1,'role_id'=>1]);
     }
 }
