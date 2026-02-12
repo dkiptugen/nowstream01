@@ -5,6 +5,7 @@ namespace App\Http\Datatables;
 use App\Models\Content;
 use App\Models\Event;
 use App\Traits\Helper;
+use Illuminate\Support\Facades\Storage;
 
 class VideoDatatable
     {
@@ -46,15 +47,15 @@ class VideoDatatable
                 $data = [];
                 if (!empty($posts))
                     {
-                        $post = $start + 1;
+                        $pos = $start + 1;
                         foreach ($posts as $post)
                             {
                                 $btn                       = $this->button($post, $request);
-                                $nestedData['id']          = $post;
+                                $nestedData['id']          = $pos;
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
-                                $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail, 'img-fluid', 'height:50px');
-                                $nestedData['video']       = $post->video_path;
+                                $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px');
+                                $nestedData['video']       = Storage::url($post->content_path);
                                 $nestedData['created_at']  = $post->created_at->toDayDateTimeString();
                                 $nestedData['action']      = $btn;
 
@@ -82,19 +83,19 @@ class VideoDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_channel_video'))
+                if ($request->user()->can('edit_video'))
                     {
                         $button .= '<a class="text text-dark" href="' . route('video.edit', ['video' => $post->id]) . '" data-toggle="tooltip" title="Edit User">
-                <i class="fas fa-edit"></i> Edit
-                </a>';
+                                    <i class="fas fa-edit"></i> Edit
+                                    </a>';
                     }
-                if ($request->user()->can('destroy_channel_video'))
+                if ($request->user()->can('destroy_video'))
                     {
                         $button .= '<form id="delete-form-' . $post->id . '" action="' . route('video.destroy', ['video' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
-                <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
-                </form>';
+                                    <input type="hidden" name="_token" value="' . csrf_token() . '" />
+                                    <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
+                                    <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
+                                    </form>';
                     }
 
                 return '<div class="d-flex align-items-center">' . $button . "</div>";

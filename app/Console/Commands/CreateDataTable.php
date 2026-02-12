@@ -1,156 +1,149 @@
 <?php
 
-    namespace App\Console\Commands;
+namespace App\Console\Commands;
 
-    use Illuminate\Console\Command;
-    use Illuminate\Support\Facades\File;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use ReflectionClass;
 
-    class  CreateDataTable extends Command
-        {
-        /**
-         * The name and signature of the console command.
-         *
-         * @var string
-         */
-            protected $signature = 'make:datatable {name} {model}  {--search=*}';
+class CreateDataTable extends Command
+    {
+        protected $signature = 'make:datatable
+                            {model : Model name}';
 
-        /**
-         * The console command description.
-         *
-         * @var string
-         */
-            protected $description = 'Create a new DataTable class';
+        protected $description = 'Generate intelligent DataTable class';
 
-        /**
-         * Execute the console command.
-         */
-            public function handle()
-                {
-                    $name          = $this->argument('name');
-                    $model         = $this->argument('model');
-                    $searchColumns = $this->option('search');
-                    $path          = app_path("Http/Datatables/{$name}.php");
-
-                    if (File::exists($path))
-                        {
-                            $this->error("{$name} already exists!");
-                            return;
-                        }
-
-                    $stub = $this->getStub($name, $model,$searchColumns);
-
-                    File::put($path, $stub);
-
-                    $this->info("{$name} created successfully.");
-                }
-
-            protected function getStub($name, $model, $searchColumns)
-                {
-                    $searchConditions = collect($searchColumns)->map(function ($column) {
-                        return "->orWhere('$column', 'LIKE', \"%{\$search}%\")";
-                    })->implode("\n");
-                    return <<<EOD
-        <?php
-
-        namespace App\Http\Datatables;
-
-        use App\Models\Event;
-        use App\Traits\Helper;
-        use App\Models\\{$model};
-        class {$name}
-        {
-            use Helper;
-
-            public \$columns = [];
-
-            /**
-             * @param \$request
-             *
-             * @return array{draw: int, recordsTotal: mixed, recordsFiltered: mixed, data: array}
-             */
-            public function data(\$request)
+        public function handle(): void
             {
-                \$columns       = \$this->columns;
-                \$totalData     = {$model}::count();
-                \$totalFiltered = \$totalData;
-                \$limit         = \$request->input('length');
-                \$start         = \$request->input('start');
-                \$order         = \$columns[\$request->input('order.0.column')];
-                \$dir           = \$request->input('order.0.dir');
+                $model = Str::studly($this->argument('model'));
+                $modelClass = "App\\Models\\{$model}";
+                $modelPath = app_path("Models/{$model}.php");
 
-                if (empty(\$request->input('search.value')))
-                {
-                    \$posts = {$model}::offset(\$start)->limit(\$limit)->orderBy(\$order, \$dir)->get();
-                }
-                else
-                {
-                    \$search = \$request->input('search.value');
-                    \$posts  = {$model}::where('name', 'LIKE', "%{\$search}%")
-                         $searchConditions
-                        ->offset(\$start)->limit(\$limit)->orderBy(\$order, \$dir)->get();
-
-                    \$totalFiltered = {$model}::where('name', 'LIKE', "%{\$search}%")
-                         $searchConditions
-                        ->count();
+                if (!File::exists($modelPath)) {
+                    $this->error("Model {$model} does not exist.");
+                    return;
                 }
 
-                \$data = [];
-                if (!empty(\$posts))
-                {
-                    \$pos = \$start + 1;
-                    foreach (\$posts as \$post)
-                    {
-                        \$btn                  = \$this->button(\$post, \$request);
-                        \$nestedData['id']     = \$pos;
-                        \$nestedData['name']   = trim(\$post->name . ' ' . \$post->surname);
-                        \$nestedData['email']  = \$post->email;
-                        \$nestedData['status'] = (\$post->status == 1) ? 'Active' : 'inactive';
-                        \$nestedData['role']   = is_numeric(\$post->role_id) ? Role::where('id', \$post->role_id)->first()->name : null;
-                        \$nestedData['action'] = \$btn;
+                $instance = new $modelClass;
+                $table = $instance->getTable();
 
-                        \$data[] = \$nestedData;
-                        \$pos++;
+                $columns = Schema::getColumnListing($table);
+
+                $relationships = $this->detectRelationships($modelClass);
+
+                $directory = app_path("Http/Datatables");
+                File::ensureDirectoryExists($directory);
+
+                $path = "{$directory}/{$model}Datatable.php";
+
+                File::put($path, $this->buildStub($model, $columns, $relationships));
+
+                $this->info("{$model}Datatable generated successfully.");
+            }
+
+        protected function detectRelationships(string $modelClass): array
+            {
+                $reflection = new ReflectionClass($modelClass);
+                $methods = $reflection->getMethods();
+
+                $relationships = [];
+
+                foreach ($methods as $method) {
+                    if ($method->class !== $modelClass) continue;
+                    if ($method->getNumberOfParameters() > 0) continue;
+
+                    $returnType = $method->getReturnType();
+                    if ($returnType && str_contains($returnType, 'Illuminate\\Database\\Eloquent\\Relations')) {
+                        $relationships[] = $method->getName();
                     }
                 }
 
-                \$json_data = [
-                    'draw'            => (int)\$request->input('draw'),
-                    'recordsTotal'    => \$totalData,
-                    'recordsFiltered' => \$totalFiltered,
-                    'data'            => \$data
-                ];
-
-                return \$json_data;
+                return $relationships;
             }
 
-            /**
-             * @param \$post
-             * @param \$request
-             *
-             * @return string
-             */
-            private function button(\$post, \$request)
+        protected function buildStub(string $model, array $columns, array $relationships): string
             {
-                \$button = null;
-                if (\$request->user()->can('edit_event'))
-                {
-                    \$button .= '<a class="text text-dark" href="' . route('user.edit', \$post->id) . '" data-toggle="tooltip" title="Edit User">
-                        <i class="fas fa-edit"></i> Edit
-                        </a>';
-                }
-                if (\$request->user()->can('destroy_event'))
-                {
-                    \$button .= '<form id="delete-form-' . \$post->id . '" action="' . route('user.destroy', \$post->id) . '" method="POST" class=" create-form my-0 py-0">
-                        <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                        <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                        <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
-                        </form>';
-                }
+                $columnMap = collect($columns)
+                    ->map(fn($col, $i) => "{$i} => '{$col}'")
+                    ->implode(",\n        ");
 
-                return '<div class="d-flex align-items-center">' . \$button . "</div>";
+                $searchColumns = collect($columns)
+                    ->filter(fn($col) => !in_array($col, ['id', 'created_at', 'updated_at']))
+                    ->map(fn($col) => "\$query->orWhere('{$col}', 'LIKE', \"%{\$search}%\");")
+                    ->implode("\n                ");
+
+                $withRelations = collect($relationships)
+                    ->map(fn($rel) => "'{$rel}'")
+                    ->implode(", ");
+
+                return <<<PHP
+<?php
+
+namespace App\Http\Datatables;
+
+use App\Models\\{$model};
+use Illuminate\Support\Facades\Cache;
+
+class {$model}Datatable
+{
+    protected array \$columns = [
+        {$columnMap}
+    ];
+
+    public function data(\$request): array
+    {
+        if (!\$request->user()->can('view_{$model}')) {
+            abort(403);
+        }
+
+        \$limit  = (int) \$request->input('length', 10);
+        \$start  = (int) \$request->input('start', 0);
+        \$draw   = (int) \$request->input('draw');
+
+        \$orderIndex = (int) \$request->input('order.0.column', 0);
+        \$dir        = \$request->input('order.0.dir') === 'asc' ? 'asc' : 'desc';
+        \$orderColumn = \$this->columns[\$orderIndex] ?? 'id';
+
+        \$cacheKey = "datatable:{$model}:" . md5(json_encode(\$request->all()));
+
+        return Cache::remember(\$cacheKey, 60, function () use (\$limit, \$start, \$draw, \$orderColumn, \$dir, \$request) {
+
+            \$query = {$model}::query()
+                ->with([{$withRelations}]);
+
+            \$totalData = (clone \$query)->count();
+
+            if (\$search = \$request->input('search.value')) {
+                \$query->where(function (\$query) use (\$search) {
+                    {$searchColumns}
+                });
             }
-        }
-        EOD;
-                }
 
-        }
+            \$totalFiltered = (clone \$query)->count();
+
+            \$rows = \$query
+                ->orderBy(\$orderColumn, \$dir)
+                ->offset(\$start)
+                ->limit(\$limit)
+                ->get();
+
+            \$data = [];
+
+            foreach (\$rows as \$row) {
+                \$data[] = \$row->toArray();
+            }
+
+            return [
+                'draw' => \$draw,
+                'recordsTotal' => \$totalData,
+                'recordsFiltered' => \$totalFiltered,
+                'data' => \$data,
+            ];
+        });
+    }
+}
+PHP;
+            }
+    }

@@ -3,10 +3,15 @@
 
     <div class="row">
         <div class="col">
-            <div class="card">
+            <div class="card card-border-primary">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5">Streams</h3>
-
+                    <h3 class="card-title m-0 h5 text-primary">Streams</h3>
+                    @can('create_stream')
+                        <a href="{{ route('backend.stream.create') }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add stream
+                        </a>
+                    @endcan
                 </div>
                 <hr>
 

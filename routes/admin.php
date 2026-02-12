@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\ContentController;
 use App\Http\Controllers\Backend\EventStreamController;
 use App\Http\Controllers\Backend\EventVideoController;
 use App\Http\Controllers\Backend\PodcastController;
+use App\Http\Controllers\Backend\PodcastEpisodeController;
 use App\Http\Controllers\Backend\RadioController;
 use App\Http\Controllers\Backend\StreamController;
 use App\Http\Controllers\Backend\TransactionController;
@@ -90,6 +91,11 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
         Route::resource('podcast', PodcastController::class)->except(['show']);
         Route::post('podcast/datatable',  'datatable')->name('podcast.datatable');
     });
+    Route::controller(PodcastEpisodeController::class)->group( function () {
+        Route::resource('podcast.episode', PodcastEpisodeController::class)->except(['show']);
+        Route::post('podcast/{podcast}/datatable',  'datatable')->name('podcast.episode.datatable');
+    });
+
 
     Route::controller(ChannelController::class)->group( function () {
         Route::resource('/channel', ChannelController::class)->except(['show']);

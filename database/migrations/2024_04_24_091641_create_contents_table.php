@@ -41,6 +41,7 @@
                         $table->uuid('category_id')->index()->nullable();
                         $table->uuid('channel_id')->index()->nullable();
 						$table->tinyInteger ('status')->default(0);
+                        $table->text('genre')->nullable();
                         $table->foreign('system_user_id')->references('id')->on('system_users')->cascadeOnDelete()->cascadeOnUpdate();
                         $table->unsignedInteger('viewers')->default(0);
                         $table->dateTime('publishdate')->nullable();

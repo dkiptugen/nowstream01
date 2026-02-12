@@ -62,14 +62,13 @@ class PodcastIndex extends Command
                                         //dd($podcasts);
                                         try
                                             {
-                                                $pod                 = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'type' => 'podcast']);
+                                                $pod                 = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'content_group' => 'podcast']);
                                                 $pod->title          = ($this->remove_emoji($podcasts->title) == "")
                                                     ? substr($this->remove_emoji($podcasts->description), 0, 10) . '...'
                                                     : $this->remove_emoji($podcasts->title);
                                                 $pod->description    = $this->remove_emoji($podcasts->description);
                                                 $pod->content_path   = $podcasts->url;
                                                 $pod->author         = $podcasts->author;
-                                                $pod->category_id    = $db_cat->id;
                                                 $pod->source         = 'Podcast Index';
                                                 $pod->publishdate    = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
                                                 $pod->status         = 1;
@@ -82,7 +81,8 @@ class PodcastIndex extends Command
                                                 $res                 = $pod->save();
                                                 if ($res)
                                                     {
-                                                        //dd('x');
+                                                        //dd($pod->categories()->sync([$db_cat->id]));
+                                                        $pod->categories()->attach($db_cat->uuid);
                                                         $this->get_episode($podcasts->id, $pod->uuid);
 
                                                     }
@@ -132,6 +132,8 @@ class PodcastIndex extends Command
                                     'is_explicit'    => $episode->explicit,
                                     'system_user_id' => 1,
                                 ]);
+
+
 
 
                             }

@@ -22,23 +22,14 @@
 					];
 				}
 
-			public function events()
-				{
-					return $this->morphedByMany(Event::class, 'taggable', 'taggables', 'tag_id');
-				}
 
-			public function streams()
-				{
-					return $this->morphedByMany(Content::class, 'taggable', 'taggables', 'tag_id');
-				}
+            public function contents()
+                {
+                    return $this->morphedByMany(Content::class, 'taggable');
+                }
 
-			public function videos()
-				{
-					return $this->morphedByMany(Content::where('type', 'video')->class, 'taggable', 'taggables', 'tag_id');
-				}
-
-			public function taggable()
-				{
-					return $this->morphTo();
-				}
+            public function categories()
+                {
+                    return $this->morphedByMany(Category::class, 'taggable');
+                }
 		}

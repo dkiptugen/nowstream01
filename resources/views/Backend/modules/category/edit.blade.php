@@ -1,13 +1,13 @@
 @extends('Backend.includes.layout')
 @section('content')
     <div class="col-12">
-        <div class="card ">
+        <div class="card card-border-primary">
             <div class="card-header">
-                <h5 class="card-title">Edit Category</h5>
+                <h5 class="card-title h5 text-primary">Edit Category</h5>
             </div>
             <div class="card-body">
 
-                <form action="{{ route('backend.category.update',$category->id) }}" class="form form-horizontal create-form" method="post" id="updateCat" >
+                <form action="{{ route('backend.category.update',$category->uuid) }}" class="form form-horizontal create-form" method="post" id="updateCat" >
                     @csrf
                     @method('put')
                     <div class="form-group form-row">
