@@ -28,7 +28,8 @@ class PodcastDatatable
                 $orderColumn = $this->columns[$orderIndex] ?? 'id';
 
                 $baseQuery = Content::query()
-                                    ->with(['categories:uuid,name', 'tags:id,name']) // Eager load
+                                    ->with(['categories:uuid,name', 'tags:id,name'])// Eager load
+                                    ->withCount('children')
                                     ->where('content_group', 'podcast');
 
                 $totalData = (clone $baseQuery)->count();
