@@ -74,7 +74,7 @@ Route::middleware(['detectCountry'])->group(function ()
         Route::get('/', [HomeController::class, 'index']);
         Route::get('/somalinite', [HomeController::class, 'landing']);
         Route::get('/newvideo', [StreamVideoController::class, 'newvideo']);
-        Route::get('/all-videos', [StreamVideoController::class, 'index']);
+        Route::get('/all-videos', [StreamVideoController::class, 'index'])->name('videos');
         Route::get('/search', [SearchController::class, 'search'])->name('search');
         Route::get('/streams', [StreamController::class, 'index']);
         Route::get('/channels', [ChannelController::class, 'index']);
@@ -151,8 +151,8 @@ Route::get('/stream/{uuid}/{slug}', [StreamController::class, 'show'])
                 Route::middleware(['check.event.payment'])->group(function ()
                     {
                         Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
-                        Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
                     });
+                 Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
                 Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
                 Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
                 Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');

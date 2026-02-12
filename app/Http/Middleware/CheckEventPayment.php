@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Content;
-use App\Models\Subscription;
+use App\Models\Order;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,32 +13,28 @@ class CheckEventPayment
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-		if(Auth::check())
-			{
-				$eventId = $request->route('eventId');
+        // Only check for authenticated users
+        if (Auth::check()) {
+            $eventId = $request->route('eventId');
 
-				$subscription = Subscription::with(['event'])
-				                            ->where('event_id',$eventId)
-				                            ->where('user_id',$request->user()->id)
-				                            ->first();
-				if(!is_null($subscription))
-					{
-						if($subscription->status == 1)
-							{
-								$stream = Content::select(['id', 'slug'])->whereEventId($subscription->event_id)
-                                                 ->first();
-								//dd(route('stream.show',[$stream->id,$stream->slug]));
-								return redirect()->route('stream.show',[$stream->id,$stream->slug]);
-							}
-					}
+            $subscription = Order::where('user_id', $request->user()->id)
+                                        ->first(); 
 
-			}
+            if ($subscription && $subscription->status == 1) {
+                $stream = Content::where('event_id', $eventId)
+                                 ->select(['id', 'slug'])
+                                 ->first();
 
+                if ($stream) {
+                    return redirect()->route('stream.show', [$stream->id, $stream->slug]);
+                }
+            }
+        }
+
+        // If user is not subscribed or no stream exists, continue to event page
         return $next($request);
     }
 }

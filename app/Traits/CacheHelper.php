@@ -1,76 +1,102 @@
 <?php
 
-	namespace App\Traits;
+namespace App\Traits;
 
-	use App\Models\Channel;
-	use App\Models\Event;
-	use App\Models\ContentRate;
-	use App\Models\Content;
-	use App\Models\Video;
+use App\Models\Channel;
+use App\Models\Event;
+use App\Models\Content;
+use App\Models\Product;
+use Illuminate\Support\Facades\Cache;
 
-	trait CacheHelper
-		{
-			public function get_channels ($id = null)
-				{
-					if (is_null ($id))
-						{
-							$channels = Channel::with (['streams', 'contents'])->where ('status', 1)->orderBy ("created_at",
-							                                                                                 "desc")->get ()
-							;
-						}
-					else
-						{
-							$channels = Channel::with (['streams', 'contents'])->find ($id);
-						}
+trait CacheHelper
+{
+    /**
+     * Get channels, optionally a single channel by ID.
+     */
+    public function get_channels($id = null)
+    {
+        return Cache::remember("channels_{$id}", now()->addDay(), function () use ($id) {
+            if (is_null($id)) {
+                return Channel::with(['streams', 'contents'])
+                    ->where('status', 1)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            }
+            return Channel::with(['streams', 'contents'])->find($id);
+        });
+    }
 
-					return $channels;
-				}
+    /**
+     * Get a single event by ID and slug.
+     */
+    public function get_event($id, $slug)
+    {
+        return Cache::remember("event_{$id}_{$slug}", now()->addDay(), function () use ($id, $slug) {
+            return Event::where('uuid', $id)
+                ->where('slug', $slug)
+                ->where('status', 1)
+                ->with(['eventRates' => fn($q) => $q->orderBy('price', 'asc')])
+                ->first();
+        });
+    }
 
-			public function get_events ($id = null, $not = 0)
-				{
-					if (is_null ($id))
-						{
-							$events = Event::where ('status', 1)->when ($not != 0, function ($query) use ($not)
-									{
-										return $query->where ('id', '<>', $not);
-									})->get ()
-							;
-						}
-					else
-						{
-							$events = Event::find ($id);
-						}
-					return $events;
-				}
+    /**
+     * Get multiple events, optionally excluding one event.
+     */
+    public function get_events($excludeId = null)
+    {
+        $key = $excludeId ? "events_except_{$excludeId}" : "events_all";
 
-			public function get_videos ($id = null)
-				{
-					if (is_null ($id))
-						{
-							$video = Content::where('type', 'video')->get ();
-						}
-					else
-						{
-							$video = Content::where('type', 'video')->find ($id);
-						}
-					return $video;
-				}
+        return Cache::remember($key, now()->addDay(), function () use ($excludeId) {
+            $query = Event::where('status', 1)->orderBy('created_at', 'desc');
+            if ($excludeId) {
+                $query->where('uuid', '!=', $excludeId);
+            }
+            return $query->get();
+        });
+    }
 
-			public function get_event_rates ($eventId, $eventRateId = null)
-				{
-					if (is_null ($eventRateId))
-						{
-							$rates = ContentRate::where ('event_id', $eventId)->where ('visible', 1)->get ()
-							;
-						}
-					else
-						{
-							$rates = ContentRate::find ($eventRateId);
-						}
-					return $rates;
-				}
+    /**
+     * Get latest videos with optional limit.
+     */
+    public function get_videos($limit = 6)
+    {
+        return Cache::remember("latest_videos_{$limit}", now()->addDay(), function () use ($limit) {
+            return Content::where('content_group', 'video')
+                ->latest()
+                ->take($limit)
+                ->get();
+        });
+    }
 
-			public function get_streams ($id = null, $not = 0)
+    /**
+     * Get latest podcasts with optional limit.
+     */
+    public function get_podcasts($limit = 6)
+    {
+        return Cache::remember("latest_podcasts_{$limit}", now()->addDay(), function () use ($limit) {
+            return Content::where('content_group', 'podcast')
+                ->latest()
+                ->take($limit)
+                ->get();
+        });
+    }
+
+    /**
+     * Get ticket-type products for an event.
+     */
+    public function get_event_ticket_rates($eventId)
+    {
+        return Cache::remember("event_{$eventId}_tickets", now()->addDay(), function () use ($eventId) {
+            return Product::where('event_id', $eventId)
+                ->where('type', 'ticket')
+                ->where('is_active', 1)
+                ->orderBy('price', 'asc')
+                ->get();
+        });
+    }
+
+  	public function get_streams ($id = null, $not = 0)
 				{
 					if (is_null ($id))
 						{
@@ -86,4 +112,4 @@
 						}
 					return $stream;
 				}
-		}
+		} 

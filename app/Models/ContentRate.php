@@ -20,7 +20,8 @@ class ContentRate extends Model
         'has_bundles',
     ];
     protected $casts = ['date_from'=>'datetime','date_to'=>'datetime'];
-    public function event(){
-        return $this->belongsTo(Event::class);
+    public function event()
+    { 
+        return $this->belongsTo(Event::class, 'event_id', 'uuid');
     }
 }

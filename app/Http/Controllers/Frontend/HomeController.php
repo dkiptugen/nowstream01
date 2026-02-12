@@ -18,17 +18,35 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
-    public function index()
-    {
-        $this->data['channels'] = Cache::rememberOnce('channels', now()->addDay(), $this->get_channels());
-        $this->data['streams'] = Cache::rememberOnce('streams_not_6', now()->addDay(), $this->get_streams(null, 6));
-        $this->data['events'] = Cache::rememberOnce('events', now()->addDay(), $this->get_events());
-        $this->data['videos'] = Cache::rememberOnce('videos', now()->addDay(), $this->get_videos());
-        $this->data['current_event'] = Content::latest()->take(1)->get();
-        $this->data['top_videos'] = Content::where('type', 'video')->orderBy('views', 'DESC')->take(4)->get();
+  public function index()
+{
+    // Channels
+    $this->data['channels'] = $this->get_channels();
 
-        return view('Frontend.index', $this->data);
-    }
+    // Streams (excluding a specific UUID if needed)
+    $this->data['streams'] = $this->get_streams(null, 6);
+
+    // Events
+    $this->data['events'] = $this->get_events();
+
+    // Latest videos (limit 6)
+    $this->data['videos'] = $this->get_videos(6);
+
+    // Current event — just the latest one
+    $this->data['current_event'] = Content::latest()->limit(1)->get();
+
+    // Top videos by views — not cached (optional: can cache using helper)
+    $this->data['top_videos'] = Content::where('type', 'video')
+        ->orderBy('views', 'desc')
+        ->limit(4)
+        ->get();
+
+    // Podcasts (limit 4)
+    $this->data['podcasts'] = $this->get_podcasts(4);
+
+    return view('Frontend.index', $this->data);
+}
+
 
     /**
      * Display the landing page with cached data.

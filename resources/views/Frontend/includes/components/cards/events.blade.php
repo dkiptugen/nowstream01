@@ -4,18 +4,19 @@
     $startDate = Carbon::parse($event->start_time);
     $endTime   = Carbon::parse($event->end_time);
 
-    $hasPaidRates = $event->eventRates->where('status', true)->count() > 0;
-    $freeStream   = !$hasPaidRates;
+    $tickets = $event->tickets ?? collect(); // fallback to empty collection
 
-    $rate = $event->eventRates
-        ->where('status', true)
-        ->sortBy('cost')
-        ->first();
+    $hasPaidTickets = $tickets->count() > 0;
+    $freeStream     = !$hasPaidTickets;
 
-    $url = $freeStream
-        ? route('free.show', ['id' => $event->id, 'slug' => $event->slug])
-        : route('event.show', ['eventId' => $event->id, 'slug' => $event->slug]);
+    $ticket = $tickets->sortBy('price')->first();
+
+ $url = $freeStream 
+    ? route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug])
+    : route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug]);
+
 @endphp
+
 
 <div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
     <div class="movie-item mb-60">
@@ -24,18 +25,18 @@
                 <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}">
             </a>
 
-            <h5 class="card-title mb-0 mt-2">
-                <b>{{ strtoupper($startDate->format('d M, Y')) }}</b>
+            <h5 class="card-title mb-0 mt-3">
+                    <a href="{{ $url }}">
+                       <b>{{ $event->event_name }}</b>
+                    </a>
             </h5>
         </div>
 
         <div class="movie-content mt-3">
             <div class="top">
-                <h5 class="title">
-                    <a href="{{ $url }}">
-                        {{ $event->event_name }}
-                    </a>
-                </h5>
+                <small class=" mb-0">
+               {{ strtoupper($startDate->format('d M, Y')) }}
+                </small>
 
                 <span class="date">
                     <small class="card-text">
@@ -50,7 +51,7 @@
                     <li>
                         <h6 class="quality">
                             <i class="bx bx-money"></i>
-                            {{ $rate ? "From KES {$rate->cost}" : 'Free' }}
+                            {{ $ticket ? "From KES {$ticket->price}" : 'Free' }}
                         </h6>
                     </li>
 

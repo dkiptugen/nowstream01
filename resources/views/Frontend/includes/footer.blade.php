@@ -33,7 +33,7 @@
                     <div class="col-lg-3">
                         <div class="footer-logo">
                             <a href="{{url('/')}}">
-                            <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Streamer Logo">
+                                        <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
                             </a>
                         </div>
                     </div>
