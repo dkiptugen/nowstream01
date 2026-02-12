@@ -83,19 +83,19 @@ class VideoDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_channel_video'))
+                if ($request->user()->can('edit_video'))
                     {
                         $button .= '<a class="text text-dark" href="' . route('video.edit', ['video' => $post->id]) . '" data-toggle="tooltip" title="Edit User">
-                <i class="fas fa-edit"></i> Edit
-                </a>';
+                                    <i class="fas fa-edit"></i> Edit
+                                    </a>';
                     }
-                if ($request->user()->can('destroy_channel_video'))
+                if ($request->user()->can('destroy_video'))
                     {
                         $button .= '<form id="delete-form-' . $post->id . '" action="' . route('video.destroy', ['video' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
-                <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
-                </form>';
+                                    <input type="hidden" name="_token" value="' . csrf_token() . '" />
+                                    <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
+                                    <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
+                                    </form>';
                     }
 
                 return '<div class="d-flex align-items-center">' . $button . "</div>";
