@@ -43,9 +43,9 @@ class PodcastController extends Controller
                     ->first();
             });
             $podcast->increment('views'); // Increment view count
-            $episodes = Content::where('parent_id', $uuid)->where('content_group', 'podcast')->get();
-
-dd($episodes);
+            $episodes = Content::where('parent_id', $podcast->uuid)->where('content_group', 'podcast')->get();
+$parent_ids= Content::where('content_group', 'podcast')->whereNotNull('parent_id')->pluck('parent_id')->toArray();
+dd($parent_ids);
             if (!$podcast) {
                 abort(404, 'Podcast not found');
             }
