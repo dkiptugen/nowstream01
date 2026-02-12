@@ -68,9 +68,7 @@
 
     <div class="form-group mt-2">
         <label for="tags" class="control-label">Tags</label>
-        <select name="tags[]" id="tags" class="form-control form-control-sm @error('tags') is-invalid @enderror" multiple="multiple">
-            <!-- Add options here if needed or leave it empty for dynamic tags -->
-        </select>
+        <input type="text" name="tags[]" id="tags" class="form-control tagsiput @error('tags') is-invalid @enderror"/>
         @error('tags')
         <div class="invalid-feedback">{{ $message }}</div>
         @enderror
@@ -108,13 +106,5 @@
 @endsection
 
 @section('footer')
-    <script type="text/javascript">
-    $(document).ready(function() {
-        $('#tags').select2({
-            tags: true,
-            tokenSeparators: [',', ' ']
-        });
-    });
-</script>
 
 @endsection
