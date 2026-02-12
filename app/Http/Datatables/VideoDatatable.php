@@ -53,8 +53,8 @@ class VideoDatatable
                                 $nestedData['id']          = $post;
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
-                                $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail, 'img-fluid', 'height:50px');
-                                $nestedData['video']       = $post->video_path;
+                                $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px');
+                                $nestedData['video']       = $post->content_path;
                                 $nestedData['created_at']  = $post->created_at->toDayDateTimeString();
                                 $nestedData['action']      = $btn;
 
