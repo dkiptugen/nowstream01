@@ -1,45 +1,29 @@
-<div class="card radius-5 h-100 border">
-    <div class="circle-image text-center">
+<div class="card radius-10 shadow-sm h-100 border-0 overflow-hidden bg-dark">
+    <div class="position-relative text-center">
         <a href="{{ url("/channel/{$channel->id}/{$channel->name}") }}">
-            <img src="{{$channel->thumbnail}}" class="w-100 mx-auto d-block my-3 aspect1 bg-dark shadow" alt="{{$channel->name}}">
+            <img src="{{ $channel->thumbnail }}" 
+                 class="rounded-circle mx-auto d-block my-3 shadow-lg" 
+                 style="width:120px; height:120px; object-fit:cover;" 
+                 alt="{{ $channel->name }}">
         </a>
-        @if(Auth::check())
-            <div id="subscription-controls-{{ $channel->id }}">
-                @if(Auth::user()->subscribedChannels->contains($channel->id))
-                    <div id="subscribe-bt n-{{ $channel->id }}">
-                        <button class="btn btn-danger btn-sm"
-                            onclick="toggleSubscription({{ $channel->id }}, false)">Unsubscribe</button>
-                    </div>
-                @else
-                    <div id="subscribe-btn-{{ $channel->id }}">
-                        <button class="btn btn-outline-primary btn-sm"
-                            onclick="toggleSubscription({{ $channel->id }}, true)">Subscribe</button>
-                    </div>
-                @endif
-            </div>
-        @endif
     </div>
-    <div class="card-body text-center pb-0">
-        <a href="{{ url("/channel/{$channel->id}/{$channel->name}") }}">
-            <strong>
-                {{ $channel->name }}
-            </strong>
+
+    <div class="card-body text-center">
+        <a href="{{ url("/channel/{$channel->id}/{$channel->name}") }}" class="text-decoration-none text-dark">
+            <h5 class="mb-1 fw-bold">{{ $channel->name }}</h5>
         </a>
-        <br>
-        <small class="text-muted">
-            <i class="lni lni-video"></i>
+
+        <div class="d-flex justify-content-center gap-3 mt-2">
             @php
                 $videoCount = \App\Models\Content::where('type', 'video')->where('channel_id', $channel->id)->count();
+                $subscriberCount = $channel->subscribers()->count();
             @endphp
-            {{ $videoCount }} Videos
-
-            <div>
-                <span>
-                    <i class="lni lni-user"></i> <span id="subscriber-count-{{ $channel->id }}">
-                        {{ $channel->subscribers()->count() }}
-                    </span> Subscribers
-                </span>
-            </div>
-        </small>
+            <span class="badge bg-primary">
+                <i class="lni lni-video"></i> {{ $videoCount }} Videos
+            </span>
+            <span class="badge bg-success">
+                <i class="lni lni-user"></i> {{ $subscriberCount }} Subscribers
+            </span>
+        </div>
     </div>
 </div>

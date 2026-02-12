@@ -106,7 +106,7 @@
             <div class="align-self-center order-2 order-md-0">
                 <div class="text p-md-4 p-2 text-light">
 
-                    <h5 class="text-light">Explore Baze Live</h5>
+                    <h5 class="text-light">Explore Streamer</h5>
                     <h1 class="text-light my-4"><b>Stream every show <br> Every concert <br> Every gig in Africa</b>
                     </h1>
 

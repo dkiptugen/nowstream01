@@ -4,7 +4,7 @@
 			<div class="row hero">
 				<div class="col-md-5 align-self-center order-2 order-md-0 p-3">
 					<div class="text-center p-md-4">
-						<h1><b>Welcome to Baze Live</b></h1>
+						<h1><b>Welcome to Streamer</b></h1>
 						<h5>STREAM EVERY SHOW, EVERY CONCERT, EVERY GIG IN AFRICA.</h5>
 						<div class="form-group w-75 mx-auto">
 							@if (session('error'))

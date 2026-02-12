@@ -83,18 +83,18 @@ class EventController extends Controller
                                     }
 
                                 $event->system_user_id = $request->user('admin')->id;
-                                //$event->channel_id     = $request->user()->channel_id;;
+                                // $event->channel_id     = $request->user()->channel_id;
                                 $event->status = 1;
                                 $res           = $event->save();
                                 if ($res)
                                     {
                                         if ($request->has('has_stream'))
-                                            {
+                                            { 
                                                 $streamkey             = Str::ulid();
                                                 $stream                = new Content();
                                                 $stream->title         = $event->event_name;
                                                 $stream->description   = $request->event_description;
-                                                $stream->content_group = 'stream';
+                                                $stream->content_group = 'livestream';
                                                 $stream->type          = 'application/x-mpegURL';
                                                 if ($request->hasFile('thumbnail'))
                                                     {
@@ -113,7 +113,13 @@ class EventController extends Controller
                                                 $stream->system_user_id    = $request->user()->id;
                                                 $stream->channel_id        = $request->user()->channel_id;
                                                 $stream->status            = 1;
-                                                $stream->save();
+                                                
+                                               try {
+                                                    $stream->save();
+                                                } catch (\Exception $e) {
+                                                    dd($e->getMessage());
+                                                }
+
                                             }
 
                                         return self::success('event', 'Saved successfully',
@@ -239,4 +245,4 @@ class EventController extends Controller
                 ];
                 return response()->json($datatable->data($request));
             }
-    }
+    } 

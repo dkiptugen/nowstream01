@@ -71,7 +71,7 @@
             <nav class="navbar navbar-expand-xl custom-inner-bg">
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     <a class="navbar-brand" href="{{url('/')}}">
-                        <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Baze Live Logo">
+                        <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Streamer Logo">
                     </a>
                     <button class="navbar-toggler d-none" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#navContentmenu" aria-controls="navContentmenu" aria-expanded="false"
@@ -145,7 +145,7 @@
     <div class="offcanvas offcanvas-top" id="navContentmenu" data-bs-backdrop="static" tabindex="-1">
         <div class="offcanvas-header">
             <a class="navbar-brand" href="{{url('/')}}">
-                <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Baze Live Logo">
+                <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Streamer Logo">
             </a>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
@@ -305,11 +305,11 @@
             <div class="row gy-lg-0 gy-10 justify-content-between align-items-center text-center text-lg-start">
                 <div class="col-lg-4 order-3 order-lg-1">
                     <p class="custom-roboto mb-0 footer-nav">&copy; 2024 <a href="https://live.baze.co.ke/"
-                            class="text-decoration-none" target="_blank"> Baze Live</a>. All Rights Reserved.</p>
+                            class="text-decoration-none" target="_blank"> Streamer</a>. All Rights Reserved.</p>
                 </div>
                 <div class="col-lg-4 order-1 order-lg-2">
                     <a class="navbar-brand d-flex justify-content-center" href="{{url('/')}}">
-                        <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Baze Live Logo">
+                        <img src="{{ asset('logo1.png') }}" height="50" class="logo-icon" alt="Streamer Logo">
                     </a>
                 </div>
                 <div class="col-lg-4 order-2 order-lg-3">

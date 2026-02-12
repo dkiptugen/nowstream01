@@ -9,7 +9,7 @@
                         <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
                     </div>
                     <div class="">
-                        <h4 class="logo-text">Baze Live</h4>
+                        <h4 class="logo-text">Streamer</h4>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>

@@ -66,23 +66,28 @@ class Content extends Model
                'created_at',
                'updated_at',
                'deleted_at'];
+
         public function categories()
             {
-                return $this->belongsToMany(Category::class,
-                                            'content_category',
-                                            'content_id',
-                                            'category_id')
-                            ->using(ContentCategory::class)
-                            ->withTimestamps();
+                return $this
+                    ->belongsToMany(Category::class,
+                        'content_category',
+                        'content_id',
+                        'category_id')
+                    ->using(ContentCategory::class)
+                    ->withTimestamps();
             }
+
         public function children()
             {
                 return $this->hasMany(Content::class, 'parent_id', 'uuid');
             }
+
         public function parent()
             {
                 return $this->belongsTo(Content::class, 'parent_id', 'uuid');
             }
+
         public function tags()
             {
                 return $this->morphToMany(
@@ -93,15 +98,18 @@ class Content extends Model
                     'tag_id'
                 )->withTimestamps();
             }
+
         public function bitrates()
             {
-                return $this->hasMany(ContentBitrate::class, 'stream_id');
+                return $this->hasMany(ContentBitrate::class, 'content_id');
             }
+
 
         public function comments()
             {
                 return $this->morphMany(Comment::class, 'commentable');
             }
+
 
         public function stream()
             {
@@ -113,21 +121,28 @@ class Content extends Model
                 return $this->morphMany(WatchHistory::class, 'watchable');
             }
 
+        public function favoritedBy()
+            {
+                return $this->belongsToMany(User::class, 'favorites', 'content_uuid', 'user_id');
+            }
+
+
         public function getEventRateAttribute()
             {
-                $checkRate = ContentRate::where([['event_id', $this->attributes['id']], ['status', true]])->count();
+                $checkRate = ContentRate::where([['event_id', $this->attributes['uuid']], ['status', true]])->count();
                 return $checkRate;
             }
 
-        public function eventRates()
+        public function rates()
             {
-                return $this->hasMany(ContentRate::class, 'event_id', 'event_id');
+                return $this->hasMany(ContentRate::class, 'event_id', 'uuid');
             }
 
         public function event()
             {
                 return $this->belongsTo(Event::class, 'event_id');
             }
+
 
         public function channel()
             {
@@ -137,22 +152,32 @@ class Content extends Model
 
         protected static function booted()
             {
-                /* static::created(function ($stream) {
-                     // Add default bitrates for the new stream
-                     $defaultBitrates = ['240p'=>300,'360p'=>800,'480p'=> 1200,'720p'=>2500, '1080p'=>5000]; // Define your default bitrates
+                static::created(function ($content)
+                    {
+                        if ($content->content_group == 'stream')
+                            {
+                                $content->bitrates()->create(['resolution' => 'original', 'bitrate' => 0, 'url' => $content->stream_url]);
+                                // Add default bitrates for the new stream
+                                $defaultBitrates = ['240p' => 300, '360p' => 800, '480p' => 1200, '720p' => 2500, '1080p' => 5000]; // Define your default bitrates
 
-                     foreach ($defaultBitrates as $key => $bitrate)
-                         {
-                             $stream->bitrates()->create(['resolution'=>$key,'bitrate' => $bitrate,'url'=>config('custom.STREAM.LIVESTREAM_LINK').'_transcoded/'.$stream->stream_key.'/'.$stream->stream_key.'_'.$key.'.m3u8']);
-                         }
-                 });*/
-                /* static::saved(function ($stream) {
-                     $defaultBitrates = ['240p'=>300,'360p'=>800,'480p'=> 1200,'720p'=>2500, '1080p'=>5000]; // Define your default bitrates
+                                foreach ($defaultBitrates as $key => $bitrate)
+                                    {
+                                        $content->bitrates()->create(['resolution' => $key, 'bitrate' => $bitrate, 'url' => config('custom.STREAM.LIVESTREAM_LINK') . '_transcoded/' . $stream->stream_key . '/' . $stream->stream_key . '_' . $key . '.m3u8']);
+                                    }
+                            }
 
-                     foreach ($defaultBitrates as $key => $bitrate)
-                         {
-                             $stream->bitrates()->create(['resolution'=>$key,'bitrate' => $bitrate,'url'=>config('custom.STREAM.LIVESTREAM_LINK').'_transcoded/'.$stream->stream_key.'/'.$stream->stream_key.'_'.$key.'.m3u8']);
-                         }
-                 });*/
+                    });
+                static::saved(function ($content)
+                    {
+                        if ($content->content_group == 'stream')
+                            {
+                                $defaultBitrates = ['240p' => 300, '360p' => 800, '480p' => 1200, '720p' => 2500, '1080p' => 5000]; // Define your default bitrates
+
+                                foreach ($defaultBitrates as $key => $bitrate)
+                                    {
+                                        $content->bitrates()->create(['resolution' => $key, 'bitrate' => $bitrate, 'url' => config('custom.STREAM.LIVESTREAM_LINK') . '_transcoded/' . $stream->stream_key . '/' . $stream->stream_key . '_' . $key . '.m3u8']);
+                                    }
+                            }
+                    });
             }
     }

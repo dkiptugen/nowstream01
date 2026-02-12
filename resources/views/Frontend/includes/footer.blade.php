@@ -33,7 +33,7 @@
                     <div class="col-lg-3">
                         <div class="footer-logo">
                             <a href="{{url('/')}}">
-                            <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Baze Live Logo">
+                                        <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
                             </a>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="copyright-text">
-                        <p class="mb-0 d-none d-md-block">Copyright Baze Live © 2024. All rights reserved.</p>
+                        <p class="mb-0 d-none d-md-block">Copyright Streamer © 2024. All rights reserved.</p>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">

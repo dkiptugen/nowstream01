@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&amp;display=swap" rel="stylesheet">
     <link href="{{ asset('frontend-assets/css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('frontend-assets/css/icons.css') }}" rel="stylesheet">
-    <title>Baze Live Dashboard</title>
+    <title>Streamer Dashboard</title>
 </head>
 
 <body>
