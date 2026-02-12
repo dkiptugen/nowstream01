@@ -77,7 +77,7 @@
             <div class="form-group mt-2 row">
                         <div class="col">
                             <label for="thumbnail" class="control-label">Thumbnail</label>
-                            <input type="file" name="thumbnail" id="" class="form-control form-control-sm @error('thumbnail') is-invalid @enderror">
+                            <input type="file" name="thumbnail" id="" class="form-control-file  @error('thumbnail') is-invalid @enderror">
                             <small class="text-muted">Should be 150x150PX</small>
                             @error('thumbnail')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -85,7 +85,7 @@
                         </div>
                         <div class="col">
                             <label for="video_path" class="control-label">Video</label>
-                            <input type="file" name="video_path" id="video_path" class="form-control form-control-sm @error('video_path') is-invalid @enderror">
+                            <input type="file" name="video_path" id="video_path" class="form-control-file @error('video_path') is-invalid @enderror">
                             @error('video_path')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
