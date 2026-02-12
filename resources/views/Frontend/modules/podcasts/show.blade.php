@@ -93,28 +93,17 @@
                                     </div>
                                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
                                         <div class="card-body">
-
-
-
                                             <ul>
                                                 @php
                                                 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
-                                                $type = 'audio'; // default
-
-                                                if (preg_match('/\.mp4$/', $ep->content_path)) $type = 'video';
-                                                elseif (preg_match('/\.m3u8$/', $ep->content_path)) $type = 'hls';
-                                                elseif (preg_match('/(youtube\.com|youtu\.be)/', $ep->content_path)) $type = 'youtube';
-
                                                 return [
                                                 'src' => $ep->content_path,
                                                 'title' => $ep->title,
                                                 'podcast' => $podcast->title,
-                                                'thumbnail' => $podcast->thumbnail_url,
-                                                'type' => $type
+                                                'thumbnail' => $podcast->thumbnail_url
                                                 ];
                                                 });
                                                 @endphp
-
 
                                                 @foreach($podcast->episodes as $index => $episode)
                                                 <li>
@@ -122,7 +111,7 @@
                                                         onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
-                                                    </a>
+                                                    </a><span class="duration"> <i class="far fa-clock"></i> {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }} </span>
                                                 </li>
                                                 @endforeach
 
