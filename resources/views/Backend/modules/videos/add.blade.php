@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col">
             <div class="card card-border-primary">
-                <div class="ccard-header">
+                <div class="card-header">
                     <h3 class="card-title m-0 h5 text-primary">Add Video</h3>
                 </div>
                 <div class="card-body">
