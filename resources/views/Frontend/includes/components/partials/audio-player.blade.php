@@ -35,25 +35,62 @@
             <i class="fas fa-volume-up"></i>
         </button>
         <input type="range" id="player-volume" min="0" max="1" step="0.01">
+        <button id="toggle-queue" class="player-btn btn-dark"><i class="fas fa-list"></i></button>
     </div>
 
     <audio id="global-audio"></audio>
 </div>
+
+ 
+<!-- Queue -->
+<div id="player-queue" class="queue d-none">
+    <h4>Up Next</h4>
+    <ul id="queue-list"></ul>
+</div>
+
+<style>
+.queue {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: #111;
+    color: #fff;
+    border-radius: 6px;
+    padding: 10px;
+    box-shadow: 0 0 10px #000;
+    z-index: 10000;
+}
+.queue ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.queue li {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #333;
+}
+.queue li.active {
+    background: #e50914;
+}
+.queue li:hover {
+    background: #222;
+}
+</style>
+
 <script>
 (function() {
-
-    /* ===============================
-       Element Bindings (Safe)
-    =============================== */
     const audio = document.getElementById('global-audio');
     const player = document.getElementById('global-audio-player');
-
-    if (!audio || !player) return; // Exit if player not present
 
     const playBtn = document.getElementById('player-play');
     const prevBtn = document.getElementById('player-prev');
     const nextBtn = document.getElementById('player-next');
     const muteBtn = document.getElementById('player-mute');
+    const toggleQueueBtn = document.getElementById('toggle-queue');
 
     const progress = document.getElementById('player-progress');
     const volume = document.getElementById('player-volume');
@@ -63,6 +100,9 @@
     const thumbEl = document.getElementById('player-thumbnail');
     const currentTimeEl = document.getElementById('sp-current');
     const durationEl = document.getElementById('sp-duration');
+
+    const queueEl = document.getElementById('player-queue');
+    const queueListEl = document.getElementById('queue-list');
 
     const STORAGE_KEY = 'audio_state';
     let playlist = [];
@@ -74,52 +114,37 @@
     function formatTime(sec) {
         if (!sec) return '0:00';
         const m = Math.floor(sec / 60);
-        const s = Math.floor(sec % 60).toString().padStart(2, '0');
+        const s = Math.floor(sec % 60).toString().padStart(2,'0');
         return `${m}:${s}`;
-    }
-
-    function updatePlayIcon() {
-        playBtn.innerHTML = audio.paused ?
-            '<i class="fas fa-play"></i>' :
-            '<i class="fas fa-pause"></i>';
-    }
-
-    function updateMuteIcon() {
-        muteBtn.innerHTML = audio.muted ?
-            '<i class="fas fa-volume-mute"></i>' :
-            '<i class="fas fa-volume-up"></i>';
     }
 
     function updateUI(track) {
         titleEl.innerText = track.title || 'Unknown';
         podcastEl.innerText = track.podcast || '';
         thumbEl.src = track.thumbnail || '';
-        currentTimeEl.innerText = '0:00';
-        durationEl.innerText = '0:00';
         player.classList.remove('d-none');
 
-        // Wait for metadata to load
         audio.addEventListener('loadedmetadata', () => {
             durationEl.innerText = formatTime(audio.duration);
         });
+
+        updateQueue();
     }
 
     function saveState() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                playlist,
-                currentIndex,
-                time: audio.currentTime || 0,
-                volume: audio.volume,
-                muted: audio.muted,
-                playing: !audio.paused
-            }));
-        } catch(e) {}
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            playlist,
+            currentIndex,
+            time: audio.currentTime || 0,
+            volume: audio.volume,
+            muted: audio.muted,
+            playing: !audio.paused
+        }));
     }
 
     function restoreState() {
         const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (!state || !state.playlist?.length) return;
+        if (!state?.playlist?.length) return;
 
         playlist = state.playlist;
         currentIndex = state.currentIndex || 0;
@@ -132,34 +157,36 @@
         audio.muted = state.muted ?? false;
         volume.value = audio.volume;
 
-        updateMuteIcon();
         if (state.playing) audio.play().catch(() => {});
-        updatePlayIcon();
     }
 
-    /* ===============================
-       Core Playback
-    =============================== */
     function loadTrack(index) {
         if (!playlist[index]) return;
-
-        const track = playlist[index];
         currentIndex = index;
-        audio.src = track.src;
+        audio.src = playlist[index].src;
         audio.currentTime = 0;
-        updateUI(track);
+        updateUI(playlist[index]);
         audio.play().catch(() => {});
-        updatePlayIcon();
         saveState();
+    }
+
+    function updateQueue() {
+        if (!queueListEl) return;
+        queueListEl.innerHTML = '';
+        playlist.forEach((track, i) => {
+            const li = document.createElement('li');
+            li.textContent = track.title;
+            if (i === currentIndex) li.classList.add('active');
+            li.addEventListener('click', () => loadTrack(i));
+            queueListEl.appendChild(li);
+        });
     }
 
     /* ===============================
        Controls
     =============================== */
     playBtn?.addEventListener('click', () => {
-        if (audio.paused) audio.play();
-        else audio.pause();
-        updatePlayIcon();
+        audio.paused ? audio.play() : audio.pause();
         saveState();
     });
 
@@ -171,30 +198,29 @@
         if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
     });
 
+    toggleQueueBtn?.addEventListener('click', () => {
+        queueEl.classList.toggle('d-none');
+    });
+
     muteBtn?.addEventListener('click', () => {
         audio.muted = !audio.muted;
-        updateMuteIcon();
         saveState();
     });
 
     volume?.addEventListener('input', () => {
         audio.volume = volume.value;
         audio.muted = false;
-        updateMuteIcon();
         saveState();
     });
 
     progress?.addEventListener('input', () => {
-        if (!isNaN(audio.duration)) {
-            audio.currentTime = (progress.value / 100) * audio.duration;
-        }
+        if (!isNaN(audio.duration)) audio.currentTime = (progress.value / 100) * audio.duration;
     });
 
     audio.addEventListener('timeupdate', () => {
         currentTimeEl.innerText = formatTime(audio.currentTime);
-        if (!isNaN(audio.duration) && audio.duration > 0) {
-            progress.value = (audio.currentTime / audio.duration) * 100;
-        }
+        if (!isNaN(audio.duration)) progress.value = (audio.currentTime / audio.duration) * 100;
+        updateQueue();
         saveState();
     });
 
@@ -216,12 +242,9 @@
         loadTrack(0);
     };
 
-    /* ===============================
-       Init
-    =============================== */
     document.addEventListener('DOMContentLoaded', restoreState);
-
 })();
+
 </script>
 
 
