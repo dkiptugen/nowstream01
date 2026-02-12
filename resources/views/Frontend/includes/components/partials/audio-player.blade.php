@@ -1,8 +1,6 @@
-<!-- Spotify-style Persistent Player -->
-<div id="global-audio-player" class="spotify-player d-none">
+ <div id="global-audio-player" class="spotify-player d-none">
     
-    <!-- Left: Artwork + Track -->
-    <div class="sp-left">
+     <div class="sp-left">
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
             <div id="player-title" class="sp-title">No audio</div>
@@ -10,8 +8,7 @@
         </div>
     </div>
 
-    <!-- Center: Controls -->
-    <div class="sp-center">
+     <div class="sp-center">
         <div class="sp-controls">
             <button id="player-prev" class="sp-btn">
                 <i class="fas fa-step-backward"></i>
@@ -33,8 +30,7 @@
         </div>
     </div>
 
-    <!-- Right: Volume -->
-    <div class="sp-right">
+     <div class="sp-right">
         <button id="player-mute" class="sp-btn">
             <i class="fas fa-volume-up"></i>
         </button>
