@@ -52,7 +52,7 @@
                 @can('view_tv')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.tv.index') }}" class="  sidebar-link">
-                           <i class="fas fa-screen align-middle"></i>
+                           <i class="fas fa-tv align-middle"></i>
                             <span class="align-middle">TVs</span>
                         </a>
 
@@ -70,7 +70,7 @@
                 @can('view_podcast')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.podcast.index') }}" class="  sidebar-link">
-                           <i class="fas fa-screen align-middle"></i>
+                           <i class="fas fa-volume align-middle"></i>
                             <span class="align-middle">Podcasts</span>
                         </a>
 
