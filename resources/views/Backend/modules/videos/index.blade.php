@@ -3,9 +3,9 @@
 
     <div class="row">
         <div class="col">
-            <div class="card">
+            <div class="card card-border-primary">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5">Videos</h3>
+                    <h3 class="card-title m-0 h5 text-primary">Videos</h3>
                     <a href="{{ route('backend.video.create') }}" class="btn btn-primary m-0 h5">+ Add Video</a>
 
                 </div>

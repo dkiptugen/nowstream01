@@ -78,6 +78,12 @@
                 "destroy_podcast",
                 "view_podcast",
             ],
+            "podcast_episode"    => [
+                "create_podcast_episode",
+                "edit_podcast_episode",
+                "destroy_podcast_episode",
+                "view_podcast_episode",
+            ],
             "radio"    => [
                 "create_radio",
                 "edit_radio",

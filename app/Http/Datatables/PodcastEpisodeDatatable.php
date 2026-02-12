@@ -6,8 +6,9 @@ use App\Models\Event;
 use App\Traits\Helper;
 use App\Models\Content;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
-class PodcastDatatable
+class PodcastEpisodeDatatable
     {
         use Helper;
 
@@ -16,7 +17,7 @@ class PodcastDatatable
     /**
      * Datatable JSON
      */
-        public function data($request): array
+        public function data($request,$podcast_id): array
             {
                 $limit = (int)$request->input('length', 10);
                 $start = (int)$request->input('start', 0);
@@ -29,8 +30,8 @@ class PodcastDatatable
 
                 $baseQuery = Content::query()
                                     ->with(['categories:uuid,name', 'tags:id,name'])// Eager load
-                                    ->withCount('children')
-                                    ->where('content_group', 'podcast');
+                                    ->where('content_group', 'podcast_episode')
+                                    ->where('parent_id',$podcast_id);
 
                 $totalData = (clone $baseQuery)->count();
 
@@ -71,9 +72,12 @@ class PodcastDatatable
                             'category'    => $post->categories?->pluck('name')->implode(', '),
                             'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
+                            'link'       =>  $this->anchor_link($post->content_path,$post->content_path,"text text-primary" ),
+                            'duration'    => $post->duration,
                             'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'
                                 . $post->children_count .
                                 '</a>',
+                            'content_rating' => $post->is_explicit?'Explicit':'Not Explicit',
                             'publishdate' => $post->publishdate,
                             'status'      => $post->status ? 'active' : 'inactive',
                             'action'      => $this->button($post, $request),
@@ -98,18 +102,18 @@ class PodcastDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_podcast'))
+                if ($request->user()->can('edit_podcast_episode'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.podcast.edit', ['podcast' => $post->uuid]) . '" data-toggle="tooltip" title="Edit podcast">
+                        $button .= '<a class="text text-dark" href="' . route('backend.podcast.episode.edit', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode">
                 <i class="fas fa-edit"></i> Edit
                 </a>';
                     }
-                if ($request->user()->can('destroy_podcast'))
+                if ($request->user()->can('destroy_podcast_episode'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.podcast.destroy', ['podcast' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.podcast.episode.destroy', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Podcast"><i class="fas fa-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Podcast Episode"><i class="fas fa-trash"></i> Delete</button>
                 </form>';
                     }
 
