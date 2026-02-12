@@ -148,20 +148,55 @@
 
 								@php
 									$channel = Channel::find($video->channel_id);
+									$user = auth()->user(); 
+									$isSubscribed = $user ? $user->subscribedChannels->contains($channel->id) : false;
 								@endphp
-								@if(Auth::check())
+								@if(Auth::check()) 
 										<div id="subscription-controls-{{ $channel->id }}">
-											@if(Auth::user()->subscribedChannels->contains($channel->id))
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, false)">Unsubscribe</button>
-												</div>
+											@if($isSubscribed)
+												<button class="btn btn-danger btn-sm"
+													onclick="toggleSubscription({{ $channel->id }}, false)">
+													Unsubscribe
+												</button>
 											@else
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-outline-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, true)">Subscribe</button>
-												</div>
+												<button class="btn btn-outline-primary btn-sm"
+													onclick="toggleSubscription({{ $channel->id }}, true)">
+													Subscribe
+												</button>
 											@endif
+											<script>
+												function toggleSubscription(channelId, subscribe) {
+													const url = subscribe ?
+														'{{ route("channels.subscribe", ":id") }}'.replace(':id', channelId) :
+														'{{ route("channels.unsubscribe", ":id") }}'.replace(':id', channelId);
+
+													$.ajax({
+														url: url,
+														type: 'POST',
+														data: {
+															_token: '{{ csrf_token() }}',
+														},
+														success: function (response) {
+															if (subscribe) {
+																$(`#subscription-controls-${channelId}`).html(`
+															<button class="btn btn-danger btn-sm" onclick="toggleSubscription(${channelId}, false)">
+																Unsubscribe
+															</button>
+														`);
+															} else {
+																$(`#subscription-controls-${channelId}`).html(`
+															<button class="btn btn-outline-primary btn-sm" onclick="toggleSubscription(${channelId}, true)">
+																Subscribe
+															</button>
+														`);
+															}
+														},
+														error: function (xhr) {
+															console.error('Error:', xhr.responseText);
+														}
+													});
+												}
+											</script>
 										</div>
 									</div>
 								@endif

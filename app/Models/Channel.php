@@ -35,15 +35,12 @@ class Channel extends Model
     {
         return $this->belongsToMany(SystemUser::class)->using(SystemUserChannel::class);
     }
-    public function subscribers()
-    {
-        return $this->belongsToMany(User::class,
-        'channel_user',
-        'channel_id',  
-        'user_id',     
-        'uuid',       
-        'id' );
-    }
+   
+// Channel.php
+public function subscribers()
+{
+    return $this->belongsToMany(User::class, 'channel_user', 'channel_uuid', 'user_id');
+}
     public function getSubscriberCountAttribute()
     {
         return $this->subscribers()->count();

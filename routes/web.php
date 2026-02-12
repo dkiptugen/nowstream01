@@ -144,7 +144,9 @@ Route::get('/stream/{uuid}/{slug}', [StreamController::class, 'show'])
                 Route::get('/favorites', [VideoFavoriteController::class, 'myfavorite'])->name('video.myfavorite');
                 Route::post('/channels/{channel}/subscribe', [ChannelController::class, 'subscribe'])->name('channels.subscribe');
                 Route::post('/channels/{channel}/unsubscribe', [ChannelController::class, 'unsubscribe'])->name('channels.unsubscribe');
-                Route::get('/video/{uuid}/{slug}', [StreamVideoController::class, 'show'])->name('video.show');
+                Route::get('/video/{uuid}/{slug?}', [StreamVideoController::class, 'show'])
+    ->name('video.show');
+
                 Route::get('/video/file/{filename}', [StreamVideoController::class, 'get_video'])->name('video.file');
                 Route::middleware(['check.event.payment'])->group(function ()
                     {

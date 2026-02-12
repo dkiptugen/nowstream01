@@ -58,4 +58,11 @@ class User extends Authenticatable
                 ->where('type', 'video')
                 ->withTimestamps();
 }
+// User.php
+public function channels()
+{
+    return $this->belongsToMany(Channel::class, 'channel_user', 'user_id', 'channel_uuid');
+}
+
+
 }

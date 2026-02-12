@@ -18,10 +18,10 @@ class WatchHistory extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function watchable()
-    {
-        return $this->morphTo();
-    }
+   public function watchable()
+{
+    return $this->morphTo();
+}
 
     public function video()
     {
