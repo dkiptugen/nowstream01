@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Traits\Helper;
 use App\Models\Content;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class PodcastEpisodeDatatable
     {
@@ -71,9 +72,12 @@ class PodcastEpisodeDatatable
                             'category'    => $post->categories?->pluck('name')->implode(', '),
                             'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
+                            'link'=>e(Storage::url($post->content_path)),
+                            'duration'    => $post->duration,
                             'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'
                                 . $post->children_count .
                                 '</a>',
+                            'content_rating' => $post->is_explicit?'Explicit':'Not Explicit',
                             'publishdate' => $post->publishdate,
                             'status'      => $post->status ? 'active' : 'inactive',
                             'action'      => $this->button($post, $request),
