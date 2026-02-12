@@ -68,7 +68,7 @@
             "processing": true,
             "serverSide": true,
             "ajax":{
-                "url": "{{ route('backend.podcast.episode.datatable',$podcast->id) }}",
+                "url": "{{ route('backend.podcast.episode.datatable',['podcast'=>$podcast->uuid]) }}",
                 "dataType": "json",
                 "type": "POST",
                 "data":{ _token: "{{csrf_token()}}"}
