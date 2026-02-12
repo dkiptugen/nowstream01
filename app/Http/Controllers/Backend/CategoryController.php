@@ -88,7 +88,7 @@ class CategoryController extends Controller
         public function edit(Category $category)
             {
                 $this->data['cat']      = Category::get();
-                $category->load('keyword');
+                $category->load('tags');
                 $this->data['category'] = $category;
                 $this->data['keywords'] = implode(',', $this->data['category']->tags->pluck('name')->toArray());
                 return view('Backend.modules.category.edit', $this->data);

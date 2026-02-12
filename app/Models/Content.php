@@ -66,7 +66,33 @@ class Content extends Model
                'created_at',
                'updated_at',
                'deleted_at'];
-
+        public function categories()
+            {
+                return $this->belongsToMany(Category::class,
+                                            'content_category',
+                                            'content_id',
+                                            'category_id')
+                            ->using(ContentCategory::class)
+                            ->withTimestamps();
+            }
+        public function children()
+            {
+                return $this->hasMany(Content::class, 'parent_id', 'uuid');
+            }
+        public function parent()
+            {
+                return $this->belongsTo(Content::class, 'parent_id', 'uuid');
+            }
+        public function tags()
+            {
+                return $this->morphToMany(
+                    Tag::class,
+                    'taggable',
+                    'taggables',
+                    'taggable_id',
+                    'tag_id'
+                )->withTimestamps();
+            }
         public function bitrates()
             {
                 return $this->hasMany(ContentBitrate::class, 'stream_id');
@@ -108,10 +134,6 @@ class Content extends Model
                 return $this->belongsTo(Channel::class, 'channel_id');
             }
 
-        public function tags()
-            {
-                return $this->morphToMany(Tag::class, 'taggable');
-            }
 
         protected static function booted()
             {

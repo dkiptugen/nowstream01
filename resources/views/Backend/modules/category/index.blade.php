@@ -1,12 +1,12 @@
 @extends('Backend.includes.layout')
 @section('content')
 <div class="col-12">
-    <div class="card">
+    <div class="card card-border-primary">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title">Categories</h5>
+            <h3 class="card-title h5 text-primary">Categories</h3>
             <div class="actbtn">
                 @if(\Illuminate\Support\Facades\Auth::user()->can('create_category'))
-                    <a href="{{ route('backend.category.create') }}" class="btn btn-sm btn-outline-dark">
+                    <a href="{{ route('backend.category.create') }}" class="btn btn-sm btn-primary">
                        <i class="fas fa-plus"></i> Add Category
                     </a>
                 @endif

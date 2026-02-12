@@ -1,107 +1,88 @@
 <?php
 
-    namespace App\Http\Datatables;
+namespace App\Http\Datatables;
 
-    use App\Models\Event;
-    use App\Models\Role;
-    use App\Traits\Helper;
-    use App\Models\SystemUser as User;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
+class UserDatatable
+{
+    protected array $columns = [
+        0 => 'id',
+        1 => 'name',
+        2 => 'email',
+        3 => 'email_verified_at',
+        4 => 'status',
+        5 => 'phone',
+        6 => 'image',
+        7 => 'password',
+        8 => 'password_changed_at',
+        9 => 'stream_auth',
+        10 => 'verification_key',
+        11 => 'remember_token',
+        12 => 'created_at',
+        13 => 'updated_at'
+    ];
 
-
-    class UserDatatable
-        {
-            use Helper;
-
-            public $columns = [];
-
-        /**
-         * @param $request
-         *
-         * @return array{draw: int, recordsTotal: mixed, recordsFiltered: mixed, data: array}
-         */
-            public function data($request)
-                {
-                    $columns       = $this->columns;
-                    $totalData     = User::count();
-                    $totalFiltered = $totalData;
-                    $limit         = $request->input('length');
-                    $start         = $request->input('start');
-                    $order         = $columns[$request->input('order.0.column')];
-                    $dir           = $request->input('order.0.dir');
-
-                    if (empty($request->input('search.value')))
-                        {
-                            $posts = User::offset($start)->limit($limit)->orderBy($order,
-                                                                                  $dir)->get();
-                        }
-                    else
-                        {
-
-                            $search = $request->input('search.value');
-                            $posts  = User::where('name', 'LIKE',
-                                                  "%{$search}%")->orWhere('email', 'LIKE', "%{$search}%")->orWhere('status', 'LIKE',
-                                                                                                                   "%{$search}%")->offset($start)->limit($limit)->orderBy($order, $dir)->get();
-
-                            $totalFiltered = User::where('name', 'LIKE', "%{$search}%")->orWhere('email', 'LIKE',
-                                                                                                 "%{$search}%")->orWhere('status', 'LIKE', "%{$search}%")->count();
-                        }
-
-                    $data = [];
-                    if (!empty($posts))
-                        {
-                            $pos = $start + 1;
-                            foreach ($posts as $post)
-                                {
-
-                                    $btn                  = $this->button($post, $request);
-                                    $nestedData['id']     = $pos;
-                                    $nestedData['name']   = trim($post->name . ' ' . $post->surname);
-                                    $nestedData['email']  = $post->email;
-                                    $nestedData['status'] = ($post->status == 1)
-                                        ? 'Active'
-                                        : 'inactive';
-                                    $nestedData['role']   = is_numeric($post->role_id) ? Role::where('id', $post->role_id)->first()->name : null;
-                                    $nestedData['action'] = $btn;
-
-                                    $data[] = $nestedData;
-                                    $pos++;
-
-                                }
-                        }
-
-                    $json_data = [
-                        'draw'            => (int)$request->input('draw'), 'recordsTotal' => $totalData,
-                        'recordsFiltered' => $totalFiltered, 'data' => $data
-                    ];
-
-                    return $json_data;
-                }
-
-        /**
-         * @param $post
-         * @param $request
-         *
-         * @return string
-         */
-            private function button($post, $request)
-                {
-                    $button = null;
-                    if ($request->user()->can('edit_event'))
-                        {
-                            $button .= '<a class="text text-dark" href="' . route('backend.user.edit', $post->id) . '" data-toggle="tooltip" title="Edit User">
-                                                <i class="fas fa-edit"></i> Edit
-                                                </a>';
-                        }
-                    if ($request->user()->can('destroy_event'))
-                        {
-                            $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.user.destroy', $post->id) . '" method="POST" class=" create-form my-0 py-0">
-                                        <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                                        <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                                        <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete User"><i class="fas fa-trash"></i> Delete</button>
-                                        </form>';
-                        }
-
-                    return '<div class="d-flex align-items-center">' . $button . "</div>";
-                }
+    public function data($request): array
+    {
+        if (!$request->user()->can('view_User')) {
+            abort(403);
         }
+
+        $limit  = (int) $request->input('length', 10);
+        $start  = (int) $request->input('start', 0);
+        $draw   = (int) $request->input('draw');
+
+        $orderIndex = (int) $request->input('order.0.column', 0);
+        $dir        = $request->input('order.0.dir') === 'asc' ? 'asc' : 'desc';
+        $orderColumn = $this->columns[$orderIndex] ?? 'id';
+
+        $cacheKey = "datatable:User:" . md5(json_encode($request->all()));
+
+        return Cache::remember($cacheKey, 60, function () use ($limit, $start, $draw, $orderColumn, $dir, $request) {
+
+            $query = User::query()
+                ->with([]);
+
+            $totalData = (clone $query)->count();
+
+            if ($search = $request->input('search.value')) {
+                $query->where(function ($query) use ($search) {
+                    $query->orWhere('name', 'LIKE', "%{$search}%");
+                $query->orWhere('email', 'LIKE', "%{$search}%");
+                $query->orWhere('email_verified_at', 'LIKE', "%{$search}%");
+                $query->orWhere('status', 'LIKE', "%{$search}%");
+                $query->orWhere('phone', 'LIKE', "%{$search}%");
+                $query->orWhere('image', 'LIKE', "%{$search}%");
+                $query->orWhere('password', 'LIKE', "%{$search}%");
+                $query->orWhere('password_changed_at', 'LIKE', "%{$search}%");
+                $query->orWhere('stream_auth', 'LIKE', "%{$search}%");
+                $query->orWhere('verification_key', 'LIKE', "%{$search}%");
+                $query->orWhere('remember_token', 'LIKE', "%{$search}%");
+                });
+            }
+
+            $totalFiltered = (clone $query)->count();
+
+            $rows = $query
+                ->orderBy($orderColumn, $dir)
+                ->offset($start)
+                ->limit($limit)
+                ->get();
+
+            $data = [];
+
+            foreach ($rows as $row) {
+                $data[] = $row->toArray();
+            }
+
+            return [
+                'draw' => $draw,
+                'recordsTotal' => $totalData,
+                'recordsFiltered' => $totalFiltered,
+                'data' => $data,
+            ];
+        });
+    }
+}

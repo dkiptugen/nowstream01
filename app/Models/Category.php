@@ -27,4 +27,23 @@ class Category extends Model
 
         protected $casts    = ['type' => JsonCast::class];
         protected $fillable = ['uuid', 'name', 'slug', 'description', 'top_menu', 'parent_id', 'is_brand', 'thumburl', 'type', 'position', 'system_user_id'];
+        public function contents()
+            {
+                return $this->belongsToMany(Content::class,
+                                            'content_category',
+                                            'category_id',
+                                            'content_id')
+                            ->using(ContentCategory::class)
+                            ->withTimestamps();
+            }
+        public function tags()
+            {
+                return $this->morphToMany(
+                    Tag::class,
+                    'taggable',
+                    'taggables',
+                    'taggable_id',
+                    'tag_id'
+                )->withTimestamps();
+            }
     }
