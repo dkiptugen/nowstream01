@@ -96,7 +96,11 @@
                                             <ul>
                                                 @foreach($podcast->episodes as $episode)
                                                 <li>
-                                                    <a href="{{ $episode->video_url }}" class="popup-video">
+                                                    <!-- use content_path to play audio -->
+ 
+
+
+                                                    <a  onclick="playSingleAudio('{{ $episode->content_path }}', '{{ $episode->title }}', '{{ $podcast->name }}', '{{ $episode->thumbnail_url }}')">
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
                                                     </a>
