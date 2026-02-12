@@ -94,22 +94,27 @@
                                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
                                         <div class="card-body">
                                             <ul>
-                                                @foreach($podcast->episodes as $episode)
+                                                @php
+                                                $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
+                                                return [
+                                                'src' => $ep->content_path,
+                                                'title' => $ep->title,
+                                                'podcast' => $podcast->title,
+                                                'thumbnail' => $podcast->thumbnail_url
+                                                ];
+                                                });
+                                                @endphp
+
+                                                @foreach($podcast->episodes as $index => $episode)
                                                 <li>
-                                                    <!-- use content_path to play audio -->
- 
-
-
-                                                    <a  onclick="playSingleAudio('{{ $episode->content_path }}', '{{ $episode->title }}', '{{ $podcast->name }}', '{{ $episode->thumbnail_url }}')">
+                                                    <a href="javascript:void(0)"
+                                                        onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
                                                     </a>
-                                                    <span class="duration">
-                                                        <i class="far fa-clock"></i>
-                                                        {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }}
-                                                    </span>
                                                 </li>
                                                 @endforeach
+
 
                                             </ul>
                                         </div>
@@ -126,7 +131,7 @@
                             <h5 class="season">Related Podcasts</h5>
                         </div>
                         <div class="row">
-                        @foreach($related as $relatedPodcast)
+                            @foreach($related as $relatedPodcast)
                             <div class="col-md-6">
                                 <div class="related-podcast-item mb-20">
                                     <div class="related-podcast-img">
@@ -134,15 +139,15 @@
                                             <img src="{{ $relatedPodcast->thumbnail_url }}" alt="{{ $relatedPodcast->title }}" class="img-fluid w-100"> </a>
                                     </div>
                                     <div class="related-podcast-content">
-                                        <p class="my-2 text-truncate-2"> 
-                                            <a href="{{ route('podcast.show', ['uuid' => $relatedPodcast->uuid, 'slug' => $relatedPodcast->slug]) }}" class="text-light"> {{ $relatedPodcast->title }} </a> 
-                                        </p> 
-                                        <span class="date"><i class="far fa-calendar-alt"></i> 
-                                        {{ Carbon::parse($relatedPodcast->created_at)->format('d M, Y') }}</span>
+                                        <p class="my-2 text-truncate-2">
+                                            <a href="{{ route('podcast.show', ['uuid' => $relatedPodcast->uuid, 'slug' => $relatedPodcast->slug]) }}" class="text-light"> {{ $relatedPodcast->title }} </a>
+                                        </p>
+                                        <span class="date"><i class="far fa-calendar-alt"></i>
+                                            {{ Carbon::parse($relatedPodcast->created_at)->format('d M, Y') }}</span>
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
+                            @endforeach
                         </div>
                     </div>
                     <div class="episode-img">
