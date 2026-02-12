@@ -5,6 +5,7 @@ namespace App\Http\Datatables;
 use App\Models\Content;
 use App\Models\Event;
 use App\Traits\Helper;
+use Illuminate\Support\Facades\Storage;
 
 class VideoDatatable
     {
@@ -54,7 +55,7 @@ class VideoDatatable
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
                                 $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px');
-                                $nestedData['video']       = $post->content_path;
+                                $nestedData['video']       = Storage::url($post->content_path);
                                 $nestedData['created_at']  = $post->created_at->toDayDateTimeString();
                                 $nestedData['action']      = $btn;
 
