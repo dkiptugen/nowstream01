@@ -25,9 +25,12 @@
                         <div class="banner-meta">
                             <ul>
                                 <li class="quality">
-                                    <span>Pg 18</span>
-                                    <span>hd</span>
+                                    <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
+                                    <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}</span>
+                                    <span>{{ $podcast->language }}</span>
                                 </li>
+                            </ul>
+                            <ul> 
                                 <li class="category">
                                     <a href="#">{{ ucfirst($podcast->author) }}</a>
                                 </li>
@@ -79,7 +82,7 @@
                                 <h2 class="title">Watch Full Episode</h2>
                             </div>
                             <div class="total-views-count">
-                                <p>2.7 million <i class="far fa-eye"></i></p>
+                                <p>{{ $podcast->views_count }} million <i class="far fa-eye"></i></p>
                             </div>
                         </div>
                         <div class="episode-watch-wrap">
