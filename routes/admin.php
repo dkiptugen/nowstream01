@@ -93,7 +93,7 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
     });
     Route::controller(PodcastEpisodeController::class)->group( function () {
         Route::resource('podcast.episode', PodcastEpisodeController::class)->except(['show']);
-        Route::post('podcast/{podcast}/datatable',  'datatable')->name('podcast.datatable');
+        Route::post('podcast/{podcast}/datatable',  'datatable')->name('podcast.episode.datatable');
     });
 
 
