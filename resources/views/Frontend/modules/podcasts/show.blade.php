@@ -100,7 +100,8 @@
                                                 'src' => $ep->content_path,
                                                 'title' => $ep->title,
                                                 'podcast' => $podcast->title,
-                                                'thumbnail' => $podcast->thumbnail_url
+                                                'thumbnail' => $podcast->thumbnail_url,
+                                                'duration' => $ep->duration
                                                 ];
                                                 });
                                                 @endphp

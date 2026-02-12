@@ -39,229 +39,191 @@
 
     <audio id="global-audio"></audio>
 </div>
-
 <script>
-    (function() {
+(function() {
 
-        /* ===============================
-           Element Bindings (Safe)
-        =============================== */
-        const audio = document.getElementById('global-audio');
-        const player = document.getElementById('global-audio-player');
+    /* ===============================
+       Element Bindings (Safe)
+    =============================== */
+    const audio = document.getElementById('global-audio');
+    const player = document.getElementById('global-audio-player');
 
-        if (!audio || !player) return; // Exit if player not present
+    if (!audio || !player) return; // Exit if player not present
 
-        const playBtn = document.getElementById('player-play');
-        const prevBtn = document.getElementById('player-prev');
-        const nextBtn = document.getElementById('player-next');
-        const muteBtn = document.getElementById('player-mute');
+    const playBtn = document.getElementById('player-play');
+    const prevBtn = document.getElementById('player-prev');
+    const nextBtn = document.getElementById('player-next');
+    const muteBtn = document.getElementById('player-mute');
 
-        const progress = document.getElementById('player-progress');
-        const volume = document.getElementById('player-volume');
+    const progress = document.getElementById('player-progress');
+    const volume = document.getElementById('player-volume');
 
-        const titleEl = document.getElementById('player-title');
-        const podcastEl = document.getElementById('player-podcast');
-        const thumbEl = document.getElementById('player-thumbnail');
-
-        const STORAGE_KEY = 'audio_state';
-
-        let playlist = [];
-        let currentIndex = 0;
-
-        /* ===============================
-           Helpers
-        =============================== */
-
-        function updatePlayIcon() {
-            playBtn.innerHTML = audio.paused ?
-                '<i class="fas fa-play"></i>' :
-                '<i class="fas fa-pause"></i>';
-        }
-
-        function updateMuteIcon() {
-            muteBtn.innerHTML = audio.muted ?
-                '<i class="fas fa-volume-mute"></i>' :
-                '<i class="fas fa-volume-up"></i>';
-        }
-
-        function updateUI(track) {
-            titleEl.innerText = track.title || 'Unknown';
-            podcastEl.innerText = track.podcast || '';
-            thumbEl.src = track.thumbnail || '';
-            player.classList.remove('d-none');
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    playlist,
-                    currentIndex,
-                    time: audio.currentTime || 0,
-                    volume: audio.volume,
-                    muted: audio.muted,
-                    playing: !audio.paused
-                }));
-            } catch (e) {
-                // Storage may fail silently (private mode)
-            }
-        }
-
-        function restoreState() {
-            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (!state || !state.playlist || !state.playlist.length) return;
-
-            playlist = state.playlist;
-            currentIndex = state.currentIndex || 0;
-
-            const track = playlist[currentIndex];
-            audio.src = track.src;
-            updateUI(track);
-
-            audio.currentTime = state.time || 0;
-            audio.volume = state.volume ?? 1;
-            audio.muted = state.muted ?? false;
-
-            volume.value = audio.volume;
-            updateMuteIcon();
-
-            if (state.playing) {
-                audio.play().catch(() => {});
-            }
-
-            updatePlayIcon();
-        }
-
-        /* ===============================
-           Core Playback
-        =============================== */
-
-        function loadTrack(index) {
-            if (!playlist[index]) return;
-
-            const track = playlist[index];
-
-            // Prevent reload if same track
-            if (audio.src === track.src) {
-                audio.play();
-                updatePlayIcon();
-                return;
-            }
-
-            currentIndex = index;
-            audio.src = track.src;
-            audio.currentTime = 0;
-
-            updateUI(track);
-
-            audio.play().catch(() => {});
-            updatePlayIcon();
-            saveState();
-        }
-
-        /* ===============================
-           Controls
-        =============================== */
-
-        playBtn?.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-            } else {
-                audio.pause();
-            }
-            updatePlayIcon();
-            saveState();
-        });
-
-        prevBtn?.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                loadTrack(currentIndex - 1);
-            }
-        });
-
-        nextBtn?.addEventListener('click', () => {
-            if (currentIndex < playlist.length - 1) {
-                loadTrack(currentIndex + 1);
-            }
-        });
-
-        muteBtn?.addEventListener('click', () => {
-            audio.muted = !audio.muted;
-            updateMuteIcon();
-            saveState();
-        });
-
-        volume?.addEventListener('input', () => {
-            audio.volume = volume.value;
-            audio.muted = false;
-            updateMuteIcon();
-            saveState();
-        });
-
-        progress?.addEventListener('input', () => {
-            if (!isNaN(audio.duration)) {
-                audio.currentTime = (progress.value / 100) * audio.duration;
-            }
-        });
-
-        audio.addEventListener('timeupdate', () => {
-            if (!isNaN(audio.duration) && audio.duration > 0) {
-                progress.value = (audio.currentTime / audio.duration) * 100;
-            }
-            saveState();
-        });
-
-        audio.addEventListener('ended', () => {
-            if (currentIndex < playlist.length - 1) {
-                loadTrack(currentIndex + 1);
-            }
-        });
-
-        /* ===============================
-           Global API (for Blade)
-        =============================== */
-
-        window.playGlobalAudio = function(list, index = 0) {
-            if (!Array.isArray(list) || !list.length) return;
-            playlist = list;
-            loadTrack(index);
-        };
-
-        window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '') {
-            playlist = [{
-                src,
-                title,
-                podcast,
-                thumbnail
-            }];
-            loadTrack(0);
-        };
-
-        /* ===============================
-           Init
-        =============================== */
-
-        document.addEventListener('DOMContentLoaded', restoreState);
-
-    })();
+    const titleEl = document.getElementById('player-title');
+    const podcastEl = document.getElementById('player-podcast');
+    const thumbEl = document.getElementById('player-thumbnail');
     const currentTimeEl = document.getElementById('sp-current');
-const durationEl = document.getElementById('sp-duration');
+    const durationEl = document.getElementById('sp-duration');
 
-function formatTime(sec) {
-    if (!sec) return '0:00';
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60).toString().padStart(2, '0');
-    return m + ':' + s;
-}
+    const STORAGE_KEY = 'audio_state';
+    let playlist = [];
+    let currentIndex = 0;
 
-audio.addEventListener('loadedmetadata', () => {
-    durationEl.innerText = formatTime(audio.duration);
-});
+    /* ===============================
+       Helpers
+    =============================== */
+    function formatTime(sec) {
+        if (!sec) return '0:00';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
 
-audio.addEventListener('timeupdate', () => {
-    currentTimeEl.innerText = formatTime(audio.currentTime);
-});
+    function updatePlayIcon() {
+        playBtn.innerHTML = audio.paused ?
+            '<i class="fas fa-play"></i>' :
+            '<i class="fas fa-pause"></i>';
+    }
 
+    function updateMuteIcon() {
+        muteBtn.innerHTML = audio.muted ?
+            '<i class="fas fa-volume-mute"></i>' :
+            '<i class="fas fa-volume-up"></i>';
+    }
+
+    function updateUI(track) {
+        titleEl.innerText = track.title || 'Unknown';
+        podcastEl.innerText = track.podcast || '';
+        thumbEl.src = track.thumbnail || '';
+        currentTimeEl.innerText = '0:00';
+        durationEl.innerText = '0:00';
+        player.classList.remove('d-none');
+
+        // Wait for metadata to load
+        audio.addEventListener('loadedmetadata', () => {
+            durationEl.innerText = formatTime(audio.duration);
+        });
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                playlist,
+                currentIndex,
+                time: audio.currentTime || 0,
+                volume: audio.volume,
+                muted: audio.muted,
+                playing: !audio.paused
+            }));
+        } catch(e) {}
+    }
+
+    function restoreState() {
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!state || !state.playlist?.length) return;
+
+        playlist = state.playlist;
+        currentIndex = state.currentIndex || 0;
+
+        audio.src = playlist[currentIndex].src;
+        updateUI(playlist[currentIndex]);
+
+        audio.currentTime = state.time || 0;
+        audio.volume = state.volume ?? 1;
+        audio.muted = state.muted ?? false;
+        volume.value = audio.volume;
+
+        updateMuteIcon();
+        if (state.playing) audio.play().catch(() => {});
+        updatePlayIcon();
+    }
+
+    /* ===============================
+       Core Playback
+    =============================== */
+    function loadTrack(index) {
+        if (!playlist[index]) return;
+
+        const track = playlist[index];
+        currentIndex = index;
+        audio.src = track.src;
+        audio.currentTime = 0;
+        updateUI(track);
+        audio.play().catch(() => {});
+        updatePlayIcon();
+        saveState();
+    }
+
+    /* ===============================
+       Controls
+    =============================== */
+    playBtn?.addEventListener('click', () => {
+        if (audio.paused) audio.play();
+        else audio.pause();
+        updatePlayIcon();
+        saveState();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+        if (currentIndex > 0) loadTrack(currentIndex - 1);
+    });
+
+    nextBtn?.addEventListener('click', () => {
+        if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+    });
+
+    muteBtn?.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        updateMuteIcon();
+        saveState();
+    });
+
+    volume?.addEventListener('input', () => {
+        audio.volume = volume.value;
+        audio.muted = false;
+        updateMuteIcon();
+        saveState();
+    });
+
+    progress?.addEventListener('input', () => {
+        if (!isNaN(audio.duration)) {
+            audio.currentTime = (progress.value / 100) * audio.duration;
+        }
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        currentTimeEl.innerText = formatTime(audio.currentTime);
+        if (!isNaN(audio.duration) && audio.duration > 0) {
+            progress.value = (audio.currentTime / audio.duration) * 100;
+        }
+        saveState();
+    });
+
+    audio.addEventListener('ended', () => {
+        if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+    });
+
+    /* ===============================
+       Global API
+    =============================== */
+    window.playGlobalAudio = function(list, index = 0) {
+        if (!Array.isArray(list) || !list.length) return;
+        playlist = list;
+        loadTrack(index);
+    };
+
+    window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '') {
+        playlist = [{ src, title, podcast, thumbnail }];
+        loadTrack(0);
+    };
+
+    /* ===============================
+       Init
+    =============================== */
+    document.addEventListener('DOMContentLoaded', restoreState);
+
+})();
 </script>
+
 
 <style>
    .spotify-player {
