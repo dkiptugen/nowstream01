@@ -72,7 +72,7 @@ class PodcastEpisodeDatatable
                             'category'    => $post->categories?->pluck('name')->implode(', '),
                             'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
-                            'link'=>e(Storage::url($post->content_path)),
+                            'link'       =>  $this->anchor_link($post->content_path,$post->content_path,"text text-primary" ),
                             'duration'    => $post->duration,
                             'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'
                                 . $post->children_count .
