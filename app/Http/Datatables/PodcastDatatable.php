@@ -67,7 +67,7 @@ class PodcastDatatable
                             'pos'          => $pos++,
                             'title'       => e($post->title),
                             'description' => str($post->description)->limit(50),
-                            'thumbnail'   => '<img src="'.$post->thumbnail_url.'" class="img-fluid" />',
+                            'thumbnail'   => '<img src="'.$post->thumbnail_url.'" class="img-fluid" width="30" />',
                             'category'    => $post->categories?->pluck('name')->implode(', '),
                             'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
