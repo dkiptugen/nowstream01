@@ -40,7 +40,7 @@
                         @method('PUT')
                         <div class="form-group">
                             <label for="title" class="control-label">Video Title</label>
-                            <input type="text" name="title" id="title" class="form-control form-control-sm @error('title') is-invalid @enderror" value="{{ old('title', $video->title) }}">
+                            <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $video->title) }}">
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -48,7 +48,7 @@
 
                         <div class="form-group mt-2">
                             <label for="description" class="control-label">Description</label>
-                            <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="10">{{ old('description', $video->description) }}</textarea>
+                            <textarea name="description" id="description" class="form-control editor @error('description') is-invalid @enderror" rows="10">{{ old('description', $video->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -56,7 +56,7 @@
 
                         <div class="form-group mt-2">
                             <label for="event_id" class="control-label">Event</label>
-                            <select name="event_id" id="event_id" class="form-control form-control-sm @error('event_id') is-invalid @enderror">
+                            <select name="event_id" id="event_id" class="form-control @error('event_id') is-invalid @enderror">
                                 @foreach($events as $event)
                                     <option value="{{ $event->uuid }}" {{ old('event_id', $video->event_uuid) == $event->uuid ? 'selected' : '' }}>{{ $event->event_name }}</option>
                                 @endforeach
@@ -68,7 +68,7 @@
 
                         <div class="form-group mt-2">
                             <label for="thumbnail" class="control-label">Thumbnail</label>
-                            <input type="file" name="thumbnail" id="thumbimage" class="form-control form-control-sm @error('thumbnail') is-invalid @enderror">
+                            <input type="file" name="thumbnail" id="thumbimage" class="form-control-input @error('thumbnail') is-invalid @enderror">
                             @if($video->thumbnail_url)
                                 <div class="mt-2">
                                     <img src="{{ $video->thumbnail_url }}" alt="Thumbnail" class="img-fluid" style="max-width: 200px;">
@@ -82,11 +82,9 @@
 
                         <div class="form-group mt-2">
                             <label for="tags" class="control-label">Tags</label>
-                            <select name="tags[]" id="tags" class="form-control form-control-sm @error('tags') is-invalid @enderror" multiple>
-                                @foreach($tags as $tag)
-                                    <option value="{{ $tag->id }}" {{ is_array($selectedTagIds) && in_array($tag->id, $selectedTagIds) ? 'selected' : '' }}>{{ $tag->name }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" name="tags" id="tags" class="form-control tags-input @error('tags') is-invalid @enderror"/>
+
+
                             @error('tags')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -94,7 +92,7 @@
 
                         <div class="form-group mt-2">
                             <label for="video_path" class="control-label">Video</label>
-                            <input type="file" name="video_path" id="video_path" class="form-control form-control-sm @error('video_path') is-invalid @enderror">
+                            <input type="file" name="video_path" id="video_path" class="form-control-input @error('video_path') is-invalid @enderror">
                             @error('video_path')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

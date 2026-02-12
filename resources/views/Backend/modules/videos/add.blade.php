@@ -28,7 +28,7 @@
 
                         <div class="form-group">
         <label for="title" class="control-label">Video Title</label>
-        <input type="text" name="title" id="title" class="form-control form-control-sm @error('title') is-invalid @enderror" value="{{ old('title') }}">
+        <input type="text" name="title" id="title" class="form-control@error('title') is-invalid @enderror" value="{{ old('title') }}">
                             @error('title')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -36,7 +36,7 @@
 
     <div class="form-group mt-2">
         <label for="description" class="control-label">Description</label>
-        <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="10">{{ old('description') }}</textarea>
+        <textarea name="description" id="description" class="form-control editor @error('description') is-invalid @enderror" rows="10">{{ old('description') }}</textarea>
         @error('description')
         <div class="invalid-feedback">{{ $message }}</div>
         @enderror
