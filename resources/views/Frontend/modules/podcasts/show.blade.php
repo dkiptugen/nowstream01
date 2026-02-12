@@ -93,18 +93,28 @@
                                     </div>
                                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
                                         <div class="card-body">
+
+
+
                                             <ul>
                                                 @php
                                                 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
+                                                $type = 'audio'; // default
+
+                                                if (preg_match('/\.mp4$/', $ep->content_path)) $type = 'video';
+                                                elseif (preg_match('/\.m3u8$/', $ep->content_path)) $type = 'hls';
+                                                elseif (preg_match('/(youtube\.com|youtu\.be)/', $ep->content_path)) $type = 'youtube';
+
                                                 return [
-                                                'src' => 'https://www.youtube.com/watch?v=R2gbPxeNk2E',
+                                                'src' => $ep->content_path,
                                                 'title' => $ep->title,
                                                 'podcast' => $podcast->title,
                                                 'thumbnail' => $podcast->thumbnail_url,
-                                                'duration' => $ep->duration
+                                                'type' => $type
                                                 ];
                                                 });
                                                 @endphp
+
 
                                                 @foreach($podcast->episodes as $index => $episode)
                                                 <li>

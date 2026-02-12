@@ -41,9 +41,8 @@
     </div>
 
     <audio id="global-audio"></audio>
-    <div id="youtube-container" class="d-none">
-        <div id="youtube-player"></div>
-    </div>
+    <video id="global-video" style="display:none;" width="100%" height="80" controls></video>
+
 </div>
 
 <!-- Queue -->
@@ -198,27 +197,63 @@
     /* ===============================
        Core Playback
     =============================== */
-    function loadTrack(index, startTime = 0) {
-        if(!playlist[index]) return;
-        currentIndex = index;
-        const track = playlist[index];
-        updateUI(track);
+  function loadTrack(index) {
+    if (!playlist[index]) return;
 
-        isYouTube = track.type === 'youtube';
-        if(isYouTube){
-            const ytId = extractYouTubeId(track.src);
-            if(ytId) createYouTubePlayer(ytId, startTime);
-        } else {
-            youtubeContainer.classList.add('d-none');
-            audio.style.display = 'block';
-            stopYTInterval();
-            audio.src = track.src;
-            audio.currentTime = startTime;
-            audio.play().catch(()=>{});
+    const track = playlist[index];
+    currentIndex = index;
+
+    const audioEl = document.getElementById('global-audio');
+    const videoEl = document.getElementById('global-video');
+    const player = document.getElementById('global-audio-player');
+
+    // Remove existing YouTube iframe
+    const ytContainer = document.getElementById('yt-container');
+    if (ytContainer) ytContainer.remove();
+
+    // Hide both audio/video by default
+    audioEl.style.display = 'none';
+    videoEl.style.display = 'none';
+    audioEl.pause();
+    videoEl.pause();
+
+    if (track.type === 'youtube') {
+        const iframe = document.createElement('iframe');
+        iframe.id = 'yt-container';
+        iframe.width = '100%';
+        iframe.height = '80';
+        iframe.src = `https://www.youtube.com/embed/${getYouTubeID(track.src)}?autoplay=1&controls=0`;
+        iframe.frameBorder = '0';
+        iframe.allow = 'autoplay; encrypted-media';
+        iframe.allowFullscreen = true;
+        player.appendChild(iframe);
+    } else if (track.src.endsWith('.mp4')) {
+        videoEl.style.display = 'block';
+        videoEl.src = track.src;
+        videoEl.currentTime = 0;
+        videoEl.play().catch(() => {});
+    } else if (track.src.endsWith('.m3u8')) {
+        videoEl.style.display = 'block';
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(track.src);
+            hls.attachMedia(videoEl);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => videoEl.play());
+        } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
+            videoEl.src = track.src;
+            videoEl.play();
         }
-
-        saveState();
+    } else {
+        audioEl.style.display = 'block';
+        audioEl.src = track.src;
+        audioEl.currentTime = 0;
+        audioEl.play().catch(() => {});
     }
+
+    updateUI(track);
+    saveState();
+}
+
 
     function nextTrack() {
         if(currentIndex < playlist.length -1) loadTrack(currentIndex+1);
@@ -494,3 +529,4 @@
     .sp-right { display: none; }
 }
 </style>
+ 
