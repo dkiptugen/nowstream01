@@ -47,11 +47,11 @@ class VideoDatatable
                 $data = [];
                 if (!empty($posts))
                     {
-                        $post = $start + 1;
+                        $pos = $start + 1;
                         foreach ($posts as $post)
                             {
                                 $btn                       = $this->button($post, $request);
-                                $nestedData['id']          = $post;
+                                $nestedData['id']          = $pos;
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
                                 $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px');
