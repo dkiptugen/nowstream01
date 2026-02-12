@@ -17,11 +17,11 @@
 
     <div class="row">
         <div class="col">
-            <div class="card">
+            <div class="card  card-border-primary">
+                <div class="card-header">
+                    <h3 class="card-title m-0 h5 text-primary">Edit Video</h3>
+                </div>
                 <div class="card-body">
-                    <h3 class="card-title m-0 h5">Edit Video</h3>
-                    <hr>
-
                     <!-- Display Success and Error Messages -->
                     @if(session('success'))
                         <div class="alert alert-success">
