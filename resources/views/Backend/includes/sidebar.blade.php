@@ -61,7 +61,7 @@
                 @can('view_radio')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.radio.index') }}" class="  sidebar-link">
-                           <i class="fas fa-radio align-middle"></i>
+                           <i class="fas fa-speaker-deck align-middle"></i>
                             <span class="align-middle">Radios</span>
                         </a>
 
@@ -70,7 +70,7 @@
                 @can('view_podcast')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.podcast.index') }}" class="  sidebar-link">
-                           <i class="fas fa-volume align-middle"></i>
+                           <i class="fas fa-volume-up align-middle"></i>
                             <span class="align-middle">Podcasts</span>
                         </a>
 
