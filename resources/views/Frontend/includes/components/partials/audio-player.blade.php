@@ -374,7 +374,7 @@ audio.addEventListener('timeupdate', () => {
     appearance: none;
     width: 10px;
     height: 10px;
-    background: #1db954;
+    background: #e4d804;
     border-radius: 50%;
 }
 
@@ -399,7 +399,7 @@ audio.addEventListener('timeupdate', () => {
     appearance: none;
     width: 10px;
     height: 10px;
-    background: #1db954;
+    background: #e4d804;
     border-radius: 50%;
 }
 
