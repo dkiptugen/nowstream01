@@ -286,11 +286,11 @@
                     </div>
                     <div class="movie-content">
                         <div class="top">
-                            <h5 class="title mt-0">
+                            <h6 class=" mt-0">
                                 <a href="{{ url("/podcast/{$podcast->id}/{$podcast->slug}") }}">
                                     {{ucfirst($podcast->title)}}
                                 </a>
-                            </h5>
+                            </h6>
                         </div>
                         <div class="bottom">
                             <!-- Display number of views -->

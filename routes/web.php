@@ -153,7 +153,7 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
     // show podcast
-    Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'showPodcast'])->name('podcast.show');
+    Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
 
     // Social Auth Routes (Global)
