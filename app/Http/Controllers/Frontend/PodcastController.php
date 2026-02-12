@@ -43,7 +43,7 @@ class PodcastController extends Controller
                     ->first();
             });
             $podcast->increment('views'); // Increment view count
-            $episodes = Content::where('parent_id', $podcast->old_id)->where('content_group', 'podcast')->get();
+            $episodes = Content::where('parent_id', $uuid)->where('content_group', 'podcast')->get();
 
 dd($episodes);
             if (!$podcast) {
