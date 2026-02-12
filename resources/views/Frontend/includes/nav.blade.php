@@ -23,15 +23,7 @@
                 </div>
                 <div class="menu-title">Videos</div>
             </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('channels') }}">
-                <div class="parent-icon"><i class='bx bx-tv'></i>
-                </div>
-                <div class="menu-title">Channels</div>
-            </a>
-
-        </li>
+        </li> 
 
         <li class="nav-item">
             <a class="nav-link" href=" {{ url('streams') }}">
