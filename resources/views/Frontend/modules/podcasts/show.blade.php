@@ -97,7 +97,7 @@
                                                 @php
                                                 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
                                                 return [
-                                                'src' => $ep->content_path,
+                                                'src' => 'https://www.youtube.com/watch?v=R2gbPxeNk2E',
                                                 'title' => $ep->title,
                                                 'podcast' => $podcast->title,
                                                 'thumbnail' => $podcast->thumbnail_url,
