@@ -61,7 +61,7 @@
                 @can('view_radio')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.radio.index') }}" class="  sidebar-link">
-                           <i class="fas fa-speaker-deck align-middle"></i>
+                           <i class="fas fa-microphone align-middle"></i>
                             <span class="align-middle">Radios</span>
                         </a>
 
