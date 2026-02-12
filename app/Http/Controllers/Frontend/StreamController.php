@@ -356,27 +356,21 @@ class StreamController extends Controller
 
 	public function freeShow($id, $slug = "")
 {
-    try {
-        // Find the stream or throw a 404 error
+    try { 
         $stream = Cache::rememberOnce('stream_'.$id,now()->addDay(),Content::findOrFail($id));
-
-        // Attempt to get the authenticated user, if any
+ 
         $user = Auth::user();
 
-        // Generate a unique key for the user and stream combination, if a user is logged in
-        if ($user) {
+         if ($user) {
             $uniqueViewKey = "stream_view_{$stream->uuid}_{$user->id}";
 
-            // Check if the key exists in the cache
-            if (!Cache::has($uniqueViewKey)) {
+             if (!Cache::has($uniqueViewKey)) {
                 // Increment the viewer count
                 $stream->increment('viewers');
 
-                // Store the key in the cache for a specific duration (e.g., 1 hour)
-                Cache::put($uniqueViewKey, true, 3600);
+                 Cache::put($uniqueViewKey, true, 3600);
 
-                // Record the watch history if the user is logged in
-                $stream->watch()
+                 $stream->watch()
                     ->updateOrCreate(
                         [
                             'user_id' => $user->id,
@@ -386,18 +380,15 @@ class StreamController extends Controller
                         ]
                     );
             }
-        } else {
-            // Increment viewer count for unauthenticated users
+        } else { 
             $stream->increment('viewers');
         }
-
-        // Fetch related data
+ 
         $streams = Content::where('status', 1)->where('uuid', '<>', $id)->take(4)->get();
         $channels = Channel::where('status', 1)->take(8)->get();
         $videos = Content::where('type', 'video')->take(12)->get();
         $comments = $stream->comments()->with('user')->get();
-		//dd($stream);
-        // Prepare data to pass to the view
+		//dd($stream); 
         $data = [
             'stream' => $stream,
             'streams' => $streams,
@@ -416,76 +407,76 @@ class StreamController extends Controller
     }
 }
 
-	public function show($id, $slug = "")
-	{
+	public function show($uuid, $slug = "")
+{
+    try { 
+        $stream = Content::where('uuid', $uuid)->firstOrFail();
 
-		try {
-			// Find the stream or throw a 404 error
-			$stream = Content::findOrFail($id);
+        $user = Auth::user();
+ 
+        if ($user && $stream->event_id) {
 
-			// Check if the current user has an active subscription for the event
-			$user = Auth::user();
-			$subscription = Subscription::where('user_id', $user->id)->where(
-				'event_id',
-				$stream->event_id
-			)->where(
-					'status',
-					1
-				)->first();
+            $subscription = Subscription::where('user_id', $user->id)
+                ->where('event_id', $stream->event_id)
+                ->where('status', 1)
+                ->first();
 
-			if (is_null($subscription)) {
-				// Redirect to the payment page if no active subscription is found
-				return redirect()->route(
-					'event.show',
-					['eventId' => $stream->event_id, 'slug' => $stream->slug]
-				);
-			}
+            if (!$subscription) {
+                return redirect()->route('event.show', [
+                    'eventId' => $stream->event_id,
+                    'slug' => $stream->slug
+                ]);
+            }
+        }
 
-			// Generate a unique key for the user and stream combination
-			$uniqueViewKey = "stream_view_{$stream->id}_{$user->id}";
+        // Viewer tracking
+        if ($user) {
+            $uniqueViewKey = "stream_view_{$stream->uuid}_{$user->id}";
 
-			// Check if the key exists in the cache
-			if (!Cache::has($uniqueViewKey)) {
-				// Increment the viewer count
-				$stream->increment('viewers');
+            if (!Cache::has($uniqueViewKey)) {
+                $stream->increment('viewers');
+                Cache::put($uniqueViewKey, true, now()->addHour());
 
-				// Store the key in the cache for a specific duration (e.g., 1 hour)
-				Cache::put($uniqueViewKey, true, 3600);
-				$stream->watch()
-					->updateOrCreate(
-						[
-							'user_id' => $user->id,
-						],
-						[
-							'watched_at' => now(),
-						]
-					);
-			}
+                $stream->watch()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    ['watched_at' => now()]
+                );
+            }
+        } else {
+            $stream->increment('viewers');
+        }
 
+        // Related data
+        $streams = Content::where('status', 1)
+            ->where('uuid', '<>', $uuid)
+            ->take(4)
+            ->get();
 
-			// Fetch related data
-			$streams = Content::where('status', 1)->where('id', '<>', $id)->take(4)->get();
-			$channels = Channel::where('status', 1)->take(8)->get();
-			$videos = Content::where('type', 'video')->take(12)->get();
-			$comments = $stream->comments()->with('user')->get();
+        $channels = Channel::where('status', 1)->take(8)->get();
 
-			// Prepare data to pass to the view
-			$data = [
-				'stream' => $stream,
-				'streams' => $streams,
-				'channels' => $channels,
-				'videos' => $videos,
-				'comments' => $comments
-			];
+        $videos = Content::where('type', 'video')
+            ->where('status', 1)
+            ->take(12)
+            ->get();
 
-			return view('Frontend.modules.channels.streams.stream', $data);
-		} catch (Exception $e) {
-			// Log the exception for debugging
-			Log::error('Content not found: ' . $e->getMessage());
+        $comments = $stream->comments()
+            ->with('user')
+            ->latest()
+            ->get();
 
-			// Return a 404 error
-			abort(404, 'Content not found');
-		}
-	}
+        return view('Frontend.modules.channels.streams.stream', [
+            'stream' => $stream,
+            'streams' => $streams,
+            'channels' => $channels,
+            'videos' => $videos,
+            'comments' => $comments
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Stream not found: ' . $e->getMessage());
+        abort(404);
+    }
+}
+
 
 }

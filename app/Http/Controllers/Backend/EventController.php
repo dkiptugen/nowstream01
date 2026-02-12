@@ -115,10 +115,10 @@ class EventController extends Controller
                                                 $stream->status            = 1;
                                                 
                                                try {
-    $stream->save();
-} catch (\Exception $e) {
-    dd($e->getMessage());
-}
+                                                    $stream->save();
+                                                } catch (\Exception $e) {
+                                                    dd($e->getMessage());
+                                                }
 
                                             }
 

@@ -77,7 +77,7 @@
 							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
 									return $query->where ('uuid', '!=', $not);
-								})->orderBy ("created_at", "asc")->where('content_group', 'stream')->with('channel')->get ()
+								})->orderBy ("created_at", "asc")->where('content_group', 'livestream')->with('channel')->get ()
 							;
 						}
 					else

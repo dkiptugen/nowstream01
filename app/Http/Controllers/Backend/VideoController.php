@@ -66,6 +66,8 @@ class VideoController extends Controller
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
                 $video->description = $validatedData['description'];
+                $video->type        = 'video';
+                $video->content_group = 'video';
 
                 // Handle thumbnail upload
                 if ($request->hasFile('thumbnail'))

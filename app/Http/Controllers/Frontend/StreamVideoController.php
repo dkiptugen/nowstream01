@@ -99,30 +99,45 @@ class StreamVideoController extends Controller
     /**
      * Display a single video with comments, channels, and related videos
      */
-    public function show(int $id)
-    {
-        try {
-            // Load the video with comments and user relationship
-            $video = Content::where('type', 'video')->with(['comments.user' => function ($q) {
-                $q->oldest();
-            }])->findOrFail($id);
+   public function show(string $uuid)
+{
+    try {
+        // Load video by UUID with comments and users
+        $video = Content::where('uuid', $uuid)
+            ->where('type', 'video')
+            ->with(['comments.user'])
+            ->firstOrFail();
+dd($video->toArray());
 
-            $comments = $video->comments;
-            // Increment the views count
-            $video->increment('views');
+        $comments = $video->comments;
 
-            // Load additional data
-            $channels = Channel::where('status', 1)->take(8)->get();
-            $relatedVideos = Content::where('type', 'video')->where('id', '!=', $id)->take(4)->get();
+        // Increment views
+        $video->increment('views');
 
-            // Record watch history (assuming you have a service for it)
+        // Additional data
+        $channels = Channel::where('status', 1)->take(8)->get();
+
+        $relatedVideos = Content::where('type', 'video')
+            ->where('uuid', '!=', $uuid)
+            ->take(4)
+            ->get();
+
+        // Watch history
+        if (auth()->check()) {
             $this->watchHistoryService->record($video);
-
-            return view('Frontend.modules.videos.video', compact('video', 'channels', 'relatedVideos', 'comments'));
-        } catch (ModelNotFoundException) {
-            abort(404, 'Video not found.');
         }
+        return view('Frontend.modules.videos.video', compact(
+            'video',
+            'channels',
+            'relatedVideos',
+            'comments'
+        ));
+
+    } catch (ModelNotFoundException $e) {
+        abort(404, 'Video not found.');
     }
+}
+
 
     /**
      * Post a comment to a video or stream
