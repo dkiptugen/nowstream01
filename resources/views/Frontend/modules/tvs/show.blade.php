@@ -9,7 +9,8 @@
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video> 	   </div>
+													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video> 	   
+                                                </div>
 
 @php
 	 $oldvid= $tv;
@@ -370,7 +371,7 @@
 				});
 
 				// Your video URL
-				const videoUrl = '{{ $oldvid->content_path }}';
+				const videoUrl = '{{ $tv->content_path }}';
 
 				// Function to determine video type
 				function getVideoType(url) {
