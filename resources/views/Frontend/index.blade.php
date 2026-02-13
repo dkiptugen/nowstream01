@@ -53,8 +53,7 @@
                             </form>
                             <p class="w-100 text-left text-light mt-2 mb-0">Already Bought? Enter Stream Token
                                 Or Phone Number
-                                To Watch. OR get <b>2GB</b>Bundles with
-                                {{$event->title}} Access, Dial <b>*544*46#ok.</b>
+                                To Watch. 
                             </p>
 
                         </div>
