@@ -22,7 +22,7 @@
 
                         <!-- VIDEO -->
                         <div class="ratio ratio-16x9">
-                            <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}" crossorigin="anonymous">
+                            <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}">
                                 <source src="{{ $episode->content_path }}" type="{{ $episode->type }}">
                             </video>
                         </div>
