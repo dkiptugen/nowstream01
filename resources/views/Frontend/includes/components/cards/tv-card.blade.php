@@ -3,7 +3,7 @@
                     <div class="movie-poster">
                         <a href="{{ route('tv.show', [$tv->uuid, $tv->slug]) }}">
                             <img src="{{$tv->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
-                                class="w-100 d-block w-100" alt="...">
+                                class="w-100 d-block w-100" alt="..." style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                             <div class="play fs-40">
                                 <i class="fadeIn animated bx bx-play-circle"></i>
                             </div>

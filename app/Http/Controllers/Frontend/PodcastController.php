@@ -20,9 +20,9 @@ class PodcastController extends Controller
      */
     public function index(Request $request)
 {
-    $perPage = 6;
+    $perPage = 18;
 
-    $podcasts = Content::where('type', 'podcast')
+    $podcasts = Content::where('content_group', 'podcast')
         ->whereNull('parent_id')
         ->paginate($perPage);
 
@@ -35,7 +35,7 @@ class PodcastController extends Controller
     $channels = $this->get_channels();
     $videos = $this->get_videos(6);
     $categories = Category::where('type', 'podcast')->limit(6)->get();
-    $topPodcasts = Content::where('type', 'podcast')
+    $topPodcasts = Content::where('content_group', 'podcast')
     ->whereNull('parent_id')
     ->orderBy('views', 'desc')
     ->limit(6)
@@ -48,7 +48,7 @@ public function loadMore(Request $request)
 {
     $perPage = 6;
     
-    $podcasts = Content::where('type', 'podcast')
+    $podcasts = Content::where('content_group', 'podcast')
             ->whereNull('parent_id') 
             ->paginate($perPage);
 

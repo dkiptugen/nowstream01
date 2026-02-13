@@ -14,7 +14,7 @@
         <div class="movie-poster mb-0">
             <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
                 <img src="{{$video->thumbnail ?? asset('frontend-assets/images/default.png')}}"
-                     class="w-100 d-block w-100" alt="...">
+                     class="w-100 d-block w-100" alt="..." loading="lazy">
                 <div class="play fs-40">
                     <i class="fadeIn animated bx bx-play-circle"></i>
                 </div>
