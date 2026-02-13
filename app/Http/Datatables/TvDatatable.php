@@ -52,7 +52,7 @@ class TvDatatable
                                 $nestedData['pos']        = $pos;
                                 $nestedData['title']      = $post->title;
                                 $nestedData['stream_url'] = $post->stream_url;
-                                $nestedData["thumbnail"]  = '<img src="' . $post->thumbnail_url . '" class="img-fluid" />';
+                                $nestedData["thumbnail"]  = '<img src="' . $post->thumbnail_url . '" class="img-fluid" width="50" height="50" />';
                                 $nestedData['region']     = $post->country;
                                 $nestedData['language']   = $post->language;
                                 $nestedData['category']   = $post->categories?->pluck('name')->implode(', ');
