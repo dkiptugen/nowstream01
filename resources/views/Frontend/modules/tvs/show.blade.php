@@ -9,7 +9,7 @@
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-													<tv id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></tv> 	   </div>
+													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video> 	   </div>
 
 @php
 	 $oldvid= $tv;
