@@ -50,14 +50,12 @@
 
     @endsection
     @section('header')
-        <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
     @endsection
     @section('footer')
         <!-- HLS.js (for .m3u8 support) -->
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-        <!-- Plyr JS -->
-        <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const video = document.getElementById('player');
