@@ -17,7 +17,7 @@ class PodcastEpisodeDatatable
     /**
      * Datatable JSON
      */
-        public function data($request,$podcast_id): array
+        public function data($request, $podcast_id): array
             {
                 $limit = (int)$request->input('length', 10);
                 $start = (int)$request->input('start', 0);
@@ -31,7 +31,7 @@ class PodcastEpisodeDatatable
                 $baseQuery = Content::query()
                                     ->with(['categories:uuid,name', 'tags:id,name'])// Eager load
                                     ->where('content_group', 'podcast_episode')
-                                    ->where('parent_id',$podcast_id);
+                                    ->where('parent_id', $podcast_id);
 
                 $totalData = (clone $baseQuery)->count();
 
@@ -65,19 +65,19 @@ class PodcastEpisodeDatatable
                 foreach ($posts as $post)
                     {
                         $data[] = [
-                            'pos'          => $pos++,
-                            'title'       => e($post->title),
-                            'description' => str($post->description)->limit(50),
-                            'thumbnail'   => '<img src="'.$post->thumbnail_url.'" class="img-fluid" width="50" />',
-                            'source'      => e($post->source),
-                            'duration'    => $post->duration,
-                            'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'
+                            'pos'            => $pos++,
+                            'title'          => e($post->title),
+                            'description'    => str($post->description)->limit(50),
+                            'thumbnail'      => '<img src="' . $post->thumbnail_url . '" class="img-fluid" width="50" />',
+                            'source'         => e($post->source),
+                            'duration'       => $post->duration,
+                            'episodes'       => '<a href="' . route('backend.podcast.episode.index', ['podcast' => $post->uuid]) . '" class="text-dark text-underline text-bold">'
                                 . $post->children_count .
                                 '</a>',
-                            'content_rating' => $post->is_explicit?'Explicit':'Not Explicit',
-                            'publishdate' => $post->publishdate,
-                            'status'      => $post->status ? 'active' : 'inactive',
-                            'action'      => $this->button($post, $request),
+                            'content_rating' => $post->is_explicit ? 'Explicit' : 'Not Explicit',
+                            'publishdate'    => $post->publishdate,
+                            'status'         => $post->status ? 'active' : 'inactive',
+                            'action'         => $this->button($post, $request),
                         ];
                     }
 
@@ -101,22 +101,22 @@ class PodcastEpisodeDatatable
                 $button = null;
                 if ($request->user()->can('edit_podcast_episode'))
                     {
-                        $button .= '<a class="btn btn-primary" href="' . route('backend.podcast.episode.edit', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode">
+                        $button .= '<a class="btn btn-primary btn-sm" style="white-space: nowrap;" href="' . route('backend.podcast.episode.edit', ['podcast' => $post->parent_id, 'episode' => $post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode">
                 <i class="fas fa-edit"></i> Edit
                 </a>';
                     }
                 if ($request->user()->can('view_podcast_episode'))
                     {
-                        $button .= '<a class="btn btn-dark" href="' . route('backend.podcast.episode.show', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Listen podcast Episode" target="_blank">
+                        $button .= '<a class="btn btn-dark btn-sm" style="white-space: nowrap;" href="' . route('backend.podcast.episode.show', ['podcast' => $post->parent_id, 'episode' => $post->uuid]) . '" data-toggle="tooltip" title="Listen podcast Episode" target="_blank">
                 <i class="fas fa-play-circle"></i> Listen
                 </a>';
                     }
                 if ($request->user()->can('destroy_podcast_episode'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.podcast.episode.destroy', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.podcast.episode.destroy', ['podcast' => $post->parent_id, 'episode' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-danger" data-toggle="tooltip" title="Delete Podcast Episode"><i class="fas fa-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete Podcast Episode" style="white-space: nowrap;"><i class="fas fa-trash"></i> Delete</button>
                 </form>';
                     }
 
