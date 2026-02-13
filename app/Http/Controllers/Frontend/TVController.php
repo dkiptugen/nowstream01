@@ -19,6 +19,7 @@ class TVController extends Controller
         $this->data['tvs'] = Content::where('content_group', 'tv')
             ->whereNotNull('stream_url')
             ->orderByDesc('views')
+            ->where('status', 1)
             ->paginate($perPage);
           
         $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
