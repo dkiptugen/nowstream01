@@ -22,7 +22,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
-                                <th>Stream URL</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
                                 <th>Language</th>
@@ -35,7 +34,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
-                                <th>Stream URL</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
                                 <th>Language</th>
