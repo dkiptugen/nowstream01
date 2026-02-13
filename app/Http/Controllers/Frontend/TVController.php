@@ -52,14 +52,11 @@ class TVController extends Controller
                     ->take(6)
                     ->get();
             });
-
-            // Sidebar tvs
-            $tvs = $this->get_tvs(6);
+ 
 
             return view('Frontend.modules.tvs.show', [
                 'tv'  => $tv,
-                'related'  => $related,
-                'tvs'   => $tvs,
+                'related'  => $related, 
             ]);
         } catch (\Exception $e) {
             abort(404, 'tv not found');
