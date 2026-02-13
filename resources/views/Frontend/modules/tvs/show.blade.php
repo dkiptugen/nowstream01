@@ -158,6 +158,7 @@
 				
 			</div>
 		</section>
+        {{ dd($tv)}}
 		@if($related->isNotEmpty())
 		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
 		<div class="container">
