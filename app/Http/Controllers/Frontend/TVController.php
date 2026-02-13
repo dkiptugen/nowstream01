@@ -17,7 +17,6 @@ class TVController extends Controller
         $perPage = 6;
 
         $this->data['tvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
             ->orderByDesc('views')
             ->where('status', 1)
             ->paginate($perPage);
