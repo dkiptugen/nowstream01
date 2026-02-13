@@ -69,7 +69,6 @@ class PodcastEpisodeDatatable
                             'title'       => e($post->title),
                             'description' => str($post->description)->limit(50),
                             'thumbnail'   => '<img src="'.$post->thumbnail_url.'" class="img-fluid" width="50" />',
-                            'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
                             'duration'    => $post->duration,
                             'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'

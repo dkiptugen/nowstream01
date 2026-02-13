@@ -21,7 +21,6 @@
                                 <th>Title</th>
                                 <th>Thumbnail</th>
                                 <th>Description</th>
-                                <th>Keywords</th>
                                 <th>Content Rating</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -38,7 +37,6 @@
                                 <th>Title</th>
                                 <th>Thumbnail</th>
                                 <th>Description</th>
-                                <th>Keywords</th>
                                 <th>Content Rating</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -74,7 +72,6 @@
                 { "data": "title" },
                 { "data": "thumbnail" },
                 { "data": "description" },
-                { "data": "keywords" },
                 { "data": "content_rating" },
                 { "data": "status"  },
                 { "data": "action" }
