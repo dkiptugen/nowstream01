@@ -8,7 +8,7 @@
 
         @if($freeStream)
             <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}">
+                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}" loading="lazy">
             </a>
             <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
                 <div class="play fs-40">

@@ -3,7 +3,7 @@
                     <div class="movie-poster">
                         <a href="{{ route('podcast.show', [$podcast->uuid, $podcast->slug]) }}">
                             <img src="{{$podcast->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
-                                class="w-100 d-block w-100" alt="...">
+                                class="w-100 d-block w-100" alt="..." loading="lazy">
                             <div class="play fs-40">
                                 <i class="fadeIn animated bx bx-play-circle"></i>
                             </div>
