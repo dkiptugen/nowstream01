@@ -57,7 +57,7 @@ class PodcastIndex extends Command
                                     {
 
 
-                                        $region   = Region::where('name', 'undefined')->first();
+                                        $region = Region::where('name', 'undefined')->first();
 
                                         $language = Language::where('code', $podcasts->language)->first();
                                         try
@@ -74,16 +74,16 @@ class PodcastIndex extends Command
 
                                         try
                                             {
-                                                $pod                 = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'content_group' => 'podcast']);
-                                                $pod->title          = ($this->remove_emoji($podcasts->title) == "")
+                                                $pod              = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'content_group' => 'podcast']);
+                                                $pod->title       = ($this->remove_emoji($podcasts->title) == "")
                                                     ? substr($this->remove_emoji($podcasts->description), 0, 10) . '...'
                                                     : $this->remove_emoji($podcasts->title);
-                                                $pod->description    = $this->remove_emoji($podcasts->description);
-                                                $pod->stream_url     = $podcasts->url;
-                                                $pod->author         = $podcasts->author;
-                                                $pod->source         = 'Podcast Index';
-                                                $pod->publishdate    = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
-                                                $pod->status         = ($type=='undefined')?0:1;;
+                                                $pod->description = $this->remove_emoji($podcasts->description);
+                                                $pod->stream_url  = $podcasts->url;
+                                                $pod->author      = $podcasts->author;
+                                                $pod->source      = 'Podcast Index';
+                                                $pod->publishdate = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
+                                                $pod->status      = ($type == 'undefined') ? 0 : 1;;
                                                 $pod->type           = $type;
                                                 $pod->language_id    = $language->id ?? 0;
                                                 $pod->language       = $podcasts->language;
@@ -126,6 +126,18 @@ class PodcastIndex extends Command
                         $episodes = $podcast->episodes($id);
                         foreach ($episodes->items as $episode)
                             {
+                                try
+                                    {
+                                        $response = Http::head($episode->enclosureUrl);
+
+                                        $type   = $response->header('Content-Type');
+                                        $status = 1;
+                                    }
+                                catch (\Exception $e)
+                                    {
+                                        $type   = 'undefined';
+                                        $status = 0;
+                                    }
                                 //dd($pid);
                                 $ep = Content::updateOrCreate([
                                     'old_id' => $episode->id
@@ -135,18 +147,16 @@ class PodcastIndex extends Command
                                     'parent_id'      => $pid,
                                     'content_group'  => 'podcast_episode',
                                     'source'         => 'Podcast Index',
-                                    'type'           => $episode->enclosureType,
                                     'description'    => $this->remove_emoji($episode->description),
                                     'duration'       => $episode->duration,
-                                    'content_path'   => $episode->enclosureUrl,
+                                    'stream_url'     => $episode->enclosureUrl,
                                     'publishdate'    => date('Y-m-d H:i:s', $episode->datePublished),
                                     'thumbnail_url'  => is_null($episode->feedImage) ? 'https://www.podcastindex.org/images/podcast-index-logo.png' : $episode->feedImage,
-                                    'status'         => 1,
+                                    'status'         => $status,
+                                    'type'           => $type,
                                     'is_explicit'    => $episode->explicit,
                                     'system_user_id' => 1,
                                 ]);
-
-
 
 
                             }
