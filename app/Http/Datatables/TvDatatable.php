@@ -95,7 +95,7 @@ class TvDatatable
                     }
                 if ($request->user()->can('destroy_tv'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.tv.destroy', ['tv' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.tv.destroy', ['tv' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                                     <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                     <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                                     <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
