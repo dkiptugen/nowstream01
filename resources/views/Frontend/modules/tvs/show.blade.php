@@ -9,7 +9,7 @@
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-													<tv id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></tv> 	   </div>
+													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video> 	   </div>
 
 @php
 	 $oldvid= $tv;
@@ -364,60 +364,60 @@
 
 		<script>
 			document.addEventListener('DOMContentLoaded', () => {
-				const tv = document.getElementById('player');
-				const player = new Plyr(tv, {
+				const video = document.getElementById('player');
+				const player = new Plyr(video, {
 					// You can customize Plyr options here
 				});
 
-				// Your tv URL
-				const tvUrl = '{{ $oldvid->content_path }}';
+				// Your video URL
+				const videoUrl = '{{ $oldvid->content_path }}';
 
-				// Function to determine tv type
-				function gettvType(url) {
+				// Function to determine video type
+				function getVideoType(url) {
 					const extension = url.split('.').pop();
 					if (extension === 'm3u8') {
 						return 'application/vnd.apple.mpegurl';
 					} else if (extension === 'mp4') {
-						return 'tv/mp4';
+						return 'video/mp4';
 					} else if (extension === 'mov') {
-						return 'tv/quicktime';
+						return 'video/quicktime';
 					} else {
 						return '';
 					}
 				}
 
-				// Function to load tv based on its type
-				function loadtv(url) {
-					const type = gettvType(url);
+				// Function to load video based on its type
+				function loadVideo(url) {
+					const type = getVideoType(url);
 
 					if (type === 'application/vnd.apple.mpegurl') {
 						if (Hls.isSupported()) {
 							const hls = new Hls();
 							hls.loadSource(url);
-							hls.attachMedia(tv);
+							hls.attachMedia(video);
 							hls.on(Hls.Events.MANIFEST_PARSED, () => {
-								tv.play();
+								video.play();
 							});
-						} else if (tv.canPlayType(type)) {
-							tv.src = url;
-							tv.addEventListener('loadedmetadata', () => {
-								tv.play();
+						} else if (video.canPlayType(type)) {
+							video.src = url;
+							video.addEventListener('loadedmetadata', () => {
+								video.play();
 							});
 						} else {
 							console.error('HLS is not supported in this browser');
 						}
-					} else if (tv.canPlayType(type)) {
-						tv.src = url;
-						tv.addEventListener('loadedmetadata', () => {
-							tv.play();
+					} else if (video.canPlayType(type)) {
+						video.src = url;
+						video.addEventListener('loadedmetadata', () => {
+							video.play();
 						});
 					} else {
-						console.error('This tv format is not supported in this browser');
+						console.error('This video format is not supported in this browser');
 					}
 				}
 
-				// Load the tv
-				loadtv(tvUrl);
+				// Load the video
+				loadVideo(videoUrl);
 			});
 		</script>
 		<script>
