@@ -81,7 +81,7 @@ class TvController extends Controller
      */
         public function datatable(Request $request, TvDatatable $datatable)
             {
-                $datatable->columns = [0 => 'uuid',1=>'title',2=>"description",7=>'start_time',8=>'end_time',9=>'ended'];
+                $datatable->columns = [0 => 'uuid',1=>'title',2=>"description"];
                 return response()->json($datatable->data($request));
             }
 }
