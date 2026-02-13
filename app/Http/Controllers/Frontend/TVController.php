@@ -30,4 +30,39 @@ class TVController extends Controller
 
         return view('Frontend.modules.tvs.index', $this->data);
     }
+    public function show($uuid, $slug)
+    {
+        try {
+            $tv = Cache::remember("tv_{$uuid}_{$slug}", now()->addDay(), function () use ($uuid, $slug) {
+                return Content::where('uuid', $uuid)
+                    ->where('slug', $slug)
+                    ->where('content_group', 'tv')
+                    ->first();
+            });
+            $tv->increment('views'); // Increment view count 
+            if (!$tv) {
+                abort(404, 'tv not found');
+            }
+
+            // Related tvs (exclude current)
+            $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
+                return Content::where('content_group', 'tv')
+                    ->where('uuid', '!=', $uuid)
+                    ->latest()
+                    ->take(6)
+                    ->get();
+            });
+
+            // Sidebar videos
+            $videos = $this->get_videos(6);
+
+            return view('Frontend.modules.tvs.show', [
+                'tv'  => $tv,
+                'related'  => $related,
+                'videos'   => $videos,
+            ]);
+        } catch (\Exception $e) {
+            abort(404, 'tv not found');
+        }
+    }
 }
