@@ -44,8 +44,7 @@ class HomeController extends Controller
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
         ->limit(6)
-        ->get();
-        dd( $this->data['topradios']);
+        ->get(); 
  
     $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null); 
     //top podcasts based on views 

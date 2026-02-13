@@ -93,6 +93,18 @@ trait CacheHelper
                 ->get();
         });
     }
+    /**
+     * Get latest radios with optional limit.
+     */
+    public function get_radios($limit = 6)
+    {
+        return Cache::remember("latest_radios_{$limit}", now()->addDay(), function () use ($limit) {
+            return Content::where('content_group', 'radio')
+                ->latest()
+                ->take($limit)
+                ->get();
+        });
+    }
 
     /**
      * Get ticket-type products for an event.
