@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="hero-area">
-    @foreach($events->take(1) as $event)
+    @foreach($events as $event)
     <!-- banner-area -->
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
         <div class="container custom-container">
