@@ -38,7 +38,7 @@ class HomeController extends Controller
  
     $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null); 
     //top podcasts based on views 
-    $this->data['topPodcasts'] = Content::where('type', 'podcast')
+    $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
     ->whereNull('parent_id')
     ->orderBy('views', 'desc')
     ->limit(6)
