@@ -2,7 +2,7 @@
     <nav class="sidebar sidebar-sticky">
         <span class="sidebar-content  js-simplebar">
             <a class="sidebar-brand text-center" href="{{ route('backend.admin_dashboard') }}">
-                <img src="{{ asset($logo) }}" alt="Logo" class="img-fluid" width="50" >
+                <img src="{{ asset($logo) }}" alt="Logo" class="img-fluid w-100"  >
             </a>
 
             <ul class="sidebar-nav">
