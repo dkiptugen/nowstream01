@@ -50,10 +50,10 @@
                                     $nestedData['pos']         = $pos;
                                     $nestedData['title']       = $post->title;
                                     $nestedData['description'] = $post->description;
-                                    $nestedData["thumbnail"]   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px; width:50px');
+                                    $nestedData["thumbnail"]   = '<img src="'.$post->thumbnail_url.'" class=""img-fluid" style="height:50px; width:50px" />';
                                     $nestedData['language']    = $post->language;
                                     $nestedData['region']      = $post->country;
-                                    $nestedData['category']    = $post->categories?->pluck('name')->implode(', ');
+                                    $nestedData['category']    = $post->genre;
                                     $nestedData['action']      = $btn;
                                     $data[]                    = $nestedData;
                                     $pos++;

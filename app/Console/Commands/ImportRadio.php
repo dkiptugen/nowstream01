@@ -51,7 +51,7 @@ class ImportRadio extends Command
                 $pod->publishdate    = Carbon::now();
                 $pod->status         = $radio->status;
                 $pod->language_id    = $language->id ?? 0;
-                $pod->language       = $language->code;
+                $pod->language       = $language->code??'';
                 $pod->country        = $region->name;
                 $pod->thumbnail_url  = $radio->thumbnail;
                 $pod->content_group  = 'radio';
