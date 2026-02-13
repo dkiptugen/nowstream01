@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="hero-area">
-    @foreach($events as $event)
+    @foreach($events->take(1) as $event)
     <!-- banner-area -->
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
         <div class="container custom-container">
@@ -75,7 +75,40 @@
     @endforeach
 </div>
 
+<!-- top-rated-movie -->
+<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+    <div class="container">
+        <div class="row align-items-end mb-30">
+            <div class="col-lg-4">
+                <div class="section-title text-center text-lg-left">
+                    <span class="sub-title">TOP Tvs</span>
+                    <h2 class="title">Live Tvs</h2>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="ucm-nav-wrap">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        @foreach($categories as $category)
+                        <li class="nav-item" role="presentation">
+                            <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab" href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}" aria-selected="false">
+                                {{ ucfirst($category->name) }}
+                            </a>
+                        </li>
+                        @endforeach
 
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row tr-movie-active">
+
+            @foreach($toptvs as $tv)
+            @include('Frontend.includes.components.cards.tv-card')
+            @endforeach
+        </div>  
+    </div>
+</section>
+<!-- top-rated-movie-end -->
 <!-- up-coming-movie-area -->
 <section class="ucm-area ucm-bg" data-background="{{ asset('assets')}}/img/bg/ucm_bg.jpg">
     <div class="ucm-bg-shape" data-background="{{ asset('assets')}}/img/bg/ucm_bg_shape.png"></div>
