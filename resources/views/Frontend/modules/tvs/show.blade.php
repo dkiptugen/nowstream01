@@ -157,8 +157,7 @@
 				</div>
 				
 			</div>
-		</section>
-        {{ dd($tv)}}
+		</section> 
 		@if($related->isNotEmpty())
 		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
 		<div class="container">
@@ -372,7 +371,7 @@
 				});
 
 				// Your video URL
-				const videoUrl = '{{ $tv->content_path }}';
+				const videoUrl = '{{ $tv->content_path ?? $tv->stream_video_link }}';
 
 				// Function to determine video type
 				function getVideoType(url) {
