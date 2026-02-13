@@ -10,13 +10,13 @@
                         </a>
                     </div>
                     <div class="movie-content">
-                        <div class="top">
+                        <!-- <div class="top">
                             <h6 class=" mt-0">
                                 <a href="{{ url("/podcast/{$podcast->id}/{$podcast->slug}") }}">
                                     {{ucfirst($podcast->title)}}
                                 </a>
                             </h6>
-                        </div>
+                        </div> -->
                         <div class="bottom">
                             <!-- Display number of views -->
 
