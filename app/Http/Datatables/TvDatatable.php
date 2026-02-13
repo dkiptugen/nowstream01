@@ -48,6 +48,11 @@ class TvDatatable
                         $pos = $start + 1;
                         foreach ($posts as $post)
                             {
+                                if(is_null($post->stream_url))
+                                    {
+                                        $post->status = 0;
+                                        $post->save();
+                                    }
                                 $btn                      = $this->button($post, $request);
                                 $nestedData['pos']        = $pos;
                                 $nestedData['title']      = $post->title;
