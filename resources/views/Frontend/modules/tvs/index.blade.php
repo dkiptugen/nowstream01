@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadcrumb-content">
-                        <h2 class="title">Our<span>tvs</span></h2>
+                        <h2 class="title">Our <span>tvs</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{'/'}}">Home</a></li>
@@ -45,8 +45,8 @@
             @endforeach
         </div>
         <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest tvs</span>
-                                <h2 class="title">Latest tvs</h2>
+                            <div class="section-title"> <span class="sub-title">Trending tvs</span>
+                                <h2 class="title">Trending tvs</h2>
                             </div>
                         </div>
         <div class="row tr-movie-active">
