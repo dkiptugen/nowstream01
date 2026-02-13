@@ -43,62 +43,50 @@
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-
-            console.log("Initializing TV Player...");
-
+        document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('player');
-            const source = @json($tv->stream_url);
-
-            if (!video) {
-                console.error("Video element not found");
-                return;
+            const player = new Plyr(video, {});
+            // Determine media type
+            function getMediaType(url) {
+                const ext = url.split('.').pop().toLowerCase();
+                if (ext === 'm3u8') return 'hls';
+                if (ext === 'mp4') return 'video/mp4';
+                if (ext === 'mp3') return 'audio/mp3';
+                if (ext === 'mov') return 'video/quicktime';
+                return '';
             }
 
-            if (!source) {
-                console.error("Stream URL missing");
-                return;
-            }
+            // Load media dynamically
+            function loadMedia(url) {
+                const type = getMediaType(url);
 
-            let player = new Plyr(video, {
-                controls: [
-                    'play-large',
-                    'play',
-                    'progress',
-                    'current-time',
-                    'mute',
-                    'volume',
-                    'settings',
-                    'fullscreen'
-                ]
-            });
-
-            if (source.endsWith('.m3u8')) {
-
-                if (Hls.isSupported()) {
-
-                    const hls = new Hls({
-                        enableWorker: true,
-                        lowLatencyMode: true
-                    });
-
-                    hls.loadSource(source);
-                    hls.attachMedia(video);
-
-                    hls.on(Hls.Events.ERROR, function (event, data) {
-                        if (data.fatal) {
-                            console.error("Fatal HLS error:", data);
-                            hls.destroy();
-                        }
-                    });
-
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = source;
+                if (type === 'hls') {
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(url);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                    }
+                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
+                    {
+                        video.src = url;
+                        video.addEventListener('loadedmetadata', () => video.play());
+                    }
+                    else console.error('HLS not supported');
                 }
-
-            } else {
-                video.src = source;
+                else if (video.canPlayType(type))
+                {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', () => video.play());
+                }
+                else console.error('Unsupported media type');
             }
+
+            // Example video/live URL
+            const mediaUrl = '{{ $video->stream_url }}'; // Replace with dynamic URL
+
+            loadMedia(mediaUrl);
+
 
         });
     </script>
