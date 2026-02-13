@@ -48,6 +48,11 @@ class TvDatatable
                         $pos = $start + 1;
                         foreach ($posts as $post)
                             {
+                                if(is_null($post->stream_url))
+                                    {
+                                        $post->status = 0;
+                                        $post->save();
+                                    }
                                 $btn                      = $this->button($post, $request);
                                 $nestedData['pos']        = $pos;
                                 $nestedData['title']      = $post->title;
@@ -83,25 +88,25 @@ class TvDatatable
                 $button = null;
                 if ($request->user()->can('edit_tv'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.tv.edit', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="Edit Tv">
-                                    <i class="bx bx-pencil"></i> Edit
+                        $button .= '<a class="btn btn-sm btn-primary" href="' . route('backend.tv.edit', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="Edit Tv">
+                                    <i class="fas fa-edit"></i> Edit
                                     </a>';
                     }
-                if ($request->user()->can('view_tv'))
+                if ($request->user()->can('view_tv') && $post->status==1)
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv">
-                                    <i class="bx bx-eye"></i> View
+                        $button .= '<a class="btn btn-sm btn-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv">
+                                    <i class="fas fa-eye"></i> View
                                     </a>';
                     }
                 if ($request->user()->can('destroy_tv'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.tv.destroy', ['tv' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.tv.destroy', ['tv' => $post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                                     <input type="hidden" name="_token" value="' . csrf_token() . '" />
                                     <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                                    <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete Content"><i class="fas fa-trash"></i> Delete</button>
                                     </form>';
                     }
 
-                return '<div class="d-flex align-items-center">' . $button . "</div>";
+                return '<div class="btn-group btn-group-sm">' . $button . "</div>";
             }
     }
