@@ -13,6 +13,7 @@ use Cviebrock\EloquentSluggable\Services\SlugService;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 ini_set('memory_limit', '-1');
@@ -58,8 +59,10 @@ class PodcastIndex extends Command
 
                                         $region   = Region::where('name', 'undefined')->first();
                                         $language = Language::where('code', $podcasts->language)->first();
+                                        $response = Http::head($podcasts->url);
 
-                                        //dd($podcasts);
+                                        $type = $response->header('Content-Type');
+
                                         try
                                             {
                                                 $pod                 = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'content_group' => 'podcast']);
@@ -67,11 +70,12 @@ class PodcastIndex extends Command
                                                     ? substr($this->remove_emoji($podcasts->description), 0, 10) . '...'
                                                     : $this->remove_emoji($podcasts->title);
                                                 $pod->description    = $this->remove_emoji($podcasts->description);
-                                                $pod->content_path   = $podcasts->url;
+                                                $pod->stream_url     = $podcasts->url;
                                                 $pod->author         = $podcasts->author;
                                                 $pod->source         = 'Podcast Index';
                                                 $pod->publishdate    = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
                                                 $pod->status         = 1;
+                                                $pod->type           = $type;
                                                 $pod->language_id    = $language->id ?? 0;
                                                 $pod->language       = $podcasts->language;
                                                 $pod->thumbnail_url  = $podcasts->image;

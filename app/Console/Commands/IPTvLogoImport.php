@@ -38,7 +38,7 @@ class IPTvLogoImport extends Command
                         if (!is_null($channel))
                             {
                                 $content->thumbnail_url = $channel['url'];
-                                //$channel->genres        = json_encode($channel['genres'] ?? []);
+                                $content->genre         = is_null($content->genre) ? json_encode($channel['genres'] ?? []) : $content->genre;
                                 $res                    = $content->save();
                                 if ($res)
                                     {
@@ -47,6 +47,6 @@ class IPTvLogoImport extends Command
                                     }
                             }
                     }
-                dd(collect($channels)->first());
+                $this->info('Import completed successfully');
             }
     }

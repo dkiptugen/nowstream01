@@ -32,10 +32,13 @@ class IPTvStreamImport extends Command
                                ->json();
                 foreach ($streams as $stream)
                     {
-                        $content = Content::where('old_id', $stream['channel'])
-                                          ->orWhere('title', $stream['title'])
-                                          ->orWhere('title', $stream['feed'])
-                                          ->first();
+                        $content  = Content::where('old_id', $stream['channel'])
+                                           ->orWhere('title', $stream['title'])
+                                           ->orWhere('title', $stream['feed'])
+                                           ->first();
+                        $response = Http::head($stream['url']);
+
+                        $type = $response->header('Content-Type');
                         if (is_null($content))
                             {
                                 $content                 = new Content();
@@ -45,8 +48,9 @@ class IPTvStreamImport extends Command
                                 $content->region_id      = 0;
                                 $content->description    = '';
                                 $content->country        = null;
-                                $content->type           =  'application/x-mpegURL';
+                                $content->type           = $type;
                                 $content->author         = 'streams';
+                                $content->stream_url     = $stream['url'];
                                 $content->content_group  = 'tv';
                                 $content->status         = 1;
                                 $content->system_user_id = 1;
@@ -60,6 +64,7 @@ class IPTvStreamImport extends Command
                             {
                                 $content->stream_url = $stream['url'];
                                 $content->status     = 1;
+                                $content->type       = $type;
                                 $res                 = $content->save();
                                 if ($res)
                                     {
