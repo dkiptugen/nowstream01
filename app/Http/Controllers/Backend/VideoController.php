@@ -118,9 +118,10 @@ class VideoController extends Controller
     /**
      * Display the specified resource.
      */
-        public function show(string $id)
+        public function show(Content $video)
             {
-                //
+                $this->data['video'] =$video;
+                return view('Backend.modules.videos.edit', $this->data);
             }
 
     /**
