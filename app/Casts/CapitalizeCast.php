@@ -15,7 +15,8 @@ class CapitalizeCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return $value;
+
+        return Str::ucfirst(Str::lower($value));
     }
 
     /**
@@ -25,6 +26,6 @@ class CapitalizeCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): mixed
     {
-        return Str::capitalize(Str::lower($value));
+        return Str::ucfirst(Str::lower($value));
     }
 }

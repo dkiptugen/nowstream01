@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\CapitalizeCast;
 use App\Casts\JsonCast;
 use App\Traits\HasUuid;
 use Cviebrock\EloquentSluggable\Sluggable;
@@ -25,7 +26,7 @@ class Category extends Model
                 ];
             }
 
-        protected $casts    = ['type' => JsonCast::class];
+        protected $casts    = ['type' => JsonCast::class,'name'=>CapitalizeCast::class];
         protected $fillable = ['uuid', 'name', 'slug', 'description', 'top_menu', 'parent_id', 'is_brand', 'thumburl', 'type', 'position', 'system_user_id'];
         public function contents()
             {
