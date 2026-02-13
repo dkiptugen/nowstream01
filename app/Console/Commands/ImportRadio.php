@@ -58,7 +58,7 @@ class ImportRadio extends Command
                 $pod->region_id      = $region->id ?? 0;
                 $pod->system_user_id = 1;
                 $pod->type           = 'audio/mpeg';
-                $pod->genre          = implode(',',$radio->categories??[]);
+                $pod->genre          = $radio->categories;
                 $res                 = $pod->save();
                 if ($res)
                     {
