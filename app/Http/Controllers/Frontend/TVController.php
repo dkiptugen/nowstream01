@@ -20,12 +20,7 @@ class TVController extends Controller
             ->whereNull('parent_id')
             ->orderByDesc('views')
             ->paginate($perPage);
-        
-        // Featured / recent videos for sidebar
-        $this->data['videos'] = $this->get_videos(6);
-
-        // Channels (optional if used on page)
-        $this->data['channels'] = $this->get_channels();
+          
         $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
         $this->data['toptvs'] = Content::where('type', 'tv')
         ->whereNull('parent_id')
