@@ -370,7 +370,7 @@
 				});
 
 				// Your tv URL
-				const tvUrl = '{{ $oldvid->tv_path }}';
+				const tvUrl = '{{ $oldvid->content_path }}';
 
 				// Function to determine tv type
 				function gettvType(url) {
