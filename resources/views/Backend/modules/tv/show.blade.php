@@ -68,12 +68,7 @@
                 let player;
 
                 function initPlayer() {
-                    player = new Plyr(video, {
-                        controls: [
-                            'play-large', 'play', 'progress', 'current-time',
-                            'mute', 'volume', 'settings', 'fullscreen'
-                        ]
-                    });
+                    player = new Plyr(video);
                 }
 
                 function loadHLS(url) {
