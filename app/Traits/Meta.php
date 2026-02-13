@@ -26,8 +26,8 @@
                         'name' => 'Streamer',
                         'title' => 'Streamer: Universe of Entertainment',
                         'description' => 'Explore the limitless possibilities. ',
-                        'logo' => asset('assets/img/logo/logo.png'),
-                        'image' => asset('assets/img/logo/logo.png'),
+                        'logo' => asset('assets/img/logo/logo-d.png'),
+                        'image' => asset('assets/img/logo/logo-d.png'),
                         'keywords' => 'Now Content,',
                         'author' => 'Caydeesoft Solutions Limited'
                     ];
