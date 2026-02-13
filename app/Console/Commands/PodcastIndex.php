@@ -58,10 +58,19 @@ class PodcastIndex extends Command
 
 
                                         $region   = Region::where('name', 'undefined')->first();
-                                        $language = Language::where('code', $podcasts->language)->first();
-                                        $response = Http::head($podcasts->url);
 
-                                        $type = $response->header('Content-Type');
+                                        $language = Language::where('code', $podcasts->language)->first();
+                                        try
+                                            {
+                                                $response = Http::head($podcasts->url);
+
+                                                $type = $response->header('Content-Type');
+                                            }
+                                        catch (\Exception $e)
+                                            {
+                                                $type = 'audio/mpeg';
+                                            }
+
 
                                         try
                                             {

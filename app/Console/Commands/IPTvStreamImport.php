@@ -36,9 +36,16 @@ class IPTvStreamImport extends Command
                                            ->orWhere('title', $stream['title'])
                                            ->orWhere('title', $stream['feed'])
                                            ->first();
-                        $response = Http::head($stream['url']);
+                        try
+                            {
+                                $response = Http::head($stream['url']);
+                                $type = $response->header('Content-Type');
+                            }
+                        catch (\Exception $e)
+                            {
+                                $type = 'application/vnd.apple.mpegurl';
+                            }
 
-                        $type = $response->header('Content-Type');
                         if (is_null($content))
                             {
                                 $content                 = new Content();

@@ -47,9 +47,17 @@ class IPTvImport extends Command
                                 if (!is_null($channel['id']))
                                     {
                                         $region = Region::where('code', $channel['country'])->first();
-                                        $language         = Language::where('code', $region->language_code)
-                                                                    ->orWhere('name', $region->language)
-                                                                    ->first();
+                                        if(!is_null($region))
+                                            {
+                                                $language         = Language::where('code', $region->language_code)
+                                                                            ->orWhere('name', $region->language)
+                                                                            ->first();
+                                            }
+                                       else
+                                           {
+                                               $language = new Language();
+
+                                           }
 
                                         $content = Content::where('old_id', $channel['id'])
                                                           ->where('source', 'iptv_org')

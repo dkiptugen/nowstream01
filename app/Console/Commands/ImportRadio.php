@@ -41,11 +41,27 @@ class ImportRadio extends Command
                     {
                         $region           = Region::where('name', $radio->region)
                                                   ->first();
-                        $language         = Language::where('code', $region->language_code)
+                        if (!is_null($region))
+                            {
+                                $language = Language::where('code', $region->language_code)
                                                     ->orWhere('name', $region->language)
                                                     ->first();
-                        $response         = Http::head($radio->stream_link);
-                        $type             = $response->header('Content-Type');
+                            }
+                        else
+                            {
+                                $language = new Language();
+
+                            }
+                        try
+                            {
+                                $response         = Http::head($radio->stream_link);
+                                $type             = $response->header('Content-Type');
+                            }
+                        catch (\Exception $e)
+                            {
+                                $type = 'audio/mpeg';
+                            }
+
                         $pod              = Content::firstOrNew(['source' => 'Songaplay', 'content_group' => 'radio', 'old_id' => Str::slug($radio->name)]);
                         $pod->title       = $radio->name;
                         $pod->description = $this->remove_emoji($radio->description);
@@ -55,8 +71,8 @@ class ImportRadio extends Command
                         $pod->publishdate    = Carbon::now();
                         $pod->status         = $radio->status;
                         $pod->language_id    = $language->id ?? 0;
-                        $pod->language       = $language->code ?? '';
-                        $pod->country        = $region->name;
+                        $pod->language       = $language->code ?? 'undefined';
+                        $pod->country        = $region->name??'undefined';
                         $pod->thumbnail_url  = $radio->thumbnail;
                         $pod->content_group  = 'radio';
                         $pod->region_id      = $region->id ?? 0;
