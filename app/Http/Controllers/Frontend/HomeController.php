@@ -40,6 +40,12 @@ class HomeController extends Controller
         ->orderBy('views', 'desc')
         ->limit(6)
         ->get();
+        $this->data['topradios'] = Content::where('content_group', 'radio') 
+        ->whereNotNull('stream_url')
+        ->orderBy('views', 'desc')
+        ->limit(6)
+        ->get();
+        dd( $this->data['topradios']);
  
     $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null); 
     //top podcasts based on views 
