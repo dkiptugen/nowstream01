@@ -121,10 +121,7 @@
             </div> 
         </div>
         <div class="row tr-movie-active">
-
-            @foreach($topradios as $radio)
-            <!-- @include('Frontend.includes.components.cards.radio-card') -->
-            @endforeach
+ 
         </div>  
     </div>
 </section>
