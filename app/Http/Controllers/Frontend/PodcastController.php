@@ -24,7 +24,6 @@ class PodcastController extends Controller
 
     $podcasts = Content::where('type', 'podcast')
         ->whereNull('parent_id')
-        ->orderByDesc('views')
         ->paginate($perPage);
 
     // Handle AJAX request (infinite scroll)
@@ -50,8 +49,7 @@ public function loadMore(Request $request)
     $perPage = 6;
     
     $podcasts = Content::where('type', 'podcast')
-            ->whereNull('parent_id')
-            ->orderByDesc('views')
+            ->whereNull('parent_id') 
             ->paginate($perPage);
 
         // If AJAX request, return partial only

@@ -9,10 +9,11 @@
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video> 	   
+													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail_url }}"></video> 	   
                                                 </div>
-
+                                                
 @php
+
 	 $oldvid= $tv;
 	$vid = $tv->id;
 @endphp
