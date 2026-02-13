@@ -8,7 +8,7 @@
                 <div class="container custom-container">
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
-					<div id="tvWrap" class="tv-wrap">
+					<div id="videoWrap" class="tv-wrap">
 													<tv id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></tv> 	   </div>
 
 @php
@@ -533,12 +533,12 @@ $(document).ready(function () {
 function syncCommentsHeight(){
     if (window.innerWidth < 1200) return;
 
-    let tvWrap = document.getElementById('tvWrap');
+    let videoWrap = document.getElementById('videoWrap');
     let commentsCard = document.getElementById('commentsCard');
 
-    if(!tvWrap || !commentsCard) return;
+    if(!videoWrap || !commentsCard) return;
 
-    commentsCard.style.height = tvWrap.offsetHeight + "px";
+    commentsCard.style.height = videoWrap.offsetHeight + "px";
 }
 
 $(document).ready(function(){
