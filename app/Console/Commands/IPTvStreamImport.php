@@ -43,7 +43,7 @@ class IPTvStreamImport extends Command
                             }
                         catch (\Exception $e)
                             {
-                                $type = 'application/vnd.apple.mpegurl';
+                                $type = 'undefined';
                             }
 
                         if (is_null($content))
@@ -59,7 +59,7 @@ class IPTvStreamImport extends Command
                                 $content->author         = 'streams';
                                 $content->stream_url     = $stream['url'];
                                 $content->content_group  = 'tv';
-                                $content->status         = 1;
+                                $content->status         = ($type=='undefined')?0:1;
                                 $content->system_user_id = 1;
                                 $res                     = $content->save();
                                 if ($res)

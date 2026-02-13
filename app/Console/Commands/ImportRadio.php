@@ -39,8 +39,8 @@ class ImportRadio extends Command
                 $radios = json_decode($data);
                 foreach ($radios as $radio)
                     {
-                        $region           = Region::where('name', $radio->region)
-                                                  ->first();
+                        $region = Region::where('name', $radio->region)
+                                        ->first();
                         if (!is_null($region))
                             {
                                 $language = Language::where('code', $region->language_code)
@@ -54,31 +54,34 @@ class ImportRadio extends Command
                             }
                         try
                             {
-                                $response         = Http::head($radio->stream_link);
-                                $type             = $response->header('Content-Type');
+                                $response = Http::head($radio->stream_link);
+                                $type     = $response->header('Content-Type');
+                                $status  = $radio->status;
                             }
                         catch (\Exception $e)
                             {
-                                $type = 'audio/mpeg';
+                                $type = 'undefined';
+                                $status = 0;
                             }
 
-                        $pod              = Content::firstOrNew(['source' => 'Songaplay', 'content_group' => 'radio', 'old_id' => Str::slug($radio->name)]);
-                        $pod->title       = $radio->name;
-                        $pod->description = $this->remove_emoji($radio->description);
-                        $pod->stream_url  = $radio->stream_link;;
+
+                        $pod                 = Content::firstOrNew(['source' => 'Songaplay', 'content_group' => 'radio', 'old_id' => Str::slug($radio->name)]);
+                        $pod->title          = $radio->name;
+                        $pod->description    = $this->remove_emoji($radio->description);
+                        $pod->stream_url     = $radio->stream_link;
                         $pod->author         = 'songaplay';
                         $pod->source         = 'Songaplay';
                         $pod->publishdate    = Carbon::now();
-                        $pod->status         = $radio->status;
+                        $pod->status         = $status;
                         $pod->language_id    = $language->id ?? 0;
                         $pod->language       = $language->code ?? 'undefined';
-                        $pod->country        = $region->name??'undefined';
+                        $pod->country        = $region->name ?? 'undefined';
                         $pod->thumbnail_url  = $radio->thumbnail;
                         $pod->content_group  = 'radio';
                         $pod->region_id      = $region->id ?? 0;
                         $pod->system_user_id = 1;
                         $pod->type           = $type;
-                        $pod->genre          = json_encode(explode(',',$radio->categories));
+                        $pod->genre          = json_encode(explode(',', $radio->categories));
                         $res                 = $pod->save();
                         if ($res)
                             {
