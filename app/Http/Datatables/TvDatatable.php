@@ -51,7 +51,6 @@ class TvDatatable
                                 $btn                      = $this->button($post, $request);
                                 $nestedData['pos']        = $pos;
                                 $nestedData['title']      = $post->title;
-                                $nestedData['stream_url'] = $post->stream_url;
                                 $nestedData["thumbnail"]  = '<img src="' . $post->thumbnail_url . '" class="img-fluid" width="50" height="50" />';
                                 $nestedData['region']     = $post->country;
                                 $nestedData['language']   = $post->language;
@@ -82,19 +81,25 @@ class TvDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_channel_stream'))
+                if ($request->user()->can('edit_tv'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('stream.edit', ['stream' => $post->id]) . '" data-toggle="tooltip" title="Edit User">
-                <i class="bx bx-pencil"></i> Edit
-                </a>';
+                        $button .= '<a class="text text-dark" href="' . route('backend.tv.edit', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="Edit Tv">
+                                    <i class="bx bx-pencil"></i> Edit
+                                    </a>';
                     }
-                if ($request->user()->can('destroy_channel_stream'))
+                if ($request->user()->can('view_tv'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
-                <input type="hidden" name="_token" value="' . csrf_token() . '" />
-                <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
-                </form>';
+                        $button .= '<a class="text text-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv">
+                                    <i class="bx bx-eye"></i> View
+                                    </a>';
+                    }
+                if ($request->user()->can('destroy_tv'))
+                    {
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.tv.destroy', ['tv' => $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                                    <input type="hidden" name="_token" value="' . csrf_token() . '" />
+                                    <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
+                                    <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
+                                    </form>';
                     }
 
                 return '<div class="d-flex align-items-center">' . $button . "</div>";
