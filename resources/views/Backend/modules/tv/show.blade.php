@@ -11,10 +11,7 @@
                 </div>
                 <div class="card-body">
                     <div class="embed-responsive embed-responsive-16by9">
-                        <video id="player" class="embed-responsive-item" playsinline
-                               controls
-                               crossorigin
-                               data-poster="{{ $tv->thumbnail_url }}"></video>
+                        <video id="player" class="embed-responsive-item" data-poster="{{ $tv->thumbnail_url }}"></video>
                     </div>
                     <h3>{{$tv->title}}</h3>
 
@@ -41,7 +38,7 @@
                     </div>
                     <div class="card-body">
                         <div class="embed-responsive embed-responsive-16by9">
-                            <video id="player" class="embed-responsive-item" playsinline data-poster="{{ $tv->thumbnail_url }}" controls crossorigin></video>
+                            <video id="player" class="embed-responsive-item" playsinline crossorigin></video>
                         </div>
                         <h3>{{$tv->title}}</h3>
 
@@ -65,72 +62,25 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const video = document.getElementById('player');
                 const source = '{{ $tv->stream_url }}';
+
                 let player;
 
-                function initPlayer() {
-                    player = new Plyr(video, {
-                        controls: [
-                            'play-large', 'play', 'progress', 'current-time',
-                            'mute', 'volume', 'settings', 'fullscreen'
-                        ]
-                    });
-                }
+                if (source.endsWith('.m3u8') && Hls.isSupported())
+                    {
 
-                function loadHLS(url) {
-                    if (Hls.isSupported()) {
-                        const hls = new Hls({
-                            maxBufferLength: 30,
-                            maxMaxBufferLength: 60,
-                            enableWorker: true
-                        });
-
-                        hls.loadSource(url);
+                        const hls = new Hls();
+                        hls.loadSource(source);
                         hls.attachMedia(video);
 
                         hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                            initPlayer();
+                            player = new Plyr(video);
                         });
-
-                        hls.on(Hls.Events.ERROR, function (event, data) {
-                            if (data.fatal) {
-                                console.error('Fatal HLS error:', data);
-                                switch (data.type) {
-                                    case Hls.ErrorTypes.NETWORK_ERROR:
-                                        hls.startLoad();
-                                        break;
-                                    case Hls.ErrorTypes.MEDIA_ERROR:
-                                        hls.recoverMediaError();
-                                        break;
-                                    default:
-                                        hls.destroy();
-                                        break;
-                                }
-                            }
-                        });
-
                     }
-                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
-                    {
-                        video.src = url;
-                        initPlayer();
-                    }
-                    else {
-                        console.error('HLS not supported in this browser');
-                    }
-                }
-
-                function loadMP4(url) {
-                    video.src = url;
-                    initPlayer();
-                }
-
-                if (source.endsWith('.m3u8')) {
-                    loadHLS(source);
-                } else {
-                    loadMP4(source);
+                else {
+                    video.src = source;
+                    player = new Plyr(video);
                 }
             });
         </script>
-
 
 @endsection
