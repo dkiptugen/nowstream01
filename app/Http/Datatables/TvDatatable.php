@@ -89,7 +89,7 @@ class TvDatatable
                 if ($request->user()->can('edit_tv'))
                     {
                         $button .= '<a class="text text-dark" href="' . route('backend.tv.edit', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="Edit Tv">
-                                    <i class="fas fa-pencil"></i> Edit
+                                    <i class="fas fa-edit"></i> Edit
                                     </a>';
                     }
                 if ($request->user()->can('view_tv') && $post->status==1)
