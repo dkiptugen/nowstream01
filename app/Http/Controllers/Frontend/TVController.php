@@ -17,14 +17,11 @@ class TVController extends Controller
         $perPage = 6;
 
         $this->data['tvs'] = Content::where('content_group', 'tv')
-            ->orderByDesc('views')
             ->where('status', 1)
             ->paginate($perPage);
           
         $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
         $this->data['toptvs'] = Content::where('type', 'tv')
-        ->whereNull('parent_id')
-        ->orderBy('views', 'desc')
         ->limit(6)
         ->get();
 
