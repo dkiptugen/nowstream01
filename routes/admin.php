@@ -78,12 +78,12 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
     });
 
     Route::controller(TvController::class)->group( function () {
-        Route::resource('tv', TvController::class)->except(['show']);
+        Route::resource('tv', TvController::class);
         Route::post('tv/datatable',  'datatable')->name('tv.datatable');
     });
 
     Route::controller(RadioController::class)->group( function () {
-        Route::resource('radio', RadioController::class)->except(['show']);
+        Route::resource('radio', RadioController::class);
         Route::post('radio/datatable', 'datatable')->name('radio.datatable');
     });
 
@@ -92,7 +92,7 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
         Route::post('podcast/datatable',  'datatable')->name('podcast.datatable');
     });
     Route::controller(PodcastEpisodeController::class)->group( function () {
-        Route::resource('podcast.episode', PodcastEpisodeController::class)->except(['show']);
+        Route::resource('podcast.episode', PodcastEpisodeController::class);
         Route::post('podcast/{podcast}/datatable',  'datatable')->name('podcast.episode.datatable');
     });
 
