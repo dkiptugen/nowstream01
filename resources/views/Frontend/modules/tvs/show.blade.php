@@ -11,7 +11,7 @@
 					<div id="videoWrap" class="tv-wrap">
 													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail_url }}"></video> 	   
                                                 </div>
-{{dd($tv)}}
+                                                
 @php
 
 	 $oldvid= $tv;
