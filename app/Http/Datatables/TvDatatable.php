@@ -21,9 +21,7 @@ class TvDatatable
             {
                 $columns = $this->columns;
                 $query   = Content::query();
-                $query
-                    ->where('channel_id', $request->user()->channel_id)
-                    ->where('content_group', 'tv');
+                $query->where('content_group', 'tv');
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
