@@ -26,6 +26,8 @@ class HomeController extends Controller
         $this->data['videos'] = Cache::rememberOnce('videos', now()->addDay(), $this->get_videos());
         $this->data['current_event'] = Content::latest()->take(1)->get();
         $this->data['top_videos'] = Content::where('type', 'video')->orderBy('views', 'DESC')->take(4)->get();
+        $this->data['podcasts'] = Content::where('content_group', 'podcast')->limit(6)->get();
+        dd($this->data['podcasts']);
 
         return view('Frontend.index', $this->data);
     }
