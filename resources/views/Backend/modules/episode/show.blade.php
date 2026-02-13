@@ -53,15 +53,6 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             const media = document.getElementById('player');
-            const source = @json($episode->content_path);
-
-            if (!source) {
-                console.error("No source URL");
-                return;
-            }
-
-            media.src = source;
-
             const player = new Plyr(media, {
                 controls: ['play', 'progress', 'current-time', 'mute', 'volume']
             });
