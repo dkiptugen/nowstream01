@@ -72,7 +72,6 @@ class PodcastEpisodeDatatable
                             'category'    => $post->categories?->pluck('name')->implode(', '),
                             'keywords'    => $post->tags?->pluck('name')->implode(', '),
                             'source'      => e($post->source),
-                            'link'       =>  $this->anchor_link($post->content_path,$post->content_path,"text text-primary" ),
                             'duration'    => $post->duration,
                             'episodes'    => '<a href="' . route('backend.podcast.episode.index',['podcast'=>$post->uuid]) . '" class="text-dark text-underline text-bold">'
                                 . $post->children_count .
@@ -104,8 +103,14 @@ class PodcastEpisodeDatatable
                 $button = null;
                 if ($request->user()->can('edit_podcast_episode'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('backend.podcast.episode.edit', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode">
+                        $button .= '<a class="btn btn-primary" href="' . route('backend.podcast.episode.edit', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode">
                 <i class="fas fa-edit"></i> Edit
+                </a>';
+                    }
+                if ($request->user()->can('view_podcast_episode'))
+                    {
+                        $button .= '<a class="btn btn-dark" href="' . route('backend.podcast.episode.show', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" data-toggle="tooltip" title="Edit podcast Episode" target="_blank">
+                <i class="fas fa-play-circle"></i> Listen
                 </a>';
                     }
                 if ($request->user()->can('destroy_podcast_episode'))
@@ -113,10 +118,10 @@ class PodcastEpisodeDatatable
                         $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.podcast.episode.destroy', ['podcast' => $post->parent_id,'episode'=>$post->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
-                <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Podcast Episode"><i class="fas fa-trash"></i> Delete</button>
+                <button type="submit" class="btn btn-danger" data-toggle="tooltip" title="Delete Podcast Episode"><i class="fas fa-trash"></i> Delete</button>
                 </form>';
                     }
 
-                return '<div class="d-flex align-items-center">' . $button . "</div>";
+                return '<div class="btn-group btn-group-sm">' . $button . "</div>";
             }
     }

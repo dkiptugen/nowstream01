@@ -21,7 +21,6 @@
                                 <th>Title</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
-                                <th>Link</th>
                                 <th>Description</th>
                                 <th>Keywords</th>
                                 <th>Content Rating</th>
@@ -40,7 +39,6 @@
                                 <th>Title</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
-                                <th>Link</th>
                                 <th>Description</th>
                                 <th>Keywords</th>
                                 <th>Content Rating</th>
@@ -78,11 +76,9 @@
                 { "data": "title" },
                 { "data": "thumbnail" },
                 { "data": "category" },
-                { "data": "link" },
                 { "data": "description" },
                 { "data": "keywords" },
                 { "data": "content_rating" },
-
                 { "data": "status"  },
                 { "data": "action" }
 
