@@ -55,7 +55,6 @@ class VideoDatatable
                                 $nestedData['title']       = $post->title;
                                 $nestedData['description'] = $post->description;
                                 $nestedData['thumbnail']   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px');
-                                $nestedData['video']       = Storage::url($post->content_path);
                                 $nestedData['created_at']  = $post->created_at->toDayDateTimeString();
                                 $nestedData['action']      = $btn;
 
@@ -87,6 +86,12 @@ class VideoDatatable
                     {
                         $button .= '<a class="text text-dark" href="' . route('backend.video.edit', ['video' => $post->uuid]) . '" data-toggle="tooltip" title="Edit User">
                                     <i class="fas fa-edit"></i> Edit
+                                    </a>';
+                    }
+                if ($request->user()->can('view_video'))
+                    {
+                        $button .= '<a class="text text-dark" href="' . route('backend.video.show', ['video' => $post->uuid]) . '" data-toggle="tooltip" title="view Video">
+                                    <i class="fas fa-eye"></i> preview
                                     </a>';
                     }
                 if ($request->user()->can('destroy_video'))

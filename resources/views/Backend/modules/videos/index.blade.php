@@ -20,7 +20,6 @@
                                         <th>Title</th>
                                         <th>Description</th>
                                         <th>Thumbnail</th>
-                                        <th>Video</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -31,7 +30,6 @@
                                         <th>Title</th>
                                         <th>Description</th>
                                         <th>Thumbnail</th>
-                                        <th>Video</th>
                                         <th>Created Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -62,7 +60,6 @@
                     {"data": "title"},
                     {"data": "description"},
                     {"data": "thumbnail", "orderable": false},
-                    {"data": "video", "orderable": false},
                     {"data":"created_at"},
                     {"data": "action", "orderable": false}
                 ],
