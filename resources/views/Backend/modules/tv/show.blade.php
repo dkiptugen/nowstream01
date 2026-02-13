@@ -38,20 +38,37 @@
             const video = document.getElementById('player');
             const source = '{{ $tv->stream_url }}';
 
-            let player;
+            const player = new Plyr(video, {
+                controls: [
+                    'play-large', 'play', 'progress', 'current-time',
+                    'mute', 'volume', 'settings', 'fullscreen'
+                ]
+            });
 
-            if (source.endsWith('.m3u8') && Hls.isSupported()) {
+            if (source.endsWith('.m3u8')) {
 
-                const hls = new Hls();
-                hls.loadSource(source);
-                hls.attachMedia(video);
+                if (Hls.isSupported()) {
+                    const hls = new Hls({
+                        enableWorker: true,
+                        lowLatencyMode: true
+                    });
 
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    player = new Plyr(video);
-                });
+                    hls.loadSource(source);
+                    hls.attachMedia(video);
+
+                    hls.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            console.error('HLS fatal error:', data);
+                            hls.destroy();
+                        }
+                    });
+
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = source;
+                }
+
             } else {
                 video.src = source;
-                player = new Plyr(video);
             }
         });
     </script>
