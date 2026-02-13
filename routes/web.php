@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\User\AuthsController;
 use App\Http\Controllers\Backend\PodcastController;
 use App\Http\Controllers\Frontend\PodcastController as FrontendPodcastController;
 use App\Http\Controllers\Frontend\SearchController;
+use App\Http\Controllers\Frontend\TVController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Frontend\StreamController;
 use App\Http\Controllers\Frontend\ChannelController;
@@ -156,6 +157,10 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
 
+    // show tv
+    Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');
+    Route::get('/tvs', [TVController::class, 'index'])->name('tvs');
+
     // Social Auth Routes (Global)
 
     Route::get('auth/social/{provider}', [AuthsController::class, 'redirectToProvider'])
@@ -178,6 +183,8 @@ Route::middleware('auth')->group(function () {
     Route::post('comment/{comment}/like', [CommentController::class, 'like'])->name('comment.like');
     Route::post('comment/{comment}/dislike', [CommentController::class, 'dislike'])->name('comment.dislike');
 });
+
+Route::get('/podcasts/load-more', [PodcastController::class, 'loadMore'])->name('podcasts.loadMore');
 
 
 require __DIR__ . '/admin.php';

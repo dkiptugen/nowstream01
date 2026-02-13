@@ -6,11 +6,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadcrumb-content">
-                        <h2 class="title">Our<span>Podcasts</span></h2>
+                        <h2 class="title">Our<span>tvs</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{'/'}}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Podcasts</li>
+                                <li class="breadcrumb-item active" aria-current="page">tvs</li>
                             </ol>
                         </nav>
                     </div>
@@ -34,25 +34,25 @@
     <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container"> 
         <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
-                                <h2 class="title">Latest Podcasts</h2>
+                            <div class="section-title"> <span class="sub-title">Latest tvs</span>
+                                <h2 class="title">Latest tvs</h2>
                             </div> 
         </div>
         <div class="row tr-movie-active">
 
-            @foreach($topPodcasts as $podcast)
-            @include('Frontend.includes.components.cards.podcast-card')
+            @foreach($toptvs as $tv)
+            @include('Frontend.includes.components.cards.tv-card')
             @endforeach
         </div>
         <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
-                                <h2 class="title">Latest Podcasts</h2>
+                            <div class="section-title"> <span class="sub-title">Latest tvs</span>
+                                <h2 class="title">Latest tvs</h2>
                             </div>
                         </div>
         <div class="row tr-movie-active">
 
-            @foreach($podcasts as $podcast)
-            @include('Frontend.includes.components.cards.podcast-card')
+            @foreach($tvs as $tv)
+            @include('Frontend.includes.components.cards.tv-card')
             @endforeach
         </div>
     </div>
