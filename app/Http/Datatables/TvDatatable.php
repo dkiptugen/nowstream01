@@ -92,7 +92,7 @@ class TvDatatable
                                     <i class="fas fa-pencil"></i> Edit
                                     </a>';
                     }
-                if ($request->user()->can('view_tv'))
+                if ($request->user()->can('view_tv') && $post->status==1)
                     {
                         $button .= '<a class="text text-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv">
                                     <i class="fas fa-eye"></i> View
