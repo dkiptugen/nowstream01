@@ -46,7 +46,7 @@
 
                     <div class="form-group form-row align-items-center">
                         <div class="col d-flex align-items-center">
-                            <img src="{{ $podcast->thumbnail }}" alt="" height="80" width="80" class="mr-2 rounded">
+                            <img src="{{ $podcast->thumbnail_url }}" alt="" height="80" width="80" class="mr-2 rounded">
                             <div class="">
                                 <label for="image" class="control-label">Thumbnail</label>
                                 <input type="file" name="logo" id="image" class="form-control-file">
