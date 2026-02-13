@@ -121,7 +121,7 @@ class VideoController extends Controller
         public function show(Content $video)
             {
                 $this->data['video'] =$video;
-                return view('Backend.modules.videos.edit', $this->data);
+                return view('Backend.modules.videos.show', $this->data);
             }
 
     /**
