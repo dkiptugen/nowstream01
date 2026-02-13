@@ -88,7 +88,7 @@
         {{-- Comment Input --}}
 		<div class="card-footer yt-comments-footer border-top border-dark">
 		<form id="comment-form"
-      action="{{ route('comment.post', ['commentableType' => 'video', 'commentableId' => $video->id]) }}"
+      action="{{ route('comment.post', ['commentableType' => 'video', 'commentableId' => $video->uuid]) }}"
       method="POST">
     @csrf
 

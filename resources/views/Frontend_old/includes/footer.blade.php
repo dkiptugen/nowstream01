@@ -93,7 +93,7 @@
             @csrf
         </form>
     </ul>
-    <p class="mb-0 d-none d-md-block">Copyright Baze Live © 2024. All rights reserved.</p>
+    <p class="mb-0 d-none d-md-block">Copyright Streamer © 2024. All rights reserved.</p>
 </footer>
 </div>
 <!--end wrapper-->

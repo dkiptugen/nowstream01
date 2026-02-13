@@ -2,7 +2,7 @@
     <div class="image">
         @php
             use App\Models\ContentRate;
-            $checkRate = ContentRate::where([['event_id', $stream->event_id], ['status', true]])->count();
+            $checkRate = ContentRate::where('content_id', $stream->id)->count();
             $freeStream = $checkRate == 0;
         @endphp
 

@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('taggables', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("tag_id");
-            $table->uuid('uuid')->index();
-            $table->string('type')->nullable();
+            $table->uuidMorphs('taggable');
+            $table->timestamps();
 
         });
     }

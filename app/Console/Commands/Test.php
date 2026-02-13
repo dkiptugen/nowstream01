@@ -43,13 +43,13 @@
 					$this->info(substr ($test,-9,3));*/
 
 					$at = new AfricasTalking();
-					$mes= $at->send_sms ('baze','0713154085','Test Message from baze live 108');
+					$mes= $at->send_sms ('baze','0713154085','Test Message from Streamer 108');
 					$this->info($mes);
 					/*$user = (new SystemUser())->updateOrCreate ([
 																	'email' => 'info@bazelive.co.ke'
 																], [
 
-																	"name" => "Baze Live API User",
+																	"name" => "Streamer API User",
 																	"password" => bcrypt ('RE9f98allANpxgBJlmzxJTs8bmE2U2C3'),
 																	"status" => true,
 																	"type" => 'owner'

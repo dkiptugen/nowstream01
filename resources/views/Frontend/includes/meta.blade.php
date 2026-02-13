@@ -22,3 +22,5 @@
 <meta name="twitter:description" content="@yield('description', config('site.description'))" />
 <meta name="twitter:image" content="{{ config('site.image') }}" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
+
+@include('Frontend.includes.components.partials.audio-player')

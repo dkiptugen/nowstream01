@@ -147,24 +147,52 @@
 
 
 								@php
-									$channel = Channel::find($video->channel_id);
-								@endphp
-								@if(Auth::check())
-										<div id="subscription-controls-{{ $channel->id }}">
-											@if(Auth::user()->subscribedChannels->contains($channel->id))
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, false)">Unsubscribe</button>
-												</div>
-											@else
-												<div id="subscribe-btn-{{ $channel->id }}">
-													<button class="btn btn-outline-danger btn-sm"
-														onclick="toggleSubscription({{ $channel->id }}, true)">Subscribe</button>
-												</div>
-											@endif
-										</div>
-									</div>
-								@endif
+    $channel = Channel::find($video->channel_id);
+    $user = auth()->user(); 
+    $isSubscribed = $user ? $user->subscribedChannels->contains($channel->id) : false;
+@endphp
+
+@if($user) 
+    <div id="subscription-controls-{{ $channel->id }}">
+        <button 
+            class="btn btn-sm {{ $isSubscribed ? 'btn-danger' : 'btn-outline-primary' }}" 
+            onclick="toggleSubscription({{ $channel->id }}, {{ $isSubscribed ? 'false' : 'true' }})"
+        >
+            {{ $isSubscribed ? 'Unsubscribe' : 'Subscribe' }}
+        </button>
+    </div>
+
+    <script>
+        function toggleSubscription(channelId, subscribe) {
+            const url = subscribe
+                ? '{{ route("channels.subscribe", ":id") }}'.replace(':id', channelId)
+                : '{{ route("channels.unsubscribe", ":id") }}'.replace(':id', channelId);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { _token: '{{ csrf_token() }}' },
+                success: function(response) {
+                    // Toggle the button dynamically
+                    const btn = $(`#subscription-controls-${channelId} button`);
+                    if (subscribe) {
+                        btn.removeClass('btn-outline-primary').addClass('btn-danger');
+                        btn.text('Unsubscribe');
+                        btn.attr('onclick', `toggleSubscription(${channelId}, false)`);
+                    } else {
+                        btn.removeClass('btn-danger').addClass('btn-outline-primary');
+                        btn.text('Subscribe');
+                        btn.attr('onclick', `toggleSubscription(${channelId}, true)`);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Subscription error:', xhr.responseText);
+                }
+            });
+        }
+    </script>
+@endif
+
 						</div>
 						<img class="ratio1" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}" alt="">
 						<p><a href="#"><strong>

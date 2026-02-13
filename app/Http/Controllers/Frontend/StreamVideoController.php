@@ -3,22 +3,20 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Events\NewComment;
-use App\Libs\Stream;
-use App\Models\WatchHistory;
-use App\Models\Video;
+use App\Http\Controllers\Controller;
 use App\Models\Channel;
 use App\Models\Comment;
 use App\Models\Content;
 use App\Services\WatchHistoryService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Http\Controllers\Controller;
 
 class StreamVideoController extends Controller
 {
-    protected WatchHistoryService $watchHistoryService;
+    protected $watchHistoryService;
 
     public function __construct(WatchHistoryService $watchHistoryService)
     {
@@ -26,13 +24,21 @@ class StreamVideoController extends Controller
     }
 
     /**
-     * Display top and other videos
+     * Videos homepage
+     * Top videos + paginated list
      */
     public function index()
     {
-        $topVideos = Content::where('type', 'video')->orderBy('views', 'DESC')->take(4)->get();
-        $videos = Content::where('type', 'video')->skip(4)->paginate(12);
-		$channels = Channel::all();
+        $topVideos = Content::where('type', 'video')
+            ->orderBy('views', 'DESC')
+            ->take(4)
+            ->get();
+
+        $videos = Content::where('type', 'video')
+            ->latest()
+            ->paginate(12);
+
+        $channels = Channel::where('status', 1)->get();
 
         return view('Frontend.modules.videos.index', [
             'top_videos' => $topVideos,
@@ -42,41 +48,70 @@ class StreamVideoController extends Controller
     }
 
     /**
-     * Show new videos page
+     * Show single video by UUID
      */
-    public function newvideo()
-    {
-        return view('Frontend.modules.videos.newvideo');
-    }
+  public function show(string $uuid, string $slug = '')
+{
+    try {
+        $video = Content::where('type', 'video')
+            ->where('uuid', $uuid)
+            ->where('status', 1)
+            ->with(['comments.user'])
+            ->firstOrFail();
 
-    /**
-     * Show continue watching page (last 10 watched)
-     */
-    public function continue()
-    {
-        $user = Auth::user();
-        if (!$user) {
-            return redirect()->route('login')
-                ->with('error', 'You must be logged in to view watched videos.');
+        // Increment views
+        $video->increment('views');
+
+        // Record watch history safely
+        if (Auth::check() && $this->watchHistoryService) {
+            try {
+                $this->watchHistoryService->record($video);
+            } catch (\Exception $e) {
+                Log::warning('Watch history failed: ' . $e->getMessage());
+            }
         }
 
-        $watchHistory = $user->watchHistory()->with('video')->latest()->limit(10)->get();
-        return view('Frontend.modules.videos.continue', compact('user', 'watchHistory'));
+        // Channels
+        $channels = Channel::where('status', 1)->take(8)->get();
+
+        // Related videos (same channel)
+        $relatedVideos = Content::where('type', 'video')
+            ->where('status', 1)
+            ->where('channel_id', $video->channel_id)
+            ->where('uuid', '!=', $video->uuid)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('Frontend.modules.videos.video', [
+            'video' => $video,
+            'channels' => $channels,
+            'relatedVideos' => $relatedVideos,
+            'comments' => $video->comments,
+        ]);
+
+    } catch (ModelNotFoundException $e) {
+        abort(404, 'Video not found');
+    } catch (\Exception $e) {
+        Log::error('Video show error: ' . $e->getMessage());
+        abort(500, 'Server error');
     }
+}
+
 
     /**
-     * Content video file to authenticated users
+     * Secure video file streaming
      */
-    public function get_video(string $filename)
+    public function getVideo(string $filename)
     {
         if (!Auth::check()) {
-            abort(403, 'Unauthorized action.');
+            abort(403, 'Unauthorized');
         }
 
         $path = storage_path('app/videos/' . $filename);
 
         if (!File::exists($path)) {
-            abort(404, 'Video not found.');
+            abort(404, 'Video not found');
         }
 
         $fileSize = File::size($path);
@@ -92,43 +127,23 @@ class StreamVideoController extends Controller
         }, 200, [
             'Content-Type' => $mimeType,
             'Content-Length' => $fileSize,
-            'Content-Disposition' => 'inline; filename="' . $filename . '"',
+            'Content-Disposition' => 'inline',
         ]);
     }
 
     /**
-     * Display a single video with comments, channels, and related videos
+     * Post comment (video or stream)
      */
-    public function show(int $id)
+public function postComment(Request $request, string $commentableType, string $commentableId)
     {
-        try {
-            // Load the video with comments and user relationship
-            $video = Content::where('type', 'video')->with(['comments.user' => function ($q) {
-                $q->oldest();
-            }])->findOrFail($id);
+        $request->validate([
+            'comment' => 'required|string|max:2000',
+        ]);
 
-            $comments = $video->comments;
-            // Increment the views count
-            $video->increment('views');
-
-            // Load additional data
-            $channels = Channel::where('status', 1)->take(8)->get();
-            $relatedVideos = Content::where('type', 'video')->where('id', '!=', $id)->take(4)->get();
-
-            // Record watch history (assuming you have a service for it)
-            $this->watchHistoryService->record($video);
-
-            return view('Frontend.modules.videos.video', compact('video', 'channels', 'relatedVideos', 'comments'));
-        } catch (ModelNotFoundException) {
-            abort(404, 'Video not found.');
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
-    }
 
-    /**
-     * Post a comment to a video or stream
-     */
-    public function postComment(Request $request, string $commentableType, int $commentableId)
-    {
         $user = Auth::user();
         $modelClass = 'App\\Models\\' . ucfirst($commentableType);
 
@@ -136,8 +151,10 @@ class StreamVideoController extends Controller
             'user_id' => $user->id,
             'commentable_type' => $modelClass,
             'commentable_id' => $commentableId,
-            'comment' => $request->input('comment'),
+            'comment' => $request->comment,
         ]);
+
+        // Broadcast if using websockets
         if ($request->ajax()) {
             broadcast(new NewComment($comment))->toOthers();
 
@@ -145,61 +162,77 @@ class StreamVideoController extends Controller
                 'success' => true,
                 'comment' => $comment->comment,
                 'user_name' => $user->name,
-                'user_image' => $user->image ? asset('storage/' . $user->image) : asset('assets/images/avatars/avatar-2.png'),
+                'user_image' => $user->image
+                    ? asset('storage/' . $user->image)
+                    : asset('assets/images/avatars/avatar-2.png'),
             ]);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Comment posted',
         ]);
-
     }
 
     /**
-     * Record watch history via AJAX
+     * Record watch duration via AJAX
      */
     public function recordWatchHistoryAjax(Request $request)
     {
-        $video = Content::where('type', 'video')->findOrFail($request->input('video_id'));
-        $this->watchHistoryService->record($video, $request->input('watch_duration', 0));
+        $request->validate([
+            'video_id' => 'required|integer',
+            'watch_duration' => 'nullable|integer',
+        ]);
 
-        return response()->json(['success' => true]);
-    }
-
-    /**
-     * List all watched videos and streams
-     */
-    public function watchedVideos()
-    {
-        $videoHistory = $this->watchHistoryService->getUserHistory(Content::where('type', 'video')->class);
-        $streamHistory = $this->watchHistoryService->getUserHistory('App\Models\Content');
-
-        if (!$videoHistory && !$streamHistory) {
-            return redirect()->route('login')
-                ->with('error', 'You must be logged in to view watched videos.');
+        if (!Auth::check()) {
+            return response()->json(['success' => false], 401);
         }
 
-        return view('Frontend.modules.videos.continue', [
-            'watchHistory' => $videoHistory,
-            'streamWatchHistory' => $streamHistory,
-        ]);
+        try {
+            $video = Content::where('type', 'video')
+                ->findOrFail($request->video_id);
+
+            $this->watchHistoryService->record(
+                $video,
+                $request->input('watch_duration', 0)
+            );
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::warning('AJAX watch history error: ' . $e->getMessage());
+            return response()->json(['success' => false]);
+        }
     }
 
+    /**
+     * Continue Watching page
+     */
+    public function continueWatching()
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login')
+                ->with('error', 'Please login to continue watching.');
+        }
+
+        $watchHistory = $this->watchHistoryService
+            ->getUserHistory(Content::class, 12);
+
+        return view('Frontend.modules.videos.continue', compact('watchHistory'));
+    }
 
     /**
-     * Fetch comments for a given video or stream
+     * Fetch comments via AJAX
      */
     public function fetchComments(string $commentableType, int $commentableId)
     {
         $modelClass = 'App\\Models\\' . ucfirst($commentableType);
 
         $comments = Comment::where('commentable_type', $modelClass)
-        ->where('commentable_id', $commentableId)
-        ->with('user')
-        ->orderBy('created_at', 'asc') // oldest first, newest last
-        ->get();
+            ->where('commentable_id', $commentableId)
+            ->with('user')
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-
-        return view('Frontend.modules.videos.video', compact('comments'))->render();
+        return response()->json($comments);
     }
 }

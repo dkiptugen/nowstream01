@@ -1,9 +1,9 @@
 @extends('Backend.includes.layout')
 @section('content')
 <div class="col-12 mb-3">
-    <div class="card ">
+    <div class="card card-border-primary ">
         <div class="card-header">
-            <h5 class="card-title mb-0">Add Category</h5>
+            <h3 class="card-title mb-0 h5 text-primary">Add Category</h3>
         </div>
         <div class="card-body">
 

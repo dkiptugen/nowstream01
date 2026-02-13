@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Datatables\StreamDatatable;
+use App\Models\Content;
 use App\Traits\Meta;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,7 @@ class StreamController extends Controller
      */
         public function create()
             {
-                //
+                return view('Backend.modules.streams.add', $this->data);
             }
 
     /**
@@ -51,15 +52,16 @@ class StreamController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-        public function edit(string $id)
+        public function edit(Content $stream)
             {
-                //
+                $this->data['stream'] = $stream->load(['categories','tags']);
+                return view('Backend.modules.streams.edit', $this->data);
             }
 
     /**
      * Update the specified resource in storage.
      */
-        public function update(Request $request, string $id)
+        public function update(Request $request, Content $stream)
             {
                 //
             }
@@ -67,7 +69,7 @@ class StreamController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-        public function destroy(string $id)
+        public function destroy(Content $stream)
             {
                 //
             }

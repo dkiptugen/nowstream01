@@ -23,8 +23,7 @@ class StreamDatatable
                 $query         = Content::query();
                 $query
                     ->where('channel_id', $request->user()->channel_id)
-                      //->where('content_group', 'stream')
-                ;
+                    ->where('content_group', 'stream');
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
@@ -37,7 +36,7 @@ class StreamDatatable
 
                     {
                         $search = $request->input('search.value');
-                        $posts  = $query->where('name', 'LIKE', "%{$search}%")
+                        $query->where('name', 'LIKE', "%{$search}%")
                                         ->orWhere('title', 'LIKE', "%{$search}%")
                                         ->orWhere('description', 'LIKE', "%{$search}%");
 

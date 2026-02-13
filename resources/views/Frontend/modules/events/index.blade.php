@@ -37,7 +37,7 @@
 				<div class="col-lg-6">
 					<div class="section-title text-center text-lg-left">
 						<span class="sub-title">.......</span>
-						<h2 class="title">Latest Videos</h2>
+						<h2 class="title">Latest Events</h2>
 					</div>
 				</div>
 				<div class="col-lg-6">

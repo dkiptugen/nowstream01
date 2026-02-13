@@ -1,3 +1,5 @@
 @include('Frontend.includes.header')
-@yield('content')
+@yield('content') 
 @include('Frontend.includes.footer')
+@yield('header')
+@yield('footer')

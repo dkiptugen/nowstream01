@@ -49,13 +49,21 @@ class User extends Authenticatable
         return $this->hasMany(WatchHistory::class);
     } 
     public function subscribedChannels()
-    {
-        return $this->belongsToMany(Channel::class, 'channel_user');
-    }
+{
+    return $this->belongsToMany(Channel::class, 'channel_user', 'user_id', 'channel_id');
+}
+
     public function favoriteVideos()
 {
     return $this->belongsToMany(Content::class, 'favorites')
                 ->where('type', 'video')
                 ->withTimestamps();
 }
+// User.php
+public function channels()
+{
+    return $this->belongsToMany(Channel::class, 'channel_user', 'user_id', 'channel_id');
+}
+
+
 }

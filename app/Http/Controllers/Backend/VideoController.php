@@ -66,6 +66,8 @@ class VideoController extends Controller
                 $video->slug        = Str::slug($validatedData['title']);
                 $video->title       = $validatedData['title'];
                 $video->description = $validatedData['description'];
+                $video->type        = 'video';
+                $video->content_group = 'video';
 
                 // Handle thumbnail upload
                 if ($request->hasFile('thumbnail'))
@@ -103,12 +105,12 @@ class VideoController extends Controller
                 if ($result)
                     {
                         return self::success('Channel videos', 'Video saved successfully.',
-                            route('video.index')
+                            route('backend.video.index')
                         );
                     }
 
                 return self::failed('Channel videos', 'Video not saved.',
-                    route('video.index')
+                    route('backend.video.index')
                 );
             }
 
@@ -161,7 +163,7 @@ class VideoController extends Controller
 
                 if (!$video)
                     {
-                        return self::failed('Videos', 'Video not found.', route('video.index'));
+                        return self::failed('Videos', 'Video not found.', route('backend.video.index'));
                     }
 
                 // Update video details
@@ -217,12 +219,12 @@ class VideoController extends Controller
                 $result = $video->save();
                 if ($result)
                     {
-                        return self::success('Channel videos', 'Video updated successfully.', route('video.index'));
+                        return self::success('Channel videos', 'Video updated successfully.', route('backend.video.index'));
                     }
                 else
                     {
                         Log::error('Video update failed', ['video' => $video]);
-                        return self::failed('Channel videos', 'Video not updated.', route('video.index'));
+                        return self::failed('Channel videos', 'Video not updated.', route('backend.video.index'));
                     }
             }
 
@@ -236,14 +238,14 @@ class VideoController extends Controller
                 if ($result)
                     {
                         return self::success('Videos', 'Video deleted successfully.',
-                            route('video.index')
+                            route('backend.video.index')
                         );
                     }
                 else
                     {
 
                         return self::failed('Channel videos', 'Video not deleted.',
-                            route('video.index')
+                            route('backend.video.index')
                         );
                     }
             }

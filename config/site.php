@@ -1,7 +1,7 @@
 <?php
     return [
         'name'        => env( 'COMPANY NAME','Laugh Industries' ),
-        'title'       => env( 'SITE_TITLE','Baze Live' ),
+        'title'       => env( 'SITE_TITLE','Streamer' ),
         'tagline'     => env( 'SITE_TAGLINE','Home of online streaming' ),
         'description' => env( 'SITE_DESCRIPTION','The best Streaming platform in town' ),
         'logo'        => env( 'SITE_URL'). 'nowstream.png' ,
