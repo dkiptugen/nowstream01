@@ -12,7 +12,6 @@ use App\Http\Controllers\Backend\PodcastController;
 use App\Http\Controllers\Frontend\PodcastController as FrontendPodcastController;
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\TVController;
-use App\Http\Controllers\Frontend\RadioController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Frontend\StreamController;
 use App\Http\Controllers\Frontend\ChannelController;
@@ -161,9 +160,6 @@ Route::middleware(['detectCountry'])->group(function () {
     // show tv
     Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');
     Route::get('/tvs', [TVController::class, 'index'])->name('tvs');
-    // show radio
-    Route::get('/radio/{uuid}/{slug}', [RadioController::class, 'show'])->name('radio.show');
-    Route::get('/radios', [RadioController::class, 'index'])->name('radios');
 
     // Social Auth Routes (Global)
 
