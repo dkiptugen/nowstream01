@@ -69,7 +69,7 @@
                         "vertical-align": "middle"
                     });
                 },
-                "order": [[6, "desc"]]
+                "order": [[1, "asc"]]
             });
         </script>
 @endsection
