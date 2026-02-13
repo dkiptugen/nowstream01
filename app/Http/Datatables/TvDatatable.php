@@ -20,8 +20,10 @@ class TvDatatable
         public function data($request)
             {
                 $columns = $this->columns;
-                $query   = Content::query();
-                $query->where('content_group', 'tv');
+                $query   = Content::query()
+                                  ->where('content_group', 'tv')
+                                 ->whereNotNull('stream_url')
+                                    ->with(['categories','tags']);
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
