@@ -56,7 +56,7 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             const media = document.getElementById('player');
-            const source = @json($episode->stream_url);
+            const source = @json($episode->content_path);
 
             if (!media || !source) {
                 console.error("Media or source missing");
