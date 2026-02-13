@@ -13,7 +13,7 @@
                         <div class="top">
                             <h6 class=" mt-0">
                         <a href="{{ route('radio.show', [$radio->uuid, $radio->slug]) }}">
-                                    {{ucfirst($radio->title)}}
+                                    {{$radio->title}}
                                 </a>
                             </h6>
                         </div>
