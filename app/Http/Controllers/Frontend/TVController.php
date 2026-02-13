@@ -53,13 +53,13 @@ class TVController extends Controller
                     ->get();
             });
 
-            // Sidebar videos
-            $videos = $this->get_videos(6);
+            // Sidebar tvs
+            $tvs = $this->get_tvs(6);
 
             return view('Frontend.modules.tvs.show', [
                 'tv'  => $tv,
                 'related'  => $related,
-                'videos'   => $videos,
+                'tvs'   => $tvs,
             ]);
         } catch (\Exception $e) {
             abort(404, 'tv not found');
