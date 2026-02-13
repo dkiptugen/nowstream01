@@ -5,11 +5,11 @@
         <div class="col">
             <div class="card card-border-primary">
                 <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5 text-primary">Streams</h3>
+                    <h3 class="card-title m-0 h5 text-primary">Radios</h3>
                     @can('create_stream')
-                        <a href="{{ route('backend.stream.create') }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('backend.radio.create') }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-plus"></i>
-                            Add stream
+                            Add Radio
                         </a>
                     @endcan
                 </div>
@@ -17,19 +17,16 @@
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="channelstreams_dt" class="table table-striped table-condensed">
+							<table id="radio_dt" class="table table-striped table-condensed">
 								<thead>
                                 <tr>
 									<th>#</th>
 									<th>Title</th>
                                     <th>Description</th>
-                                    <th>Stream Key</th>
-                                    <th>Stream Link</th>
-                                    <th>Stream URL</th>
-									<th>Thumbnail</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Ended</th>
+									<th>Logo</th>
+                                    <th>Language</th>
+                                    <th>Region</th>
+                                    <th>Category</th>
 									<th>Action</th>
 									</tr>
 								</thead>
@@ -38,13 +35,10 @@
                                     <th>#</th>
                                     <th>Title</th>
                                     <th>Description</th>
-                                    <th>Stream Key</th>
-                                    <th>Stream Link</th>
-                                    <th>Stream URL</th>
-                                    <th>Thumbnail</th>
-                                    <th>Start Time</th>
-                                    <th>End Time</th>
-                                    <th>Ended</th>
+                                    <th>Logo</th>
+                                    <th>Language</th>
+                                    <th>Region</th>
+                                    <th>Category</th>
                                     <th>Action</th>
 									</tr>
 								</tfoot>
@@ -60,11 +54,11 @@
 @endsection
 @section('footer')
     <script>
-            $('#channelstreams_dt').DataTable({
+            $('#radio_dt').DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
-                    "url": "{{ route('backend.stream.datatable') }}",
+                    "url": "{{ route('backend.radio.datatable') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": {_token: "{{csrf_token()}}"}
@@ -73,13 +67,10 @@
                     {"data": "pos"},
                     {"data": "title"},
                     {"data": "description"},
-                    {"data": "stream_key", "orderable": false},
-                    {"data": "stream_link", "orderable": false},
-                    {"data": "stream_url", "orderable": false},
                     {"data": "thumbnail", "orderable": false},
-                    {"data": "start_time"},
-                    {"data": "end_time"},
-                    {"data": "is_ended"},
+                    {"data": "language"},
+                    {"data": "region"},
+                    {"data": "category"},
                     {"data": "action", "orderable": false}
                 ],
 
@@ -89,7 +80,7 @@
                         "vertical-align": "middle"
                     });
                 },
-                "order": [[7, "desc"]]
+                "order": [[1, "desc"]]
             });
         </script>
 @endsection
