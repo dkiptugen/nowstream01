@@ -68,7 +68,7 @@ class PodcastIndex extends Command
                                             }
                                         catch (\Exception $e)
                                             {
-                                                $type = 'audio/mpeg';
+                                                $type = 'undefined';
                                             }
 
 
@@ -83,7 +83,7 @@ class PodcastIndex extends Command
                                                 $pod->author         = $podcasts->author;
                                                 $pod->source         = 'Podcast Index';
                                                 $pod->publishdate    = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
-                                                $pod->status         = 1;
+                                                $pod->status         = ($type=='undefined')?0:1;;
                                                 $pod->type           = $type;
                                                 $pod->language_id    = $language->id ?? 0;
                                                 $pod->language       = $podcasts->language;
