@@ -47,7 +47,8 @@ class TvController extends Controller
      */
         public function show(Content $tv)
             {
-                //
+                $this->data['tv'] = $tv;
+                return view('Backend.modules.tv.show', $this->data);
             }
 
     /**
