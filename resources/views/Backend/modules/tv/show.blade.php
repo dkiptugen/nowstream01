@@ -83,7 +83,7 @@
             }
 
             // Example video/live URL
-            const mediaUrl = '{{ $video->stream_url }}'; // Replace with dynamic URL
+            const mediaUrl = '{{ $tv->stream_url }}'; // Replace with dynamic URL
 
             loadMedia(mediaUrl);
 
