@@ -22,8 +22,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
-
-                                <th>Stream URL</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
                                 <th>Language</th>
@@ -36,8 +34,6 @@
                             <tr>
                                 <th>#</th>
                                 <th>Title</th>
-
-                                <th>Stream URL</th>
                                 <th>Thumbnail</th>
                                 <th>Category</th>
                                 <th>Language</th>
@@ -70,7 +66,6 @@
             "columns": [
                 {"data": "pos"},
                 {"data": "title"},
-                {"data": "stream_url", "orderable": false},
                 {"data": "thumbnail", "orderable": false},
                 {"data": "category"},
                 {"data": "language"},
