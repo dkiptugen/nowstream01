@@ -19,20 +19,14 @@
                         $ext = strtolower(pathinfo($episode->content_path, PATHINFO_EXTENSION));
                     @endphp
 
-                    @if($ext === 'mp3')
-                        <!-- AUDIO -->
-                        <audio
-                            id="player"
-                            crossorigin="anonymous">
-                        </audio>
-                    @else
+
                         <!-- VIDEO -->
                         <div class="ratio ratio-16x9">
                             <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}" crossorigin="anonymous">
                                 <source src="{{ $episode->content_path }}" type="{{ $episode->type }}">
                             </video>
                         </div>
-                    @endif
+
 
                     <h4 class="mt-3"></h4>
 
