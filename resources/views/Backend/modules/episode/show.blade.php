@@ -10,7 +10,7 @@
         <div class="col">
             <div class="card shadow">
                 <div class="card-header">
-                    <h5 class="text-primary mb-0">View Media</h5>
+                    <h5 class="text-primary mb-0">View:  {{ $episode->title }}</h5>
                 </div>
 
                 <div class="card-body">
@@ -37,7 +37,7 @@
                         </div>
                     @endif
 
-                    <h4 class="mt-3">{{ $episode->title }}</h4>
+
 
                 </div>
             </div>

@@ -11,7 +11,7 @@
         <div class="col">
             <div class="card shadow">
                 <div class="card-header">
-                    <h5 class="text-primary mb-0">View TV</h5>
+                    <h5 class="text-primary mb-0">View {{ $tv->title  }}TV</h5>
                 </div>
 
                 <div class="card-body">
@@ -24,7 +24,7 @@
                         </video>
 
 
-                    <h4 class="mt-3">{{ $tv->title }}</h4>
+
 
                 </div>
             </div>
