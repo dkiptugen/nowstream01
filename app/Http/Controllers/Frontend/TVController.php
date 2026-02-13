@@ -16,9 +16,9 @@ class TVController extends Controller
         // Latest tvs (paginated style alternative)
 
         $this->data['tvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('language', 'eng')
-            ->paginate(20);
+                ->whereNotNull('stream_url')
+                ->where('language', 'en')
+            ->paginate(30);
           
         $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
         $this->data['toptvs'] = Content::where('type', 'tv')
