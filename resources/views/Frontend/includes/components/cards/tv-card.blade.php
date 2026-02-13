@@ -12,7 +12,7 @@
                     <div class="movie-content">
                         <div class="top">
                             <h6 class=" mt-0">
-                                <a href="{{ url("/tv/{$tv->id}/{$tv->slug}") }}">
+                        <a href="{{ route('tv.show', [$tv->uuid, $tv->slug]) }}">
                                     {{ucfirst($tv->title)}}
                                 </a>
                             </h6>
