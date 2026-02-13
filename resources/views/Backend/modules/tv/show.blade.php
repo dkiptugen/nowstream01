@@ -19,8 +19,7 @@
                         <video
                             id="player"
                             playsinline
-                            data-poster="{{ $tv->thumbnail_url }}"
-                            crossorigin = "anonymous">
+                            data-poster="{{ $tv->thumbnail_url }}">
                         </video>
 
 
