@@ -1,6 +1,16 @@
 @php use Carbon\Carbon; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
+@php
+$playlist = $podcast->episodes->map(function($ep) use ($podcast) {
+return [
+'src' => $ep->content_path,
+'title' => $ep->title,
+'podcast' => $podcast->title,
+'thumbnail' => $podcast->thumbnail_url
+];
+});
+@endphp
 <!-- main-area -->
 <main>
 
@@ -11,9 +21,12 @@
                 <div class="col-xl-4 col-lg-4">
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
-                        <a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video">
+                        <a class="popup-video"
+ onclick='playGlobalAudio(@json($playlist), 0)'>
                             <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
                         </a>
+ 
+
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-8">
@@ -30,7 +43,7 @@
                                     <span>{{ $podcast->language }}</span>
                                 </li>
                             </ul>
-                            <ul> 
+                            <ul>
                                 <li class="category">
                                     <a href="#">{{ ucfirst($podcast->author) }}</a>
                                 </li>
@@ -97,16 +110,6 @@
                                     <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample" style="">
                                         <div class="card-body">
                                             <ul>
-                                                @php
-                                                $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
-                                                return [
-                                                'src' => $ep->content_path,
-                                                'title' => $ep->title,
-                                                'podcast' => $podcast->title,
-                                                'thumbnail' => $podcast->thumbnail_url
-                                                ];
-                                                });
-                                                @endphp
 
                                                 @foreach($podcast->episodes as $index => $episode)
                                                 <li>
