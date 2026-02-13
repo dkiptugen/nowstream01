@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="hero-area">
-    @foreach($current_event as $event)
+    @foreach($events as $event)
     <!-- banner-area -->
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
         <div class="container custom-container">
@@ -12,9 +12,17 @@
                 <div class="col-xl-6 col-lg-8">
                     <div class="banner-content">
                         <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
-                        <h2 class="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1.8s">Buy
-                            {{$event->title}} Access By <span><a class=""
-                                    href="{{ url("/event/{$event->id}/{$event->slug}") }}">Clicking Here</a></span>.
+                        @php
+                        $words = preg_split('/\s+/', trim(ucfirst($event->event_name)));
+                        $half = (int) ceil(count($words) / 2);
+
+                        $firstHalf = implode(' ', array_slice($words, 0, $half));
+                        $secondHalf = implode(' ', array_slice($words, $half));
+                        @endphp
+
+                        <h2 class="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1.8s">
+                            {{ $firstHalf }}
+                            <span>{{ $secondHalf }}</span>
                         </h2>
                         <div class="banner-meta wow fadeInUp" data-wow-delay=".6s" data-wow-duration="1.8s">
                             <ul>
@@ -53,7 +61,7 @@
                             </form>
                             <p class="w-100 text-left text-light mt-2 mb-0">Already Bought? Enter Stream Token
                                 Or Phone Number
-                                To Watch. 
+                                To Watch.
                             </p>
 
                         </div>
