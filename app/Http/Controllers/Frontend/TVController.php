@@ -21,6 +21,7 @@ class TVController extends Controller
           
         $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
         $this->data['toptvs'] = Content::where('type', 'tv')
+        ->whereNotNull('stream_url')
         ->limit(6)
         ->get();
 
@@ -44,6 +45,7 @@ class TVController extends Controller
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'tv')
                     ->where('uuid', '!=', $uuid)
+                    ->whereNotNull('stream_url')
                     ->latest()
                     ->take(6)
                     ->get();
