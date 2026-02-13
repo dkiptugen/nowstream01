@@ -14,7 +14,7 @@ class TVController extends Controller
     public function index()
     {
         // Latest tvs (paginated style alternative)
-        $perPage = 6;
+        $perPage = 16;
 
         $this->data['tvs'] = Content::where('content_group', 'tv')
             ->where('status', 1)
