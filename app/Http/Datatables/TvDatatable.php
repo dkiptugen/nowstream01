@@ -51,14 +51,12 @@ class TvDatatable
                                 $btn                       = $this->button($post, $request);
                                 $nestedData['pos']         = $pos;
                                 $nestedData['title']       = $post->title;
-                                $nestedData['description'] = $post->description;
-                                $nestedData['stream_link'] = $post->stream_video_link;
+                                $nestedData['stream_url']  = $post->stream_url;
                                 $nestedData["thumbnail"]   = '<img src="' . $post->thumbnail_url . '" class="img-fluid" />';
                                 $nestedData['region']      = $post->country;
                                 $nestedData['language']    = $post->language;
                                 $nestedData['category']    = $post->categories?->pluck('name')->implode(', ');
                                 $nestedData['action']      = $btn;
-
                                 $data[] = $nestedData;
                                 $pos++;
                             }
