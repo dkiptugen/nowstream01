@@ -81,6 +81,18 @@ trait CacheHelper
                 ->get();
         });
     }
+    /**
+     * Get latest tvs with optional limit.
+     */
+    public function get_tvs($limit = 6)
+    {
+        return Cache::remember("latest_tvs_{$limit}", now()->addDay(), function () use ($limit) {
+            return Content::where('content_group', 'tv')
+                ->latest()
+                ->take($limit)
+                ->get();
+        });
+    }
 
     /**
      * Get ticket-type products for an event.
