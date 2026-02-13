@@ -34,8 +34,8 @@
     <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container"> 
         <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest tvs</span>
-                                <h2 class="title">Latest tvs</h2>
+                            <div class="section-title"> <span class="sub-title">Trending TVs</span>
+                                <h2 class="title">Trending TVs</h2>
                             </div> 
         </div>
         <div class="row tr-movie-active">
@@ -45,8 +45,8 @@
             @endforeach
         </div>
         <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Trending tvs</span>
-                                <h2 class="title">Trending tvs</h2>
+                            <div class="section-title"> <span class="sub-title">Latest TVs</span>
+                                <h2 class="title">Latest TVs</h2>
                             </div>
                         </div>
         <div class="row tr-movie-active">
