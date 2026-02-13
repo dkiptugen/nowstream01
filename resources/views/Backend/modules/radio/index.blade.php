@@ -27,6 +27,7 @@
                                     <th>Language</th>
                                     <th>Region</th>
                                     <th>Category</th>
+                                    <th>Status</th>
 									<th>Action</th>
 									</tr>
 								</thead>
@@ -39,6 +40,7 @@
                                     <th>Language</th>
                                     <th>Region</th>
                                     <th>Category</th>
+                                    <th>Status</th>
                                     <th>Action</th>
 									</tr>
 								</tfoot>
@@ -71,6 +73,7 @@
                     {"data": "language"},
                     {"data": "region"},
                     {"data": "category"},
+                    {"data": "status", "orderable": false},
                     {"data": "action", "orderable": false}
                 ],
 

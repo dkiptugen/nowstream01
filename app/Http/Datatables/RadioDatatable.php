@@ -55,6 +55,7 @@
                                     $nestedData['region']      = $post->country;
                                     $nestedData['category']    = $post->genre;
                                     $nestedData['action']      = $btn;
+                                    $nestedData['status']      = $post->status ? 'Active' : 'Inactive';
                                     $data[]                    = $nestedData;
                                     $pos++;
                                 }
