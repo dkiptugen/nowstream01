@@ -48,16 +48,17 @@ class TvDatatable
                         $pos = $start + 1;
                         foreach ($posts as $post)
                             {
-                                $btn                       = $this->button($post, $request);
-                                $nestedData['pos']         = $pos;
-                                $nestedData['title']       = $post->title;
-                                $nestedData['stream_url']  = $post->stream_url;
-                                $nestedData["thumbnail"]   = '<img src="' . $post->thumbnail_url . '" class="img-fluid" />';
-                                $nestedData['region']      = $post->country;
-                                $nestedData['language']    = $post->language;
-                                $nestedData['category']    = $post->categories?->pluck('name')->implode(', ');
-                                $nestedData['action']      = $btn;
-                                $data[] = $nestedData;
+                                $btn                      = $this->button($post, $request);
+                                $nestedData['pos']        = $pos;
+                                $nestedData['title']      = $post->title;
+                                $nestedData['stream_url'] = $post->stream_url;
+                                $nestedData["thumbnail"]  = '<img src="' . $post->thumbnail_url . '" class="img-fluid" />';
+                                $nestedData['region']     = $post->country;
+                                $nestedData['language']   = $post->language;
+                                $nestedData['category']   = $post->categories?->pluck('name')->implode(', ');
+                                $nestedData['status']     = $post->status ? 'Active' : 'Inactive';
+                                $nestedData['action']     = $btn;
+                                $data[]                   = $nestedData;
                                 $pos++;
                             }
                     }
