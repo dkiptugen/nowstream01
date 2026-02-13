@@ -15,7 +15,7 @@ class TVController extends Controller
     {
         // Latest tvs (paginated style alternative)
 
-        $this->data['tvs'] = Content::where('content_group', 'radio')
+        $this->data['tvs'] = Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url') 
             ->paginate(30);
           
