@@ -74,6 +74,8 @@
         <main class="py-4">
             @yield('content')
         </main>
+        
+@include('Frontend.includes.components.partials.audio-player')
     </div>
     @vite('resources/js/app.js')
 </body>
