@@ -31,12 +31,19 @@ class HomeController extends Controller
  
     $this->data['current_event'] = Content::latest()->limit(1)->get();
  
-    $this->data['top_videos'] = Content::where('type', 'video')
+    $this->data['top_videos'] = Content::where('content_group', 'video')
         ->orderBy('views', 'desc')
         ->limit(4)
         ->get();
  
     $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null); 
+    //top podcasts based on views 
+    $this->data['topPodcasts'] = Content::where('type', 'podcast')
+    ->whereNull('parent_id')
+    ->orderBy('views', 'desc')
+    ->limit(6)
+    ->get();
+
     // podcast categories   "type" => "["podcast"]"
    $this->data['categories'] = Category::limit(6)->get();  
     return view('Frontend.index', $this->data);
