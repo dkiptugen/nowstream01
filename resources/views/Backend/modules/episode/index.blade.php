@@ -6,7 +6,7 @@
                 <h5 class="card-title">{{ $podcast->title }} Episodes</h5>
                 <div class="actbtn">
                     @can('create_podcast_episode')
-                        <a href="{{ route('podcast.episodes.create',['podcast'=>$podcast->id]) }}" class="btn btn-sm btn-outline-dark">
+                        <a href="{{ route('podcast.episode.create',['podcast'=>$podcast->uuid]) }}" class="btn btn-sm btn-outline-dark">
                             <i class="fas fa-plus"></i> Add Podcast
                         </a>
                     @endcan
