@@ -20,7 +20,6 @@
                                 <th>#</th>
                                 <th>Title</th>
                                 <th>Thumbnail</th>
-                                <th>Category</th>
                                 <th>Description</th>
                                 <th>Keywords</th>
                                 <th>Content Rating</th>
@@ -38,7 +37,6 @@
                                 <th>#</th>
                                 <th>Title</th>
                                 <th>Thumbnail</th>
-                                <th>Category</th>
                                 <th>Description</th>
                                 <th>Keywords</th>
                                 <th>Content Rating</th>
@@ -75,7 +73,6 @@
                 { "data": "pos" },
                 { "data": "title" },
                 { "data": "thumbnail" },
-                { "data": "category" },
                 { "data": "description" },
                 { "data": "keywords" },
                 { "data": "content_rating" },
