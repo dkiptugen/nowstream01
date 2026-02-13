@@ -79,6 +79,8 @@ return Application::configure(basePath: dirname(__DIR__))
                               VerifyCsrfToken::class,
                               SubstituteBindings::class,
                               AuthenticateSession::class,
+                              Cors::class,
+                              GetRegion::class,
 
                           ]);
 
