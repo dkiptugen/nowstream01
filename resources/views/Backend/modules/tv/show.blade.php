@@ -11,7 +11,7 @@
                 </div>
                 <div class="card-body">
                     <div class="embed-responsive embed-responsive-16by9">
-                        <video id="player" class="embed-responsive-item" data-poster="{{ $tv->thumbnail_url }}"></video>
+                        <video id="player" class="embed-responsive-item" playsinline data-poster="{{ $tv->thumbnail_url }}" controls crossorigin></video>
                     </div>
                     <h3>{{$tv->title}}</h3>
 
@@ -22,8 +22,33 @@
     </div>
 
 @endsection
+@section('header')
+@endsection
+@section('footer')
+    @extends('Backend.includes.layout')
+    @section('content')
 
+        <div class="row">
+            <div class="col ">
+                <div class="card card-border-primary shadow">
+                    <div class="card-header">
+                        <h3 class="my-0 card-title text-primary  h5">
+                            View Tv
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <video id="player" class="embed-responsive-item" playsinline data-poster="{{ $tv->thumbnail_url }}" controls crossorigin></video>
+                        </div>
+                        <h3>{{$tv->title}}</h3>
 
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    @endsection
     @section('header')
         <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     @endsection
@@ -40,7 +65,12 @@
                 let player;
 
                 function initPlayer() {
-                    player = new Plyr(video);
+                    player = new Plyr(video, {
+                        controls: [
+                            'play-large', 'play', 'progress', 'current-time',
+                            'mute', 'volume', 'settings', 'fullscreen'
+                        ]
+                    });
                 }
 
                 function loadHLS(url) {
