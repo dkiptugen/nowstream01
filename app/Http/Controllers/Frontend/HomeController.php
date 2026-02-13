@@ -11,7 +11,6 @@ use App\Models\Content;
 use App\Models\Video;
 use App\Traits\CacheHelper;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
@@ -20,45 +19,40 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
-    public function index()
-    {
-        $this->data['channels'] = $this->get_channels();
+  public function index()
+{ 
+    $this->data['channels'] = $this->get_channels();
+ 
+    $this->data['streams'] = $this->get_streams(null, 6);
+ 
+    $this->data['events'] = $this->get_events();
+ 
+    $this->data['videos'] = $this->get_videos(6);
+ 
+    $this->data['current_event'] = Content::latest()->limit(1)->get();
+ 
+    $this->data['top_videos'] = Content::where('content_group', 'video')
+        ->orderBy('views', 'desc')
+        ->limit(4)
+        ->get();
+        $this->data['toptvs'] = Content::where('content_group', 'tv') 
+        ->whereNotNull('stream_url')
+        ->orderBy('views', 'desc')
+        ->limit(6)
+        ->get();
+ 
+    $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null); 
+    //top podcasts based on views 
+    $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
+    ->whereNull('parent_id')
+    ->orderBy('views', 'desc')
+    ->limit(6)
+    ->get();
 
-        $this->data['streams'] = $this->get_streams(null, 6);
-
-        $this->data['events'] = $this->get_events();
-
-        $this->data['videos'] = $this->get_videos(6);
-
-        $this->data['current_event'] = Content::latest()->limit(1)->get();
-
-        $this->data['top_videos'] = Content::where('content_group', 'video')
-            ->orderBy('views', 'desc')
-            ->limit(4)
-            ->get();
-        $this->data['toptvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->orderBy('views', 'desc')
-            ->limit(6)
-            ->get();
-        $this->data['topradios'] = Content::where('content_group', 'radio')
-            ->whereNotNull('stream_url')
-            ->orderBy('views', 'desc')
-            ->limit(6)
-            ->get();
-
-        $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null);
-        //top podcasts based on views 
-        $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->orderBy('views', 'desc')
-            ->limit(6)
-            ->get();
-
-        // podcast categories   "type" => "["podcast"]"
-        $this->data['categories'] = Category::limit(6)->get();
-        return view('Frontend.index', $this->data);
-    }
+    // podcast categories   "type" => "["podcast"]"
+   $this->data['categories'] = Category::limit(6)->get();  
+    return view('Frontend.index', $this->data);
+}
 
 
     /**
