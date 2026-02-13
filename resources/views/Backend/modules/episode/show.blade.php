@@ -1,7 +1,6 @@
 @extends('Backend.includes.layout')
 
 @section('header')
-    <!-- Plyr CSS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 @endsection
 
@@ -11,18 +10,32 @@
         <div class="col">
             <div class="card shadow">
                 <div class="card-header">
-                    <h5 class="text-primary mb-0">View TV</h5>
+                    <h5 class="text-primary mb-0">View Media</h5>
                 </div>
 
                 <div class="card-body">
 
-                        <video
-                            id="player"
-                            playsinline
-                            data-poster="{{ $episode->thumbnail_url }}"
-                            crossorigin = "anonymous">
-                        </video>
+                    @php
+                        $ext = strtolower(pathinfo($episode->content_path, PATHINFO_EXTENSION));
+                    @endphp
 
+                    @if($ext === 'mp3')
+                        <!-- AUDIO -->
+                        <audio
+                            id="player"
+                            crossorigin="anonymous">
+                        </audio>
+                    @else
+                        <!-- VIDEO -->
+                        <div class="ratio ratio-16x9">
+                            <video
+                                id="player"
+                                playsinline
+                                data-poster="{{ $episode->thumbnail_url }}"
+                                crossorigin="anonymous">
+                            </video>
+                        </div>
+                    @endif
 
                     <h4 class="mt-3">{{ $episode->title }}</h4>
 
@@ -36,57 +49,45 @@
 
 @section('footer')
 
-    <!-- HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-    <!-- Plyr JS -->
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('player');
-            const player = new Plyr(video, {});
-            // Determine media type
-            function getMediaType(url) {
-                const ext = url.split('.').pop().toLowerCase();
-                if (ext === 'm3u8') return 'hls';
-                if (ext === 'mp4') return 'video/mp4';
-                if (ext === 'mp3') return 'audio/mp3';
-                if (ext === 'mov') return 'video/quicktime';
-                return '';
+
+            const media = document.getElementById('player');
+            const source = @json($episode->stream_url);
+
+            if (!media || !source) {
+                console.error("Media or source missing");
+                return;
             }
 
-            // Load media dynamically
-            function loadMedia(url) {
-                const type = getMediaType(url);
+            let player;
 
-                if (type === 'hls') {
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(url);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                    }
-                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
-                    {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => video.play());
-                    }
-                    else console.error('HLS not supported');
+            // HLS
+            if (source.endsWith('.m3u8')) {
+
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(source);
+                    hls.attachMedia(media);
+
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        player = new Plyr(media);
+                    });
+
+                } else if (media.canPlayType('application/vnd.apple.mpegurl')) {
+                    media.src = source;
+                    player = new Plyr(media);
                 }
-                else if (video.canPlayType(type))
-                {
-                    video.src = url;
-                    video.addEventListener('loadedmetadata', () => video.play());
-                }
-                else console.error('Unsupported media type');
+
+                return;
             }
 
-            // Example video/live URL
-            const mediaUrl = '{{ $episode->stream_url }}'; // Replace with dynamic URL
-
-            loadMedia(mediaUrl);
-
+            // MP3 or MP4
+            media.src = source;
+            player = new Plyr(media);
 
         });
     </script>
