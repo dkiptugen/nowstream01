@@ -51,9 +51,10 @@ class PodcastEpisodeController extends Controller
     /**
      * Display the specified resource.
      */
-        public function show(Content $podcast)
+        public function show(Content $podcast, Content $episode)
             {
-                //
+                $this->data['episode'] = $episode;
+                return view('Backend.modules.tv.show', $this->data);
             }
 
     /**
