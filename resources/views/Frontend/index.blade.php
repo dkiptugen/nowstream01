@@ -249,13 +249,13 @@
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
         <div class="row align-items-end mb-30">
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="section-title text-center text-lg-left">
                     <span class="sub-title">TOP Podcasts</span>
                     <h2 class="title">Trending Podcasts</h2>
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         @foreach($categories as $category)
