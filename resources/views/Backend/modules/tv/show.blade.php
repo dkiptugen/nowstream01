@@ -11,10 +11,7 @@
                 </div>
                 <div class="card-body">
                     <div class="embed-responsive embed-responsive-16by9">
-                        <video id="player" class="embed-responsive-item" playsinline
-                               controls
-                               crossorigin
-                               data-poster="{{ $tv->thumbnail_url }}"></video>
+                        <video id="player" class="embed-responsive-item" data-poster="{{ $tv->thumbnail_url }}"></video>
                     </div>
                     <h3>{{$tv->title}}</h3>
 
