@@ -276,7 +276,7 @@
             @include('Frontend.includes.components.cards.podcast-card')
             @endforeach
         </div>
-        <div class="row align-items-end mb-30">
+        <div class="row align-items-end mb-30 mt-5">
             <div class="col-lg-6">
                 <div class="section-title text-center text-lg-left">
                     <span class="sub-title">New Podcasts</span>
