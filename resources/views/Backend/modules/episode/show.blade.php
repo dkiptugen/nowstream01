@@ -1,7 +1,7 @@
 @extends('Backend.includes.layout')
 
 @section('header')
-    {{--<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />--}}
+ <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 @endsection
 
 @section('content')
@@ -40,7 +40,7 @@
 
 @section('footer')
 
-   {{-- <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
@@ -52,6 +52,6 @@
             });
 
         });
-    </script>--}}
+    </script>
 
 @endsection
