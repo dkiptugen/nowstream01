@@ -58,36 +58,16 @@
             const media = document.getElementById('player');
             const source = @json($episode->content_path);
 
-            if (!media || !source) {
-                console.error("Media or source missing");
+            if (!source) {
+                console.error("No source URL");
                 return;
             }
 
-            let player;
-
-            // HLS
-            if (source.endsWith('.m3u8')) {
-
-                if (Hls.isSupported()) {
-                    const hls = new Hls();
-                    hls.loadSource(source);
-                    hls.attachMedia(media);
-
-                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                        player = new Plyr(media);
-                    });
-
-                } else if (media.canPlayType('application/vnd.apple.mpegurl')) {
-                    media.src = source;
-                    player = new Plyr(media);
-                }
-
-                return;
-            }
-
-            // MP3 or MP4
             media.src = source;
-            player = new Plyr(media);
+
+            const player = new Plyr(media, {
+                controls: ['play', 'progress', 'current-time', 'mute', 'volume']
+            });
 
         });
     </script>
