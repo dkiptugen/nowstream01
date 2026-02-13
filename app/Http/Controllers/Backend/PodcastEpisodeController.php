@@ -54,7 +54,7 @@ class PodcastEpisodeController extends Controller
         public function show(Content $podcast, Content $episode)
             {
                 $this->data['episode'] = $episode;
-                return view('Backend.modules.tv.show', $this->data);
+                return view('Backend.modules.episode.show', $this->data);
             }
 
     /**
