@@ -26,10 +26,10 @@
         </li> 
 
         <li class="nav-item">
-            <a class="nav-link" href=" {{ url('streams') }}">
+            <a class="nav-link" href=" {{ url('radios') }}">
                 <div class="parent-icon"><i class="bx bx-video-recording"></i>
                 </div>
-                <div class="menu-title">Streams</div>
+                <div class="menu-title">radios</div>
             </a>
 
         </li>
