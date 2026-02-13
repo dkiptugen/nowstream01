@@ -16,15 +16,13 @@
 
                 <div class="card-body">
 
-                    <!-- Bootstrap 5 Ratio -->
-                    <div class="ratio ratio-16x9">
                         <video
                             id="player"
                             playsinline
                             data-poster="{{ $tv->thumbnail_url }}"
                             crossorigin = "anonymous">
                         </video>
-                    </div>
+
 
                     <h4 class="mt-3">{{ $tv->title }}</h4>
 
