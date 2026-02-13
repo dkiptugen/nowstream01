@@ -20,7 +20,7 @@ class PodcastController extends Controller
      */
     public function index(Request $request)
 {
-    $perPage = 6;
+    $perPage = 18;
 
     $podcasts = Content::where('content_group', 'podcast')
         ->whereNull('parent_id')
