@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ImportPodcastEpisodes;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Language;
@@ -43,128 +44,71 @@ class PodcastIndex extends Command
      */
         public function handle()
             {
+                $pi = new PI();
 
-                try
+                $categories = $pi->podcastCategories()->feeds;
+
+                $this->output->progressStart(count($categories));
+
+                foreach ($categories as $cat)
                     {
-                        $podcast  = new PI();
-                        $category = $podcast->podcastCategories()->feeds;
-                        foreach ($category as $cat)
+
+                        $db_cat = Category::firstOrCreate(
+                            ['name' => $cat->name],
+                            [
+                                'system_user_id' => 1,
+                                'position'       => 1,
+                                'type'           => ['podcast'],
+                                'status'         => 1,
+                                'description'    => ''
+                            ]
+                        );
+
+                        $trending = $pi->trending_podcast($db_cat->name)->feeds ?? [];
+
+                        foreach ($trending as $podcastData)
                             {
 
-                                $db_cat = Category::firstOrCreate(['name' => $cat->name], ['system_user_id' => 1, 'position' => 1, 'type' => ['podcast'], 'status' => 1, 'description' => '']);
-                                //dd($db_cat);
-                                foreach ($podcast->trending_podcast($db_cat->name)->feeds as $podcasts)
-                                    {
+                                $language = Language::where('code', $podcastData->language)->first();
+                                $region   = Region::where('name', 'undefined')->first();
 
+                                $pod = Content::updateOrCreate(
+                                    [
+                                        'old_id'        => $podcastData->id,
+                                        'source'        => 'Podcast Index',
+                                        'content_group' => 'podcast'
+                                    ],
+                                    [
+                                        'title'          => $this->remove_emoji($podcastData->title),
+                                        'description'    => $this->remove_emoji($podcastData->description),
+                                        'stream_url'     => $podcastData->url,
+                                        'author'         => $podcastData->author,
+                                        'publishdate'    => Carbon::createFromTimestamp($podcastData->newestItemPublishTime),
+                                        'status'         => 1,
+                                        'type'           => 'rss',
+                                        'language_id'    => $language->id ?? null,
+                                        'thumbnail_url'  => $podcastData->image,
+                                        'region_id'      => $region->id ?? null,
+                                        'system_user_id' => 1,
+                                    ]
+                                );
 
-                                        $region = Region::where('name', 'undefined')->first();
+                                $pod->categories()->syncWithoutDetaching([$db_cat->uuid]);
 
-                                        $language = Language::where('code', $podcasts->language)->first();
-                                        try
-                                            {
-                                                $response = Http::head($podcasts->url);
+                                ImportPodcastEpisodes::dispatch(
+                                    $podcastData->id,
+                                    $pod->uuid
+                                );
 
-                                                $type = $response->header('Content-Type');
-                                            }
-                                        catch (\Exception $e)
-                                            {
-                                                $type = 'undefined';
-                                            }
-
-
-                                        try
-                                            {
-                                                $pod              = Content::firstOrNew(['old_id' => $podcasts->id, 'source' => 'Podcast Index', 'content_group' => 'podcast']);
-                                                $pod->title       = ($this->remove_emoji($podcasts->title) == "")
-                                                    ? substr($this->remove_emoji($podcasts->description), 0, 10) . '...'
-                                                    : $this->remove_emoji($podcasts->title);
-                                                $pod->description = $this->remove_emoji($podcasts->description);
-                                                $pod->stream_url  = $podcasts->url;
-                                                $pod->author      = $podcasts->author;
-                                                $pod->source      = 'Podcast Index';
-                                                $pod->publishdate = date('Y-m-d H:i:s', $podcasts->newestItemPublishTime);
-                                                $pod->status      = ($type == 'undefined') ? 0 : 1;;
-                                                $pod->type           = $type;
-                                                $pod->language_id    = $language->id ?? 0;
-                                                $pod->language       = $podcasts->language;
-                                                $pod->thumbnail_url  = $podcasts->image;
-                                                $pod->content_group  = 'podcast';
-                                                $pod->region_id      = $region->id ?? 0;
-                                                $pod->system_user_id = 1;
-                                                $res                 = $pod->save();
-                                                if ($res)
-                                                    {
-                                                        //dd($pod->categories()->sync([$db_cat->id]));
-                                                        $pod->categories()->attach($db_cat->uuid);
-                                                        $this->get_episode($podcasts->id, $pod->uuid);
-
-                                                    }
-                                                echo "\n" . $podcasts->title;
-                                            }
-                                        catch (Exception $e)
-                                            {
-                                                Log::error($e->getMessage());
-                                            }
-
-                                    }
                             }
+
+                        $this->output->progressAdvance();
                     }
-                catch (Exception $e)
-                    {
-                        Log::error($e->getMessage());
-                    }
+
+                $this->output->progressFinish();
 
                 return Command::SUCCESS;
             }
 
-        public function get_episode($id, $pid)
-            {
 
-                try
-                    {
-                        $podcast  = new PI();
-                        $episodes = $podcast->episodes($id);
-                        foreach ($episodes->items as $episode)
-                            {
-                                try
-                                    {
-                                        $response = Http::head($episode->enclosureUrl);
-
-                                        $type   = $response->header('Content-Type');
-                                        $status = 1;
-                                    }
-                                catch (\Exception $e)
-                                    {
-                                        $type   = 'undefined';
-                                        $status = 0;
-                                    }
-                                //dd($pid);
-                                $ep = Content::updateOrCreate([
-                                    'old_id' => $episode->id
-                                ], [
-                                    'title'          => $this->remove_emoji($episode->title),
-                                    'slug'           => SlugService::createSlug(Content::class, 'slug', $episode->title),
-                                    'parent_id'      => $pid,
-                                    'content_group'  => 'podcast_episode',
-                                    'source'         => 'Podcast Index',
-                                    'description'    => $this->remove_emoji($episode->description),
-                                    'duration'       => $episode->duration,
-                                    'stream_url'     => $episode->enclosureUrl,
-                                    'publishdate'    => date('Y-m-d H:i:s', $episode->datePublished),
-                                    'thumbnail_url'  => is_null($episode->feedImage) ? 'https://www.podcastindex.org/images/podcast-index-logo.png' : $episode->feedImage,
-                                    'status'         => $status,
-                                    'type'           => $type,
-                                    'is_explicit'    => $episode->explicit,
-                                    'system_user_id' => 1,
-                                ]);
-
-
-                            }
-
-                    }
-                catch (Exception $e)
-                    {
-                        Log::error($e->getMessage());
-                    }
-            }
     }

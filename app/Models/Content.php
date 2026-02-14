@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\JsonCast;
 use App\Traits\HasUuid;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ class Content extends Model
         protected $keyType      = 'string';
         public    $incrementing = false;
         protected $primaryKey   = 'uuid';
+        protected $casts        = ['genre' => JsonCast::class];
 
         public function sluggable(): array
             {

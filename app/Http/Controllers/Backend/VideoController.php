@@ -18,7 +18,9 @@ use Illuminate\Support\Str;
 class VideoController extends Controller
     {
         use Meta;
+
         public $data = [];
+
         public function __construct()
             {
                 $this->data = self::product_def();
@@ -60,28 +62,28 @@ class VideoController extends Controller
                 //$event = Event::findOrFail($validatedData['event_id']);
 
 
-                $video              = new Content();
-                $video->channel_id  = Auth::user()->channel_id??0;
-                $video->event_id    = $validatedData['event_id'];
-                $video->slug        = Str::slug($validatedData['title']);
-                $video->title       = $validatedData['title'];
-                $video->description = $validatedData['description'];
-                $video->type        = 'video';
+                $video                = new Content();
+                $video->channel_id    = Auth::user()->channel_id ?? 0;
+                $video->event_id      = $validatedData['event_id'];
+                $video->slug          = Str::slug($validatedData['title']);
+                $video->title         = $validatedData['title'];
+                $video->description   = $validatedData['description'];
+                $video->type          = 'video';
                 $video->content_group = 'video';
 
                 // Handle thumbnail upload
                 if ($request->hasFile('thumbnail'))
                     {
-                        $uploadService    = new UploadService();
-                        $thumbnailPath    = $uploadService->file_upload($request, 'thumbnail', 'thumbnails');
+                        $uploadService        = new UploadService();
+                        $thumbnailPath        = $uploadService->file_upload($request, 'thumbnail', 'thumbnails');
                         $video->thumbnail_url = $thumbnailPath['path'];
                     }
 
                 // Handle video upload
                 if ($request->hasFile('video_path'))
                     {
-                        $uploadService     = new UploadService();
-                        $videoPath         = $uploadService->file_upload($request, 'video_path', 'videos');
+                        $uploadService       = new UploadService();
+                        $videoPath           = $uploadService->file_upload($request, 'video_path', 'videos');
                         $video->content_path = $videoPath['path'];
                     }
 
@@ -91,17 +93,27 @@ class VideoController extends Controller
                 // Save tags to the tags table and attach tag IDs to the tags column of the videos table
                 if ($result && isset($validatedData['tags']))
                     {
-                        $tags = explode(',', $validatedData['tags']);
-                        if(!empty($tags))
+                        $tags = collect(explode(',', $validatedData['tags']))
+                            ->map(fn($tag) => trim(strtolower($tag)))
+                            ->filter()
+                            ->unique()
+                            ->values();
+
+                        if ($tags->isNotEmpty())
                             {
+
+                                // Save genre as JSON (if needed)
                                 $video->genre = $tags;
                                 $video->save();
-                                foreach ($tags as $tagName)
+                                $tagIds = $tags->map(function ($tagName)
                                     {
-                                        $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
+                                        $tag = Tag::firstOrCreate(
+                                            ['name' => $tagName],
+                                            ['slug' => Str::slug($tagName)]
                                         );
-                                        $video->tags()->attach($tag->id);
-                                    }
+                                        return $tag->id;
+                                    });
+                                $video->tags()->sync($tagIds);
                             }
                     }
 
@@ -123,7 +135,7 @@ class VideoController extends Controller
      */
         public function show(Content $video)
             {
-                $this->data['video'] =$video;
+                $this->data['video'] = $video;
                 return view('Backend.modules.videos.show', $this->data);
             }
 
@@ -158,7 +170,7 @@ class VideoController extends Controller
                         'event_id'    => 'required|exists:events,uuid',
                         'thumbnail'   => 'nullable|image|max:5120',
                         'video_path'  => 'nullable|file|mimetypes:video/avi,video/mpeg,video/mp4|max:50000',
-                        'tags'        => 'nullable|array',
+                        'tags'        => 'nullable',
                         'tags.*'      => 'nullable|string|max:50',
                     ]
                 );
@@ -206,23 +218,36 @@ class VideoController extends Controller
                     }
 
                 // Update tags
-                if (isset($validatedData['tags']))
+                if (!empty($validatedData['tags']))
                     {
-                        $tags = explode(',', $validatedData['tags']);
-                        if(!empty($tags))
+
+                        $tags = collect(explode(',', $validatedData['tags']))
+                            ->map(fn($tag) => trim(strtolower($tag)))
+                            ->filter()
+                            ->unique()
+                            ->values();
+
+                        if ($tags->isNotEmpty())
                             {
+
+                                // Save genre as JSON (if needed)
                                 $video->genre = $tags;
                                 $video->save();
-                                $video->tags()->detach();
-                                foreach ($tags as $tagName)
+
+                                // Get or create tags in bulk
+                                $tagIds = $tags->map(function ($tagName)
                                     {
-                                        $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
+                                        $tag = Tag::firstOrCreate(
+                                            ['name' => $tagName],
+                                            ['slug' => Str::slug($tagName)]
                                         );
-                                        $video->tags()->attach($tag->id);
-                                    }
+                                        return $tag->id;
+                                    });
+
+                                // Sync instead of detach + attach
+                                $video->tags()->sync($tagIds);
                             }
                     }
-
 
 
                 // Save the video
