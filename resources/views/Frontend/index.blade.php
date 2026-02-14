@@ -124,7 +124,17 @@
             </div>
         </div>
         <div class="row tr-movie-active">
- 
+@php
+$playlist = $topradios->map(function ($radio) {
+    return [
+        'src' => $radio->stream_url ?? null,
+        'title' => $radio->title ?? 'Untitled',
+        'podcast' => $radio->title ?? 'Unknown Podcast',
+        'thumbnail' => $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg'),
+    ];
+});
+@endphp
+
             @foreach($topradios as $radio)
             @include('Frontend.includes.components.cards.radio-card')
             @endforeach
