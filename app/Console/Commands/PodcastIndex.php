@@ -53,7 +53,7 @@ class PodcastIndex extends Command
                 foreach ($categories as $cat)
                     {
 
-                        $trending = $pi->trending_podcast($db_cat->name)->feeds ?? [];
+                        $trending = $pi->trending_podcast($cat->name)->feeds ?? [];
 
                         foreach ($trending as $podcastData)
                             {
