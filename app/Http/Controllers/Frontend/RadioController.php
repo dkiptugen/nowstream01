@@ -18,11 +18,13 @@ class RadioController extends Controller
 
         $this->data['radios'] = Content::where('content_group', 'radio')
                 ->whereNotNull('stream_url') 
+            ->where('status', 1)
             ->paginate(30);
           
         $this->data['categories'] = Category::where('type', 'radio')->limit(6)->get(); 
         $this->data['topradios'] = Content::where('content_group', 'radio') 
         ->whereNotNull('stream_url')
+        ->where('status', 1)
         ->orderBy('views', 'desc')
         ->limit(6)
         ->get();
@@ -36,6 +38,7 @@ class RadioController extends Controller
                 return Content::where('uuid', $uuid)
                     ->where('slug', $slug)
                     ->where('content_group', 'radio')
+            ->where('status', 1)
                     ->first();
             });
             $radio->increment('views'); // Increment view count 
@@ -48,6 +51,7 @@ class RadioController extends Controller
                 return Content::where('content_group', 'radio')
                     ->where('uuid', '!=', $uuid)
                     ->whereNotNull('stream_url')
+                    ->where('status', 1)
                     ->latest()
                     ->take(6)
                     ->get();
