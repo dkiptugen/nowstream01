@@ -44,6 +44,7 @@ class HomeController extends Controller
         $this->data['topradios'] = Content::where('content_group', 'radio')
             ->whereNotNull('stream_url')
             ->orderBy('views', 'desc')
+            ->where('status', 1)
             ->limit(6)
             ->get();
 
