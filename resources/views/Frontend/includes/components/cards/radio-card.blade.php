@@ -1,7 +1,14 @@
 <div class="col-xl-2 col-lg-2 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-60">
                     <div class="movie-poster">
-                        <a href="{{ route('radio.show', [$radio->uuid, $radio->slug]) }}">
+                        <a href="{{ route('radio.show', [$radio->uuid, $radio->slug]) }}"  
+    onclick="playSingleAudio(
+        '{{ $radio->stream_url }}',
+        '{{ addslashes($radio->title) }}',
+        'Live Radio',
+        '{{ $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
+    )"
+    >
                             <img src="{{$radio->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                 class="w-100 d-block w-100" alt="..." style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                             <div class="play fs-40">
@@ -17,17 +24,7 @@
                                 </a>
                             </h6>
                         </div>
-                        <div class="bottom">
-                  <button 
-    onclick="playSingleAudio(
-        '{{ $radio->stream_url }}',
-        '{{ addslashes($radio->title) }}',
-        'Live Radio',
-        '{{ $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
-    )"
-    class="btn btn-sm btn-primary">
-    Play
-</button>
+                        <div class="bottom"> 
 
  
                             <ul>
