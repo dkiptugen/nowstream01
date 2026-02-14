@@ -18,15 +18,17 @@
                             </h6>
                         </div>
                         <div class="bottom">
-                            <!-- Display number of views -->
-  <a class="popup-video" onclick="playSingleAudio(
-            '{{ $radio->stream_url }}',
-            '{{ addslashes($radio->title) }}',
-            'Live Radio',
-            '{{ $radio->thumbnail_url }}'
-        )">
-                            <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
-                        </a>
+                  <button 
+    onclick="playSingleAudio(
+        '{{ $radio->stream_url }}',
+        '{{ addslashes($radio->title) }}',
+        'Live Radio',
+        '{{ $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
+    )"
+    class="btn btn-sm btn-primary">
+    Play
+</button>
+
  
                             <ul>
                                 <li>
