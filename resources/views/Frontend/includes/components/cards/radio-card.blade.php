@@ -6,6 +6,7 @@
         '{{ $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
      )"
      style="cursor:pointer;">
+     {{dd($radio)}}
                 <div class="movie-item mb-60">
                     <div class="movie-poster">
                         
