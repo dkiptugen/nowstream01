@@ -30,29 +30,38 @@ class IPTvLogoImport extends Command
                 $channels = Http::timeout(120)
                                 ->get($this->baseUrl . '/logos.json')
                                 ->json();
+                //$this->info(collect($channels)->toJson());
                 foreach ($channels as $channel)
                     {
-                        $content = Content::where('old_id', $channel['channel'])
-                                          ->orWhere('title', $channel['feed'])
-                                          ->first();
-                        if (!is_null($channel))
+                        try
                             {
-                                try
-                                    {
-                                        $content->thumbnail_url = !is_null($channel['url'])?$channel['url']:asset('assets/img/no-logo.jpg');
-                                        $content->genre         = is_null($content->genre) ? json_encode($channel['genres'] ?? []) : $content->genre;
-                                        $res                    = $content->save();
-                                        if ($res)
-                                            {
 
-                                                $this->info($content->title.'-'.json_encode($channel));
-                                            }
-                                    }
-                                catch (\Exception $e)
+                                $content = Content::where('old_id', $channel['channel'] ?? null)
+                                                  ->orWhere('title', $channel['feed'] ?? null)
+                                                  ->first();
+
+                                if (!$content)
                                     {
-                                        $this->info($e->getMessage());
+                                        $this->warn("Content not found for: " . ($channel['channel'] ?? 'unknown'));
+                                        continue; // ✅ skip instead of breaking loop
                                     }
 
+                                $content->thumbnail_url = $channel['url'] ?? asset('assets/img/no-logo.jpg');
+
+                                if (empty($content->genre))
+                                    {
+                                        $content->genre = json_encode($channel['genres'] ?? []);
+                                    }
+
+                                $content->save();
+
+                                $this->info("Updated: " . $content->title);
+
+                            }
+                        catch (\Throwable $e)
+                            {
+                                $this->error("Error processing channel: " . $e->getMessage());
+                                continue; // ✅ continue even if error happens
                             }
 
                     }
