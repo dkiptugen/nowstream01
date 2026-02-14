@@ -46,23 +46,12 @@ class PodcastIndex extends Command
             {
                 $pi = new PI();
 
-                $categories = $pi->podcastCategories()->feeds;
+                $categories = Category::get();
 
                 $this->output->progressStart(count($categories));
 
                 foreach ($categories as $cat)
                     {
-
-                        $db_cat = Category::firstOrCreate(
-                            ['name' => $cat->name],
-                            [
-                                'system_user_id' => 1,
-                                'position'       => 1,
-                                'type'           => ['podcast'],
-                                'status'         => 1,
-                                'description'    => ''
-                            ]
-                        );
 
                         $trending = $pi->trending_podcast($db_cat->name)->feeds ?? [];
 
@@ -93,7 +82,7 @@ class PodcastIndex extends Command
                                     ]
                                 );
 
-                                $pod->categories()->syncWithoutDetaching([$db_cat->uuid]);
+                                $pod->categories()->syncWithoutDetaching([$cat->uuid]);
 
                                 ImportPodcastEpisodes::dispatch(
                                     $podcastData->id,
