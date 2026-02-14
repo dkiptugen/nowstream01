@@ -43,7 +43,8 @@
 
 					$data = Http::withHeaders($this->headers)->get('https://api.podcastindex.org/api/1.0/podcasts/trending', [
 						'cat' => $cat,
-						"max" => 1000
+						"max" => 1000,
+                        "full" => 1
 					]);
 					if ($data->successful())
 						{
