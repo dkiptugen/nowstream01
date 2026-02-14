@@ -45,12 +45,12 @@ class IPTvLogoImport extends Command
                                         if ($res)
                                             {
 
-                                                $this->info($content->title);
+                                                $this->info($content->title.'-'.json_encode($channel));
                                             }
                                     }
                                 catch (\Exception $e)
                                     {
-                                        $this->error($e->getMessage());
+                                        $this->info($e->getMessage());
                                     }
 
                             }
