@@ -37,14 +37,22 @@ class IPTvLogoImport extends Command
                                           ->first();
                         if (!is_null($channel))
                             {
-                                $content->thumbnail_url = $channel['url'];
-                                $content->genre         = is_null($content->genre) ? json_encode($channel['genres'] ?? []) : $content->genre;
-                                $res                    = $content->save();
-                                if ($res)
+                                try
                                     {
+                                        $content->thumbnail_url = $channel['url'];
+                                        $content->genre         = is_null($content->genre) ? json_encode($channel['genres'] ?? []) : $content->genre;
+                                        $res                    = $content->save();
+                                        if ($res)
+                                            {
 
-                                        $this->info($content->title);
+                                                $this->info($content->title);
+                                            }
                                     }
+                                catch (\Exception $e)
+                                    {
+                                        $this->error($e->getMessage());
+                                    }
+
                             }
                     }
                 $this->info('Import completed successfully');
