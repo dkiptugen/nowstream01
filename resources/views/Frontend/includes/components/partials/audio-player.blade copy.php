@@ -187,6 +187,11 @@
         if (!isNaN(audio.duration)) {
             audio.currentTime = (progress.value / 100) * audio.duration;
         }
+        if (!isFinite(audio.duration)) {
+    progress.value = 0;
+    durationEl.innerText = 'LIVE';
+}
+
     });
 
     audio.addEventListener('timeupdate', () => {
@@ -221,6 +226,7 @@
     document.addEventListener('DOMContentLoaded', restoreState);
 
 })();
+
 </script>
 
 
