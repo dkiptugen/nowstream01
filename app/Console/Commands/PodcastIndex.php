@@ -6,16 +6,12 @@ use App\Jobs\ImportPodcastEpisodes;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Language;
-
 use App\Models\Region;
 use App\Traits\Meta;
 use App\Libs\PodcastIndex as PI;
-use Cviebrock\EloquentSluggable\Services\SlugService;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 ini_set('memory_limit', '-1');
 
@@ -23,28 +19,16 @@ class PodcastIndex extends Command
     {
         use Meta;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-        protected $signature = 'pi:import';
+        protected $signature   = 'pi:import';
+        protected $description = 'Import trending podcasts from Podcast Index';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-        protected $description = 'Command description';
-
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
         public function handle()
             {
                 $pi = new PI();
+
+                // Cache these once (avoid querying inside loop)
+                $languages = Language::pluck('id', 'code');
+                $region    = Region::where('name', 'undefined')->first();
 
                 $categories = Category::get();
 
@@ -53,42 +37,63 @@ class PodcastIndex extends Command
                 foreach ($categories as $cat)
                     {
 
-                        $trending = $pi->trending_podcast($cat->name)->feeds ?? [];
-
-                        foreach ($trending as $podcastData)
+                        try
                             {
 
-                                $language = Language::where('code', $podcastData->language)->first();
-                                $region   = Region::where('name', 'undefined')->first();
+                                $trending = $pi->trending_podcast($cat->name)->feeds ?? [];
 
-                                $pod = Content::updateOrCreate(
-                                    [
-                                        'old_id'        => $podcastData->id,
-                                        'source'        => 'Podcast Index',
-                                        'content_group' => 'podcast'
-                                    ],
-                                    [
-                                        'title'          => $this->remove_emoji($podcastData->title),
-                                        'description'    => $this->remove_emoji($podcastData->description),
-                                        'stream_url'     => $podcastData->url,
-                                        'author'         => $podcastData->author,
-                                        'publishdate'    => Carbon::createFromTimestamp($podcastData->newestItemPublishTime),
-                                        'status'         => 1,
-                                        'type'           => 'rss',
-                                        'language_id'    => $language->id ?? null,
-                                        'thumbnail_url'  => $podcastData->image,
-                                        'region_id'      => $region->id ?? null,
-                                        'system_user_id' => 1,
-                                    ]
-                                );
+                                foreach ($trending as $podcastData)
+                                    {
 
-                                $pod->categories()->syncWithoutDetaching([$cat->uuid]);
+                                        $title = $this->remove_emoji($podcastData->title);
 
-                                ImportPodcastEpisodes::dispatch(
-                                    $podcastData->id,
-                                    $pod->uuid
-                                );
+                                        // 🔥 Ensure slug always exists (Chinese-safe)
+                                        $slug = Str::slug(Str::ascii($title));
 
+                                        if (empty($slug))
+                                            {
+                                                $slug = 'podcast-' . $podcastData->id;
+                                            }
+
+                                        $pod = Content::updateOrCreate(
+                                            [
+                                                'old_id'        => $podcastData->id,
+                                                'source'        => 'Podcast Index',
+                                                'content_group' => 'podcast'
+                                            ],
+                                            [
+                                                'title'          => $title,
+                                                'slug'           => $slug,
+                                                'description'    => $this->remove_emoji($podcastData->description),
+                                                'stream_url'     => $podcastData->url,
+                                                'author'         => $podcastData->author,
+                                                'publishdate'    => Carbon::createFromTimestamp(
+                                                    $podcastData->newestItemPublishTime
+                                                ),
+                                                'status'         => 1,
+                                                'type'           => 'rss',
+                                                'language_id'    => $languages[$podcastData->language] ?? null,
+                                                'thumbnail_url'  => $podcastData->image,
+                                                'region_id'      => $region->id ?? null,
+                                                'system_user_id' => 1,
+                                            ]
+                                        );
+
+                                        // Attach category safely
+                                        $pod->categories()->syncWithoutDetaching([$cat->uuid]);
+
+                                        // Dispatch episode import job
+                                        ImportPodcastEpisodes::dispatch(
+                                            $podcastData->id,
+                                            $pod->uuid
+                                        )->onQueue('podcasts');
+
+                                    }
+
+                            }
+                        catch (\Throwable $e)
+                            {
+                                logger()->error("Podcast import error: " . $e->getMessage());
                             }
 
                         $this->output->progressAdvance();
@@ -98,6 +103,4 @@ class PodcastIndex extends Command
 
                 return Command::SUCCESS;
             }
-
-
     }
