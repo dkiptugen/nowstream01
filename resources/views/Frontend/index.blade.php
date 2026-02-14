@@ -2,78 +2,7 @@
 
 
 @section('content')
-
-<div class="hero-area">
-    @foreach($events->take(1) as $event)
-    <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
-        <div class="container custom-container">
-            <div class="row">
-                <div class="col-xl-6 col-lg-8">
-                    <div class="banner-content">
-                        <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
-                        @php
-                        $words = preg_split('/\s+/', trim(ucfirst($event->event_name)));
-                        $half = (int) ceil(count($words) / 2);
-
-                        $firstHalf = implode(' ', array_slice($words, 0, $half));
-                        $secondHalf = implode(' ', array_slice($words, $half));
-                        @endphp
-
-                        <h2 class="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1.8s">
-                            {{ $firstHalf }}
-                            <span>{{ $secondHalf }}</span>
-                        </h2>
-                        <div class="banner-meta wow fadeInUp" data-wow-delay=".6s" data-wow-duration="1.8s">
-                            <ul>
-                                <li class="quality">
-                                    <span>Pg 18</span>
-                                    <span>hd</span>
-                                </li>
-                                <li class="category">
-                                    <a href="#">Comedy,</a>
-                                    <a href="#">Entertainment</a>
-                                </li>
-                                <li class="release-time">
-                                    <span><i class="far fa-calendar-alt"></i> 2021</span>
-                                    <span><i class="far fa-clock"></i> 128 min</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="form-group w-100">
-                            @if (session('error'))
-                            <div class="alert alert-danger mt-4">
-                                {{ session('error') }}
-                            </div>
-                            @endif
-                            <h3 class="text-light mb-3">
-                            </h3>
-                            <form action="{{ route('stream.find') }}" method="POST" class="newsletter-form">
-                                @csrf
-                                <div class="input-group mw-500">
-                                    <input type="text" class="" name="stream_token"
-                                        placeholder="Enter Token or Phone Number" aria-label="Stream token"
-                                        aria-describedby="button-addon2">
-                                    <input type="hidden" name="event_id" value="{{$event->id}}">
-                                    <button class="btn" type="submit" id="button-addon2"><i
-                                            class="fas fa-play"></i> Watch Now</button>
-                                </div>
-                            </form>
-                            <p class="w-100 text-left text-light mt-2 mb-0">Already Bought? Enter Stream Token
-                                Or Phone Number
-                                To Watch.
-                            </p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- banner-area-end -->
-
-    @endforeach
-</div>
+ 
 
 <!-- top-rated-movie -->
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
