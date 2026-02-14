@@ -16,14 +16,22 @@
                 <div class="card-body">
 
                     @php
-                        $ext = strtolower(pathinfo($episode->content_path, PATHINFO_EXTENSION));
+                        $ext = strtolower(pathinfo($episode->stream_url, PATHINFO_EXTENSION));
+                        $mime = match ($ext) {
+                                        'mp3'  => 'audio/mpeg',
+                                        'm4a'  => 'audio/mp4',
+                                        'aac'  => 'audio/aac',
+                                        'wav'  => 'audio/wav',
+                                        'ogg'  => 'audio/ogg',
+                                        default => 'application/octet-stream',
+                                    };
                     @endphp
 
 
                         <!-- VIDEO -->
                         <div class="ratio ratio-16x9">
                             <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}">
-                                <source src="{{ $episode->stream_url }}" type="{{ $episode->type }}">
+                                <source src="{{ $episode->stream_url }}" type="{{ $mime }}">
                             </video>
                         </div>
 
