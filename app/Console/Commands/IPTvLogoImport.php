@@ -39,7 +39,7 @@ class IPTvLogoImport extends Command
                             {
                                 try
                                     {
-                                        $content->thumbnail_url = $channel['url']??asset('assets/img/no-logo.jpg');
+                                        $content->thumbnail_url = !is_null($channel['url'])?$channel['url']:asset('assets/img/no-logo.jpg');
                                         $content->genre         = is_null($content->genre) ? json_encode($channel['genres'] ?? []) : $content->genre;
                                         $res                    = $content->save();
                                         if ($res)
@@ -54,6 +54,7 @@ class IPTvLogoImport extends Command
                                     }
 
                             }
+
                     }
                 $this->info('Import completed successfully');
             }
