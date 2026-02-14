@@ -19,7 +19,11 @@
                         </div>
                         <div class="bottom">
                             <!-- Display number of views -->
-
+  <a class="popup-video"
+ onclick='playGlobalAudio(@json($playlist), 0)'>
+                            <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
+                        </a>
+ 
                             <ul>
                                 <li>
                                     <span class="channel"><i class="far fa-user"></i>
