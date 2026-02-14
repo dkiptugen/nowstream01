@@ -4,7 +4,7 @@
 @php
 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
 return [
-'src' => $ep->content_path,
+'src' => $ep->stream_url,
 'title' => $ep->title,
 'podcast' => $podcast->title,
 'thumbnail' => $podcast->thumbnail_url
