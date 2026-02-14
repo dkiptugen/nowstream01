@@ -51,7 +51,7 @@ class VideoController extends Controller
                         'event_id'    => 'required|exists:events,uuid',
                         'thumbnail'   => 'nullable|image|max:5120',
                         'video_path'  => 'required|file|mimes:mp4,mov,avi,mpeg|max:81200',
-                        'tags'        => 'nullable|array',
+                        'tags'        => 'nullable',
                         'tags.*'      => 'nullable|string|max:50',
                     ]
                 );
@@ -91,15 +91,18 @@ class VideoController extends Controller
                 // Save tags to the tags table and attach tag IDs to the tags column of the videos table
                 if ($result && isset($validatedData['tags']))
                     {
-                        $tags = [];
-                        foreach ($validatedData['tags'] as $tagName)
+                        $tags = explode(',', $validatedData['tags']);
+                        if(!empty($tags))
                             {
-                                $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
-                                );
-                                $tags[] = $tag->id;
+                                $video->genre = $tags;
+                                $video->save();
+                                foreach ($tags as $tagName)
+                                    {
+                                        $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
+                                        );
+                                        $video->tags()->attach($tag->id);
+                                    }
                             }
-                        $video->tags = json_encode($tags); // Save tag IDs as a JSON array in the tags column
-                        $video->save();
                     }
 
                 if ($result)
@@ -205,15 +208,21 @@ class VideoController extends Controller
                 // Update tags
                 if (isset($validatedData['tags']))
                     {
-                        $tags = [];
-                        foreach ($validatedData['tags'] as $tagName)
+                        $tags = explode(',', $validatedData['tags']);
+                        if(!empty($tags))
                             {
-                                $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
-                                );
-                                $tags[] = $tag->id;
+                                $video->genre = $tags;
+                                $video->save();
+                                $video->tags()->detach();
+                                foreach ($tags as $tagName)
+                                    {
+                                        $tag    = Tag::firstOrCreate(['name' => $tagName], ['slug' => Str::slug($tagName)]
+                                        );
+                                        $video->tags()->attach($tag->id);
+                                    }
                             }
-                        $video->tags()->sync($tags);
                     }
+
 
 
                 // Save the video
