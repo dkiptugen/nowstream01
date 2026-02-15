@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 const player = new Plyr(video, {
     autoplay: true,
-    controls: ['play', 'mute', 'volume', 'fullscreen']
+    controls: ['play', 'autoplay', 'volume', 'fullscreen']
 });
 
 </script>
