@@ -9,13 +9,17 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-						<video
-    id="player"
-    playsinline
-    controls
-    preload="auto"
-    poster="{{ $tv->thumbnail_url }}">
-</video>
+	@foreach($tvs as $tv)
+    <video
+        id="player-{{ $tv->uuid }}"
+        class="tv-player"
+        data-stream="{{ $tv->stream_url }}"
+        playsinline
+        controls
+        poster="{{ $tv->thumbnail_url }}">
+    </video>
+@endforeach
+
 
 					</div>
  
@@ -374,96 +378,59 @@
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const video = document.getElementById('player');
-    if (!video) return;
+    const videos = document.querySelectorAll('.tv-player');
 
-    const streamUrl = @json($tv->stream_url);
+    videos.forEach(video => {
 
-    if (!streamUrl) {
-        console.error('No stream URL provided');
-        return;
-    }
+        const streamUrl = video.dataset.stream;
+        if (!streamUrl) return;
 
-    // Initialize Plyr
-    const player = new Plyr(video, {
-        autoplay: true,
-        muted: false,
-        controls: [
-            'play',
-            'progress',
-            'current-time',
-            'mute',
-            'volume',
-            'fullscreen'
-        ]
-    });
+        const player = new Plyr(video, {
+            autoplay: false,
+            muted: true
+        });
 
-    let hls = null;
+        let hls = null;
 
-    function isHls(url) {
-        return url.toLowerCase().includes('.m3u8');
-    }
+        function loadStream(url) {
 
-    function loadStream(url) {
-
-        // Destroy previous HLS if exists
-        if (hls) {
-            hls.destroy();
-            hls = null;
-        }
-
-        // HLS Stream
-        if (isHls(url)) {
-
-            if (Hls.isSupported()) {
-                hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                    backBufferLength: 30
-                });
-
-                hls.loadSource(url);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    video.play().catch(() => {});
-                });
-
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    console.error('HLS error:', data);
-                });
-
-            } 
-            // Safari native HLS
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', function () {
-                    video.play().catch(() => {});
-                });
-            } 
-            else {
-                console.error('HLS not supported in this browser');
+            if (hls) {
+                hls.destroy();
+                hls = null;
             }
 
-        } 
-        // MP4 / other formats
-        else {
-            video.src = url;
-            video.load();
+            if (url.includes('.m3u8')) {
 
-            video.addEventListener('loadedmetadata', function () {
-                video.play().catch(() => {});
-            });
+                if (Hls.isSupported()) {
+                    hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        // Do not autoplay multiple TVs
+                    });
+
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                }
+
+            } else {
+                video.src = url;
+            }
         }
-    }
 
-    // Load single TV stream
-    loadStream(streamUrl);
+        loadStream(streamUrl);
 
-});
+    });
+
+}); 
+
 const player = new Plyr(video, {
     autoplay: true,
     controls: ['play', 'mute', 'volume', 'fullscreen']
