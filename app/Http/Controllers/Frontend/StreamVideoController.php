@@ -29,12 +29,12 @@ class StreamVideoController extends Controller
      */
     public function index()
     {
-        $topVideos = Content::where('type', 'video')
+        $topVideos = Content::where('content_group', 'video')
             ->orderBy('views', 'DESC')
             ->take(4)
             ->get();
 
-        $videos = Content::where('type', 'video')
+        $videos = Content::where('content_group', 'video')
             ->latest()
             ->paginate(12);
 
@@ -53,7 +53,7 @@ class StreamVideoController extends Controller
   public function show(string $uuid, string $slug = null)
 {
     try {
-        $video = Content::where('type', 'video')
+        $video = Content::where('content_group', 'video')
             ->where('uuid', $uuid)
             ->where('status', 1)
             ->with(['comments.user'])
@@ -75,7 +75,7 @@ class StreamVideoController extends Controller
         $channels = Channel::where('status', 1)->take(8)->get();
 
         // Related videos (same channel)
-        $relatedVideos = Content::where('type', 'video')
+        $relatedVideos = Content::where('content_group', 'video')
             ->where('status', 1)
             ->where('channel_id', $video->channel_id)
             ->where('uuid', '!=', $video->uuid)
