@@ -27,7 +27,7 @@ $this->data['categories'] = Category::orderBy('created_at', 'desc')
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
         ->with('categories')
-        ->limit(6)
+        ->limit(39)
         ->get();
             dd($this->data['categories']);
         // english channels
