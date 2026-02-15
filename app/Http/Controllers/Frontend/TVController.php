@@ -20,9 +20,7 @@ class TVController extends Controller
                 ->with('categories')
             ->paginate(30);
           
-$this->data['categories'] = Category::whereJsonContains('type', 'podcast')
-    ->limit(6)
-    ->get();
+$this->data['categories'] = Category::all();
         $this->data['toptvs'] = Content::where('content_group', 'tv') 
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
