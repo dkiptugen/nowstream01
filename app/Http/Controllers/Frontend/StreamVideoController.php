@@ -54,8 +54,7 @@ class StreamVideoController extends Controller
 {
     try {
         $video = Content::where('content_group', 'video')
-            ->where('uuid', $uuid)
-            ->where('status', 1)
+            ->where('uuid', $uuid) 
             ->with(['comments.user'])
             ->firstOrFail();
 
