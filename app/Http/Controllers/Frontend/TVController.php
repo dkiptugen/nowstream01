@@ -17,14 +17,19 @@ class TVController extends Controller
 
         $this->data['tvs'] = Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url') 
+                ->with('categories')
             ->paginate(30);
           
-        $this->data['categories'] = Category::where('type', 'tv')->limit(6)->get(); 
+$this->data['categories'] = Category::whereJsonContains('type', 'tv')
+    ->limit(6)
+    ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv') 
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
+        ->with('categories')
         ->limit(6)
         ->get();
+            dd($this->data['categories']);
         // english channels
         $this->data['english_tvs'] = Content::where('content_group', 'tv') 
         ->whereNotNull('stream_url')
