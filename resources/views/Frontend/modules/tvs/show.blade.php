@@ -375,9 +375,7 @@
 	@section('footer')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+ 
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
