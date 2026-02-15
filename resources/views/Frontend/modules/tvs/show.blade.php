@@ -401,10 +401,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadMedia(url) {
         const type = getMediaType(url);
 
-        // Reset video completely (important)
-        video.pause();
+        // Reset video completely (important) 
         video.removeAttribute('src');
         video.load();
+		video.muted = false;
+video.volume = 1;
+video.play();
+
 
         // Destroy previous HLS if exists
         if (hlsInstance) {
