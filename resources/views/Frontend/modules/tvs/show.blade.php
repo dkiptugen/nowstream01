@@ -8,20 +8,19 @@
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="tv-wrap"> 
- <video
-    id="player"
-    data-stream="{{ $tv->stream_url }}"
-    playsinline
-	autoplay
-	pip
-    controls
-    poster="{{ $tv->thumbnail_url }}">
-</video>
+					<div id="videoWrap" class="tv-wrap">  
+    <video
+        id="player"
+        data-stream="{{ $tv->stream_url }}"
+        playsinline
+        controls
+        poster="{{ $tv->thumbnail_url }}">
+    </video>
 
+    <div class="live-badge">LIVE</div>
+</div>
 
-
-					</div>
+ 
  
 				</div>
 				@include('Frontend.includes.components.partials.tv-comments')
@@ -372,12 +371,25 @@
 		.sticky {
 			z-index: 99;
 		}
+		.live-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
 	</style>
 	@endsection
 	@section('footer')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
- <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
 
     const video = document.getElementById('player');
@@ -387,50 +399,139 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!streamUrl) return;
 
     const player = new Plyr(video, {});
-    let hlsInstance = null;
+
+    let hls = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    const reconnectDelay = 3000;
 
     function getMediaType(url) {
         const ext = url.split('.').pop().toLowerCase();
         if (ext === 'm3u8') return 'hls';
         if (ext === 'mp4') return 'video/mp4';
-        if (ext === 'mp3') return 'audio/mp3';
-        if (ext === 'mov') return 'video/quicktime';
         return '';
     }
 
-    function loadMedia(url) {
-        const type = getMediaType(url);
+    function autoplayWithSound() {
+        video.muted = false;
+        video.volume = 1;
 
-        // Reset video completely (important) 
-        video.removeAttribute('src');
-        video.load();
-		video.muted = false;
-video.volume = 1;
-video.play();
+        video.play().catch(() => {
+            // Browser blocked autoplay with sound
+            video.muted = true;
+            video.play().catch(() => {});
+        });
+    }
 
-
-        // Destroy previous HLS if exists
-        if (hlsInstance) {
-            hlsInstance.destroy();
-            hlsInstance = null;
-        }
-
-        if (type === 'hls') {
-            if (Hls.isSupported()) {
-                hlsInstance = new Hls();
-                hlsInstance.loadSource(url);
-                hlsInstance.attachMedia(video);
-            }
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-            }
-        }
-        else if (video.canPlayType(type)) {
-            video.src = url;
+    function destroyHls() {
+        if (hls) {
+            hls.destroy();
+            hls = null;
         }
     }
 
-    loadMedia(streamUrl);
+    function reconnectStream() {
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            console.error('Max reconnect attempts reached');
+            return;
+        }
+
+        reconnectAttempts++;
+        console.log('Reconnecting stream...', reconnectAttempts);
+
+        setTimeout(() => {
+            loadStream(streamUrl);
+        }, reconnectDelay);
+    }
+
+    function loadStream(url) {
+        const type = getMediaType(url);
+
+        // Reset video
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+
+        destroyHls();
+
+        if (type === 'hls') {
+
+            if (Hls.isSupported()) {
+
+                hls = new Hls({
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                    enableWorker: true,
+                    lowLatencyMode: true
+                });
+
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    reconnectAttempts = 0;
+                    autoplayWithSound();
+                });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+
+                    if (data.fatal) {
+                        console.error('HLS fatal error:', data.type);
+
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                reconnectStream();
+                                break;
+
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError();
+                                break;
+
+                            default:
+                                reconnectStream();
+                                break;
+                        }
+                    }
+                });
+
+            }
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
+            }
+
+        } else {
+            video.src = url;
+            video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
+        }
+    }
+
+    /* ===============================
+       Network Recovery
+    =============================== */
+    window.addEventListener('offline', function () {
+        console.warn('Network lost');
+    });
+
+    window.addEventListener('online', function () {
+        console.log('Network restored — reconnecting');
+        reconnectAttempts = 0;
+        loadStream(streamUrl);
+    });
+
+    /* ===============================
+       Visibility Optimization
+    =============================== */
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && video.paused) {
+            video.play().catch(() => {});
+        }
+    });
+
+    /* ===============================
+       Start
+    =============================== */
+    loadStream(streamUrl);
 
 });
 </script>
