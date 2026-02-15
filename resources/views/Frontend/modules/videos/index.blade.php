@@ -116,7 +116,7 @@
                 <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                     <div class="movie-item mb-60 shadow-sm bg-dark">
                         <div class="movie-poster mb-0">
-                            <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
+                            <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
                                 <img src="{{$video->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                     class="w-100 d-block w-100" alt="...">
                                 <div class="play fs-40">
@@ -130,7 +130,7 @@
                             $channel = Channel::find($video->channel_id);
                             @endphp
                                 <h5 class="title mt-0">
-                                    <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
+                                    <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
                                         {{ucfirst($video->title)}}
                                     </a>
                                 </h5> 
