@@ -50,7 +50,7 @@ class StreamVideoController extends Controller
     /**
      * Show single video by UUID
      */
-  public function show(string $uuid, string $slug = '')
+  public function show(string $uuid, string $slug = null)
 {
     try {
         $video = Content::where('type', 'video')

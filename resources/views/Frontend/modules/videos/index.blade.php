@@ -69,7 +69,7 @@
                             $channel = Channel::find($video->channel_id);
                             @endphp
                                 <h5 class="title mt-0">
-                                    <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
+                                    <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
                                         {{ucfirst($video->title)}}
                                     </a>
                                 </h5> 
