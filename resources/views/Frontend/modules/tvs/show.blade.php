@@ -380,7 +380,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('player');
+            const video = document.getElementById('player-{{ $tv->uuid }}');
             const player = new Plyr(video, {});
             // Determine media type
             function getMediaType(url) {
