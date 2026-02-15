@@ -51,13 +51,12 @@
             </div>
             <div class="row tr-movie-active">
             @php use App\Models\Channel; @endphp
-            @foreach($top_videos as $video) 
-            {{dd($video);}}
+            @foreach($top_videos as $video)  
                 <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                     <div class="movie-item mb-60 shadow-sm bg-dark">
                         <div class="movie-poster mb-0">
                             <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
-                                <img src="{{$video->thumbnail ?? asset('frontend-assets/images/default.png')}}"
+                                <img src="{{$video->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                     class="w-100 d-block w-100" alt="...">
                                 <div class="play fs-40">
                                     <i class="fadeIn animated bx bx-play-circle"></i>
@@ -118,7 +117,7 @@
                     <div class="movie-item mb-60 shadow-sm bg-dark">
                         <div class="movie-poster mb-0">
                             <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
-                                <img src="{{$video->thumbnail ?? asset('frontend-assets/images/default.png')}}"
+                                <img src="{{$video->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                     class="w-100 d-block w-100" alt="...">
                                 <div class="play fs-40">
                                     <i class="fadeIn animated bx bx-play-circle"></i>
