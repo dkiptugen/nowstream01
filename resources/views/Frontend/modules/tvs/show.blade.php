@@ -9,14 +9,14 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap"> 
-    <video
-        id="player-{{ $tv->uuid }}"
-        class="tv-player"
-        data-stream="{{ $tv->stream_url }}"
-        playsinline
-        controls
-        poster="{{ $tv->thumbnail_url }}">
-    </video> 
+ <video
+    id="player"
+    data-stream="{{ $tv->stream_url }}"
+    playsinline
+    controls
+    poster="{{ $tv->thumbnail_url }}">
+</video>
+
 
 
 					</div>
@@ -375,57 +375,61 @@
 	@section('footer')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
- 
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const video = document.getElementById('player');
+    if (!video) return;
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('player-{{ $tv->uuid }}');
-            const player = new Plyr(video, {});
-            // Determine media type
-            function getMediaType(url) {
-                const ext = url.split('.').pop().toLowerCase();
-                if (ext === 'm3u8') return 'hls';
-                if (ext === 'mp4') return 'video/mp4';
-                if (ext === 'mp3') return 'audio/mp3';
-                if (ext === 'mov') return 'video/quicktime';
-                return '';
+    const streamUrl = video.dataset.stream;
+    if (!streamUrl) return;
+
+    const player = new Plyr(video, {});
+    let hlsInstance = null;
+
+    function getMediaType(url) {
+        const ext = url.split('.').pop().toLowerCase();
+        if (ext === 'm3u8') return 'hls';
+        if (ext === 'mp4') return 'video/mp4';
+        if (ext === 'mp3') return 'audio/mp3';
+        if (ext === 'mov') return 'video/quicktime';
+        return '';
+    }
+
+    function loadMedia(url) {
+        const type = getMediaType(url);
+
+        // Reset video completely (important)
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+
+        // Destroy previous HLS if exists
+        if (hlsInstance) {
+            hlsInstance.destroy();
+            hlsInstance = null;
+        }
+
+        if (type === 'hls') {
+            if (Hls.isSupported()) {
+                hlsInstance = new Hls();
+                hlsInstance.loadSource(url);
+                hlsInstance.attachMedia(video);
             }
-
-            // Load media dynamically
-            function loadMedia(url) {
-                const type = getMediaType(url);
-
-                if (type === 'hls') {
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(url);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                    }
-                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
-                    {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => video.play());
-                    }
-                    else console.error('HLS not supported');
-                }
-                else if (video.canPlayType(type))
-                {
-                    video.src = url;
-                    video.addEventListener('loadedmetadata', () => video.play());
-                }
-                else console.error('Unsupported media type');
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
             }
+        }
+        else if (video.canPlayType(type)) {
+            video.src = url;
+        }
+    }
 
-            // Example video/live URL
-            const mediaUrl = '{{ $tv->stream_url }}'; // Replace with dynamic URL
+    loadMedia(streamUrl);
 
-            loadMedia(mediaUrl);
+});
+</script>
 
-
-        });
-    </script>
 
 	<script>
 		$(document).ready(function() {
