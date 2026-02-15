@@ -21,8 +21,7 @@ class TVController extends Controller
             ->paginate(30);
           
 $this->data['categories'] = Category::orderBy('created_at', 'desc')  
-        ->where('type', 'Tv')
-    ->limit(39)
+    ->limit(20)
     ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv') 
         ->whereNotNull('stream_url')
