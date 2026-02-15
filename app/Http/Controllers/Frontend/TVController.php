@@ -20,8 +20,7 @@ class TVController extends Controller
                 ->with('categories')
             ->paginate(30);
           
-$this->data['categories'] = Category::orderBy('created_at', 'desc') 
-->where('type', 'tvs')
+$this->data['categories'] = Category::orderBy('created_at', 'desc')  
     ->limit(39)
     ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv') 
@@ -29,8 +28,7 @@ $this->data['categories'] = Category::orderBy('created_at', 'desc')
         ->orderBy('views', 'desc')
         ->with('categories')
         ->limit(39)
-        ->get();
-            dd($this->data['categories']);
+        ->get(); 
         // english channels
         $this->data['english_tvs'] = Content::where('content_group', 'tv') 
         ->whereNotNull('stream_url')
