@@ -10,17 +10,15 @@
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
 						<video
-							id="player"
-							playsinline
-							data-poster="{{ $tv->thumbnail_url }}">
-						</video>
+    id="player"
+    playsinline
+    controls
+    preload="auto"
+    poster="{{ $tv->thumbnail_url }}">
+</video>
+
 					</div>
-
-					@php
-
-					$oldvid= $tv;
-					$vid = $tv->id;
-					@endphp
+ 
 				</div>
 				@include('Frontend.includes.components.partials.tv-comments')
 
@@ -75,13 +73,7 @@
 		<div class="row">
 			<div class="col-12 col-lg-8">
 				<div class="card radius-5 row mx-md-0">
-
-					<video id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></video>
-
-					@php
-					$oldvid= $tv;
-					$vid = $tv->id;
-					@endphp
+ 
 					<div class="card-body">
 						<h2 class="mb-0">
 							{{$tv->title}}
@@ -379,52 +371,106 @@
 	</style>
 	@endsection
 	@section('footer')
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-	<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-	<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			const video = document.getElementById('player');
-			const player = new Plyr(video, {});
-			// Determine media type
-			function getMediaType(url) {
-				const ext = url.split('.').pop().toLowerCase();
-				if (ext === 'm3u8') return 'hls';
-				if (ext === 'mp4') return 'video/mp4';
-				if (ext === 'mp3') return 'audio/mp3';
-				if (ext === 'mov') return 'video/quicktime';
-				return '';
-			}
+    const video = document.getElementById('player');
+    if (!video) return;
 
-			// Load media dynamically
-			function loadMedia(url) {
-				const type = getMediaType(url);
+    const streamUrl = @json($tv->stream_url);
 
-				if (type === 'hls') {
-					if (Hls.isSupported()) {
-						const hls = new Hls();
-						hls.loadSource(url);
-						hls.attachMedia(video);
-						hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-					} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-						video.src = url;
-						video.addEventListener('loadedmetadata', () => video.play());
-					} else console.error('HLS not supported');
-				} else if (video.canPlayType(type)) {
-					video.src = url;
-					video.addEventListener('loadedmetadata', () => video.play());
-				} else console.error('Unsupported media type');
-			}
+    if (!streamUrl) {
+        console.error('No stream URL provided');
+        return;
+    }
 
-			// Example video/live URL
-			const mediaUrl = '{{ $tv->stream_url }}'; // Replace with dynamic URL
+    // Initialize Plyr
+    const player = new Plyr(video, {
+        autoplay: true,
+        muted: false,
+        controls: [
+            'play',
+            'progress',
+            'current-time',
+            'mute',
+            'volume',
+            'fullscreen'
+        ]
+    });
 
-			loadMedia(mediaUrl);
+    let hls = null;
 
+    function isHls(url) {
+        return url.toLowerCase().includes('.m3u8');
+    }
 
-		});
-	</script>
+    function loadStream(url) {
+
+        // Destroy previous HLS if exists
+        if (hls) {
+            hls.destroy();
+            hls = null;
+        }
+
+        // HLS Stream
+        if (isHls(url)) {
+
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 30
+                });
+
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play().catch(() => {});
+                });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    console.error('HLS error:', data);
+                });
+
+            } 
+            // Safari native HLS
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', function () {
+                    video.play().catch(() => {});
+                });
+            } 
+            else {
+                console.error('HLS not supported in this browser');
+            }
+
+        } 
+        // MP4 / other formats
+        else {
+            video.src = url;
+            video.load();
+
+            video.addEventListener('loadedmetadata', function () {
+                video.play().catch(() => {});
+            });
+        }
+    }
+
+    // Load single TV stream
+    loadStream(streamUrl);
+
+});
+const player = new Plyr(video, {
+    autoplay: true,
+    controls: ['play', 'mute', 'volume', 'fullscreen']
+});
+
+</script>
+
 	<script>
 		$(document).ready(function() {
 
