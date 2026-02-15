@@ -465,7 +465,7 @@
 				});
 
 				// Your video URL
-				const videoUrl = '{{ $oldvid->video_path }}';
+				const videoUrl = '{{ $oldvid->stream_url ?? $video->content_path }}';
 
 				// Function to determine video type
 				function getVideoType(url) {
