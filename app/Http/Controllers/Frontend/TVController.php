@@ -25,6 +25,13 @@ class TVController extends Controller
         ->orderBy('views', 'desc')
         ->limit(6)
         ->get();
+        // english channels
+        $this->data['english_tvs'] = Content::where('content_group', 'tv') 
+        ->whereNotNull('stream_url')
+        ->where('language', 'en')
+        ->orderBy('views', 'desc')
+        ->limit(6)
+        ->get();
 
         return view('Frontend.modules.tvs.index', $this->data);
     }

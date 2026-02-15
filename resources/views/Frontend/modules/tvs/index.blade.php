@@ -44,6 +44,12 @@
             @include('Frontend.includes.components.cards.tv-card')
             @endforeach
         </div>
+        <div class="row tr-movie-active">
+
+            @foreach($english_tvs as $tv)
+            @include('Frontend.includes.components.cards.tv-card')
+            @endforeach
+        </div>
         <div class="episode-top-wrap">
                             <div class="section-title"> <span class="sub-title">Latest TVs</span>
                                 <h2 class="title">Latest TVs</h2>
