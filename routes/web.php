@@ -20,6 +20,7 @@ use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\StreamVideoController;
 use App\Http\Controllers\Frontend\SubscriptionController;
 use App\Http\Controllers\Frontend\VideoFavoriteController;
+use App\Http\Controllers\Frontend\CategoryController;
 use Illuminate\Support\Str;
 use Pusher\Pusher;
 
@@ -121,6 +122,8 @@ Route::middleware(['detectCountry'])->group(function () {
     });
     Route::post('/stream/find', [StreamController::class, 'findStream'])->name('stream.find');
     Route::get('stream/{streamId}/view', [StreamController::class, 'proxy_stream'])->name('stream.view');
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::middleware(['auth:web'])->group(function () {
 
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
