@@ -20,7 +20,7 @@ class TVController extends Controller
                 ->with('categories')
             ->paginate(30);
           
-$this->data['categories'] = Category::whereJsonContains('type', 'tv')
+$this->data['categories'] = Category::whereJsonContains('type', 'podcast')
     ->limit(6)
     ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv') 
