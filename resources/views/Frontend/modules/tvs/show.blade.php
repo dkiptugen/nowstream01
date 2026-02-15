@@ -13,6 +13,8 @@
     id="player"
     data-stream="{{ $tv->stream_url }}"
     playsinline
+	autoplay
+	pip
     controls
     poster="{{ $tv->thumbnail_url }}">
 </video>
