@@ -65,7 +65,7 @@ class HomeController extends Controller
         $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
             ->whereNull('parent_id')
             ->orderBy('views', 'desc')
-            ->where('country', $countryName)
+            ->where('country', $countryName ?? null)
             ->limit(16)
             ->get();
         // podcast categories   "type" => "["podcast"]"
