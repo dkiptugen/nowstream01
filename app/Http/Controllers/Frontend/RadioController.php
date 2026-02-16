@@ -26,7 +26,7 @@ class RadioController extends Controller
         ->whereNotNull('stream_url')
         ->where('status', 1)
         ->orderBy('views', 'desc')
-        ->limit(6)
+        ->limit(value: 16)
         ->get();
 
         return view('Frontend.modules.radios.index', $this->data);
