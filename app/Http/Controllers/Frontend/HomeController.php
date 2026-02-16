@@ -29,8 +29,7 @@ class HomeController extends Controller
         $iso = strtoupper($request->country);
 
         $countryName = $this->getCountryNameByIso($iso);
-
-        dd($iso, $countryName);
+        $this->data['country_name'] = $countryName ?? 'Unknown Country';
 
         $this->data['channels'] = $this->get_channels();
 
