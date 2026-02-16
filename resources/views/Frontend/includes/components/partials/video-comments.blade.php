@@ -22,11 +22,14 @@
                 @endforelse
             </div>
 
+
         </div>
 
         {{-- Comment Input Form --}}
         <div class="card-footer yt-comments-footer border-top border-dark">
-            <form id="comment-form" action="{{ route('comment.post', ['commentableType' => $commentableType, 'commentableId' => $commentableId]) }}" method="POST">
+            <form id="comment-form"
+                action="{{ route('comment.post', ['commentableType' => $commentableType, 'commentableId' => $commentableId]) }}"
+                method="POST">
                 @csrf
                 <div class="media align-items-start">
                     @php
@@ -62,68 +65,62 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    const commentList = document.getElementById('commentlist');
+        const commentForm = document.getElementById('comment-form');
+const commentList = document.getElementById('commentlist');
 
-    // Post new comment via AJAX
-    const commentForm = document.getElementById('comment-form');
-    commentForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+commentForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('comment-input');
+    const commentText = input.value.trim();
+    if (!commentText) return;
 
-        const input = document.getElementById('comment-input');
-        const comment = input.value.trim();
-        if (!comment) return;
-
-        fetch(this.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ comment })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                // Insert new comment at the **top of comment list**, i.e., just below the form
-                commentList.insertAdjacentHTML('afterbegin', data.html);
-                input.value = '';
-                const countEl = document.getElementById('comment-count');
-                countEl.textContent = parseInt(countEl.textContent) + 1;
-
-                bindLikeDislike(); // rebind buttons
-            }
-        });
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: commentText })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Insert new comment HTML at the **top**
+            commentList.insertAdjacentHTML('afterbegin', data.html);
+            input.value = '';
+        }
     });
-
-    function bindLikeDislike() {
-        document.querySelectorAll('.yt-actions').forEach(actionsEl => {
-            const commentEl = actionsEl.closest('.media');
-            const commentId = commentEl.dataset.commentId;
-
-            actionsEl.querySelector('.comment-like-btn').onclick = () => toggleReaction(commentId, 'like', actionsEl);
-            actionsEl.querySelector('.comment-dislike-btn').onclick = () => toggleReaction(commentId, 'dislike', actionsEl);
-        });
-    }
-
-    function toggleReaction(commentId, type, container) {
-        fetch(`/comment/${commentId}/${type}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-            container.querySelector('.likes-count').textContent = data.likes;
-            container.querySelector('.dislikes-count').textContent = data.dislikes;
-        });
-    }
-
-    bindLikeDislike();
-
 });
+
+function bindLikeDislike() {
+            document.querySelectorAll('.yt-actions').forEach(actionsEl => {
+                const commentEl = actionsEl.closest('.media');
+                const commentId = commentEl.dataset.commentId;
+
+                actionsEl.querySelector('.comment-like-btn').onclick = () => toggleReaction(commentId, 'like', actionsEl);
+                actionsEl.querySelector('.comment-dislike-btn').onclick = () => toggleReaction(commentId, 'dislike', actionsEl);
+            });
+        }
+
+        function toggleReaction(commentId, type, container) {
+            fetch(`/comment/${commentId}/${type}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    container.querySelector('.likes-count').textContent = data.likes;
+                    container.querySelector('.dislikes-count').textContent = data.dislikes;
+                });
+        }
+
+        bindLikeDislike();
+
+    });
 </script>
