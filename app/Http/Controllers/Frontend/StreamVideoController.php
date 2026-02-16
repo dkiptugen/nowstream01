@@ -94,7 +94,15 @@ class StreamVideoController extends Controller
                     ->take(6)
                     ->get();
             });
+            $comments = $video->comments()->latest()->get();
 
+             // Country name mapping (cache)
+             $iso = strtoupper($video->country ?? 'KE');
+             $countryName = Cache::remember("country_name_{$iso}", now()->addDay(), function () use ($iso) {
+            $path = resource_path('data/countries.json');
+            if (!File::exists($path)) {
+                return [];
+            });
             return view('Frontend.modules.videos.video', compact('video', 'channels', 'related', 'comments'));
         } catch (ModelNotFoundException $e) {
             abort(404, 'Video not found');
