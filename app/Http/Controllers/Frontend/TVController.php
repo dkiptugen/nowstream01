@@ -15,10 +15,14 @@ class TVController extends Controller
     {
         // Latest tvs (paginated style alternative)
 
+        $this->data['tv_countries'] = Content::where('content_group', 'tv') 
+                ->with('categories')
+            ->pluck('country');
         $this->data['tvs'] = Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url') 
+                ->where('country', 'Kenya')
                 ->with('categories')
-            ->paginate(30);
+            ->take(30)->get();
           
 $this->data['categories'] = Category::orderBy('created_at', 'desc')  
     ->limit(20)
@@ -35,7 +39,7 @@ $this->data['categories'] = Category::orderBy('created_at', 'desc')
         ->where('language', 'en')
         ->orderBy('views', 'desc')
         ->limit(6)
-        ->get();
+        ->get(); 
 
         return view('Frontend.modules.tvs.index', $this->data);
     }
