@@ -183,11 +183,7 @@
                                 </a>
                             </div>
                             <div class="movie-content">
-                                <div class="top">
-                                    @php
-                                     use App\Models\Channel;
-                                        $channel = Channel::find($video->channel_id);
-                                    @endphp
+                                <div class="top"> 
                                     <h5 class="title mt-0">
                                         <a href="{{ url("/video/{$video->id}/{$video->slug}") }}">
                                             {{ucfirst($video->title)}}
@@ -199,9 +195,7 @@
 
                                     <ul>
                                         <li><span class="quality">hd</span></li>
-                                        <li>
-                                            <span class="channel"><i class="far fa-user"></i>
-                                                {{ $channel ? $channel->name : 'Unknown' }}</span>
+                                        <li> 
                                             <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
                                             <span class="views ml-2">
                                                 <i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views
