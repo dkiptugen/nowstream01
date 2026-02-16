@@ -36,9 +36,10 @@ class TVController extends Controller
         });
 
         // Categories where type "type" => "["podcast"]"
-        $categories = Cache::remember('tv_categories', 3600, function () {
-            return Category::where('type', 'tv')->get();
-        });
+       // Categories where type contains "tv"
+$categories = Cache::remember('tv_categories', 3600, function () {
+    return Category::whereJsonContains('type', 'tv')->get();
+});
 dd($categories);
         // Top TVs
         $toptvs = Cache::remember('top_tvs', 600, function () {
