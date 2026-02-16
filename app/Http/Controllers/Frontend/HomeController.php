@@ -49,7 +49,12 @@ public function index(Request $request)
 
         return [
 
-        
+            // Channels
+            'channels' => Channel::select('uuid', 'name', 'thumbnail')
+                ->where('status', 1)
+                ->limit(20)
+                ->get(),
+
             // Streams (live)
             'streams' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
                 ->where('content_group', 'livestream')
