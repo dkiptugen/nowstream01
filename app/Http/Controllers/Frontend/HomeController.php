@@ -97,8 +97,10 @@ class HomeController extends Controller
                     'title',
                     'slug',
                     'stream_url',
-                    'thumbnail as thumbnail_url', // alias
-                    'views'
+                    'thumbnail_url', // alias
+                    'views',
+                    'content_group'
+
                 )
                     ->where('content_group', 'tv')
                     ->whereNotNull('stream_url')
