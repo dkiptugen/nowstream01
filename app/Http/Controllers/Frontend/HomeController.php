@@ -33,7 +33,6 @@ class HomeController extends Controller
 
         $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName) {
 
-    dd($countryName);
             return [
                 'country_name' => $countryName ?? 'Kenya',
 
