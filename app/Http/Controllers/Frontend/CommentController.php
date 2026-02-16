@@ -34,48 +34,28 @@ class CommentController extends Controller
     /**
      * Post a comment on a content item (UUID)
      */
-   public function postComment(Request $request, string $commentableType, string $commentableId)
+public function postComment(Request $request, $commentableType, $commentableId)
 {
     if (!Auth::check()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Unauthorized'
-        ], 401);
+        return response()->json(['success' => false], 401);
     }
 
     $request->validate([
-        'comment' => 'required|string|max:2000',
+        'comment' => 'required'
     ]);
 
-    $user = Auth::user();
-
     try {
+        // Assuming videos are stored in Content table
+        $content = Content::where('uuid', $commentableId)->firstOrFail();
 
-        // Resolve model class
-        if ($commentableType === 'content') {
-            $modelClass = Content::class;
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid type'
-            ], 400);
-        }
-
-        // Find the content
-        $content = $modelClass::where('uuid', $commentableId)->firstOrFail();
-
-        // Create comment
         $comment = Comment::create([
-            'user_id' => $user->id,
-            'commentable_type' => $modelClass,
-            'commentable_id' => $content->id, // IMPORTANT: use numeric ID
-            'comment' => e($request->comment),
+            'user_id' => Auth::id(),
+            'commentable_type' => Content::class,
+            'commentable_id' => $content->id,
+            'comment' => e($request->comment)
         ]);
 
-        // Render HTML for instant display
-        $html = view('Frontend.includes.components.partials.single-comment', [
-            'comment' => $comment
-        ])->render();
+        $html = view('Frontend.includes.components.partials.single-comment', compact('comment'))->render();
 
         return response()->json([
             'success' => true,
@@ -83,14 +63,15 @@ class CommentController extends Controller
         ]);
 
     } catch (\Exception $e) {
-        Log::error('Comment error: '.$e->getMessage());
+        Log::error($e->getMessage());
 
         return response()->json([
             'success' => false,
-            'message' => 'Failed to post comment'
+            'message' => 'Server error'
         ], 500);
     }
 }
+
     /**
      * Like a comment
      */
