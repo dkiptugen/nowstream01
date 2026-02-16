@@ -73,14 +73,10 @@ class CommentController extends Controller
                 ])->render();
 
                 return response()->json([
-                    'success' => true,
-                    'comment_id' => $comment->id,
-                    'comment' => $comment->comment,
-                    'user_name' => $user->name,
-                    'user_image' => $user->image
-                        ? asset($user->image)
-                        : asset('assets/images/avatars/avatar-2.png'),
-                ]);
+    'success' => true,
+    'comment_id' => $comment->id,
+]);
+
 
             }
 
