@@ -34,18 +34,18 @@ class HomeController extends Controller
 
         $this->data['top_videos'] = Content::where('content_group', 'video')
             ->orderBy('views', 'desc')
-            ->limit(4)
+            ->limit(14)
             ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv')
             ->whereNotNull('stream_url')
             ->orderBy('views', 'desc')
-            ->limit(6)
+            ->limit(16)
             ->get();
         $this->data['topradios'] = Content::where('content_group', 'radio')
             ->whereNotNull('stream_url')
             ->orderBy('views', 'desc')
             ->where('status', 1)
-            ->limit(6)
+            ->limit(16)
             ->get();
 
         $this->data['podcasts'] = $this->get_podcasts(6)->where('parent_id', null);
@@ -53,7 +53,7 @@ class HomeController extends Controller
         $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
             ->whereNull('parent_id')
             ->orderBy('views', 'desc')
-            ->limit(6)
+            ->limit(16)
             ->get();
 
         // podcast categories   "type" => "["podcast"]"
