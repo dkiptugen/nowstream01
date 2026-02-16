@@ -35,14 +35,27 @@ class TVController extends Controller
                 ->get();
         });
         // for categories of tv
-
+        $categories = Cache::remember('tv_categories', 3600, function () use ($tvs) {
+            return $tvs->pluck('categories')
+                ->flatten()
+                ->whereinjson('type', 'tv')
+                ->unique('id')
+                ->take(6);
+        });
+        // $categories = Cache::remember('tv_categories', 3600, function () use ($tvs) {
+        //     return $tvs->pluck('categories')
+        //         ->flatten()
+        //         ->where('type', 'tv')
+        //         ->unique('id')
+        //         ->take(6);
+        // });
 
         // Categories where type "type" => "["podcast"]"
         // Categories where type contains "tv"
         $categories = Cache::remember('tv_categories', 3600, function () {
             return $tvs->pluck('categories')
                 ->flatten()
-                ->where('type', 'tv')
+                ->whereinjson('type', 'tv')
                 ->unique('id')
                 ->take(6);
         });
