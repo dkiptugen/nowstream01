@@ -42,7 +42,7 @@
                 </div> 
                 </div>
 
-        <div class="pcar-wrapper tr-movie-active">
+        <div class="pcar-wrapper">
 
             <!-- Outside container overlays -->
             <div class="pcar-overlay pcar-overlay-left"></div>
