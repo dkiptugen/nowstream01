@@ -181,6 +181,7 @@
             </div>
             <div class="row tr-movie-active">
  
+                @php use App\Models\Channel; @endphp
                 @foreach($top_videos as $video) 
                  @php
                         $channel = Channel::find($video->channel_id);
