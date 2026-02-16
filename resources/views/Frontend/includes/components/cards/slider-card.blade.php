@@ -84,7 +84,6 @@
 @else
     <div class="movie-item">
         <div class="movie-poster">
-            {{ dd($item) }}
             <img src="{{ $item->thumbnail_url ?? asset('assets/img/default.png')}}" class="w-100 d-block w-100"
                 alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
         </div>

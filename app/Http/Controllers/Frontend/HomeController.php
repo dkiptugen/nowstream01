@@ -93,18 +93,18 @@ class HomeController extends Controller
 
                 // Top TVs (country aware)
                 'toptvs' => Content::select(
-        'uuid',
-        'title',
-        'slug',
-        'stream_url',
-        'thumbnail as thumbnail_url', // alias
-        'views'
-    )
-    ->where('content_group', 'tv')
-    ->whereNotNull('stream_url')
-    ->orderByDesc('views')
-    ->limit(16)
-    ->get(),
+                    'uuid',
+                    'title',
+                    'slug',
+                    'stream_url',
+                    'thumbnail as thumbnail_url', // alias
+                    'views'
+                )
+                    ->where('content_group', 'tv')
+                    ->whereNotNull('stream_url')
+                    ->orderByDesc('views')
+                    ->limit(16)
+                    ->get(),
 
 
 
