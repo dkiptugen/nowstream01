@@ -8,8 +8,8 @@
             </h6>
         </div>
 
-        <div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
-
+       <div class="yt-comments-body" id="comment-list">
+    <div id="commentlist">
                 @if($comments->isEmpty())
                     <div class="text-center text-light-50 py-4">
                         No comments yet. Be the first to comment.
@@ -20,6 +20,7 @@
                     @endforeach
                 @endif
 
+        </div>
         </div>
 
         {{-- Comment Input Form (always at bottom) --}}
