@@ -14,8 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::limit(16)->get();
-dd($categories);
+        $categories = Category::limit(16)->get(); 
         $tvs = Content::where('content_group', 'tv')
             ->whereNotNull('stream_url')
             ->where('category_id', 1)
