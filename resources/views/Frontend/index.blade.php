@@ -186,6 +186,9 @@
                         <div class="movie-item mb-60">
                             <div class="movie-poster">
                                 <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
+                                     @php 
+                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
+                    @endphp
                                     <img src="{{ $thumbnail }}"
                                          alt="{{ $video->title }}"
                                          class="w-100 d-block"
