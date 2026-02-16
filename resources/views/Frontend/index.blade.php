@@ -186,8 +186,11 @@
                         <div class="movie-item mb-60">
                             <div class="movie-poster">
                                 <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
-                                    <img src="{{$video->thumbnail ?? asset('frontend-assets/images/default.png')}}"
-                                        class="w-100 d-block w-100" alt="...">
+                                    <img src="{{ $thumbnail }}"
+                                         alt="{{ $video->title }}"
+                                         class="w-100 d-block"
+                                         style="object-fit: cover; aspect-ratio: 16/9;"
+                                         loading="lazy">
                                     <div class="play fs-40">
                                         <i class="fadeIn animated bx bx-play-circle"></i>
                                     </div>
