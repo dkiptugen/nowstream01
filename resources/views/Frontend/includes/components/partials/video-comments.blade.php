@@ -8,35 +8,19 @@
             </h6>
         </div>
 
-     <div class="yt-comments-body" id="comment-list">
-    <div id="commentlist">
-        @forelse($comments as $comment)
-            <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
-                <img src="{{ $comment->user->image ? asset('storage/' . $comment->user->image) : asset('assets/images/avatars/avatar-2.png') }}" class="mr-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;" alt="{{ $comment->user->name }}">
-                <div class="media-body">
-                    <strong class="mr-2 text-white" style="font-size:14px;">{{ $comment->user->name }}</strong>
-                    <small class="text-light-50" style="font-size:12px;">{{ $comment->created_at->diffForHumans() }}</small>
-                    <div class="mt-1 text-light" style="font-size:14px; line-height:1.4;">{{ $comment->comment }}</div>
-                    <div class="mt-2 d-flex align-items-center yt-actions" style="font-size:13px;">
-                        <a href="javascript:void(0)" class="mr-3 comment-like-btn">
-                            <i class="fa fa-thumbs-up"></i> Like
-                            <span class="likes-count">{{ $comment->likes_count ?? 0 }}</span>
-                        </a>
-                        <a href="javascript:void(0)" class="mr-3 comment-dislike-btn">
-                            <i class="fa fa-thumbs-down"></i> Dislike
-                            <span class="dislikes-count">{{ $comment->dislikes_count ?? 0 }}</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="text-center text-light-50 py-4">
-                No comments yet. Be the first to comment.
-            </div>
-        @endforelse
-    </div>
-</div>
+        <div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
 
+                @if($comments->isEmpty())
+                    <div class="text-center text-light-50 py-4">
+                        No comments yet. Be the first to comment.
+                    </div>
+                @else
+                    @foreach($comments as $comment)
+                        @include('Frontend.includes.components.partials.single-comment', ['comment' => $comment])
+                    @endforeach
+                @endif
+
+        </div>
 
         {{-- Comment Input Form (always at bottom) --}}
         <div class="card-footer yt-comments-footer border-top border-dark">
