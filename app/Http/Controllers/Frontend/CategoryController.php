@@ -38,7 +38,6 @@ class CategoryController extends Controller
             $q->where('category_id', $category->id);
         })
         ->whereNotNull('stream_url')
-        ->orderBy('views', 'desc')
         ->limit(12)
         ->get();
 
