@@ -19,15 +19,12 @@
 
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($genres as $category)
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="{{ $category->slug }}-tab"
-                                    href="{{ route('category.show', $category->slug) }}"  aria-controls="{{ $category->slug }}"
-                                    aria-selected="false">
-                                    {{ ucfirst($category->name) }}
-                                </a>
-                            </li>
-                        @endforeach
+                            @foreach($genres as $genre)
+        <li><a href="{{ route('categories.show', ['slug' => Str::slug($genre)]) }}">
+            {{ ucfirst($genre) }}
+        </a></li>
+    @endforeach
+
 
                     </ul>
                 </div>
