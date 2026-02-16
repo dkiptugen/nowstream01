@@ -87,7 +87,12 @@ Route::middleware(['detectCountry'])->group(function () {
         '/comment/post/{commentableType}/{commentableId}',
         [CommentController::class, 'postComment']
     )->name('comment.post');
- 
+
+    // Fetch comments for a content item (UUID supported)
+    Route::get(
+        '/comment/fetch/{commentableType}/{commentableId}',
+        [CommentController::class, 'fetchComments']
+    )->name('comment.fetch');
     Route::post('/record-watch-history/{video}', [StreamVideoController::class, 'recordWatchHistory']);
 
     Route::name('user.')->prefix('user')->controller(AuthsController::class)->group(function () {
