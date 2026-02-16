@@ -32,49 +32,34 @@
                     </ul>
                 </div>
             </div>
-        </section> <!-- breadcrumb-area-end -->
-        <div class="custom-carousel" 
-     data-autoplay="true" 
-     data-interval="4000">
+        </section> 
+        
+<div class="pcar-wrapper">
 
-    <button class="carousel-btn prev">&#10094;</button>
+    <!-- Outside container overlays -->
+    <div class="pcar-overlay pcar-overlay-left"></div>
+    <div class="pcar-overlay pcar-overlay-right"></div>
 
-    <div class="carousel-viewport">
-        <div class="carousel-track">
+    <div class="container">
+        <div class="pcar"
+             data-autoplay="true"
+             data-interval="3500"
+             data-desktop="5"
+             data-tablet="3"
+             data-mobile="1">
 
-        <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
-            </div>
-            <div class="carousel-item">
-                uygfuy
+            <div class="pcar-track">
+                @foreach($toptvs as $tv)
+                    <div class="pcar-item">
+                       @include('Frontend.includes.components.cards.tv-card')
+                    </div>
+                @endforeach
             </div>
 
         </div>
     </div>
-
-    <button class="carousel-btn next">&#10095;</button>
 </div>
+
 
 
         <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
@@ -111,76 +96,77 @@
         </section>
 
     </main>
-@endsection
 <style>
-    .custom-carousel {
-        position: relative;
-        width: 100%;
-    }
+/* ===============================
+   Wrapper (full width)
+=================================*/
+.pcar-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
 
-    .carousel-viewport {
-        overflow: hidden;
-        width: 100%;
-    }
+/* ===============================
+   Carousel viewport (container width)
+=================================*/
+.pcar {
+    position: relative;
+    overflow: hidden;
+}
 
-    .carousel-track {
-        display: flex;
-        transition: transform 0.4s ease;
-        will-change: transform;
-    }
+/* ===============================
+   Track
+=================================*/
+.pcar-track {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.5s ease;
+    will-change: transform;
+}
 
-    .carousel-item {
-        flex: 0 0 auto;
-        position: relative;
-        padding: 5px;
-    }
+/* ===============================
+   Items
+=================================*/
+.pcar-item {
+    flex: 0 0 auto;
+}
 
-    /* Navigation buttons */
-    .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 5;
-        background: rgba(0, 0, 0, 0.6);
-        border: none;
-        color: #fff;
-        font-size: 24px;
-        padding: 8px 12px;
-        cursor: pointer;
-    }
+/* ===============================
+   Overlay (outside container)
+=================================*/
+.pcar-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.35);
+    pointer-events: none;
+    z-index: 5;
+    display: none;
+}
 
-    .carousel-btn.prev {
-        left: 0;
-    }
+/* Left / Right positioning */
+.pcar-overlay-left {
+    left: 0;
+}
 
-    .carousel-btn.next {
-        right: 0;
-    }
+.pcar-overlay-right {
+    right: 0;
+}
 
-    /* Edge overlay effect */
-    .carousel-item::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0);
-        transition: background 0.3s ease;
-        pointer-events: none;
-    }
+/* Desktop only */
+@media (min-width: 992px) {
 
-    .carousel-item.edge-overlay::after {
-        background: rgba(0, 0, 0, 0.35);
+    .pcar-overlay {
+        display: block;
+        width: calc((100% - var(--pcar-container-width, 1320px)) / 2);
     }
+}
 
-    /* Disable overlay on tablet/mobile */
-    @media (max-width: 991px) {
-        .carousel-item.edge-overlay::after {
-            background: transparent;
-        }
-    }
 </style> 
 
-@section('header')
 @endsection
-@section('footer')
+@push('styles')
+@endpush
+@push('scripts')
 
-@endsection
+@endpush
