@@ -36,11 +36,10 @@ class TVController extends Controller
         });
 
         // Categories where type "type" => "["podcast"]"
-       // Categories where type contains "tv"
-$categories = Cache::remember('tv_categories', 3600, function () {
-    return Category::whereJsonContains('type', 'tv')->get();
-});
-dd($categories);
+        // Categories where type contains "tv"
+        $categories = Cache::remember('tv_categories', 3600, function () {
+            return Category::whereJsonContains('type', 'tv')->get();
+        });
         // Top TVs
         $toptvs = Cache::remember('top_tvs', 600, function () {
             return Content::where('content_group', 'tv')
@@ -80,15 +79,16 @@ dd($categories);
                     ->first();
             });
 
-            if (!$tv) abort(404, 'TV not found');
+            if (!$tv)
+                abort(404, 'TV not found');
 
             // Increment views (not cached)
             $tv->increment('views');
 
-       $comments = $tv->comments()
-    ->with('user')
-    ->orderBy('created_at', 'asc') // oldest first
-    ->get();
+            $comments = $tv->comments()
+                ->with('user')
+                ->orderBy('created_at', 'asc') // oldest first
+                ->get();
             // Related TVs (cache)
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'tv')
