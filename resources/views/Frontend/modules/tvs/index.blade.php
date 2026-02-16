@@ -33,24 +33,25 @@
                 </div>
             </div>
         </section> <!-- breadcrumb-area-end -->
-        <div class="custom-carousel" data-autoplay="true" data-interval="4000">
+        <div class="custom-carousel" 
+     data-autoplay="true" 
+     data-interval="4000">
 
-            <button class="carousel-btn prev">&#10094;</button>
+    <button class="carousel-btn prev">&#10094;</button>
 
-            <div class="carousel-viewport">
-                <div class="carousel-track">
+    <div class="carousel-viewport">
+        <div class="carousel-track">
 
-                    @foreach($toptvs as $tv)
-                        <div class="carousel-item">
-                            @include('Frontend.includes.components.cards.tv-card')
-                        </div>
-                    @endforeach
-
-                </div>
+            <div class="carousel-item">
+                uygfuy
             </div>
 
-            <button class="carousel-btn next">&#10095;</button>
         </div>
+    </div>
+
+    <button class="carousel-btn next">&#10095;</button>
+</div>
+
 
         <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
             <div class="container">
