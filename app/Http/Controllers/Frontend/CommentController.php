@@ -23,7 +23,7 @@ class CommentController extends Controller
         ->with(['user', 'likes']) // eager load user and likes
         ->orderBy('created_at', 'desc')
         ->get();
-
+dd($comments);  
     return view('Frontend.includes.components.partials.video-comments', [
         'comments' => $comments,
         'commentableType' => $commentableType,
