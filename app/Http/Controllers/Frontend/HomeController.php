@@ -70,7 +70,7 @@ public function index(Request $request)
                 ->get(),
 
             // Latest videos
-            'videos' => Content::with('channel:id,name')
+            'videos' => Content::with('channel:uuid,name')
                 ->select('uuid', 'title', 'slug', 'thumbnail_url', 'views', 'channel_id')
                 ->where('content_group', 'video')
                 ->latest()
