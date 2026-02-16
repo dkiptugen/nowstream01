@@ -100,15 +100,22 @@ $genres = Cache::remember('tv_genres', 3600, function () {
                 ->with('user')
                 ->orderBy('created_at', 'asc') // oldest first
                 ->get();
-            // Related TVs (cache)
-            $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
-                return Content::where('content_group', 'tv')
-                    ->where('uuid', '!=', $uuid)
-                    ->whereNotNull('stream_url')
-                    ->latest()
-                    ->take(16)
-                    ->get();
-            });
+            $genres = json_decode($tv->genre, true) ?? [];
+
+// Related TVs (cache)
+$related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid, $genres) {
+    return Content::where('content_group', 'tv')
+        ->where('uuid', '!=', $uuid)
+        ->whereNotNull('stream_url')
+        ->where(function ($query) use ($genres) {
+            foreach ($genres as $genre) {
+                $query->orWhereJsonContains('genre', $genre);
+            }
+        })
+        ->latest()
+        ->take(16)
+        ->get();
+});
 
             return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments'));
         } catch (\Exception $e) {
