@@ -133,12 +133,12 @@ class HomeController extends Controller
                     ->where('content_group', 'podcast')
                     ->whereNull('parent_id')
                     ->latest()
-                    ->limit(8)
+                    ->limit(18)
                     ->get(),
 
                 // Categories
                 'categories' => Category::select('uuid', 'name', 'slug')
-                    ->limit(6)
+                    ->limit(16)
                     ->get(),
             ];
         });
