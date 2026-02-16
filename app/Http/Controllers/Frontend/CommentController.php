@@ -34,62 +34,63 @@ class CommentController extends Controller
     /**
      * Post a comment on a content item (UUID)
      */
-    public function postComment(Request $request, string $contentGroup, string $uuid)
-    {
-        // Ensure user is authenticated
-        if (!Auth::check()) {
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
-            }
-            return redirect()->route('login')->with('error', 'Please login to post a comment.');
-        }
-
-        // Validate input
-        $request->validate([
-            'comment' => 'required|string|max:2000',
-        ]);
-
-        $user = Auth::user();
-
-        // Find the content by UUID and content group
-        $content = Content::where('uuid', $uuid)
-            ->where('content_group', $contentGroup)
-            ->firstOrFail();
-
-        try {
-            // Create the comment
-            $comment = Comment::create([
-                'user_id' => $user->id,
-                'commentable_type' => Content::class,
-                'commentable_id' => $content->uuid,
-                'comment' => htmlspecialchars($request->input('comment')),
-            ]);
-
-            // Return JSON for AJAX requests
-            if ($request->ajax()) {
-                // Render the comment HTML partial
-                $html = view('Frontend.includes.components.partials.single-comment', [
-                    'comment' => $comment
-                ])->render();
-
-                return response()->json([
-    'success' => true,
-    'comment_id' => $comment->id,
-]);
-
-
-            }
-
-            return redirect()->back()->with('success', 'Comment posted.');
-        } catch (\Exception $e) {
-            Log::error('Failed to post comment: ' . $e->getMessage());
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Failed to post comment'], 500);
-            }
-            return redirect()->back()->with('error', 'Failed to post comment.');
-        }
+   public function postComment(Request $request, string $commentableType, string $commentableId)
+{
+    if (!Auth::check()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized'
+        ], 401);
     }
 
+    $request->validate([
+        'comment' => 'required|string|max:2000',
+    ]);
+
+    $user = Auth::user();
+
+    try {
+
+        // Resolve model class
+        if ($commentableType === 'content') {
+            $modelClass = Content::class;
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid type'
+            ], 400);
+        }
+
+        // Find the content
+        $content = $modelClass::where('uuid', $commentableId)->firstOrFail();
+
+        // Create comment
+        $comment = Comment::create([
+            'user_id' => $user->id,
+            'commentable_type' => $modelClass,
+            'commentable_id' => $content->id, // IMPORTANT: use numeric ID
+            'comment' => e($request->comment),
+        ]);
+
+        // Render HTML for instant display
+        $html = view('Frontend.includes.components.partials.single-comment', [
+            'comment' => $comment
+        ])->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Comment error: '.$e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to post comment'
+        ], 500);
+    }
+}
     /**
      * Like a comment
      */
