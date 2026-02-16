@@ -93,7 +93,7 @@ class StreamVideoController extends Controller
                     ->get();
             });
             $comments = $video->comments()->latest()->get();
-
+dd($comments);
              // Country name mapping (cache)
              $iso = strtoupper($video->country ?? 'KE');
              $countryName = Cache::remember("country_name_{$iso}", now()->addDay(), function () use ($iso) {
