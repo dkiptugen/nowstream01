@@ -52,9 +52,7 @@ class HomeController extends Controller
 
                 'toptvs' => $this->contentQuery('tv', $countryName, 16, true),
 
-                'topradios' => $this->contentQuery('radio', $countryName, 16, true)
-                    ->where('status', 1)
-                    ->get(),
+                $this->data['topradios'] = Content::where('content_group', 'radio') ->whereNotNull('stream_url') ->orderBy('views', 'desc') ->where('country', $countryName) ->where('status', 1) ->limit(16) ->get(),
 
                 'topPodcasts' => Content::select('uuid', 'title', 'thumbnail_url', 'views', 'country')
                     ->where('content_group', 'podcast')
