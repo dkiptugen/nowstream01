@@ -10,8 +10,6 @@
 
         <div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
 
-            {{-- Comments container --}}
-            <div id="commentlist">
                 @if($comments->isEmpty())
                     <div class="text-center text-light-50 py-4">
                         No comments yet. Be the first to comment.
@@ -21,8 +19,6 @@
                         @include('Frontend.includes.components.partials.single-comment', ['comment' => $comment])
                     @endforeach
                 @endif
-            </div>
-
 
         </div>
 
