@@ -23,65 +23,121 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
+
     public function index(Request $request)
     {
-        $this->data['country'] = $request->country;
-        $iso = strtoupper($request->country);
+        $iso = strtoupper($request->country ?? 'KE');
 
-        $countryName = $this->getCountryNameByIso($iso);
-        $this->data['country_name'] = $countryName ?? 'Unknown Country';
+        // Cache country name forever (JSON should not be read per request)
+        $countryName = Cache::rememberForever("country_name_{$iso}", function () use ($iso) {
+            return $this->getCountryNameByIso($iso) ?? 'Unknown Country';
+        });
 
-        $this->data['channels'] = $this->get_channels();
+        $this->data['country'] = $iso;
+        $this->data['country_name'] = $countryName;
 
-        $this->data['streams'] = $this->get_streams(null, 6);
+        /*
+        |--------------------------------------------------------------------------
+        | Page Cache Key (country-specific)
+        |--------------------------------------------------------------------------
+        */
+        $cacheKey = "homepage_data_{$countryName}";
 
-        $this->data['events'] = $this->get_events();
+        $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName, $iso) {
 
-        $this->data['videos'] = $this->get_videos(6);
+            return [
+                'country' => $iso,
+                'country_name' => $countryName,
 
-        $this->data['current_event'] = Content::latest()->limit(1)->get();
+                // Channels
+                'channels' => Cache::remember("channels_{$countryName}", 600, function () {
+                    return $this->get_channels();
+                }),
 
-        $this->data['top_videos'] = Content::where('content_group', 'video')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName)
-            ->limit(14)
-            ->get();
-        $this->data['toptvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('country', $countryName)
-            ->orderBy('views', 'desc')
-            ->limit(16)
-            ->get();
-        $this->data['topradios'] = Content::where('content_group', 'radio')
-            ->whereNotNull('stream_url')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName)
-            ->where('status', 1)
-            ->limit(16)
-            ->get();
+                // Streams
+                'streams' => Cache::remember("streams_{$countryName}", 600, function () {
+                    return $this->get_streams(null, 6);
+                }),
 
-        $this->data['podcasts'] = $this->get_podcasts(16)->where('parent_id', null);
-        //top podcasts based on views 
-        $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName ?? '')
-            ->limit(16)
-            ->get();
-        // podcast categories   "type" => "["podcast"]"
-        $this->data['categories'] = Category::limit(6)->get();
+                // Events
+                'events' => Cache::remember("events_{$countryName}", 600, function () {
+                    return $this->get_events();
+                }),
+
+                // Videos
+                'videos' => Cache::remember("videos_{$countryName}", 600, function () {
+                    return $this->get_videos(6);
+                }),
+
+                // Latest Event
+                'current_event' => Cache::remember("current_event", 300, function () {
+                    return Content::latest()->limit(1)->get();
+                }),
+
+                // Top Videos
+                'top_videos' => Cache::remember("top_videos_{$countryName}", 600, function () use ($countryName) {
+                    return Content::where('content_group', 'video')
+                        ->where('country', $countryName)
+                        ->orderByDesc('views')
+                        ->limit(14)
+                        ->get();
+                }),
+
+                // Top TVs
+                'toptvs' => Cache::remember("top_tvs_{$countryName}", 600, function () use ($countryName) {
+                    return Content::where('content_group', 'tv')
+                        ->whereNotNull('stream_url')
+                        ->where('country', $countryName)
+                        ->orderByDesc('views')
+                        ->limit(16)
+                        ->get();
+                }),
+
+                // Top Radios
+                'topradios' => Cache::remember("top_radios_{$countryName}", 600, function () use ($countryName) {
+                    return Content::where('content_group', 'radio')
+                        ->whereNotNull('stream_url')
+                        ->where('country', $countryName)
+                        ->where('status', 1)
+                        ->orderByDesc('views')
+                        ->limit(16)
+                        ->get();
+                }),
+
+                // Podcasts
+                'podcasts' => Cache::remember("podcasts_{$countryName}", 600, function () {
+                    return $this->get_podcasts(16)->where('parent_id', null);
+                }),
+
+                // Top Podcasts
+                'topPodcasts' => Cache::remember("top_podcasts_{$countryName}", 600, function () use ($countryName) {
+                    return Content::where('content_group', 'podcast')
+                        ->whereNull('parent_id')
+                        ->where('country', $countryName)
+                        ->orderByDesc('views')
+                        ->limit(16)
+                        ->get();
+                }),
+
+                // Categories (rarely change)
+                'categories' => Cache::remember('homepage_categories', 3600, function () {
+                    return Category::limit(6)->get();
+                }),
+            ];
+        });
+
         return view('Frontend.index', $this->data);
     }
 
     private function getCountryNameByIso($iso)
     {
-        $path = app_path('Console/Commands/Regions.json');
-
-        if (!File::exists($path)) {
-            return null;
-        }
-
-        $countries = json_decode(File::get($path), true);
+        $countries = Cache::rememberForever('countries_json', function () {
+            $path = app_path('assets/json/Regions.json');
+            if (!File::exists($path)) {
+                return [];
+            }
+            return json_decode(File::get($path), true);
+        });
 
         foreach ($countries as $country) {
             if (strtoupper($country['code']) === $iso) {
@@ -91,6 +147,7 @@ class HomeController extends Controller
 
         return null;
     }
+
 
     /**
      * Display the landing page with cached data.
