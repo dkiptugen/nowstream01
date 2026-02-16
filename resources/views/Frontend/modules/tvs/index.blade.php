@@ -40,7 +40,6 @@
     <div class="pcar-overlay pcar-overlay-left"></div>
     <div class="pcar-overlay pcar-overlay-right"></div>
 
-    <div class="container">
         <div class="pcar"
              data-autoplay="true"
              data-interval="3500"
@@ -55,8 +54,6 @@
                     </div>
                 @endforeach
             </div>
-
-        </div>
     </div>
 </div>
 
