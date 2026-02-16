@@ -15,12 +15,6 @@
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
 					</div>
-<img src="{{ $this->thumbnail_tag($post->thumbnail_url) }}" 
-     alt="" 
-     class="img-fluid w-100 d-block" 
-     style="object-fit: cover; aspect-ratio: 16/9;" 
-     loading="lazy">
-					<img src="{{ url($video->thumbnail_url) }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
 
 					@php
 					$oldvid= $video;
