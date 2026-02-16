@@ -78,5 +78,94 @@
 @include('Frontend.includes.components.partials.audio-player')
     </div>
     @vite('resources/js/app.js')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    document.querySelectorAll('.custom-carousel').forEach(carousel => {
+
+        const track = carousel.querySelector('.carousel-track');
+        const items = carousel.querySelectorAll('.carousel-item');
+        const prevBtn = carousel.querySelector('.prev');
+        const nextBtn = carousel.querySelector('.next');
+
+        if (!track || items.length === 0) return;
+
+        let index = 0;
+        let itemsPerView = 4;
+        let autoplay = carousel.dataset.autoplay === "true";
+        let intervalTime = parseInt(carousel.dataset.interval) || 4000;
+        let autoTimer;
+
+        function getItemsPerView() {
+            const w = window.innerWidth;
+            if (w < 576) return 1;
+            if (w < 768) return 2;
+            if (w < 992) return 3;
+            return 5;
+        }
+
+        function updateLayout() {
+            itemsPerView = getItemsPerView();
+            const itemWidth = carousel.offsetWidth / itemsPerView;
+
+            items.forEach(item => {
+                item.style.width = itemWidth + 'px';
+            });
+
+            moveTo(index);
+        }
+
+        function moveTo(i) {
+            const maxIndex = Math.max(0, items.length - itemsPerView);
+            index = Math.max(0, Math.min(i, maxIndex));
+
+            const itemWidth = items[0].offsetWidth;
+            track.style.transform = `translateX(-${index * itemWidth}px)`;
+
+            updateOverlay();
+        }
+
+        function updateOverlay() {
+            items.forEach(item => item.classList.remove('edge-overlay'));
+
+            if (window.innerWidth < 992) return;
+
+            const start = index;
+            const end = index + itemsPerView - 1;
+
+            if (items[start]) items[start].classList.add('edge-overlay');
+            if (items[start + 1]) items[start + 1].classList.add('edge-overlay');
+            if (items[end]) items[end].classList.add('edge-overlay');
+            if (items[end - 1]) items[end - 1].classList.add('edge-overlay');
+        }
+
+        prevBtn.addEventListener('click', () => moveTo(index - 1));
+        nextBtn.addEventListener('click', () => moveTo(index + 1));
+
+        /* Autoplay */
+        function startAutoplay() {
+            if (!autoplay) return;
+            autoTimer = setInterval(() => {
+                const maxIndex = items.length - itemsPerView;
+                index >= maxIndex ? moveTo(0) : moveTo(index + 1);
+            }, intervalTime);
+        }
+
+        function stopAutoplay() {
+            clearInterval(autoTimer);
+        }
+
+        carousel.addEventListener('mouseenter', stopAutoplay);
+        carousel.addEventListener('mouseleave', startAutoplay);
+
+        window.addEventListener('resize', updateLayout);
+
+        updateLayout();
+        startAutoplay();
+    });
+
+});
+</script>
 </body>
 </html>
