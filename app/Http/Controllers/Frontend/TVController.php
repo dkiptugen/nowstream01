@@ -34,7 +34,9 @@ class TVController extends Controller
                 ->take(30)
                 ->get();
         });
-        dd($tvs);
+        // for categories of tv
+
+        dd($tvs->first()->categories);
 
         // Categories where type "type" => "["podcast"]"
         // Categories where type contains "tv"
