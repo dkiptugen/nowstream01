@@ -23,54 +23,91 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
+
     public function index(Request $request)
     {
-        $this->data['country'] = $request->country;
         $iso = strtoupper($request->country);
+        $countryName = $this->getCountryNameByIso($iso) ?? null;
 
-        $countryName = $this->getCountryNameByIso($iso);
-        $this->data['country_name'] = $countryName ?? 'Unknown Country';
+        $cacheKey = 'home_' . ($countryName ?? 'kenya');
 
-        $this->data['channels'] = $this->get_channels();
+        $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName) {
 
-        $this->data['streams'] = $this->get_streams(null, 6);
+    dd($countryName);
+            return [
+                'country_name' => $countryName ?? 'Kenya',
 
-        $this->data['events'] = $this->get_events();
+                'channels' => $this->get_channels(),
 
-        $this->data['videos'] = $this->get_videos(6);
+                'streams' => $this->get_streams(null, 6),
 
-        $this->data['current_event'] = Content::latest()->limit(1)->get();
+                'events' => $this->get_events(),
 
-        $this->data['top_videos'] = Content::where('content_group', 'video')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName)
-            ->limit(14)
-            ->get();
-        $this->data['toptvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('country', $countryName)
-            ->orderBy('views', 'desc')
-            ->limit(16)
-            ->get();
-        $this->data['topradios'] = Content::where('content_group', 'radio')
-            ->whereNotNull('stream_url')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName)
-            ->where('status', 1)
-            ->limit(16)
-            ->get();
+                'videos' => $this->get_videos(6),
 
-        $this->data['podcasts'] = $this->get_podcasts(16)->where('parent_id', null);
-        //top podcasts based on views 
-        $this->data['topPodcasts'] = Content::where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->orderBy('views', 'desc')
-            ->where('country', $countryName ?? null)
-            ->limit(16)
-            ->get();
-        // podcast categories   "type" => "["podcast"]"
-        $this->data['categories'] = Category::limit(6)->get();
+                'current_event' => Content::select('uuid', 'title', 'thumbnail_url', 'created_at')
+                    ->latest()
+                    ->first(),
+
+                'top_videos' => $this->contentQuery('video', $countryName, 14),
+
+                'toptvs' => $this->contentQuery('tv', $countryName, 16, true),
+
+                'topradios' => $this->contentQuery('radio', $countryName, 16, true)
+                    ->where('status', 1)
+                    ->get(),
+
+                'topPodcasts' => Content::select('uuid', 'title', 'thumbnail_url', 'views', 'country')
+                    ->where('content_group', 'podcast')
+                    ->whereNull('parent_id')
+                    ->when(
+                        $countryName,
+                        fn($q) =>
+                        $q->where(function ($sub) use ($countryName) {
+                            $sub->where('country', $countryName)
+                                ->orWhereNull('country');
+                        })
+                    )
+                    ->orderByDesc('views')
+                    ->limit(16)
+                    ->get(),
+
+                'podcasts' => $this->get_podcasts(16)->where('parent_id', null),
+
+                'categories' => Category::select('id', 'name', 'slug')
+                    ->limit(6)
+                    ->get(),
+            ];
+        });
+
+        $this->data['country'] = $iso;
+
         return view('Frontend.index', $this->data);
+    }
+    private function contentQuery($group, $countryName, $limit = 10, $requireStream = false)
+    {
+        $query = Content::select(
+            'uuid',
+            'title',
+            'thumbnail_url',
+            'stream_url',
+            'views',
+            'country'
+        )
+            ->where('content_group', $group)
+            ->when($requireStream, fn($q) => $q->whereNotNull('stream_url'))
+            ->when(
+                $countryName,
+                fn($q) =>
+                $q->where(function ($sub) use ($countryName) {
+                    $sub->where('country', $countryName)
+                        ->orWhereNull('country');
+                })
+            )
+            ->orderByDesc('views')
+            ->limit($limit);
+
+        return $query->get();
     }
 
     private function getCountryNameByIso($iso)
