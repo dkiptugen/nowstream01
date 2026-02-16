@@ -19,7 +19,7 @@
 
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($categories as $category)
+                        @foreach($genres as $category)
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="{{ $category->slug }}-tab"
                                     href="{{ route('category.show', $category->slug) }}"  aria-controls="{{ $category->slug }}"

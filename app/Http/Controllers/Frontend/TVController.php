@@ -42,6 +42,14 @@ class TVController extends Controller
        $categories = Cache::remember('tv_categories', 3600, function () {
     return Category::where('type', 'like', '%tv%')->get();
 });
+// genres
+$genres = Cache::remember('tv_genres', 3600, function () {
+    return Content::where('content_group', 'tv')
+        ->whereNotNull('genre')
+        ->pluck('genre')
+        ->flatten()
+        ->unique();
+});
 
         // Top TVs
         $toptvs = Cache::remember('top_tvs', 600, function () {
