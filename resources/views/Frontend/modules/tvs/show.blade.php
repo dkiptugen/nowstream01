@@ -52,9 +52,13 @@
 									<span>hd</span>
 								</li>
 								<li class="category">
-									<a href="#">Romance,</a>
-									<a href="#">Drama</a>
-								</li>
+    @foreach($tv->categories as $category)
+        <a href="{{ route('category.show', $category->slug) }}">
+            {{ $category->name }}@if(!$loop->last),@endif
+        </a>
+    @endforeach
+</li>
+
 								<li class="release-time">
 									<span><i class="far fa-calendar-alt"></i> 2021</span>
 									<span><i class="far fa-clock"></i> 128 min</span>
