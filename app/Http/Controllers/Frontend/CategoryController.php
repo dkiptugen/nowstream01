@@ -30,12 +30,20 @@ class CategoryController extends Controller
      */
   public function show($slug)
 {
-    $category = Category::where('slug', $slug)->firstOrFail();
+    $category = Category::with('contents')->where('slug', $slug)->firstOrFail();
 
-    // Fetch content by type
-    $tvs = $category->contents()->whereJsonContains('type', 'tv')->get();
-    $radios = $category->contents()->whereJsonContains('type', 'radio')->get();
-    $podcasts = $category->contents()->whereJsonContains('type', 'podcast')->get();
+// Filter contents by type
+$tvs = $category->contents->filter(function ($content) {
+    return in_array('tv', json_decode($content->type ?? '[]'));
+});
+
+$radios = $category->contents->filter(function ($content) {
+    return in_array('radio', json_decode($content->type ?? '[]'));
+});
+
+$podcasts = $category->contents->filter(function ($content) {
+    return in_array('podcast', json_decode($content->type ?? '[]'));
+});
 
     return view('Frontend.modules.categories.show', compact(
         'category',
