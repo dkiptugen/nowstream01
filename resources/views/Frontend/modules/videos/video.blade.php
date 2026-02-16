@@ -21,7 +21,11 @@
 					$vid = $video->id;
 					@endphp
 				</div>
-				@include('Frontend.includes.components.partials.video-comments')
+				@include('Frontend.includes.components.partials.video-comments', [
+    'comments' => $comments,
+    'commentableType' => 'video',
+    'commentableId' => $video->uuid
+])
 
 				<div class="col-xl-7 col-lg-8 mt-4">
 					<div class="movie-details-content">
