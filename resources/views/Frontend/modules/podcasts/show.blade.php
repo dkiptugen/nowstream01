@@ -19,7 +19,7 @@ return [
         <div class="container">
             <div class="row align-items-center position-relative">
                 <div class="col-xl-8 col-lg-8">
-                    <div class="row mx-0">
+                    <div class="row mx-0 g-3">
 
                 <div class="col-xl-5 col-lg-5">
                     <div class="movie-details-img">
