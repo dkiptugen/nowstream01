@@ -66,19 +66,16 @@ public function index(Request $request)
                 return $this->get_events();
             }),
 
-            'videos' => Cache::remember("videos_global", 600, function () {
-                return Content::where('content_group', 'video')
-            ->latest()
-            ->paginate(12);
-            }),
-
-
-            'top_videos' => Cache::remember("top_videos_global", 600, function ()  {
-                return Content::where('content_group', 'video')
+            'videos' => Content::where('content_group', 'video')
                     ->orderByDesc('views')
                     ->limit(14)
-                    ->get();
-            }),
+                    ->get(),
+
+
+            'top_videos' => Content::where('content_group', 'video')
+                    ->orderByDesc('views')
+                    ->limit(14)
+                    ->get(),
 
             'current_event' => Cache::remember("current_event", 300, function () {
                 return Content::latest()->limit(1)->get();
