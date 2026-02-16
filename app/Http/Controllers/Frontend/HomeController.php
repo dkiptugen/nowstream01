@@ -42,7 +42,7 @@ class HomeController extends Controller
         |--------------------------------------------------------------------------
         */
         $cacheKey = "homepage_data_{$countryName}";
-
+dd($cacheKey);
         $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName, $iso) {
 
             return [
