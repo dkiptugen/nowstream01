@@ -16,7 +16,7 @@
         </div>
     </section>
 
-    <section class="content-list pt-4">
+    <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
         <div class="container">
             @if($contents->isEmpty())
                 <div class="text-center text-light-50 py-4">No content found for this genre.</div>
