@@ -20,7 +20,7 @@
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                             @foreach($genres as $genre)
-        <li><a href="{{ route('categories.show', ['slug' => Str::slug($genre)]) }}">
+        <li><a href="{{ route('category.show', ['slug' => Str::slug($genre)]) }}">
             {{ ucfirst($genre) }}
         </a></li>
     @endforeach
