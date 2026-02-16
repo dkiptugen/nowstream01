@@ -15,7 +15,7 @@
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
 					</div>
-
+{{ dd($video) }}
 					@php
 					$oldvid= $video;
 					$vid = $video->id;
