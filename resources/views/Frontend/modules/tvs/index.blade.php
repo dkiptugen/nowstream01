@@ -139,9 +139,9 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.66);
             pointer-events: none;
-            z-index: 5;
+            z-index: 95;
             display: none;
         }
 
