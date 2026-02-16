@@ -129,24 +129,25 @@ dd($cacheKey);
         return view('Frontend.index', $this->data);
     }
 
-    private function getCountryNameByIso($iso)
-    {
-        $countries = Cache::rememberForever('countries_json', function () {
-            $path = app_path('Console/Commands/Regions.json');
-            if (!File::exists($path)) {
-                return [];
-            }
-            return json_decode(File::get($path), true);
-        });
-
-        foreach ($countries as $country) {
-            if (strtoupper($country['code']) === $iso) {
-                return $country['name'];
-            }
+  private function getCountryNameByIso($iso)
+{
+    $countries = Cache::rememberForever('countries_json', function () {
+        $path = public_path('assets/json/Regions.json'); // Updated path
+        if (!File::exists($path)) {
+            return [];
         }
+        return json_decode(File::get($path), true);
+    });
 
-        return null;
+    foreach ($countries as $country) {
+        if (strtoupper($country['code']) === $iso) {
+            return $country['name'];
+        }
     }
+
+    return null;
+}
+
 
 
     /**
