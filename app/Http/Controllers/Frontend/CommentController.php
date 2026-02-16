@@ -15,22 +15,21 @@ class CommentController extends Controller
     /**
      * Fetch comments for a given content item (UUID)
      */
-    public function fetchComments(string $commentableType, string $commentableId)
-    {
-        $modelClass = 'App\\Models\\' . ucfirst($commentableType);
+  public function fetchComments(string $commentableType, string $commentableId)
+{
+    $modelClass = 'App\\Models\\Content'; // all commentables are Content
+    $comments = Comment::where('commentable_type', $modelClass)
+        ->where('commentable_id', $commentableId)
+        ->with(['user', 'likes']) // eager load user and likes
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $comments = Comment::where('commentable_type', $modelClass)
-            ->where('commentable_id', $commentableId)
-            ->orderBy('created_at', 'desc')
-            ->with('user')
-            ->get();
-
-        return view('Frontend.includes.components.partials.video-comments', [
-            'comments' => $comments,
-            'commentableType' => $commentableType,   // <-- pass type
-            'commentableId' => $commentableId,     // <-- pass ID
-        ])->render();
-    }
+    return view('Frontend.includes.components.partials.video-comments', [
+        'comments' => $comments,
+        'commentableType' => $commentableType,
+        'commentableId' => $commentableId,
+    ])->render();
+}
 
 
     /**
