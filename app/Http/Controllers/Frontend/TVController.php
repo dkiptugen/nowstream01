@@ -35,9 +35,9 @@ class TVController extends Controller
                 ->get();
         });
 
-        // Categories
+        // Categories where type "type" => "["podcast"]"
         $categories = Cache::remember('tv_categories', 3600, function () {
-            return Category::all();
+            return Category::where('type', 'tv')->get();
         });
 dd($categories);
         // Top TVs
