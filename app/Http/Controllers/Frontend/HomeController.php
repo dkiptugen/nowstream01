@@ -69,7 +69,10 @@ public function index(Request $request)
             }),
 
             'videos' => Cache::remember("videos_global", 600, function () {
-                return $this->get_videos( 6);
+                return Content::where('content_group', 'video')
+                    ->orderByDesc('created_at')
+                    ->limit(14)
+                    ->get();
             }),
 
 
