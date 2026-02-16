@@ -81,7 +81,7 @@
             <div class="row align-items-end mb-30">
                 <div class="col-lg-4">
                     <div class="section-title text-center text-lg-left">
-                        <span class="sub-title">TOP Tvs in if ($country == 'KE')</span>
+                        <span class="sub-title">TOP Tvs in {{ $country == 'KE' ? 'Kenya' : 'Other Countries' }}</span>
                         <h2 class="title">Live Tvs</h2>
                     </div>
                 </div>
