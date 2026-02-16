@@ -21,8 +21,8 @@
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         @foreach($categories as $category)
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
-                                    href="{{ route('category.show', $category->slug) }}" role="tab" aria-controls="{{ $category->slug }}"
+                                <a class="nav-link" id="{{ $category->slug }}-tab"
+                                    href="{{ route('category.show', $category->slug) }}"  aria-controls="{{ $category->slug }}"
                                     aria-selected="false">
                                     {{ ucfirst($category->name) }}
                                 </a>
