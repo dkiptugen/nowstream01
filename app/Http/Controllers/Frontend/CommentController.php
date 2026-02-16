@@ -15,22 +15,23 @@ class CommentController extends Controller
     /**
      * Fetch comments for a given content item (UUID)
      */
-    public function fetchComments(string $contentGroup, string $uuid)
+    public function fetchComments(string $commentableType, string $commentableId)
     {
-        $content = Content::where('uuid', $uuid)
-            ->where('content_group', $contentGroup)
-            ->firstOrFail();
+        $modelClass = 'App\\Models\\' . ucfirst($commentableType);
 
-        $comments = Comment::where('commentable_type', Content::class)
-            ->where('commentable_id', $content->uuid)
+        $comments = Comment::where('commentable_type', $modelClass)
+            ->where('commentable_id', $commentableId)
             ->orderBy('created_at', 'desc')
-            ->with('user') // eager load users
+            ->with('user')
             ->get();
 
         return view('Frontend.includes.components.partials.video-comments', [
             'comments' => $comments,
+            'commentableType' => $commentableType,   // <-- pass type
+            'commentableId' => $commentableId,     // <-- pass ID
         ])->render();
     }
+
 
     /**
      * Post a comment on a content item (UUID)
@@ -69,8 +70,8 @@ class CommentController extends Controller
                     'success' => true,
                     'comment' => $comment->comment,
                     'user_name' => $user->name,
-                    'user_image' => $user->image 
-                        ? asset('storage/' . $user->image) 
+                    'user_image' => $user->image
+                        ? asset('storage/' . $user->image)
                         : asset('assets/images/avatars/avatar-2.png'),
                     'created_at' => $comment->created_at->diffForHumans(),
                 ]);
@@ -86,66 +87,66 @@ class CommentController extends Controller
         }
     }
 
-   /**
- * Like a comment
- */
-public function like(string $commentId)
-{
-    return $this->handleReaction($commentId, 'like');
-}
-
-/**
- * Dislike a comment
- */
-public function dislike(string $commentId)
-{
-    return $this->handleReaction($commentId, 'dislike');
-}
-
-/**
- * Handle like/dislike toggling
- */
-private function handleReaction(string $commentId, string $type)
-{
-    if (!Auth::check()) {
-        return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+    /**
+     * Like a comment
+     */
+    public function like(string $commentId)
+    {
+        return $this->handleReaction($commentId, 'like');
     }
 
-    $userId = Auth::id();
+    /**
+     * Dislike a comment
+     */
+    public function dislike(string $commentId)
+    {
+        return $this->handleReaction($commentId, 'dislike');
+    }
 
-    $existing = CommentLike::where('comment_id', $commentId)
-        ->where('user_id', $userId)
-        ->first();
-
-    if ($existing) {
-        if ($existing->type === $type) {
-            $existing->delete(); // remove existing reaction
-        } else {
-            $existing->update(['type' => $type]); // toggle reaction
+    /**
+     * Handle like/dislike toggling
+     */
+    private function handleReaction(string $commentId, string $type)
+    {
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
-    } else {
-        CommentLike::create([
-            'comment_id' => $commentId,
-            'user_id' => $userId,
-            'type' => $type,
+
+        $userId = Auth::id();
+
+        $existing = CommentLike::where('comment_id', $commentId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($existing) {
+            if ($existing->type === $type) {
+                $existing->delete(); // remove existing reaction
+            } else {
+                $existing->update(['type' => $type]); // toggle reaction
+            }
+        } else {
+            CommentLike::create([
+                'comment_id' => $commentId,
+                'user_id' => $userId,
+                'type' => $type,
+            ]);
+        }
+
+        return $this->likeResponse($commentId);
+    }
+
+    /**
+     * Return like/dislike counts for a comment
+     */
+    private function likeResponse(string $commentId)
+    {
+        $comment = Comment::findOrFail($commentId);
+
+        return response()->json([
+            'success' => true,
+            'likes' => $comment->likes()->where('type', 'like')->count(),
+            'dislikes' => $comment->likes()->where('type', 'dislike')->count(),
         ]);
     }
 
-    return $this->likeResponse($commentId);
-}
-
-/**
- * Return like/dislike counts for a comment
- */
-private function likeResponse(string $commentId)
-{
-    $comment = Comment::findOrFail($commentId);
-
-    return response()->json([
-        'success' => true,
-        'likes' => $comment->likes()->where('type', 'like')->count(),
-        'dislikes' => $comment->likes()->where('type', 'dislike')->count(),
-    ]);
-}
- 
 }
