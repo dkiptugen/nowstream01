@@ -10,6 +10,8 @@ use App\Models\ContentRate;
 use App\Models\Content;
 use App\Models\Video;
 use App\Traits\CacheHelper;
+use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -20,8 +22,13 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
-    public function index()
+    public function index(Request $request)
     {
+          $this->data['country'] = $request->country;
+
+
+           dd($this->data['country']);
+
         $this->data['channels'] = $this->get_channels();
 
         $this->data['streams'] = $this->get_streams(null, 6);
@@ -55,7 +62,6 @@ class HomeController extends Controller
             ->orderBy('views', 'desc')
             ->limit(16)
             ->get();
-
         // podcast categories   "type" => "["podcast"]"
         $this->data['categories'] = Category::limit(6)->get();
         return view('Frontend.index', $this->data);
