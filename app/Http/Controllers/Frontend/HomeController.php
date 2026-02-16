@@ -24,9 +24,12 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-          $this->data['country'] = $request->country;
+        $this->data['country'] = $request->country;
+        $iso = strtoupper($request->country);
 
- 
+        $countryName = $this->getCountryNameByIso($iso);
+
+        dd($iso, $countryName);
 
         $this->data['channels'] = $this->get_channels();
 
@@ -66,6 +69,24 @@ class HomeController extends Controller
         return view('Frontend.index', $this->data);
     }
 
+    private function getCountryNameByIso($iso)
+    {
+        $path = app_path('Console/Commands/Regions.json');
+
+        if (!File::exists($path)) {
+            return null;
+        }
+
+        $countries = json_decode(File::get($path), true);
+
+        foreach ($countries as $country) {
+            if (strtoupper($country['code']) === $iso) {
+                return $country['name'];
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Display the landing page with cached data.
