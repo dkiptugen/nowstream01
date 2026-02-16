@@ -69,7 +69,7 @@
                 </form>
             @else
                 <div class="text-center text-light-50 py-2">
-                    <a href="{{ route('user.login') }}" class="btn btn-sm btn-primary">Login to add a comment</a>
+                    <a href="{{ route('user.login') }}" class="btn btn-sm btn-primary">Login to comment</a>
                 </div>
             @endif
         </div>
