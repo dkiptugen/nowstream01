@@ -20,6 +20,8 @@ class HomeController extends Controller
 {
     use CacheHelper;
 
+    protected $data = [];
+
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
@@ -48,7 +50,7 @@ public function index(Request $request)
     $cacheKey = "homepage_data_{$countryName}";
 
     // Cache everything for 10 minutes (or adjust TTL)
-    $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName, $iso) {
+    $cachedData = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName, $iso) {
 
         return [
             'country' => $iso,
@@ -115,6 +117,8 @@ public function index(Request $request)
             }),
         ];
     });
+
+    $this->data = $cachedData;
 
     return view('Frontend.index', $this->data);
 }
