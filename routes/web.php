@@ -25,18 +25,18 @@ use Illuminate\Support\Str;
 use Pusher\Pusher;
 
 /*
-	   |--------------------------------------------------------------------------
-	   | Web Routes
-	   |--------------------------------------------------------------------------
-	   |
-	   | Here is where you can register web routes for your application. These
-	   | routes are loaded by the RouteServiceProvider and all of them will
-	   | be assigned to the "web" middleware group. Make something great!
-	   |
-	   */
+       |--------------------------------------------------------------------------
+       | Web Routes
+       |--------------------------------------------------------------------------
+       |
+       | Here is where you can register web routes for your application. These
+       | routes are loaded by the RouteServiceProvider and all of them will
+       | be assigned to the "web" middleware group. Make something great!
+       |
+       */
 
 Route::post('/pusher/auth', function (Request $request) {
-    $socketId    = $request->input('socket_id');
+    $socketId = $request->input('socket_id');
     $channelName = $request->input('channel_name');
 
     // Perform your user authentication logic here
@@ -55,7 +55,7 @@ Route::post('/pusher/auth', function (Request $request) {
             config('broadcasting.connections.pusher.app_id'),
             [
                 'cluster' => config('broadcasting.connections.pusher.options.cluster'),
-                'useTLS'  => true,
+                'useTLS' => true,
             ]
         );
 
@@ -88,31 +88,32 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::post('/record-watch-history/{video}', [StreamVideoController::class, 'recordWatchHistory']);
 
     Route::name('user.')->prefix('user')->controller(AuthsController::class)->group(function () {
-        Route::get('/partner/register',  'partner');
-        Route::get('social/{social}',  'redirectToProvider')->name('auth.social');
+        Route::get('/partner/register', 'partner');
+        Route::get('social/{social}', 'redirectToProvider')->name('auth.social');
         Route::get('social/{social}/callback', 'handleProviderCallback')->name('auth.social_callback');
-        Route::any('social/{social}/delete',  'deleteProviderCallback')->name('auth.social_delete');
+        Route::any('social/{social}/delete', 'deleteProviderCallback')->name('auth.social_delete');
 
         // Authentication routes
 
-        Route::get('register',  'showRegisterForm')->name('register.form');
-        Route::post('register',  'register')->name('register');
-        Route::get('phone-login',  'showPhoneLoginForm')->name('phonelogin.form');
-        Route::post('phone-login',  'phoneLogin')->name('phonelogin');
-        Route::get('phone-resend',  'phoneResend')->name('phoneresend');
-        Route::post('otp_verification',  'otp_verify')->name('otp_verification');
-        Route::get('login',  'showLoginForm')->name('login.form');
-        Route::post('login',  'login')->name('login');
-        Route::post('logout',  'logout')->name('logout');
+        Route::get('register', 'showRegisterForm')->name('register.form');
+        Route::post('register', 'register')->name('register');
+        Route::get('phone-login', 'showPhoneLoginForm')->name('phonelogin.form');
+        Route::post('phone-login', 'phoneLogin')->name('phonelogin');
+        Route::get('phone-resend', 'phoneResend')->name('phoneresend');
+        Route::post('otp_verification', 'otp_verify')->name('otp_verification');
+        Route::get('login', 'showLoginForm')->name('login.form');
+        Route::post('login', 'login')->name('login');
+        Route::post('logout', 'logout')->name('logout');
 
         // Password reset routes
-        Route::post('/forgot-password',  'forgotPassword')->name('password.email');
-        Route::post('/reset-password',  'resetPassword')->name('password.update');;
+        Route::post('/forgot-password', 'forgotPassword')->name('password.email');
+        Route::post('/reset-password', 'resetPassword')->name('password.update');
+        ;
         // Email verification route
         Route::get('/email/verify', function () {
             return view('Frontend.auth.verify-email');
         })->middleware(['auth'])->name('verification.notice')->name('verification.notice');
-        Route::get('/email/verify/{id}/{hash}',  'verifyEmail')
+        Route::get('/email/verify/{id}/{hash}', 'verifyEmail')
             ->middleware(['auth', 'signed'])
             ->name('verification.verify');
         Route::post('/email/verification-notification', function () {

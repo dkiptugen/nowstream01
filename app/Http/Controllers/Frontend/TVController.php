@@ -15,32 +15,32 @@ class TVController extends Controller
     {
         // Latest tvs (paginated style alternative)
 
-        $this->data['tv_countries'] = Content::where('content_group', 'tv') 
-                ->with('categories')
+        $this->data['tv_countries'] = Content::where('content_group', 'tv')
+            ->with('categories')
             ->pluck('country');
-            
+
         $this->data['tvs'] = Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url') 
-                ->where('country', 'Kenya')
-                ->with('categories')
+            ->whereNotNull('stream_url')
+            ->where('country', 'Kenya')
+            ->with('categories')
             ->take(30)->get();
-          
-$this->data['categories'] = Category::orderBy('created_at', 'desc')  
-    ->limit(20)
-    ->get();
-        $this->data['toptvs'] = Content::where('content_group', 'tv') 
-        ->whereNotNull('stream_url')
-        ->orderBy('views', 'desc')
-        ->with('categories')
-        ->limit(39)
-        ->get(); 
+
+        $this->data['categories'] = Category::orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
+        $this->data['toptvs'] = Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->orderBy('views', 'desc')
+            ->with('categories')
+            ->limit(39)
+            ->get();
         // english channels
-        $this->data['english_tvs'] = Content::where('content_group', 'tv') 
-        ->whereNotNull('stream_url')
-        ->where('language', 'en')
-        ->orderBy('views', 'desc')
-        ->limit(6)
-        ->get(); 
+        $this->data['english_tvs'] = Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('language', 'en')
+            ->orderBy('views', 'desc')
+            ->limit(6)
+            ->get();
 
         return view('Frontend.modules.tvs.index', $this->data);
     }
@@ -67,11 +67,11 @@ $this->data['categories'] = Category::orderBy('created_at', 'desc')
                     ->take(6)
                     ->get();
             });
- 
+
 
             return view('Frontend.modules.tvs.show', [
-                'tv'  => $tv,
-                'related'  => $related, 
+                'tv' => $tv,
+                'related' => $related,
             ]);
         } catch (\Exception $e) {
             abort(404, 'tv not found');
