@@ -16,16 +16,5 @@
                                 </a>
                             </h6>
                         </div>
-                        <div class="bottom">
-                            <!-- Display number of views -->
-
-                            <ul>
-                                <li>
-                                    <span class="channel"><i class="far fa-user"></i>
-                                        {{ $item->author ? $item->author : 'Unknown' }}</span>
-                                    <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
