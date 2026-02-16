@@ -72,10 +72,16 @@ class CommentController extends Controller
                 'comment' => $comment
             ])->render();
 
-            return response()->json([
-                'success' => true,
-                'html' => $html,
-            ]);
+           return response()->json([
+    'success' => true,
+    'comment_id' => $comment->id,
+    'comment' => $comment->comment,
+    'user_name' => $user->name,
+    'user_image' => $user->image 
+        ? asset($user->image)
+        : asset('assets/images/avatars/avatar-2.png'),
+]);
+
         }
 
         return redirect()->back()->with('success', 'Comment posted.');
