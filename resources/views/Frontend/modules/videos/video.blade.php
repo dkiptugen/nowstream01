@@ -293,7 +293,243 @@
 	@endif
 	@endsection
 	@section('header')
-	<script>
+	<style>
+		@media (min-width: 769px) {
+			.page-footer {
+				display: none;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.page-wrapper {
+				margin-top: 30px !important;
+			}
+
+			.comment-top {
+				height: 40vh;
+				overflow-y: scroll;
+			}
+
+			.comment-top {
+				max-height: 30vh;
+				overflow-y: scroll;
+				height: auto;
+			}
+		}
+
+		.plyr--video {
+			padding: 0;
+		}
+
+		#my-video {
+			width: 100%;
+			aspect-ratio: 16 / 9 !important;
+			height: auto;
+		}
+
+		#player {
+			transition: all 0.3s ease-in-out;
+		}
+
+		#player.sticky {
+			position: fixed;
+			bottom: 0;
+			right: 0;
+			width: 400px;
+			z-index: 9999;
+			height: max-content;
+		}
+	</style>
+
+	<style>
+		.btn-send {
+			padding: 5px;
+			border: 1px solid #2a2b2c;
+		}
+
+		/* Make both columns stretch to same height */
+		.video-comments-row {
+			align-items: stretch !important;
+		}
+
+		/* comments card takes full height of the column */
+		.yt-comments-card {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* scroll area */
+		.yt-comments-body {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.text-light-50 {
+			color: rgba(255, 255, 255, .55) !important;
+		}
+
+		.yt-comments-card {
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 14px;
+			background: rgba(10, 10, 10, 0.55);
+			backdrop-filter: blur(14px);
+			-webkit-backdrop-filter: blur(14px);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+			overflow: hidden;
+		}
+
+		.yt-comments-header,
+		.yt-comments-footer {
+			background: rgba(0, 0, 0, .35);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+		}
+
+		.yt-comments-body {
+			max-height: 520px;
+			overflow-y: auto;
+		}
+
+		.yt-comments-body::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.yt-comments-body::-webkit-scrollbar-thumb {
+			background: rgba(255, 255, 255, .15);
+			border-radius: 20px;
+		}
+
+		.yt-comment-input {
+			background: rgba(255, 255, 255, .06) !important;
+			border: 1px solid rgba(255, 255, 255, .10) !important;
+			color: #fff !important;
+			border-radius: 10px 0 0 !important;
+			padding: 10px 12px !important;
+		}
+
+		.yt-comment-input::placeholder {
+			color: rgba(255, 255, 255, .55) !important;
+		}
+
+		.yt-actions a {
+			color: rgba(255, 255, 255, .55);
+			text-decoration: none;
+			transition: .2s;
+		}
+
+		.yt-actions a:hover {
+			color: #fff;
+			text-decoration: none;
+		}
+
+		#comment-list {
+			max-height: 520px;
+			overflow-y: auto;
+		}
+
+		/* Video wrapper uses 16:9 ratio like YouTube */
+		.video-wrap {
+			position: relative;
+			width: 100%;
+			padding-top: 56.25%;
+			/* 16:9 */
+			overflow: hidden;
+			border-radius: 10px;
+		}
+
+		.video-wrap video,
+		.video-wrap iframe,
+		.video-wrap .plyr {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		/* Comments card height must match video height */
+		@media (min-width: 1200px) {
+			#commentsCard {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Scroll only the comment list */
+			#comment-list {
+				flex: 1 1 auto;
+				overflow-y: auto;
+				min-height: 0;
+			}
+		}
+
+		/* Dark translucent */
+		.yt-comments-card {
+			background: rgba(0, 0, 0, .55);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(255, 255, 255, .08);
+		}
+
+		.sticky {
+			z-index: 99;
+		}
+	</style>
+	@endsection
+	@section('footer')
+
+	<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('player');
+            const player = new Plyr(video, {});
+            // Determine media type
+            function getMediaType(url) {
+                const ext = url.split('.').pop().toLowerCase();
+                if (ext === 'm3u8') return 'hls';
+                if (ext === 'mp4') return 'video/mp4';
+                if (ext === 'mp3') return 'audio/mp3';
+                if (ext === 'mov') return 'video/quicktime';
+                return '';
+            }
+
+            // Load media dynamically
+            function loadMedia(url) {
+                const type = getMediaType(url);
+
+                if (type === 'hls') {
+                    if (Hls.isSupported()) {
+                        const hls = new Hls();
+                        hls.loadSource(url);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                    }
+                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
+                    {
+                        video.src = url;
+                        video.addEventListener('loadedmetadata', () => video.play());
+                    }
+                    else console.error('HLS not supported');
+                }
+                else if (video.canPlayType(type))
+                {
+                    video.src = url;
+                    video.addEventListener('loadedmetadata', () => video.play());
+                }
+                else console.error('Unsupported media type');
+            }
+
+            // Example video/live URL
+            const mediaUrl = '{{ Storage::url($video->content_path) }}'; // Replace with dynamic URL
+
+            loadMedia(mediaUrl);
+
+
+        });
+    </script>
+<script>
 $(document).ready(function() {
 
     // Scroll comments container to bottom
@@ -386,6 +622,7 @@ $(document).ready(function() {
 
 });
 </script>
+
 
 
 	<!-- <script>
