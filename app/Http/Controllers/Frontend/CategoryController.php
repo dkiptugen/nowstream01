@@ -29,27 +29,47 @@ class CategoryController extends Controller
      * Single category (all content)
      */
     public function show($slug)
-    {
-        $category = Category::where('slug', $slug)->firstOrFail();
+{
+    $category = Category::where('slug', $slug)->firstOrFail();
 
-        $contents = Content::whereHas('categories', function ($query) use ($category) {
-                $query->where('categories.id', $category->id);
-            })
-            ->latest()
-            ->paginate(12);
+    // TVs
+    $tvs = Content::where('content_group', 'tv')
+        ->whereHas('categories', function ($q) use ($category) {
+            $q->where('categories.id', $category->id);
+        })
+        ->whereNotNull('stream_url')
+        ->orderBy('views', 'desc')
+        ->limit(12)
+        ->get();
 
-        $podcasts = Content::where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->orderBy('views', 'desc')
-            ->limit(6)
-            ->get();
+    // Radios
+    $radios = Content::where('content_group', 'radio')
+        ->whereHas('categories', function ($q) use ($category) {
+            $q->where('categories.id', $category->id);
+        })
+        ->whereNotNull('stream_url')
+        ->orderBy('views', 'desc')
+        ->limit(12)
+        ->get();
 
-        return view('Frontend.modules.categories.show', compact(
-            'category',
-            'contents',
-            'podcasts'
-        ));
-    }
+    // Podcasts (main shows only)
+    $podcasts = Content::where('content_group', 'podcast')
+        ->whereNull('parent_id')
+        ->whereHas('categories', function ($q) use ($category) {
+            $q->where('categories.id', $category->id);
+        })
+        ->orderBy('views', 'desc')
+        ->limit(12)
+        ->get();
+
+    return view('Frontend.modules.categories.show', compact(
+        'category',
+        'tvs',
+        'radios',
+        'podcasts'
+    ));
+}
+
 
     /**
      * Category filtered by content group
