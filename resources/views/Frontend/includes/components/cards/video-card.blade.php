@@ -1,7 +1,4 @@
- @php
-                        $channel = Channel::find($video->channel_id);
-                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
-                    @endphp
+
                     <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                         <div class="movie-item mb-60 shadow-sm bg-dark">
                             <div class="movie-poster mb-0">

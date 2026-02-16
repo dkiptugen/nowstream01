@@ -51,6 +51,10 @@
             <div class="row tr-movie-active">
                 @php use App\Models\Channel; @endphp
                 @foreach($top_videos as $video)
+                 @php
+                        $channel = Channel::find($video->channel_id);
+                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
+                    @endphp
                    @include('Frontend.includes.components.cards.video-card')
                 @endforeach
             </div>
@@ -72,6 +76,10 @@
 
             <div class="row tr-movie-active">
                 @foreach ($videos as $video)
+                 @php
+                        $channel = Channel::find($video->channel_id);
+                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
+                    @endphp
                    @include('Frontend.includes.components.cards.video-card')
                 @endforeach
             </div>
