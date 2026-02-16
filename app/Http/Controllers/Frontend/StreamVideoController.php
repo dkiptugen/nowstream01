@@ -93,8 +93,11 @@ class StreamVideoController extends Controller
                 ->get();
         });
 
-        // Comments: oldest first (to display newest at bottom)
-        $comments = $video->comments()->with('user')->oldest()->get();
+       $comments = $video->comments()
+    ->with('user')
+    ->orderBy('created_at', 'asc') // oldest first
+    ->get();
+
 
         // Country name mapping (cache)
         $iso = strtoupper($video->country ?? 'KE');
