@@ -29,46 +29,24 @@ class CategoryController extends Controller
      * Single category (all content)
      */
     public function show($slug)
-{
-    $category = Category::where('slug', $slug)->firstOrFail();
+    {
+        // Find the category
+        $category = Category::where('slug', $slug)->firstOrFail();
 
-    // TVs
-    $tvs = Content::where('content_group', 'tv')
-        ->whereHas('categories', function ($q) use ($category) {
-            $q->where('category_id', $category->id);
-        })
-        ->whereNotNull('stream_url')
-        ->limit(12)
-        ->get();
+        // Fetch all contents associated with this category
+        $contents = Content::whereHas('categories', function ($q) use ($category) {
+            $q->where('id', $category->id);
+        })->paginate(12);
 
-    // Radios
-    $radios = Content::where('content_group', 'radio')
-        ->whereHas('categories', function ($q) use ($category) {
-            $q->where('category_id', $category->uuid);
-        })
-        ->whereNotNull('stream_url')
-        ->orderBy('views', 'desc')
-        ->limit(12)
-        ->get();
+        // Separate by content group if you want tabs: tv / radio / podcast
+        $tvs = $contents->where('content_group', 'tv');
+        $radios = $contents->where('content_group', 'radio');
+        $podcasts = $contents->where('content_group', 'podcast');
 
-    // Podcasts (main shows only)
-    $podcasts = Content::where('content_group', 'podcast')
-        ->whereNull('parent_id')
-        ->whereHas('categories', function ($q) use ($category) {
-            $q->where('category_id', $category->uuid);
-        })
-        ->orderBy('views', 'desc')
-        ->limit(12)
-        ->get();
-
-    return view('Frontend.modules.categories.show', compact(
-        'category',
-        'tvs',
-        'radios',
-        'podcasts'
-    ));
-}
-
+        return view('Frontend.modules.categories.show', compact(
+            'category', 'contents', 'tvs', 'radios', 'podcasts'
+        ));
+    }
 
     /**
      * Category filtered by content group
