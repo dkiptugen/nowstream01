@@ -62,7 +62,7 @@ class CommentController extends Controller
         $comment = Comment::create([
             'user_id' => $user->id,
             'commentable_type' => Content::class,
-            'commentable_id' => $content->id, // Use numeric ID for relations
+            'commentable_id' => $content->uuid,
             'comment' => htmlspecialchars($request->input('comment')),
         ]);
 
