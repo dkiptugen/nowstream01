@@ -121,7 +121,6 @@ class HomeController extends Controller
                     ->get(),
 
 
-
                 // Top Podcasts (NO country filter)
                 'topPodcasts' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
                     ->where('content_group', 'podcast')

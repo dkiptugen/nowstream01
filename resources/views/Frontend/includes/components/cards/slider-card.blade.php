@@ -19,7 +19,7 @@
 
     @if($item->content_group === 'radio')
         <div class="movie-item" style="cursor:pointer;"
-            onclick="playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($title) }}', 'Live Radio', '{{ $thumbnail }}')">
+            onclick="playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($title) }}', 'Live Radio', '{{ $thumbnail }}')" style="cursor:pointer;">
             <div class="movie-poster">
                 <img src="{{ $thumbnail }}" class="w-100 d-block" alt="{{ $title }}" style="object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                 <div class="play fs-40">
