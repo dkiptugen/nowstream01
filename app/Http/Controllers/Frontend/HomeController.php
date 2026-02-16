@@ -43,7 +43,7 @@ class HomeController extends Controller
 
         $this->data['top_videos'] = Content::where('content_group', 'video')
             ->orderBy('views', 'desc')
-            ->where('country', $request->country)
+            ->where('country', $$countryName)
             ->limit(14)
             ->get();
         $this->data['toptvs'] = Content::where('content_group', 'tv')
