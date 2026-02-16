@@ -1,10 +1,10 @@
  @if ($item->content_group === 'radio')
    
      <div class="movie-item" onclick="playSingleAudio(
-        '{{ $radio->stream_url }}',
-        '{{ addslashes($radio->title) }}',
+        '{{ $item->stream_url }}',
+        '{{ addslashes($item->title) }}',
         'Live Radio',
-        '{{ $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
+        '{{ $item->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
      )"
      style="cursor:pointer;"> 
 
