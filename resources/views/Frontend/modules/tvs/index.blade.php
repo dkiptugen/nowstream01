@@ -19,12 +19,14 @@
 
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                            @foreach($genres as $genre)
-        <li class="nav-item" role="presentation">
-                                <a class="nav-link" href="{{ route('genre.show', ['slug' => Str::slug($genre)]) }}">
+                 @foreach($genres as $genre)
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
             {{ ucfirst($genre) }}
-        </a></li> 
-    @endforeach
+        </a>
+    </li>
+@endforeach
+
 
 
                     </ul>
