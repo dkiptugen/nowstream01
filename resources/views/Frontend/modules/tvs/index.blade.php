@@ -33,8 +33,16 @@
                 </div>
             </div>
         </section>
+  <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+            <div class="container">
+                <div class="episode-top-wrap">
+                    <div class="section-title"> <span class="sub-title">Trending TVs</span>
+                        <h2 class="title">Trending TVs</h2>
+                    </div>
+                </div> 
+                </div>
 
-        <div class="pcar-wrapper">
+        <div class="pcar-wrapper tr-movie-active">
 
             <!-- Outside container overlays -->
             <div class="pcar-overlay pcar-overlay-left"></div>
@@ -51,6 +59,7 @@
                 </div>
             </div>
         </div>
+        </section>
 
 
 
