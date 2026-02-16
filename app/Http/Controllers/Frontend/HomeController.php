@@ -26,8 +26,7 @@ class HomeController extends Controller
     {
           $this->data['country'] = $request->country;
 
-
-           dd($this->data['country']);
+ 
 
         $this->data['channels'] = $this->get_channels();
 
