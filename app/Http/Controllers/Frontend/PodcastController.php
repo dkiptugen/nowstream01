@@ -38,7 +38,7 @@ class PodcastController extends Controller
     $topPodcasts = Content::where('content_group', 'podcast')
     ->whereNull('parent_id')
     ->orderBy('views', 'desc')
-    ->limit(6)
+    ->limit(16)
     ->get();
 
     return view('Frontend.modules.podcasts.index', compact('podcasts', 'channels', 'videos', 'categories','topPodcasts'));
