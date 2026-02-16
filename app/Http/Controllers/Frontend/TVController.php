@@ -106,7 +106,7 @@ $genres = Cache::remember('tv_genres', 3600, function () {
                     ->where('uuid', '!=', $uuid)
                     ->whereNotNull('stream_url')
                     ->latest()
-                    ->take(6)
+                    ->take(16)
                     ->get();
             });
 
