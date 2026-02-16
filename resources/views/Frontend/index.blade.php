@@ -181,13 +181,42 @@
             </div>
             <div class="row tr-movie-active">
  
-                @php use App\Models\Channel; @endphp
-                @foreach($top_videos as $video) 
-                 @php
-                        $channel = Channel::find($video->channel_id);
-                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
-                    @endphp
-                   @include('Frontend.includes.components.cards.video-card')
+                @foreach($top_videos as $video)
+                    <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
+                        <div class="movie-item mb-60">
+                            <div class="movie-poster">
+                                <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
+                                    <img src="{{$video->thumbnail ?? asset('frontend-assets/images/default.png')}}"
+                                        class="w-100 d-block w-100" alt="...">
+                                    <div class="play fs-40">
+                                        <i class="fadeIn animated bx bx-play-circle"></i>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="movie-content">
+                                <div class="top"> 
+                                    <h5 class="title mt-0">
+                                        <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
+                                            {{ucfirst($video->title)}}
+                                        </a>
+                                    </h5>
+                                </div>
+                                <div class="bottom">
+                                    <!-- Display number of views -->
+
+                                    <ul>
+                                        <li><span class="quality">hd</span></li>
+                                        <li> 
+                                            <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
+                                            <span class="views ml-2">
+                                                <i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
             </div>
         </div>
