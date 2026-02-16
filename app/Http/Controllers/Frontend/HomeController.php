@@ -132,7 +132,7 @@ dd($cacheKey);
     private function getCountryNameByIso($iso)
     {
         $countries = Cache::rememberForever('countries_json', function () {
-            $path = app_path('assets/json/Regions.json');
+            $path = app_path('Console/Commands/Regions.json');
             if (!File::exists($path)) {
                 return [];
             }
