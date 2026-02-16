@@ -86,65 +86,66 @@ class CommentController extends Controller
         }
     }
 
-    /**
-     * Like a comment
-     */
-    public function like(int $commentId)
-    {
-        return $this->handleReaction($commentId, 'like');
+   /**
+ * Like a comment
+ */
+public function like(string $commentId)
+{
+    return $this->handleReaction($commentId, 'like');
+}
+
+/**
+ * Dislike a comment
+ */
+public function dislike(string $commentId)
+{
+    return $this->handleReaction($commentId, 'dislike');
+}
+
+/**
+ * Handle like/dislike toggling
+ */
+private function handleReaction(string $commentId, string $type)
+{
+    if (!Auth::check()) {
+        return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
     }
 
-    /**
-     * Dislike a comment
-     */
-    public function dislike(int $commentId)
-    {
-        return $this->handleReaction($commentId, 'dislike');
-    }
+    $userId = Auth::id();
 
-    /**
-     * Handle like/dislike toggling
-     */
-    private function handleReaction(int $commentId, string $type)
-    {
-        if (!Auth::check()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
-        }
+    $existing = CommentLike::where('comment_id', $commentId)
+        ->where('user_id', $userId)
+        ->first();
 
-        $userId = Auth::id();
-
-        $existing = CommentLike::where('comment_id', $commentId)
-            ->where('user_id', $userId)
-            ->first();
-
-        if ($existing) {
-            if ($existing->type === $type) {
-                $existing->delete(); // remove existing reaction
-            } else {
-                $existing->update(['type' => $type]); // toggle reaction
-            }
+    if ($existing) {
+        if ($existing->type === $type) {
+            $existing->delete(); // remove existing reaction
         } else {
-            CommentLike::create([
-                'comment_id' => $commentId,
-                'user_id' => $userId,
-                'type' => $type,
-            ]);
+            $existing->update(['type' => $type]); // toggle reaction
         }
-
-        return $this->likeResponse($commentId);
-    }
-
-    /**
-     * Return like/dislike counts for a comment
-     */
-    private function likeResponse(int $commentId)
-    {
-        $comment = Comment::findOrFail($commentId);
-
-        return response()->json([
-            'success' => true,
-            'likes' => $comment->likes()->where('type', 'like')->count(),
-            'dislikes' => $comment->likes()->where('type', 'dislike')->count(),
+    } else {
+        CommentLike::create([
+            'comment_id' => $commentId,
+            'user_id' => $userId,
+            'type' => $type,
         ]);
     }
+
+    return $this->likeResponse($commentId);
+}
+
+/**
+ * Return like/dislike counts for a comment
+ */
+private function likeResponse(string $commentId)
+{
+    $comment = Comment::findOrFail($commentId);
+
+    return response()->json([
+        'success' => true,
+        'likes' => $comment->likes()->where('type', 'like')->count(),
+        'dislikes' => $comment->likes()->where('type', 'dislike')->count(),
+    ]);
+}
+ 
 }
