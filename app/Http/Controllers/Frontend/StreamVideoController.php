@@ -103,7 +103,7 @@ class StreamVideoController extends Controller
             if (!File::exists($path)) {
                 return [];
             }});
-            return view('Frontend.modules.videos.video', compact('video', 'channels', 'related', 'comments'));
+            return view('Frontend.modules.videos.video', compact('video', 'channels', 'related', 'comments', 'countryName'));
         } catch (ModelNotFoundException $e) {
             abort(404, 'Video not found');
         } catch (\Exception $e) {
