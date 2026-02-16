@@ -35,7 +35,7 @@ class CategoryController extends Controller
     // TVs
     $tvs = Content::where('content_group', 'tv')
         ->whereHas('categories', function ($q) use ($category) {
-            $q->where('categories.id', $category->id);
+            $q->where('categories.id', $category->uuid);
         })
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
@@ -45,7 +45,7 @@ class CategoryController extends Controller
     // Radios
     $radios = Content::where('content_group', 'radio')
         ->whereHas('categories', function ($q) use ($category) {
-            $q->where('categories.id', $category->id);
+            $q->where('categories.id', $category->uuid);
         })
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
@@ -56,7 +56,7 @@ class CategoryController extends Controller
     $podcasts = Content::where('content_group', 'podcast')
         ->whereNull('parent_id')
         ->whereHas('categories', function ($q) use ($category) {
-            $q->where('categories.id', $category->id);
+            $q->where('categories.id', $category->uuid);
         })
         ->orderBy('views', 'desc')
         ->limit(12)
