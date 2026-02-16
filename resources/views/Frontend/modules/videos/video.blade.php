@@ -15,7 +15,9 @@
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
 					</div>
-{{ dd($video) }}
+					<img src="{{ $video->thumbnail_url }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
+					<img src="{{ asset('$video->thumbnail_url') }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
+
 					@php
 					$oldvid= $video;
 					$vid = $video->id;
