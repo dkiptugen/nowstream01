@@ -71,7 +71,7 @@ $genres = Cache::remember('tv_genres', 3600, function () {
                 ->get();
         });
 
-        $this->data = compact('tv_countries', 'tvs', 'categories', 'toptvs', 'english_tvs');
+        $this->data = compact('tv_countries', 'tvs', 'categories', 'toptvs', 'english_tvs', 'genres');
 
         return view('Frontend.modules.tvs.index', $this->data);
     }
