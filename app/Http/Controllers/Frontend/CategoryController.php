@@ -32,7 +32,7 @@ class CategoryController extends Controller
     {
         // Find the category
         $category = Category::where('slug', $slug)->firstOrFail();
-
+dd($category);
         // Fetch all contents associated with this category
         $contents = Content::whereHas('categories', function ($q) use ($category) {
             $q->where('id', $category->id);
