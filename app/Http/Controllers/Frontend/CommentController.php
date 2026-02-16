@@ -51,7 +51,7 @@ public function postComment(Request $request, $commentableType, $commentableId)
         $comment = Comment::create([
             'user_id' => Auth::id(),
             'commentable_type' => Content::class,
-            'commentable_id' => $content->id,
+            'commentable_id' => $content->uuid,
             'comment' => e($request->comment)
         ]);
 
