@@ -182,6 +182,7 @@ Route::middleware(['detectCountry'])->group(function () {
     // show podcast
     Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
+Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
 
     // show tv
     Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');

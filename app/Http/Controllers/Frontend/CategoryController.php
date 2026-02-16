@@ -54,7 +54,15 @@ public function show($slug)
         'category', 'tvs', 'radios', 'podcasts'
     ));
 }
+public function genreContents($genre)
+{
+    // Fetch content where the JSON genre array contains the requested genre
+    $contents = Content::whereJsonContains('genre', $genre)
+        ->orderBy('views', 'desc')
+        ->paginate(12); // or get() if no pagination
 
+    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+}
 
 
     /**
