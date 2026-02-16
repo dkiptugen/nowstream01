@@ -18,6 +18,7 @@ class TVController extends Controller
         $this->data['tv_countries'] = Content::where('content_group', 'tv') 
                 ->with('categories')
             ->pluck('country');
+            
         $this->data['tvs'] = Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url') 
                 ->where('country', 'Kenya')
