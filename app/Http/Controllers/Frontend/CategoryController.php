@@ -28,25 +28,23 @@ class CategoryController extends Controller
     /**
      * Single category (all content)
      */
-    public function show($slug)
-    {
-        // Find the category
-        $category = Category::where('slug', $slug)->firstOrFail();
-dd($category);
-        // Fetch all contents associated with this category
-        $contents = Content::whereHas('categories', function ($q) use ($category) {
-            $q->where('id', $category->id);
-        })->paginate(12);
+  public function show($slug)
+{
+    $category = Category::where('slug', $slug)->firstOrFail();
 
-        // Separate by content group if you want tabs: tv / radio / podcast
-        $tvs = $contents->where('content_group', 'tv');
-        $radios = $contents->where('content_group', 'radio');
-        $podcasts = $contents->where('content_group', 'podcast');
+    // Fetch content by type
+    $tvs = $category->contents()->whereJsonContains('type', 'tv')->get();
+    $radios = $category->contents()->whereJsonContains('type', 'radio')->get();
+    $podcasts = $category->contents()->whereJsonContains('type', 'podcast')->get();
 
-        return view('Frontend.modules.categories.show', compact(
-            'category', 'contents', 'tvs', 'radios', 'podcasts'
-        ));
-    }
+    return view('Frontend.modules.categories.show', compact(
+        'category',
+        'tvs',
+        'radios',
+        'podcasts'
+    ));
+}
+
 
     /**
      * Category filtered by content group
