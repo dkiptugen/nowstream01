@@ -20,8 +20,6 @@ class HomeController extends Controller
 {
     use CacheHelper;
 
-    protected $data = [];
-
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
@@ -70,9 +68,8 @@ public function index(Request $request)
 
             'videos' => Cache::remember("videos_global", 600, function () {
                 return Content::where('content_group', 'video')
-                    ->orderByDesc('created_at')
-                    ->limit(14)
-                    ->get();
+            ->latest()
+            ->paginate(12);
             }),
 
 
