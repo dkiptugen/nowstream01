@@ -50,7 +50,8 @@
                 </div>
             </div>
             <div class="row tr-movie-active">
-            @php use App\Models\Channel; @endphp
+            @php use App\Models\Channel;
+	use Illuminate\Support\Facades\Storage; @endphp
             @foreach($top_videos as $video)  
                 <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                     <div class="movie-item mb-60 shadow-sm bg-dark">
