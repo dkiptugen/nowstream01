@@ -23,7 +23,11 @@
  
  
 				</div>
-				@include('Frontend.includes.components.partials.tv-comments')
+				@include('Frontend.includes.components.partials.video-comments', [
+    'comments' => $comments,
+    'commentableType' => 'tv',
+    'commentableId' => $tv->uuid
+])
 
 				<div class="col-xl-7 col-lg-8 mt-4">
 					<div class="movie-details-content">

@@ -546,26 +546,5 @@
 			});
 		</script> -->
 
-	<script>
-		function syncCommentsHeight() {
-			if (window.innerWidth < 1200) return;
-
-			let videoWrap = document.getElementById('videoWrap');
-			let commentsCard = document.getElementById('commentsCard');
-
-			if (!videoWrap || !commentsCard) return;
-
-			commentsCard.style.height = videoWrap.offsetHeight + "px";
-		}
-
-		$(document).ready(function() {
-			syncCommentsHeight();
-			$(window).on('resize', syncCommentsHeight);
-
-			// delay to allow Plyr render
-			setTimeout(syncCommentsHeight, 300);
-			setTimeout(syncCommentsHeight, 1000);
-		});
-	</script>
 
 	@endsection

@@ -86,6 +86,10 @@ class TVController extends Controller
             // Increment views (not cached)
             $tv->increment('views');
 
+       $comments = $tv->comments()
+    ->with('user')
+    ->orderBy('created_at', 'asc') // oldest first
+    ->get();
             // Related TVs (cache)
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'tv')
@@ -96,7 +100,7 @@ class TVController extends Controller
                     ->get();
             });
 
-            return view('Frontend.modules.tvs.show', compact('tv', 'related'));
+            return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments'));
         } catch (\Exception $e) {
             abort(404, 'TV not found');
         }
