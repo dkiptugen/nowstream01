@@ -109,6 +109,11 @@ class PodcastController extends Controller
             // Increment view count (do not cache increment)
             $podcast->increment('views');
 
+            $comments = $podcast->comments()
+                ->with('user')
+                ->orderBy('created_at', 'asc') // oldest first
+                ->get();
+
             // Episodes (cache per podcast)
             $episodes = Cache::remember("podcast_episodes_{$uuid}", now()->addMinutes(30), function () use ($podcast) {
                 return Content::where('parent_id', $podcast->uuid)
