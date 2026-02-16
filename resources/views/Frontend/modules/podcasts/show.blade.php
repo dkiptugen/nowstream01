@@ -183,3 +183,153 @@ return [
     </section>
 </main>
 @endsection
+@section('header')
+
+	<style>
+		.btn-send {
+			padding: 5px;
+			border: 1px solid #2a2b2c;
+		}
+
+		/* Make both columns stretch to same height */
+		.tv-comments-row {
+			align-items: stretch !important;
+		}
+
+		/* comments card takes full height of the column */
+		.yt-comments-card {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* scroll area */
+		.yt-comments-body {
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.text-light-50 {
+			color: rgba(255, 255, 255, .55) !important;
+		}
+
+		.yt-comments-card {
+			border: 1px solid rgba(255, 255, 255, .08);
+			border-radius: 14px;
+			background: rgba(10, 10, 10, 0.55);
+			backdrop-filter: blur(14px);
+			-webkit-backdrop-filter: blur(14px);
+			box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+			overflow: hidden;
+		}
+
+		.yt-comments-header,
+		.yt-comments-footer {
+			background: rgba(0, 0, 0, .35);
+			backdrop-filter: blur(10px);
+			-webkit-backdrop-filter: blur(10px);
+		}
+
+		.yt-comments-body {
+			max-height: 520px;
+			overflow-y: auto;
+		}
+
+		.yt-comments-body::-webkit-scrollbar {
+			width: 6px;
+		}
+
+		.yt-comments-body::-webkit-scrollbar-thumb {
+			background: rgba(255, 255, 255, .15);
+			border-radius: 20px;
+		}
+
+		.yt-comment-input {
+			background: rgba(255, 255, 255, .06) !important;
+			border: 1px solid rgba(255, 255, 255, .10) !important;
+			color: #fff !important;
+			border-radius: 10px 0 0 !important;
+			padding: 10px 12px !important;
+		}
+
+		.yt-comment-input::placeholder {
+			color: rgba(255, 255, 255, .55) !important;
+		}
+
+		.yt-actions a {
+			color: rgba(255, 255, 255, .55);
+			text-decoration: none;
+			transition: .2s;
+		}
+
+		.yt-actions a:hover {
+			color: #fff;
+			text-decoration: none;
+		}
+
+		#comment-list {
+			max-height: 520px;
+			overflow-y: auto;
+		}
+
+		/* tv wrapper uses 16:9 ratio like YouTube */
+		.tv-wrap {
+			position: relative;
+			width: 100%;
+			padding-top: 56.25%;
+			/* 16:9 */
+			overflow: hidden;
+			border-radius: 10px;
+		}
+
+		.tv-wrap tv,
+		.tv-wrap iframe,
+		.tv-wrap .plyr {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+
+		/* Comments card height must match tv height */
+		@media (min-width: 1200px) {
+			#commentsCard {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Scroll only the comment list */
+			#comment-list {
+				flex: 1 1 auto;
+				overflow-y: auto;
+				min-height: 0;
+			}
+		}
+
+		/* Dark translucent */
+		.yt-comments-card {
+			background: rgba(0, 0, 0, .55);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(255, 255, 255, .08);
+		}
+
+		.sticky {
+			z-index: 99;
+		}
+		.live-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+	</style>
+@endsection
