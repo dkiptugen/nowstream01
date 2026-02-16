@@ -85,7 +85,7 @@ class StreamVideoController extends Controller
             });
 
             // Related videos per video (cache 30 min)
-            $related = Cache::remember("related_videos_{$uuid}", now()->addMinutes(30), function () use ($video) {
+            $relatedVideos = Cache::remember("related_videos_{$uuid}", now()->addMinutes(30), function () use ($video) {
                 return Content::where('content_group', 'video')
                     ->where('status', 1)
                     ->where('channel_id', $video->channel_id)
@@ -103,7 +103,7 @@ class StreamVideoController extends Controller
             if (!File::exists($path)) {
                 return [];
             }});
-            return view('Frontend.modules.videos.video', compact('video', 'channels', 'related', 'comments', 'countryName'));
+            return view('Frontend.modules.videos.video', compact('video', 'channels', 'relatedVideos', 'comments', 'countryName'));
         } catch (ModelNotFoundException $e) {
             abort(404, 'Video not found');
         } catch (\Exception $e) {
