@@ -68,39 +68,46 @@
         const commentForm = document.getElementById('comment-form');
         const commentList = document.getElementById('commentlist');
 
-        commentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const input = document.getElementById('comment-input');
-            const commentText = input.value.trim();
-            if (!commentText) return;
+        $('#comment-form').on('submit', function(e) {
+    e.preventDefault();
 
-            fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ comment: commentText })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove "No comments yet" placeholder if exists
-                        const noComments = commentList.querySelector('.text-center');
-                        if (noComments) noComments.remove();
+    let commentInput = $('#comment-input').val();
+    let uuid = 'your-video-uuid';
+    let contentGroup = 'video';
 
-                        // Append new comment at the BOTTOM
-                        commentList.insertAdjacentHTML('beforeend', data.html);
-
-                        // Clear input
-                        input.value = '';
-
-                        // Re-bind like/dislike events for new comment
-                        bindLikeDislike();
-                    }
-                });
-        });
+    $.ajax({
+        url: `/comment/post/${contentGroup}/${uuid}`,
+        type: 'POST',
+        data: { comment: commentInput, _token: $('input[name="_token"]').val() },
+        success: function(res) {
+            if (res.success) {
+                // Append new comment at the bottom
+                $('#commentlist').append(`
+                    <div class="media py-3 border-bottom border-dark" data-comment-id="${res.comment.id}">
+                        <img src="${res.user_image}" class="mr-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;" alt="${res.user_name}">
+                        <div class="media-body">
+                            <strong class="mr-2 text-white" style="font-size:14px;">${res.user_name}</strong>
+                            <small class="text-light-50" style="font-size:12px;">Just now</small>
+                            <div class="mt-1 text-light" style="font-size:14px; line-height:1.4;">${res.comment}</div>
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size:13px;">
+                                <a href="javascript:void(0)" class="mr-3 comment-like-btn">
+                                    <i class="fa fa-thumbs-up"></i> Like
+                                    <span class="likes-count">0</span>
+                                </a>
+                                <a href="javascript:void(0)" class="mr-3 comment-dislike-btn">
+                                    <i class="fa fa-thumbs-down"></i> Dislike
+                                    <span class="dislikes-count">0</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('#comment-input').val('');
+                $('#comment-count').text(parseInt($('#comment-count').text()) + 1);
+            }
+        }
+    });
+});
 
         function bindLikeDislike() {
             document.querySelectorAll('.yt-actions').forEach(actionsEl => {
