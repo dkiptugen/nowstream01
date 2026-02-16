@@ -70,33 +70,37 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        const commentForm = document.getElementById('comment-form');
-        const commentList = document.getElementById('commentlist');
+     const commentForm = document.getElementById('comment-form');
+const commentList = document.getElementById('commentlist');
 
-        commentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const input = document.getElementById('comment-input');
-            const commentText = input.value.trim();
-            if (!commentText) return;
+commentForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const input = document.getElementById('comment-input');
+    const commentText = input.value.trim();
+    if (!commentText) return;
 
-            fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ comment: commentText })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Insert new comment HTML at the **top**
-                        commentList.insertAdjacentHTML('afterbegin', data.html);
-                        input.value = '';
-                    }
-                });
-        });
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: commentText })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Remove "No comments yet" placeholder if exists
+            const noComments = commentList.querySelector('.text-center');
+            if (noComments) noComments.remove();
+
+            // Insert new comment HTML at the top
+            commentList.insertAdjacentHTML('afterbegin', data.html);
+            input.value = '';
+        }
+    });
+});
 
         function bindLikeDislike() {
             document.querySelectorAll('.yt-actions').forEach(actionsEl => {
