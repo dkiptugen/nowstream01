@@ -35,7 +35,7 @@ class CategoryController extends Controller
     // TVs
     $tvs = Content::where('content_group', 'tv')
         ->whereHas('categories', function ($q) use ($category) {
-            $q->where('category_id', $category->uuid);
+            $q->where('category_id', $category->id);
         })
         ->whereNotNull('stream_url')
         ->orderBy('views', 'desc')
