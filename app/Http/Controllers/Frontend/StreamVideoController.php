@@ -88,7 +88,6 @@ class StreamVideoController extends Controller
             $relatedVideos = Cache::remember("related_videos_{$uuid}", now()->addMinutes(30), function () use ($video) {
                 return Content::where('content_group', 'video')
                     ->where('status', 1)
-                    ->where('channel_id', $video->channel_id)
                     ->where('uuid', '!=', $video->uuid)
                     ->latest()
                     ->take(6)
