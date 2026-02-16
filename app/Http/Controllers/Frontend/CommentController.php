@@ -93,7 +93,14 @@ class CommentController extends Controller
     {
         $user = Auth::user();
         $modelClass = 'App\\Models\\' . ucfirst($commentableType);
-
+$item = $modelClass::where('uuid', $commentableId)->first();
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Content not found.'], 404);
+        }
+        dd($item);
+         $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
         $comment = Comment::create([
             'user_id' => $user->id,
             'commentable_type' => $modelClass,
