@@ -40,7 +40,7 @@
     <div class="carousel-viewport">
         <div class="carousel-track">
 
-        @foreach($tvs as $tv)
+        @foreach($toptvs as $tv)
             <div class="carousel-item">
             @include('Frontend.includes.components.cards.tv-card')
             </div>
