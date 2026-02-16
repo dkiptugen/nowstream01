@@ -139,7 +139,7 @@ class PodcastController extends Controller
             });
 
             return view('Frontend.modules.podcasts.show', compact(
-                'podcast', 'related', 'videos', 'episodes'
+                'podcast', 'related', 'videos', 'episodes', 'comments'
             ));
 
         } catch (\Exception $e) {
