@@ -52,7 +52,7 @@
 									<span>hd</span>
 								</li>
 								<li class="category">
-									{{ dd($tv->categories) }}
+									{{ dd($tv) }}
     @foreach($tv->categories as $category)
         <a href="{{ route('category.show', $category->slug) }}">
             {{ $category->name }}@if(!$loop->last),@endif
