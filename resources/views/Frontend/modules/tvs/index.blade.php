@@ -98,7 +98,6 @@
         </section>
 
     </main>
-
 @endsection
 @push('styles')
 @endpush

@@ -101,7 +101,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.66);
+            background: rgb(20 19 27 / 93%);
             pointer-events: none;
             z-index: 95;
             display: none;
@@ -125,6 +125,7 @@
             }
         }
     </style>
+
 
 
 </head>

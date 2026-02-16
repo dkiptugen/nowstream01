@@ -113,33 +113,31 @@
 <!-- top-rated-movie -->
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
-        <div class="row align-items-end mb-30">
-            <div class="col-lg-4">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">TOP Radios</span>
-                    <h2 class="title">Live Radios</h2>
+                <div class="episode-top-wrap">
+                    <div class="section-title"> <span class="sub-title">Trending Radios</span>
+                        <h2 class="title">Trending Radios</h2>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-8"> 
-            </div>
-        </div>
-        <div class="row tr-movie-active">
-@php
-$playlist = $topradios->map(function ($radio) {
-    return [
-        'src' => $radio->stream_url ?? null,
-        'title' => $radio->title ?? 'Untitled',
-        'podcast' => $radio->title ?? 'Unknown Podcast',
-        'thumbnail' => $radio->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg'),
-    ];
-});
-@endphp
 
-            @foreach($topradios as $radio)
-            @include('Frontend.includes.components.cards.radio-card')
-            @endforeach
-        </div>  
-    </div>
+            <div class="pcar-wrapper">
+
+                <!-- Outside container overlays -->
+                <div class="pcar-overlay pcar-overlay-left"></div>
+                <div class="pcar-overlay pcar-overlay-right"></div>
+
+                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
+                    data-mobile="1">
+
+                    <div class="pcar-track">
+                        @foreach($topradios as $item)
+                            <div class="pcar-item">
+                                @include('Frontend.includes.components.cards.slider-card')
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 </section>
 <!-- top-rated-movie-end --> 
 <!-- top-rated-movie -->

@@ -161,30 +161,32 @@
 		</section> 
 		@if($related->isNotEmpty())
 		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
-		<div class="container">
-			<h5 class="mb-3 section-title">
-				<!-- Error Alert -->
-				@if (session('success'))
-					You dont Have an active subscription. Pick an Event Below <br>
+		    <div class="container">
+                <div class="episode-top-wrap">
+                    <div class="section-title"> <span class="sub-title">Related Radios</span>
+                        <h2 class="title">Trending Radios</h2>
+                    </div>
+                </div>
+            </div>
 
-				@endif 
-			</h5>
-			<div class="row align-items-end mb-60">
-				<div class="col-lg-6">
-					<div class="section-title text-center text-lg-left">
-						<span class="sub-title">.......</span>
-						<h2 class="title">Continue <span>Watching</span></h2>
-					</div>
-				</div>
-				<div class="col-lg-6">
-				</div>
-			</div>
-			<div class="row tr-movie-active">
-				@foreach($related as $tv)  
-					@include('Frontend.includes.components.cards.tv-card')
-				@endforeach
-			</div>
-		</div>
+            <div class="pcar-wrapper">
+
+                <!-- Outside container overlays -->
+                <div class="pcar-overlay pcar-overlay-left"></div>
+                <div class="pcar-overlay pcar-overlay-right"></div>
+
+                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
+                    data-mobile="1">
+
+                    <div class="pcar-track">
+                        @foreach($related as $item)
+                            <div class="pcar-item">
+                                @include('Frontend.includes.components.cards.slider-card')
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
 	</section>
 		@endif
  
