@@ -18,7 +18,10 @@ return [
     <section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
         <div class="container">
             <div class="row align-items-center position-relative">
-                <div class="col-xl-3 col-lg-3">
+                <div class="col-xl-8 col-lg-8">
+                    <div class="row mx-0">
+
+                <div class="col-xl-5 col-lg-5">
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
                         <a class="popup-video"
@@ -29,7 +32,7 @@ return [
 
                     </div>
                 </div>
-                <div class="col-xl-5 col-lg-5">
+                <div class="col-xl-7 col-lg-7">
                     <div class="movie-details-content">
                         <h5>Top podcast</h5>
                         <h2>
@@ -77,17 +80,17 @@ return [
                         </div>
                     </div>
                 </div>
+                    </div>
+                </div>
                 <!-- <div class="movie-details-btn">
 					<a href="{{ asset('assets/img/poster/movie_details_img.jpg') }}" class="download-btn"
 						download="">Create podcast <img src="fonts/download.svg" alt=""></a>
-				</div> -->
-                <div class="col-xl-4 col-lg-4">
+				</div> --> 
                     		@include('Frontend.includes.components.partials.video-comments', [
     'comments' => $comments,
     'commentableType' => 'podcast',
     'commentableId' => $podcast->uuid
-])
-                </div>
+]) 
             </div>
         </div>
     </section>
