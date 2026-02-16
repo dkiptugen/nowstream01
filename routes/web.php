@@ -166,6 +166,19 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
+
+    // Content within a category (specific)
+    Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
+        ->name('content.category');
+
+    // Category main page
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])
+        ->name('category.show');
+
+    // Categories list
+    Route::get('/categories', [CategoryController::class, 'index'])
+        ->name('categories.index');
+
     // show podcast
     Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
