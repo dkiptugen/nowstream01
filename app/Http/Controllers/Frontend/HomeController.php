@@ -73,7 +73,7 @@ public function index(Request $request)
             }),
 
 
-            'top_videos' => Cache::remember("top_videos_{$countryName}", 600, function () use ($countryName) {
+            'top_videos' => Cache::remember("top_videos_global", 600, function ()  {
                 return Content::where('content_group', 'video')
                     ->orderByDesc('views')
                     ->limit(14)
