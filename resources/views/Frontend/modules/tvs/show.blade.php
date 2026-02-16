@@ -51,8 +51,7 @@
 									<span>Pg 18</span>
 									<span>hd</span>
 								</li>
-								<li class="category">
-									{{ dd($tv) }}
+								<li class="category"> 
     @foreach($tv->categories as $category)
         <a href="{{ route('category.show', $category->slug) }}">
             {{ $category->name }}@if(!$loop->last),@endif

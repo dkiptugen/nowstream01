@@ -28,30 +28,33 @@ class CategoryController extends Controller
     /**
      * Single category (all content)
      */
-  public function show($slug)
+public function show($slug)
 {
-    $category = Category::with('contents')->where('slug', $slug)->firstOrFail();
+    // Get the category by slug
+    $category = Category::where('slug', $slug)->firstOrFail();
 
-// Filter contents by type
-$tvs = $category->contents->filter(function ($content) {
-    return in_array('tv', json_decode($content->type ?? '[]'));
-});
+    // Fetch TVs where content_group is 'tv' and genre JSON contains the category name
+    $tvs = Content::where('content_group', 'tv')
+        ->whereJsonContains('genre', strtolower($category->name)) // store genres in lowercase
+        ->orderBy('views', 'desc')
+        ->get();
 
-$radios = $category->contents->filter(function ($content) {
-    return in_array('radio', json_decode($content->type ?? '[]'));
-});
+    // Similarly, fetch radios and podcasts
+    $radios = Content::where('content_group', 'radio')
+        ->whereJsonContains('genre', strtolower($category->name))
+        ->orderBy('views', 'desc')
+        ->get();
 
-$podcasts = $category->contents->filter(function ($content) {
-    return in_array('podcast', json_decode($content->type ?? '[]'));
-});
+    $podcasts = Content::where('content_group', 'podcast')
+        ->whereJsonContains('genre', strtolower($category->name))
+        ->orderBy('views', 'desc')
+        ->get();
 
     return view('Frontend.modules.categories.show', compact(
-        'category',
-        'tvs',
-        'radios',
-        'podcasts'
+        'category', 'tvs', 'radios', 'podcasts'
     ));
 }
+
 
 
     /**
