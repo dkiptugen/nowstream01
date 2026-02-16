@@ -37,11 +37,9 @@ class TVController extends Controller
 
         // Categories
         $categories = Cache::remember('tv_categories', 3600, function () {
-            return Category::orderBy('created_at', 'desc')
-                ->limit(20)
-                ->get();
+            return Category::all();
         });
-
+dd($categories);
         // Top TVs
         $toptvs = Cache::remember('top_tvs', 600, function () {
             return Content::where('content_group', 'tv')
