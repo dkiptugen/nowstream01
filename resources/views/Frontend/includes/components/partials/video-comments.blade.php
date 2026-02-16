@@ -94,10 +94,7 @@ commentForm.addEventListener('submit', function(e) {
             // Remove "No comments yet" placeholder if exists
             const noComments = commentList.querySelector('.text-center');
             if (noComments) noComments.remove();
-
-            // Insert new comment HTML at the top
-            commentList.insertAdjacentHTML('afterbegin', data.html);
-            input.value = '';
+ 
         }
     });
 });
