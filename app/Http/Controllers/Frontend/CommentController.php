@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Comment;
+use App\Models\Content;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -93,7 +95,7 @@ class CommentController extends Controller
     {
         $user = Auth::user();
         $modelClass = 'App\\Models\\' . ucfirst($commentableType);
-$item = $modelClass::where('uuid', $commentableId)->first();
+$item = Content::where('uuid', $commentableId)->first();
         if (!$item) {
             return response()->json(['success' => false, 'message' => 'Content not found.'], 404);
         }
