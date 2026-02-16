@@ -373,13 +373,7 @@
         }
     });
 </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const commentTop = document.querySelector('.comment-top');
-        commentTop.scrollTop = commentTop.scrollHeight;
-    });
-</script>
+ 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var subscribeButton = document.getElementById("subscribe-button");
