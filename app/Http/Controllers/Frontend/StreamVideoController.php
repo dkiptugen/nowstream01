@@ -50,7 +50,7 @@ class StreamVideoController extends Controller
             return Channel::where('status', 1)->get();
         });
 
-        return view('Frontend.modules.videos.index', compact('topVideos', 'videos', 'channels'));
+        return view('Frontend.modules.videos.index', compact('top_videos', 'videos', 'channels'));
     }
 
     /**
