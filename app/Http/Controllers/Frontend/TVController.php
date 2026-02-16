@@ -35,21 +35,21 @@ class TVController extends Controller
                 ->get();
         });
         // for categories of tv
- 
+
 
         // Categories where type "type" => "["podcast"]"
         // Categories where type contains "tv"
-       $categories = Cache::remember('tv_categories', 3600, function () {
-    return Category::where('type', 'like', '%tv%')->get();
-});
-// genres
-$genres = Cache::remember('tv_genres', 3600, function () {
-    return Content::where('content_group', 'tv')
-        ->whereNotNull('genre')
-        ->pluck('genre')
-        ->flatten()
-        ->unique();
-});
+        $categories = Cache::remember('tv_categories', 3600, function () {
+            return Category::where('type', 'like', '%tv%')->get();
+        });
+        // genres
+        $genres = Cache::remember('tv_genres', 3600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('genre')
+                ->pluck('genre')
+                ->flatten()
+                ->unique();
+        });
 
         // Top TVs
         $toptvs = Cache::remember('top_tvs', 600, function () {
@@ -100,22 +100,21 @@ $genres = Cache::remember('tv_genres', 3600, function () {
                 ->with('user')
                 ->orderBy('created_at', 'asc') // oldest first
                 ->get();
-            $genres = json_decode($tv->genre, true) ?? [];
-
-// Related TVs (cache)
-$related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid, $genres) {
-    return Content::where('content_group', 'tv')
-        ->where('uuid', '!=', $uuid)
-        ->whereNotNull('stream_url')
-        ->where(function ($query) use ($genres) {
-            foreach ($genres as $genre) {
-                $query->orWhereJsonContains('genre', $genre);
-            }
-        })
-        ->latest()
-        ->take(16)
-        ->get();
-});
+            $genres = $tv->genre ?? [];
+            // Related TVs (cache)
+            $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid, $genres) {
+                return Content::where('content_group', 'tv')
+                    ->where('uuid', '!=', $uuid)
+                    ->whereNotNull('stream_url')
+                    ->where(function ($query) use ($genres) {
+                        foreach ($genres as $genre) {
+                            $query->orWhereJsonContains('genre', $genre);
+                        }
+                    })
+                    ->latest()
+                    ->take(16)
+                    ->get();
+            });
 
             return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments'));
         } catch (\Exception $e) {
