@@ -32,30 +32,25 @@
                     </ul>
                 </div>
             </div>
-        </section> 
-        
-<div class="pcar-wrapper">
+        </section>
 
-    <!-- Outside container overlays -->
-    <div class="pcar-overlay pcar-overlay-left"></div>
-    <div class="pcar-overlay pcar-overlay-right"></div>
+        <div class="pcar-wrapper">
 
-        <div class="pcar"
-             data-autoplay="true"
-             data-interval="3500"
-             data-desktop="5"
-             data-tablet="3"
-             data-mobile="1">
+            <!-- Outside container overlays -->
+            <div class="pcar-overlay pcar-overlay-left"></div>
+            <div class="pcar-overlay pcar-overlay-right"></div>
 
-            <div class="pcar-track">
-                @foreach($toptvs as $tv)
-                    <div class="pcar-item">
-                       @include('Frontend.includes.components.cards.tv-card')
-                    </div>
-                @endforeach
+            <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="7" data-tablet="3" data-mobile="1">
+
+                <div class="pcar-track">
+                    @foreach($toptvs as $item)
+                        <div class="pcar-item">
+                            @include('Frontend.includes.components.cards.slider-card')
+                        </div>
+                    @endforeach
+                </div>
             </div>
-    </div>
-</div>
+        </div>
 
 
 
@@ -93,73 +88,72 @@
         </section>
 
     </main>
-<style>
-/* ===============================
-   Wrapper (full width)
-=================================*/
-.pcar-wrapper {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-}
+    <style>
+        /* ===============================
+       Wrapper (full width)
+    =================================*/
+        .pcar-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
 
-/* ===============================
-   Carousel viewport (container width)
-=================================*/
-.pcar {
-    position: relative;
-    overflow: hidden;
-}
+        /* ===============================
+       Carousel viewport (container width)
+    =================================*/
+        .pcar {
+            position: relative;
+            overflow: hidden;
+        }
 
-/* ===============================
-   Track
-=================================*/
-.pcar-track {
-    display: flex;
-    gap: 16px;
-    transition: transform 0.5s ease;
-    will-change: transform;
-}
+        /* ===============================
+       Track
+    =================================*/
+        .pcar-track {
+            display: flex;
+            gap: 16px;
+            transition: transform 0.5s ease;
+            will-change: transform;
+        }
 
-/* ===============================
-   Items
-=================================*/
-.pcar-item {
-    flex: 0 0 auto;
-}
+        /* ===============================
+       Items
+    =================================*/
+        .pcar-item {
+            flex: 0 0 auto;
+        }
 
-/* ===============================
-   Overlay (outside container)
-=================================*/
-.pcar-overlay {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.35);
-    pointer-events: none;
-    z-index: 5;
-    display: none;
-}
+        /* ===============================
+       Overlay (outside container)
+    =================================*/
+        .pcar-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
 
-/* Left / Right positioning */
-.pcar-overlay-left {
-    left: 0;
-}
+        /* Left / Right positioning */
+        .pcar-overlay-left {
+            left: 0;
+        }
 
-.pcar-overlay-right {
-    right: 0;
-}
+        .pcar-overlay-right {
+            right: 0;
+        }
 
-/* Desktop only */
-@media (min-width: 992px) {
+        /* Desktop only */
+        @media (min-width: 992px) {
 
-    .pcar-overlay {
-        display: block;
-        width: calc((100% - var(--pcar-container-width, 1320px)) / 2);
-    }
-}
-
-</style> 
+            .pcar-overlay {
+                display: block;
+                width: calc((100% - var(--pcar-container-width, 1320px)) / 2);
+            }
+        }
+    </style>
 
 @endsection
 @push('styles')
