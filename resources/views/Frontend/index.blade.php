@@ -185,6 +185,7 @@
                             <div class="movie-content">
                                 <div class="top">
                                     @php
+                                     use App\Models\Channel;
                                         $channel = Channel::find($video->channel_id);
                                     @endphp
                                     <h5 class="title mt-0">
