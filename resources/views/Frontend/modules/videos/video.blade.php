@@ -15,8 +15,8 @@
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
 					</div>
-					<img src="{{ $video->thumbnail_url }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
-					<img src="{{ asset('$video->thumbnail_url') }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
+					<img src="{{ 'https://www.now.co.ke/' . $video->thumbnail_url }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
+					<img src="{{ url($video->thumbnail_url) }}" alt="" class="w-100 d-block w-100" style="object-fit: cover; aspect-ratio: 16/9;" loading="lazy">
 
 					@php
 					$oldvid= $video;
