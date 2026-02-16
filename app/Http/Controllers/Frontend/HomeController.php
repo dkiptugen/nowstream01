@@ -67,15 +67,13 @@ public function index(Request $request)
             }),
 
             'videos' => Content::where('content_group', 'video')
-                    ->orderByDesc('views')
-                    ->limit(14)
-                    ->get(),
+            ->latest()
+            ->paginate(12),
 
 
             'top_videos' => Content::where('content_group', 'video')
-                    ->orderByDesc('views')
-                    ->limit(14)
-                    ->get(),
+            ->latest()
+            ->paginate(12),
 
             'current_event' => Cache::remember("current_event", 300, function () {
                 return Content::latest()->limit(1)->get();
