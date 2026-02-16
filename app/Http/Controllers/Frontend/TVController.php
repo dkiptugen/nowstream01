@@ -11,54 +11,82 @@ use App\Traits\CacheHelper;
 
 class TVController extends Controller
 {
+    protected $data = [];
+
+    /**
+     * TV listing page
+     */
     public function index()
     {
-        // Latest tvs (paginated style alternative)
+        // TV countries (distinct)
+        $tv_countries = Cache::remember('tv_countries', 3600, function () {
+            return Content::where('content_group', 'tv')
+                ->pluck('country')
+                ->unique();
+        });
 
-        $this->data['tv_countries'] = Content::where('content_group', 'tv')
-            ->with('categories')
-            ->pluck('country');
+        // TVs for Kenya (or default country)
+        $tvs = Cache::remember('tvs_kenya', 600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('country', 'Kenya')
+                ->with('categories')
+                ->take(30)
+                ->get();
+        });
 
-        $this->data['tvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('country', 'Kenya')
-            ->with('categories')
-            ->take(30)->get();
+        // Categories
+        $categories = Cache::remember('tv_categories', 3600, function () {
+            return Category::orderBy('created_at', 'desc')
+                ->limit(20)
+                ->get();
+        });
 
-        $this->data['categories'] = Category::orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get();
-        $this->data['toptvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->orderBy('views', 'desc')
-            ->with('categories')
-            ->limit(39)
-            ->get();
-        // english channels
-        $this->data['english_tvs'] = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('language', 'en')
-            ->orderBy('views', 'desc')
-            ->limit(6)
-            ->get();
+        // Top TVs
+        $toptvs = Cache::remember('top_tvs', 600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->orderByDesc('views')
+                ->with('categories')
+                ->limit(39)
+                ->get();
+        });
+
+        // English channels
+        $english_tvs = Cache::remember('english_tvs', 600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('language', 'en')
+                ->orderByDesc('views')
+                ->limit(6)
+                ->get();
+        });
+
+        $this->data = compact('tv_countries', 'tvs', 'categories', 'toptvs', 'english_tvs');
 
         return view('Frontend.modules.tvs.index', $this->data);
     }
+
+    /**
+     * Single TV page
+     */
     public function show($uuid, $slug)
     {
         try {
+            // Cache TV detail
             $tv = Cache::remember("tv_{$uuid}_{$slug}", now()->addDay(), function () use ($uuid, $slug) {
                 return Content::where('uuid', $uuid)
                     ->where('slug', $slug)
                     ->where('content_group', 'tv')
                     ->first();
             });
-            $tv->increment('views'); // Increment view count 
-            if (!$tv) {
-                abort(404, 'tv not found');
-            }
 
-            // Related tvs (exclude current)
+            if (!$tv) abort(404, 'TV not found');
+
+            // Increment views (not cached)
+            $tv->increment('views');
+
+            // Related TVs (cache)
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'tv')
                     ->where('uuid', '!=', $uuid)
@@ -68,13 +96,9 @@ class TVController extends Controller
                     ->get();
             });
 
-
-            return view('Frontend.modules.tvs.show', [
-                'tv' => $tv,
-                'related' => $related,
-            ]);
+            return view('Frontend.modules.tvs.show', compact('tv', 'related'));
         } catch (\Exception $e) {
-            abort(404, 'tv not found');
+            abort(404, 'TV not found');
         }
     }
 }
