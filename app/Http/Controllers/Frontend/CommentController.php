@@ -89,27 +89,54 @@ class CommentController extends Controller
     /**
      * Store a new comment (supports UUIDs)
      */
-    public function postComment(Request $request, string $commentableType, string $commentableId)
-    {
-        $user = Auth::user();
-        $modelClass = 'App\\Models\\' . ucfirst($commentableType);
-
-        $comment = Comment::create([
-            'user_id' => $user->id,
-            'commentable_type' => $modelClass,
-            'commentable_id' => $commentableId,
-            'comment' => $request->input('comment'),
-        ]);
-
+  public function postComment(Request $request, string $commentableType, string $commentableId)
+{
+    // 1. Authentication check
+    if (!Auth::check()) {
         if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'comment' => $comment->comment,
-                'user_name' => $user->name,
-                'user_image' => $user->image ? asset('storage/' . $user->image) : asset('assets/images/avatars/avatar-2.png'),
-            ]);
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
-
-        return redirect()->back()->with('success', 'Comment posted.');
+        return redirect()->route('login')->with('error', 'Please login to post a comment.');
     }
+
+    $user = Auth::user();
+
+    // 2. Validate input
+    $request->validate([
+        'comment' => 'required|string|max:2000',
+    ]);
+
+    // 3. Determine model class
+    $modelClass = 'App\\Models\\' . ucfirst($commentableType);
+    if (!class_exists($modelClass)) {
+        abort(400, 'Invalid commentable type.');
+    }
+
+    // 4. Create comment safely
+    $comment = Comment::create([
+        'user_id' => $user->id,
+        'commentable_type' => $modelClass,
+        'commentable_id' => $commentableId,
+        'comment' => htmlspecialchars($request->input('comment')), // sanitize input
+    ]);
+
+    // 5. Broadcast event if AJAX (for real-time updates)
+    if ($request->ajax()) {
+        broadcast(new \App\Events\NewComment($comment))->toOthers();
+
+        return response()->json([
+            'success' => true,
+            'comment' => $comment->comment,
+            'user_name' => $user->name,
+            'user_image' => $user->image 
+                ? asset('storage/' . $user->image) 
+                : asset('assets/images/avatars/avatar-2.png'),
+            'created_at' => $comment->created_at->diffForHumans(),
+        ]);
+    }
+
+    // 6. Normal request redirect
+    return redirect()->back()->with('success', 'Comment posted.');
+}
+
 }
