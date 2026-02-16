@@ -1,4 +1,14 @@
-<div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
+<div class="col-xl-3 col-lg-8">
+    <div class="yt-comments-card card sticky-top" id="commentsCard">
+
+        {{-- Header --}}
+        <div class="card-header yt-comments-header border-0 pb-2">
+            <h6 class="mb-0 font-weight-bold text-white">
+                Comments <span class="text-light-50">(<span id="comment-count">{{ $comments->count() }}</span>)</span>
+            </h6>
+        </div>
+
+      <div class="card-body pt-2 pb-0 yt-comments-body" id="comment-list">
 
     {{-- Comments container --}}
     <div id="commentlist">
@@ -52,8 +62,10 @@
     </form>
 </div>
 
+    </div>
+</div>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
+   document.addEventListener('DOMContentLoaded', function () {
 
     const commentForm = document.getElementById('comment-form');
     const commentList = document.getElementById('commentlist');
