@@ -17,7 +17,7 @@
         poster="{{ $tv->thumbnail_url }}">
     </video>
 
-    <div class="live-badge"><img src="{{ asset('assets/img/logo1.png') }}"></div>
+    <div class="live-badge"><img src="{{ asset('assets/img/logo/logo.png') }}" height="30"></div>
 </div>
 
  
