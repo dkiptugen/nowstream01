@@ -92,7 +92,7 @@ public function index(Request $request)
                 ->get(),
 
             // Top TVs (country aware)
-            'toptvs' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views')
+            'toptvs' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views', 'thumbnail_url')
                 ->where('content_group', 'tv')
                 ->whereNotNull('stream_url')
                 ->when($countryName, $countryFilter)
@@ -101,7 +101,7 @@ public function index(Request $request)
                 ->get(),
 
             // Top Radios (country aware)
-            'topradios' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views')
+            'topradios' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views', 'thumbnail_url')
                 ->where('content_group', 'radio')
                 ->where('status', 1)
                 ->whereNotNull('stream_url')
