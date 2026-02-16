@@ -105,8 +105,7 @@ public function index(Request $request)
 
             'topPodcasts' => Cache::remember("top_podcasts_{$countryName}", 600, function () use ($countryName) {
                 return Content::where('content_group', 'podcast')
-                    ->whereNull('parent_id')
-                    ->where('country', $countryName)
+                    ->whereNull('parent_id') 
                     ->orderByDesc('views')
                     ->limit(16)
                     ->get();
