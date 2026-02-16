@@ -35,56 +35,59 @@ class CommentController extends Controller
     /**
      * Post a comment on a content item (UUID)
      */
-    public function postComment(Request $request, string $contentGroup, string $uuid)
-    {
-        if (!Auth::check()) {
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
-            }
-            return redirect()->route('login')->with('error', 'Please login to post a comment.');
+  public function postComment(Request $request, string $contentGroup, string $uuid)
+{
+    // Ensure user is authenticated
+    if (!Auth::check()) {
+        if ($request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
+        return redirect()->route('login')->with('error', 'Please login to post a comment.');
+    }
 
-        $request->validate([
-            'comment' => 'required|string|max:2000',
+    // Validate input
+    $request->validate([
+        'comment' => 'required|string|max:2000',
+    ]);
+
+    $user = Auth::user();
+
+    // Find the content by UUID and content group
+    $content = Content::where('uuid', $uuid)
+        ->where('content_group', $contentGroup)
+        ->firstOrFail();
+
+    try {
+        // Create the comment
+        $comment = Comment::create([
+            'user_id' => $user->id,
+            'commentable_type' => Content::class,
+            'commentable_id' => $content->id, // Use numeric ID for relations
+            'comment' => htmlspecialchars($request->input('comment')),
         ]);
 
-        $user = Auth::user();
+        // Return JSON for AJAX requests
+        if ($request->ajax()) {
+            // Render the comment HTML partial
+            $html = view('Frontend.includes.components.partials.single-comment', [
+                'comment' => $comment
+            ])->render();
 
-        // Find the content by UUID and content group
-        $content = Content::where('uuid', $uuid)
-            ->where('content_group', $contentGroup)
-            ->firstOrFail();
-
-        try {
-            $comment = Comment::create([
-                'user_id' => $user->id,
-                'commentable_type' => Content::class,
-                'commentable_id' => $content->uuid,
-                'comment' => htmlspecialchars($request->input('comment')), // sanitize input
+            return response()->json([
+                'success' => true,
+                'html' => $html,
             ]);
-
-            // Broadcast to others if needed (real-time)
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'comment' => $comment->comment,
-                    'user_name' => $user->name,
-                    'user_image' => $user->image
-                        ? asset('storage/' . $user->image)
-                        : asset('assets/images/avatars/avatar-2.png'),
-                    'created_at' => $comment->created_at->diffForHumans(),
-                ]);
-            }
-
-            return redirect()->back()->with('success', 'Comment posted.');
-        } catch (\Exception $e) {
-            Log::error('Failed to post comment: ' . $e->getMessage());
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Failed to post comment'], 500);
-            }
-            return redirect()->back()->with('error', 'Failed to post comment.');
         }
+
+        return redirect()->back()->with('success', 'Comment posted.');
+    } catch (\Exception $e) {
+        Log::error('Failed to post comment: ' . $e->getMessage());
+        if ($request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Failed to post comment'], 500);
+        }
+        return redirect()->back()->with('error', 'Failed to post comment.');
     }
+}
 
     /**
      * Like a comment
