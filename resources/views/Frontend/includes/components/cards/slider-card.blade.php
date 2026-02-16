@@ -1,4 +1,4 @@
- <div class="movie-item mb-60">
+ <div class="movie-item">
                     <div class="movie-poster">
                         <a href="{{ route($item->content_group . '.show', [$item->uuid, $item->slug]) }}">
                             <img src="{{$item->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
