@@ -30,7 +30,7 @@ class StreamVideoController extends Controller
     public function index()
     {
         // Top videos (cache 10 min)
-        $topVideos = Cache::remember('top_videos_homepage', now()->addMinutes(10), function () {
+        $top_videos = Cache::remember('top_videos_home', now()->addMinutes(10), function () {
             return Content::where('content_group', 'video')
                 ->orderByDesc('views')
                 ->take(4)
