@@ -529,68 +529,62 @@
 
         });
     </script>
+<script>
+$(document).ready(function() {
 
-	<script>
-		$(document).ready(function() {
+    // Scroll comments to bottom
+    function scrollCommentsToBottom() {
+        const list = $('#commentlist'); // make sure this matches your container
+        if (!list.length) return;
+        list.stop().animate({ scrollTop: list[0].scrollHeight }, 300);
+    }
 
-			function scrollCommentsToBottom() {
-				let list = $('#comment-list');
-				if (!list.length) return;
-				list.scrollTop(list[0].scrollHeight);
-			}
+    // Scroll on page load
+    scrollCommentsToBottom();
 
-			// scroll on load
-			scrollCommentsToBottom();
+    // Handle comment submission
+    $('#comment-form').on('submit', function(e) {
+        e.preventDefault();
 
-			// submit comment
-			$('#comment-form').on('submit', function(e) {
-				e.preventDefault();
+        const form = $(this);
+        const url = form.attr('action');
+        const btn = $('#comment-submit-btn');
+        const commentInput = $('#comment-input');
+        const commentText = commentInput.val().trim();
 
-				let form = $(this);
-				let url = form.attr('action');
-				let btn = $('#comment-submit-btn');
+        if (!commentText) return;
 
-				let commentInput = $('#comment-input');
-				let commentText = commentInput.val().trim();
+        btn.prop('disabled', true);
 
-				if (!commentText) return;
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: form.serialize(),
+            success: function(res) {
 
-				btn.prop('disabled', true);
+                // Get user info dynamically
+                const name = "{{ auth()->check() ? auth()->user()->name : 'Guest' }}";
+                const avatar = "{{ auth()->check() ? (auth()->user()->image ?? asset('avatar.png')) : asset('avatar.png') }}";
 
-				$.ajax({
-					url: url,
-					type: "POST",
-					data: form.serialize(),
-					success: function(res) {
+                // Escape text to prevent XSS
+                const safeText = $('<div>').text(commentText).html();
 
-						// if you use broadcast()->toOthers() then we must append manually for sender
-						let name = "{{ auth()->check() ? auth()->user()->name : '' }}";
-						let avatar = "{{ auth()->check() ? (auth()->user()->image ?? asset('avatar.png')) : asset('avatar.png') }}";
-
-						let safeText = $('<div>').text(commentText).html();
-
-						let newComment = `
+                // Build comment HTML
+                const newComment = `
                     <div class="media py-3 border-bottom border-dark">
-                        <img src="${avatar}" class="mr-3 rounded-circle"
+                        <img src="${avatar}" class="mr-3 rounded-circle" 
                              style="width:42px;height:42px;object-fit:cover;" alt="avatar">
-
                         <div class="media-body">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center flex-wrap">
-                                    <strong class="mr-2 text-white" style="font-size: 14px;">
-                                        ${name}
-                                    </strong>
-                                    <small class="text-light-50" style="font-size: 12px;">
-                                        just now
-                                    </small>
+                                    <strong class="mr-2 text-white" style="font-size:14px;">${name}</strong>
+                                    <small class="text-light-50" style="font-size:12px;">just now</small>
                                 </div>
                             </div>
-
-                            <div class="mt-1 text-light" style="font-size: 14px; line-height: 1.4;">
+                            <div class="mt-1 text-light" style="font-size:14px; line-height:1.4;">
                                 ${safeText}
                             </div>
-
-                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
+                            <div class="mt-2 d-flex align-items-center yt-actions" style="font-size:13px;">
                                 <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
                                 <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
                                 <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
@@ -599,30 +593,31 @@
                     </div>
                 `;
 
-						// IMPORTANT: append to bottom (latest at bottom)
-						$('#commentlist').append(newComment);
+                // Append comment to container
+                $('#commentlist').append(newComment);
 
-						// update count
-						let countEl = $('#comment-count');
-						countEl.text(parseInt(countEl.text() || 0) + 1);
+                // Update comment count
+                const countEl = $('#comment-count');
+                countEl.text(parseInt(countEl.text() || 0) + 1);
 
-						// clear input
-						commentInput.val('');
+                // Clear input
+                commentInput.val('');
 
-						// scroll bottom
-						scrollCommentsToBottom();
-					},
-					error: function() {
-						alert('Failed to post comment. Please try again.');
-					},
-					complete: function() {
-						btn.prop('disabled', false);
-					}
-				});
-			});
+                // Scroll to bottom
+                scrollCommentsToBottom();
+            },
+            error: function() {
+                alert('Failed to post comment. Please try again.');
+            },
+            complete: function() {
+                btn.prop('disabled', false);
+            }
+        });
+    });
 
-		});
-	</script>
+});
+</script>
+
 
 	<!-- <script>
 			document.addEventListener('DOMContentLoaded', function () {

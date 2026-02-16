@@ -8,8 +8,8 @@
             </h6>
         </div>
 
-       <div class="yt-comments-body" id="comment-lists">
-    <div id="cnewommentlist">
+       <div class="yt-comments-body" id="comment-list">
+    <div id="commentlist">
                 @if($comments->isEmpty())
                     <div class="text-center text-light-50 py-4">
                         No comments yet. Be the first to comment.
@@ -62,76 +62,3 @@
 
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-
-        const commentForm = document.getElementById('comment-form');
-        const cnewommentlist = document.getElementById('cnewommentlist');
-
-        commentForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const input = document.getElementById('comment-input');
-            const commentText = input.value.trim();
-            if (!commentText) return;
-
-            fetch(this.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ comment: commentText })
-            })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Remove "No comments yet" placeholder if exists
-                        const noComments = cnewommentlist.querySelector('.text-center');
-                        if (noComments) noComments.remove();
-
-                        // Append new comment at the BOTTOM
-                        cnewommentlist.insertAdjacentHTML('beforeend', data.html);
-
-                        // Clear input
-                        input.value = '';
-
-                        // Re-bind like/dislike events for new comment
-                        bindLikeDislike();
-                    }
-                });
-        });
-
-        function bindLikeDislike() {
-            document.querySelectorAll('.yt-actions').forEach(actionsEl => {
-                const commentEl = actionsEl.closest('.media');
-                const commentId = commentEl.dataset.commentId;
-
-                const likeBtn = actionsEl.querySelector('.comment-like-btn');
-                const dislikeBtn = actionsEl.querySelector('.comment-dislike-btn');
-
-                if (likeBtn) likeBtn.onclick = () => toggleReaction(commentId, 'like', actionsEl);
-                if (dislikeBtn) dislikeBtn.onclick = () => toggleReaction(commentId, 'dislike', actionsEl);
-            });
-        }
-
-        function toggleReaction(commentId, type, container) {
-            fetch(`/comment/${commentId}/${type}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json',
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    container.querySelector('.likes-count').textContent = data.likes;
-                    container.querySelector('.dislikes-count').textContent = data.dislikes;
-                });
-        }
-
-        bindLikeDislike();
-
-    });
-
-</script>
