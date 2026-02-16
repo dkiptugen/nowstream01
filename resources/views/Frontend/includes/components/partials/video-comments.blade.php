@@ -13,14 +13,17 @@
 
             {{-- Comments container --}}
             <div id="commentlist">
-                @forelse ($comments as $comment)
-                    @include('Frontend.includes.components.partials.single-comment', ['comment' => $comment])
-                @empty
+                @if($comments->isEmpty())
                     <div class="text-center text-light-50 py-4">
                         No comments yet. Be the first to comment.
                     </div>
-                @endforelse
+                @else
+                    @foreach($comments as $comment)
+                        @include('Frontend.includes.components.partials.single-comment', ['comment' => $comment])
+                    @endforeach
+                @endif
             </div>
+
 
 
         </div>
@@ -68,34 +71,34 @@
     document.addEventListener('DOMContentLoaded', function () {
 
         const commentForm = document.getElementById('comment-form');
-const commentList = document.getElementById('commentlist');
+        const commentList = document.getElementById('commentlist');
 
-commentForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const input = document.getElementById('comment-input');
-    const commentText = input.value.trim();
-    if (!commentText) return;
+        commentForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const input = document.getElementById('comment-input');
+            const commentText = input.value.trim();
+            if (!commentText) return;
 
-    fetch(this.action, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ comment: commentText })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Insert new comment HTML at the **top**
-            commentList.insertAdjacentHTML('afterbegin', data.html);
-            input.value = '';
-        }
-    });
-});
+            fetch(this.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ comment: commentText })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Insert new comment HTML at the **top**
+                        commentList.insertAdjacentHTML('afterbegin', data.html);
+                        input.value = '';
+                    }
+                });
+        });
 
-function bindLikeDislike() {
+        function bindLikeDislike() {
             document.querySelectorAll('.yt-actions').forEach(actionsEl => {
                 const commentEl = actionsEl.closest('.media');
                 const commentId = commentEl.dataset.commentId;

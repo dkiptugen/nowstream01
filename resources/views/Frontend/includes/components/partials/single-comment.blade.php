@@ -1,5 +1,6 @@
 <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
-    <img src="{{ $comment->user->image ? asset($comment->user->image) : 'https://via.placeholder.com/42' }}" class="mr-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;" alt="{{ $comment->user->name }}">
+    <img src="{{ $comment->user->image ? asset($comment->user->image) : 'https://via.placeholder.com/42' }}" 
+         class="mr-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;" alt="{{ $comment->user->name }}">
     <div class="media-body">
         <strong class="mr-2 text-white" style="font-size:14px;">{{ $comment->user->name }}</strong>
         <small class="text-light-50" style="font-size:12px;">{{ $comment->created_at->diffForHumans() }}</small>
