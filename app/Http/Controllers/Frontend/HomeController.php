@@ -92,15 +92,20 @@ class HomeController extends Controller
                     ->get(),
 
                 // Top TVs (country aware)
-                'toptvs' => Content::select('uuid', 'title', 'slug', 'stream_url', 'thumbnail_url', 'views')
-                    ->where('content_group', 'tv')
-                    ->whereNotNull('stream_url')
-                    ->when($countryName, function ($q) use ($countryName) {
-                        $q->where('country', $countryName)->orWhereNull('country');
-                    })
-                    ->orderByDesc('views')
-                    ->limit(16)
-                    ->get(),
+                'toptvs' => Content::select(
+        'uuid',
+        'title',
+        'slug',
+        'stream_url',
+        'thumbnail as thumbnail_url', // alias
+        'views'
+    )
+    ->where('content_group', 'tv')
+    ->whereNotNull('stream_url')
+    ->orderByDesc('views')
+    ->limit(16)
+    ->get(),
+
 
 
                 // Top Radios (country aware)
