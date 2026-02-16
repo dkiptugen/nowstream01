@@ -84,21 +84,70 @@ document.addEventListener('DOMContentLoaded', function () {
     const btn = document.getElementById('comment-submit-btn');
 
     function scrollBottom() {
-        scrollBox.scrollTop = scrollBox.scrollHeight;
+        if (scrollBox) {
+            scrollBox.scrollTop = scrollBox.scrollHeight;
+        }
     }
 
     // Scroll on load
     scrollBottom();
 
-    // ===== Post Comment =====
     form.addEventListener('submit', function(e){
         e.preventDefault();
 
         const text = input.value.trim();
         if (!text) return;
 
+        // ===== User info from blade =====
+        const userName = "{{ auth()->user()->name ?? 'User' }}";
+        const userImage = "{{ auth()->user()->image ? asset(auth()->user()->image) : asset('assets/images/avatars/avatar-2.png') }}";
+
+        // ===== Remove empty placeholder =====
+        const empty = document.getElementById('no-comments');
+        if (empty) empty.remove();
+
+        // ===== Temporary ID for optimistic comment =====
+        const tempId = 'temp-' + Date.now();
+
+        // ===== Escape text =====
+        const safeText = document.createElement('div');
+        safeText.innerText = text;
+
+        // ===== Add comment instantly =====
+        const html = `
+            <div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
+                <img src="${userImage}" class="mr-3 rounded-circle"
+                     style="width:42px;height:42px;object-fit:cover;">
+
+                <div class="media-body">
+                    <strong class="text-white">${userName}</strong>
+                    <small class="text-light-50 ml-2">just now</small>
+
+                    <div class="text-light mt-1">${safeText.innerHTML}</div>
+
+                    <div class="mt-2 yt-actions">
+                        <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
+                        <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        list.insertAdjacentHTML('beforeend', html);
+
+        // Update count immediately
+        countEl.textContent = parseInt(countEl.textContent) + 1;
+
+        // Clear input immediately
+        input.value = '';
+
+        // Scroll
+        scrollBottom();
+
+        // Disable button during request
         btn.disabled = true;
 
+        // ===== Send to server =====
         fetch(form.action, {
             method: 'POST',
             headers: {
@@ -110,57 +159,48 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(res => res.json())
         .then(data => {
+            if (!data.success) {
+                throw new Error('Failed');
+            }
 
-            if (!data.success) return;
-
-            // Remove placeholder
-            const empty = document.getElementById('no-comments');
-            if (empty) empty.remove();
-
-            // Build comment
-            const html = `
-                <div class="media py-3 border-bottom border-dark" data-comment-id="${data.comment_id}">
-                    <img src="${data.user_image}" class="mr-3 rounded-circle"
-                         style="width:42px;height:42px;object-fit:cover;">
-
-                    <div class="media-body">
-                        <strong class="text-white">${data.user_name}</strong>
-                        <small class="text-light-50 ml-2">just now</small>
-
-                        <div class="text-light mt-1">${data.comment}</div>
-
-                        <div class="mt-2 yt-actions">
-                            <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
-                            <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            list.insertAdjacentHTML('beforeend', html);
-
-            // Update count
-            countEl.textContent = parseInt(countEl.textContent) + 1;
-
-            input.value = '';
-            scrollBottom();
+            // Replace temp ID with real ID
+            const tempEl = document.querySelector(`[data-comment-id="${tempId}"]`);
+            if (tempEl) {
+                tempEl.setAttribute('data-comment-id', data.comment_id);
+            }
         })
-        .finally(() => btn.disabled = false);
+        .catch(() => {
+            // Rollback UI if failed
+            const tempEl = document.querySelector(`[data-comment-id="${tempId}"]`);
+            if (tempEl) tempEl.remove();
+
+            countEl.textContent = Math.max(0, parseInt(countEl.textContent) - 1);
+            alert('Failed to post comment. Please try again.');
+        })
+        .finally(() => {
+            btn.disabled = false;
+        });
     });
 
 
-    // ===== Like / Dislike (Delegated) =====
+    // ===== Delegated Like / Dislike =====
     document.addEventListener('click', function(e){
 
-        if (!e.target.closest('.comment-like-btn') && !e.target.closest('.comment-dislike-btn')) return;
+        const likeBtn = e.target.closest('.comment-like-btn');
+        const dislikeBtn = e.target.closest('.comment-dislike-btn');
+
+        if (!likeBtn && !dislikeBtn) return;
 
         e.preventDefault();
 
-        const actionBtn = e.target.closest('a');
-        const commentEl = actionBtn.closest('.media');
+        const btnEl = likeBtn || dislikeBtn;
+        const commentEl = btnEl.closest('.media');
         const commentId = commentEl.dataset.commentId;
 
-        const type = actionBtn.classList.contains('comment-like-btn') ? 'like' : 'dislike';
+        // Ignore temporary comments
+        if (commentId.startsWith('temp-')) return;
+
+        const type = likeBtn ? 'like' : 'dislike';
 
         fetch(`/comment/${commentId}/${type}`, {
             method: 'POST',
@@ -179,3 +219,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
