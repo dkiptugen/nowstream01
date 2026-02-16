@@ -20,6 +20,8 @@ class HomeController extends Controller
 {
     use CacheHelper;
 
+    protected $data = [];
+
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
@@ -66,22 +68,21 @@ public function index(Request $request)
                 return $this->get_events();
             }),
 
-            'videos' => Cache::remember("videos_{$countryName}", 600, function () {
-                return $this->get_videos(6);
+            'videos' => Cache::remember("videos_global", 600, function () {
+                return $this->get_videos( 6);
             }),
 
-            'current_event' => Cache::remember("current_event", 300, function () {
-                return Content::latest()->limit(1)->get();
-            }),
 
             'top_videos' => Cache::remember("top_videos_{$countryName}", 600, function () use ($countryName) {
                 return Content::where('content_group', 'video')
-                    ->where('country', $countryName)
                     ->orderByDesc('views')
                     ->limit(14)
                     ->get();
             }),
 
+            'current_event' => Cache::remember("current_event", 300, function () {
+                return Content::latest()->limit(1)->get();
+            }),
             'toptvs' => Cache::remember("top_tvs_{$countryName}", 600, function () use ($countryName) {
                 return Content::where('content_group', 'tv')
                     ->whereNotNull('stream_url')
