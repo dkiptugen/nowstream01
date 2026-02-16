@@ -23,89 +23,121 @@ class HomeController extends Controller
     /**
      * Display the homepage with cached channels, streams, events, and videos.
      */
+public function index(Request $request)
+{
+    // --- Country handling ---
+    $iso = strtoupper($request->country ?? '');
+    $countryName = $this->getCountryNameByIso($iso);
 
-    public function index(Request $request)
-    {
-        $iso = strtoupper($request->country);
-        $countryName = $this->getCountryNameByIso($iso) ?? null;
+    $this->data['country'] = $iso;
+    $this->data['country_name'] = $countryName ?? 'Kenya';
 
-        $cacheKey = 'home_' . ($countryName ?? 'kenya');
+    // Cache per country (affects only content that uses country)
+    $cacheKey = 'homepage_' . ($iso ?: 'kenya');
 
-        $this->data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName) {
+    $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName) {
 
-            return [
-                'country_name' => $countryName ?? 'Kenya',
+        // Country filter (only for models that have country)
+        $countryFilter = function ($query) use ($countryName) {
+            if ($countryName) {
+                $query->where(function ($q) use ($countryName) {
+                    $q->where('country', $countryName)
+                      ->orWhereNull('country');
+                });
+            }
+        };
 
-                'channels' => $this->get_channels(),
+        return [
 
-                'streams' => $this->get_streams(null, 6),
+            // Channels
+            'channels' => Channel::select('uuid', 'name', 'thumbnail')
+                ->where('status', 1)
+                ->limit(20)
+                ->get(),
 
-                'events' => $this->get_events(),
+            // Streams (live)
+            'streams' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
+                ->where('content_group', 'livestream')
+                ->latest()
+                ->limit(6)
+                ->get(),
 
-                'videos' => $this->get_videos(6),
+            // Events
+            'events' => Content::select('uuid', 'title', 'slug', 'start_time')
+                ->where('content_group', 'event')
+                ->latest()
+                ->limit(6)
+                ->get(),
 
-                'current_event' => Content::select('uuid', 'title', 'thumbnail_url', 'created_at')
-                    ->latest()
-                    ->first(),
+            // Latest videos
+            'videos' => Content::with('channel:id,name')
+                ->select('uuid', 'title', 'slug', 'thumbnail_url', 'views', 'channel_id')
+                ->where('content_group', 'video')
+                ->latest()
+                ->limit(6)
+                ->get(),
 
-                'top_videos' => $this->contentQuery('video', $countryName, 14),
+            // Current event
+            'current_event' => Content::select('uuid', 'title', 'slug')
+                ->where('content_group', 'event')
+                ->latest()
+                ->first(),
 
-                'toptvs' => $this->contentQuery('tv', $countryName, 16, true),
+            // Top videos (country aware)
+            'top_videos' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
+                ->where('content_group', 'video')
+                ->when($countryName, $countryFilter)
+                ->orderByDesc('views')
+                ->limit(14)
+                ->get(),
 
-                $this->data['topradios'] = Content::where('content_group', 'radio') ->whereNotNull('stream_url') ->orderBy('views', 'desc') ->where('country', $countryName) ->where('status', 1) ->limit(16) ->get(),
+            // Top TVs (country aware)
+            'toptvs' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views')
+                ->where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->when($countryName, $countryFilter)
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
 
-                'topPodcasts' => Content::select('uuid', 'title', 'thumbnail_url', 'views', 'country')
-                    ->where('content_group', 'podcast')
-                    ->whereNull('parent_id')
-                    ->when(
-                        $countryName,
-                        fn($q) =>
-                        $q->where(function ($sub) use ($countryName) {
-                            $sub->where('country', $countryName)
-                                ->orWhereNull('country');
-                        })
-                    )
-                    ->orderByDesc('views')
-                    ->limit(16)
-                    ->get(),
+            // Top Radios (country aware)
+            'topradios' => Content::select('uuid', 'title', 'slug', 'stream_url', 'views')
+                ->where('content_group', 'radio')
+                ->where('status', 1)
+                ->whereNotNull('stream_url')
+                ->when($countryName, $countryFilter)
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
 
-                'podcasts' => $this->get_podcasts(16)->where('parent_id', null),
+            // Top Podcasts (NO country filter)
+            'topPodcasts' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
+                ->where('content_group', 'podcast')
+                ->whereNull('parent_id')
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
 
-                'categories' => Category::select('id', 'name', 'slug')
-                    ->limit(6)
-                    ->get(),
-            ];
-        });
+            // Latest Podcasts (NO country filter)
+            'podcasts' => Content::select('uuid', 'title', 'slug', 'thumbnail_url', 'views')
+                ->where('content_group', 'podcast')
+                ->whereNull('parent_id')
+                ->latest()
+                ->limit(8)
+                ->get(),
 
-        $this->data['country'] = $iso;
+            // Categories
+            'categories' => Category::select('uuid', 'name', 'slug')
+                ->limit(6)
+                ->get(),
+        ];
+    });
 
-        return view('Frontend.index', $this->data);
-    }
-    private function contentQuery($group, $countryName, $limit = 10, $requireStream = false)
-    {
-        $query = Content::select(
-            'uuid',
-            'title',
-            'thumbnail_url',
-            'stream_url',
-            'views',
-            'country'
-        )
-            ->where('content_group', $group)
-            ->when($requireStream, fn($q) => $q->whereNotNull('stream_url'))
-            ->when(
-                $countryName,
-                fn($q) =>
-                $q->where(function ($sub) use ($countryName) {
-                    $sub->where('country', $countryName)
-                        ->orWhereNull('country');
-                })
-            )
-            ->orderByDesc('views')
-            ->limit($limit);
+    $this->data = array_merge($this->data, $data);
 
-        return $query->get();
-    }
+    return view('Frontend.index', $this->data);
+}
+
 
     private function getCountryNameByIso($iso)
     {
