@@ -12,6 +12,7 @@ use App\Models\Video;
 use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
