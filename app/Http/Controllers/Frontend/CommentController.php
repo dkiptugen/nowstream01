@@ -3,36 +3,79 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Comment;
+use App\Models\CommentLike;
+use App\Models\Content;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\CommentLike;
+use Illuminate\Support\Facades\Log;
 
 class CommentController extends Controller
 {
     /**
-     * Fetch comments for a given commentable model (UUID supported)
+     * Fetch comments for a given content item (UUID)
      */
     public function fetchComments(string $commentableType, string $commentableId)
     {
-        $modelClass = 'App\\Models\\' . ucfirst($commentableType);
-
+        $modelClass = 'App\\Models\\Content'; // all commentables are Content
         $comments = Comment::where('commentable_type', $modelClass)
             ->where('commentable_id', $commentableId)
+            ->with(['user', 'likes']) // eager load user and likes
             ->orderBy('created_at', 'desc')
-            ->with('user') // eager load users to avoid N+1
             ->get();
-
-        // Return rendered HTML (for AJAX partial refresh)
         return view('Frontend.includes.components.partials.video-comments', [
-            'comments' => $comments
+            'comments' => $comments,
+            'commentableType' => $commentableType,
+            'commentableId' => $commentableId,
         ])->render();
     }
+
+
+    /**
+     * Post a comment on a content item (UUID)
+     */
+public function postComment(Request $request, $commentableType, $commentableId)
+{
+    if (!Auth::check()) {
+        return response()->json(['success' => false], 401);
+    }
+
+    $request->validate([
+        'comment' => 'required'
+    ]);
+
+    try {
+        // Assuming videos are stored in Content table
+        $content = Content::where('uuid', $commentableId)->firstOrFail();
+
+        $comment = Comment::create([
+            'user_id' => Auth::id(),
+            'commentable_type' => Content::class,
+            'commentable_id' => $content->uuid,
+            'comment' => e($request->comment)
+        ]);
+
+        $html = view('Frontend.includes.components.partials.single-comment', compact('comment'))->render();
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Server error'
+        ], 500);
+    }
+}
 
     /**
      * Like a comment
      */
-    public function like(int $commentId)
+    public function like(string $commentId)
     {
         return $this->handleReaction($commentId, 'like');
     }
@@ -40,7 +83,7 @@ class CommentController extends Controller
     /**
      * Dislike a comment
      */
-    public function dislike(int $commentId)
+    public function dislike(string $commentId)
     {
         return $this->handleReaction($commentId, 'dislike');
     }
@@ -48,9 +91,14 @@ class CommentController extends Controller
     /**
      * Handle like/dislike toggling
      */
-    private function handleReaction(int $commentId, string $type)
+    private function handleReaction(string $commentId, string $type)
     {
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+
         $userId = Auth::id();
+
         $existing = CommentLike::where('comment_id', $commentId)
             ->where('user_id', $userId)
             ->first();
@@ -75,7 +123,7 @@ class CommentController extends Controller
     /**
      * Return like/dislike counts for a comment
      */
-    private function likeResponse(int $commentId)
+    private function likeResponse(string $commentId)
     {
         $comment = Comment::findOrFail($commentId);
 
@@ -86,30 +134,4 @@ class CommentController extends Controller
         ]);
     }
 
-    /**
-     * Store a new comment (supports UUIDs)
-     */
-    public function postComment(Request $request, string $commentableType, string $commentableId)
-    {
-        $user = Auth::user();
-        $modelClass = 'App\\Models\\' . ucfirst($commentableType);
-
-        $comment = Comment::create([
-            'user_id' => $user->id,
-            'commentable_type' => $modelClass,
-            'commentable_id' => $commentableId,
-            'comment' => $request->input('comment'),
-        ]);
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'comment' => $comment->comment,
-                'user_name' => $user->name,
-                'user_image' => $user->image ? asset('storage/' . $user->image) : asset('assets/images/avatars/avatar-2.png'),
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'Comment posted.');
-    }
 }

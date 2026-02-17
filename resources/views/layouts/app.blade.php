@@ -13,6 +13,7 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
+    @yield('styles')
     <!-- Scripts -->
 </head>
 <body>
@@ -78,5 +79,7 @@
 @include('Frontend.includes.components.partials.audio-player')
     </div>
     @vite('resources/js/app.js')
+    @yield('scripts')
+
 </body>
 </html>

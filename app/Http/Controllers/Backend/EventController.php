@@ -116,8 +116,8 @@ class EventController extends Controller
                                                 
                                                try {
                                                     $stream->save();
-                                                } catch (\Exception $e) {
-                                                    dd($e->getMessage());
+                                                } catch (\Exception $e) { 
+                                                    Log::error('Stream creation failed: ' . $e->getMessage());
                                                 }
 
                                             }

@@ -20,22 +20,23 @@ use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\StreamVideoController;
 use App\Http\Controllers\Frontend\SubscriptionController;
 use App\Http\Controllers\Frontend\VideoFavoriteController;
+use App\Http\Controllers\Frontend\CategoryController;
 use Illuminate\Support\Str;
 use Pusher\Pusher;
 
 /*
-	   |--------------------------------------------------------------------------
-	   | Web Routes
-	   |--------------------------------------------------------------------------
-	   |
-	   | Here is where you can register web routes for your application. These
-	   | routes are loaded by the RouteServiceProvider and all of them will
-	   | be assigned to the "web" middleware group. Make something great!
-	   |
-	   */
+       |--------------------------------------------------------------------------
+       | Web Routes
+       |--------------------------------------------------------------------------
+       |
+       | Here is where you can register web routes for your application. These
+       | routes are loaded by the RouteServiceProvider and all of them will
+       | be assigned to the "web" middleware group. Make something great!
+       |
+       */
 
 Route::post('/pusher/auth', function (Request $request) {
-    $socketId    = $request->input('socket_id');
+    $socketId = $request->input('socket_id');
     $channelName = $request->input('channel_name');
 
     // Perform your user authentication logic here
@@ -54,7 +55,7 @@ Route::post('/pusher/auth', function (Request $request) {
             config('broadcasting.connections.pusher.app_id'),
             [
                 'cluster' => config('broadcasting.connections.pusher.options.cluster'),
-                'useTLS'  => true,
+                'useTLS' => true,
             ]
         );
 
@@ -82,36 +83,45 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::get('/event', [EventController::class, 'show']);
     Route::get('/channel/{id}/{name}', [ChannelController::class, 'show'])->name('channel.show');
     // Route::post('/{commentableType}/{commentableId}/comment', [StreamVideoController::class, 'postComment'])->name('comment.post');
-    Route::post('/comment/post/{commentableType}/{commentableId}', [StreamVideoController::class, 'postComment'])->name('comment.post');
-    Route::get('/comment/fetch/{commentableType}/{commentableId}', [CommentController::class, 'fetchComments'])->name('comment.fetch');
+    Route::post(
+        '/comment/post/{commentableType}/{commentableId}',
+        [CommentController::class, 'postComment']
+    )->name('comment.post');
+
+    // Fetch comments for a content item (UUID supported)
+    Route::get(
+        '/comment/fetch/{commentableType}/{commentableId}',
+        [CommentController::class, 'fetchComments']
+    )->name('comment.fetch');
     Route::post('/record-watch-history/{video}', [StreamVideoController::class, 'recordWatchHistory']);
 
     Route::name('user.')->prefix('user')->controller(AuthsController::class)->group(function () {
-        Route::get('/partner/register',  'partner');
-        Route::get('social/{social}',  'redirectToProvider')->name('auth.social');
+        Route::get('/partner/register', 'partner');
+        Route::get('social/{social}', 'redirectToProvider')->name('auth.social');
         Route::get('social/{social}/callback', 'handleProviderCallback')->name('auth.social_callback');
-        Route::any('social/{social}/delete',  'deleteProviderCallback')->name('auth.social_delete');
+        Route::any('social/{social}/delete', 'deleteProviderCallback')->name('auth.social_delete');
 
         // Authentication routes
 
-        Route::get('register',  'showRegisterForm')->name('register.form');
-        Route::post('register',  'register')->name('register');
-        Route::get('phone-login',  'showPhoneLoginForm')->name('phonelogin.form');
-        Route::post('phone-login',  'phoneLogin')->name('phonelogin');
-        Route::get('phone-resend',  'phoneResend')->name('phoneresend');
-        Route::post('otp_verification',  'otp_verify')->name('otp_verification');
-        Route::get('login',  'showLoginForm')->name('login.form');
-        Route::post('login',  'login')->name('login');
-        Route::post('logout',  'logout')->name('logout');
+        Route::get('register', 'showRegisterForm')->name('register.form');
+        Route::post('register', 'register')->name('register');
+        Route::get('phone-login', 'showPhoneLoginForm')->name('phonelogin.form');
+        Route::post('phone-login', 'phoneLogin')->name('phonelogin');
+        Route::get('phone-resend', 'phoneResend')->name('phoneresend');
+        Route::post('otp_verification', 'otp_verify')->name('otp_verification');
+        Route::get('login', 'showLoginForm')->name('login.form');
+        Route::post('login', 'login')->name('login');
+        Route::post('logout', 'logout')->name('logout');
 
         // Password reset routes
-        Route::post('/forgot-password',  'forgotPassword')->name('password.email');
-        Route::post('/reset-password',  'resetPassword')->name('password.update');;
+        Route::post('/forgot-password', 'forgotPassword')->name('password.email');
+        Route::post('/reset-password', 'resetPassword')->name('password.update');
+        ;
         // Email verification route
         Route::get('/email/verify', function () {
             return view('Frontend.auth.verify-email');
         })->middleware(['auth'])->name('verification.notice')->name('verification.notice');
-        Route::get('/email/verify/{id}/{hash}',  'verifyEmail')
+        Route::get('/email/verify/{id}/{hash}', 'verifyEmail')
             ->middleware(['auth', 'signed'])
             ->name('verification.verify');
         Route::post('/email/verification-notification', function () {
@@ -121,6 +131,8 @@ Route::middleware(['detectCountry'])->group(function () {
     });
     Route::post('/stream/find', [StreamController::class, 'findStream'])->name('stream.find');
     Route::get('stream/{streamId}/view', [StreamController::class, 'proxy_stream'])->name('stream.view');
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::middleware(['auth:web'])->group(function () {
 
         Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
@@ -154,9 +166,23 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
+
+    // Content within a category (specific)
+    Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
+        ->name('content.category');
+
+    // Category main page
+    Route::get('/category/{slug}', [CategoryController::class, 'show'])
+        ->name('category.show');
+
+    // Categories list
+    Route::get('/categories', [CategoryController::class, 'index'])
+        ->name('categories.index');
+
     // show podcast
     Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
+Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
 
     // show tv
     Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');

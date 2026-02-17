@@ -373,13 +373,7 @@
         }
     });
 </script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const commentTop = document.querySelector('.comment-top');
-        commentTop.scrollTop = commentTop.scrollHeight;
-    });
-</script>
+ 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var subscribeButton = document.getElementById("subscribe-button");
@@ -523,6 +517,107 @@
         history.pushState(null, document.title, location.href);
     });
 </script>
+
+<script>
+(function () {
+
+    function initCarousel(carousel) {
+
+        const track = carousel.querySelector('.pcar-track');
+        const items = carousel.querySelectorAll('.pcar-item');
+
+        if (!track || items.length === 0) return;
+
+        let index = 0;
+        let visibleItems = 1;
+        let itemWidth = 0;
+
+        const gap = 16;
+
+        function getVisibleItems() {
+            const w = window.innerWidth;
+
+            if (w >= 992) return parseInt(carousel.dataset.desktop) || 5;
+            if (w >= 768) return parseInt(carousel.dataset.tablet) || 3;
+            return parseInt(carousel.dataset.mobile) || 1;
+        }
+
+        function setSizes() {
+            visibleItems = getVisibleItems();
+
+            const containerWidth = carousel.offsetWidth;
+            itemWidth = (containerWidth - (gap * (visibleItems - 1))) / visibleItems;
+
+            items.forEach(item => {
+                item.style.width = itemWidth + 'px';
+            });
+
+            move();
+        }
+
+        function move() {
+            const distance = index * (itemWidth + gap);
+            track.style.transform = `translateX(-${distance}px)`;
+        }
+
+        function next() {
+            if (index < items.length - visibleItems) {
+                index++;
+            } else {
+                index = 0;
+            }
+            move();
+        }
+
+        /* Autoplay */
+        if (carousel.dataset.autoplay === "true") {
+            const interval = parseInt(carousel.dataset.interval) || 4000;
+            setInterval(next, interval);
+        }
+
+        window.addEventListener('resize', setSizes);
+
+        setSizes();
+    }
+
+    /* Initialize all carousels */
+    document.querySelectorAll('.pcar').forEach(initCarousel);
+
+    /* Set container width variable for overlay */
+    function updateOverlayWidth() {
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        const width = container.offsetWidth;
+        document.documentElement.style.setProperty('--pcar-container-width', width + 'px');
+    }
+
+    window.addEventListener('load', updateOverlayWidth);
+    window.addEventListener('resize', updateOverlayWidth);
+
+})();
+</script>
+	<script>
+		function syncCommentsHeight() {
+			if (window.innerWidth < 1200) return;
+
+			let videoWrap = document.getElementById('videoWrap');
+			let commentsCard = document.getElementById('commentsCard');
+
+			if (!videoWrap || !commentsCard) return;
+
+			commentsCard.style.height = videoWrap.offsetHeight + "px";
+		}
+
+		$(document).ready(function() {
+			syncCommentsHeight();
+			$(window).on('resize', syncCommentsHeight);
+
+			// delay to allow Plyr render
+			setTimeout(syncCommentsHeight, 300);
+			setTimeout(syncCommentsHeight, 1000);
+		});
+	</script>
 
 </body>
 
