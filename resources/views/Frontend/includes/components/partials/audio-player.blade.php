@@ -47,7 +47,7 @@
 </div>
 <script>
     (function () {
-        const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload";
+const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload";
 
         const media = document.getElementById('global-audio');
         const player = document.getElementById('global-audio-player');
@@ -138,59 +138,59 @@
             player.classList.remove('d-none');
         }
 
-        function saveState() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                playlist,
-                currentIndex,
-                time: media.currentTime,
-                playing: !media.paused,
-                volume: media.volume,
-                muted: media.muted
-            }));
+   function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        playlist,
+        currentIndex,
+        time: media.currentTime,
+        playing: !media.paused,
+        volume: media.volume,
+        muted: media.muted
+    }));
+}
+
+media.addEventListener('play', saveState);
+media.addEventListener('pause', saveState);
+media.addEventListener('volumechange', saveState);
+
+function restoreState() {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!state?.playlist?.length) return;
+
+    playlist = state.playlist;
+    currentIndex = state.currentIndex || 0;
+
+    const track = playlist[currentIndex];
+
+    // Restore user preferences first
+    media.volume = typeof state.volume === 'number' ? state.volume : 1;
+    media.muted = state.muted || false;
+
+    loadSource(track.src);
+    updateUI(track);
+
+    media.addEventListener('loadedmetadata', () => {
+        media.currentTime = state.time || 0;
+
+        if (state.playing) {
+            const originalMuted = media.muted;
+
+            // Try normal play first
+            let playPromise = media.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Autoplay blocked → temporarily mute
+                    media.muted = true;
+                    media.play().then(() => {
+                        // Restore user's mute preference
+                        media.muted = originalMuted;
+                    }).catch(() => {});
+                });
+            }
         }
-
-        media.addEventListener('play', saveState);
-        media.addEventListener('pause', saveState);
-        media.addEventListener('volumechange', saveState);
-
-        function restoreState() {
-            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (!state?.playlist?.length) return;
-
-            playlist = state.playlist;
-            currentIndex = state.currentIndex || 0;
-
-            const track = playlist[currentIndex];
-
-            // Restore user preferences first
-            media.volume = typeof state.volume === 'number' ? state.volume : 1;
-            media.muted = state.muted || false;
-
-            loadSource(track.src);
-            updateUI(track);
-
-            media.addEventListener('loadedmetadata', () => {
-                media.currentTime = state.time || 0;
-
-                if (state.playing) {
-                    const originalMuted = media.muted;
-
-                    // Try normal play first
-                    let playPromise = media.play();
-
-                    if (playPromise !== undefined) {
-                        playPromise.catch(() => {
-                            // Autoplay blocked → temporarily mute
-                            media.muted = true;
-                            media.play().then(() => {
-                                // Restore user's mute preference
-                                media.muted = originalMuted;
-                            }).catch(() => { });
-                        });
-                    }
-                }
-            }, { once: true });
-        }
+    }, { once: true });
+}
 
         function loadTrack(index) {
             if (!playlist[index]) return;
@@ -314,71 +314,69 @@
         /* =====================
            Restore on load
         ===================== */
-        restoreState();
+       restoreState();
     })();
 </script>
 <script>
     /* =====================
    Scroll-to-Float Video Handoff
 ===================== */
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-        const pageVideo = document.getElementById('player'); // main page video
-        if (!pageVideo) return;
+    const pageVideo = document.getElementById('player'); // main page video
+    if (!pageVideo) return;
 
-        let movedToGlobal = false;
+    let movedToGlobal = false;
 
-        window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', () => {
 
-            const rect = pageVideo.getBoundingClientRect();
-            const outOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+        const rect = pageVideo.getBoundingClientRect();
+        const outOfView = rect.bottom < 0 || rect.top > window.innerHeight;
 
-            // === Move to global when video leaves screen ===
-            if (outOfView && !movedToGlobal && !pageVideo.paused) {
+        // === Move to global when video leaves screen ===
+        if (outOfView && !movedToGlobal && !pageVideo.paused) {
 
-                movedToGlobal = true;
+            movedToGlobal = true;
 
-                const src = pageVideo.currentSrc || pageVideo.src;
+            const src = pageVideo.currentSrc || pageVideo.src;
 
-                window.playGlobalVideo(
-                    src,
-                    pageVideo.dataset.title || '',
-                    pageVideo.dataset.channel || 'Video',
-                    pageVideo.dataset.thumb || ''
-                );
+            window.playGlobalVideo(
+                src,
+                pageVideo.dataset.title || '',
+                pageVideo.dataset.channel || 'Video',
+                pageVideo.dataset.thumb || ''
+            );
 
-                // Sync time after global loads
-                const globalMedia = document.getElementById('global-audio');
+            // Sync time after global loads
+            const globalMedia = document.getElementById('global-audio');
 
-                globalMedia.addEventListener('loadedmetadata', function syncOnce() {
-                    globalMedia.currentTime = pageVideo.currentTime;
-                    pageVideo.pause();
-                    this.removeEventListener('loadedmetadata', syncOnce);
-                });
+            globalMedia.addEventListener('loadedmetadata', function syncOnce() {
+                globalMedia.currentTime = pageVideo.currentTime;
+                pageVideo.pause();
+                this.removeEventListener('loadedmetadata', syncOnce);
+            });
 
-                document.getElementById('global-audio-player').classList.remove('d-none');
-            }
+            document.getElementById('global-audio-player').classList.remove('d-none');
+        }
 
-            // === Return to page video when back in view ===
-            if (!outOfView && movedToGlobal) {
+        // === Return to page video when back in view ===
+        if (!outOfView && movedToGlobal) {
 
-                movedToGlobal = false;
+            movedToGlobal = false;
 
-                const globalMedia = document.getElementById('global-audio');
+            const globalMedia = document.getElementById('global-audio');
 
-                pageVideo.src = globalMedia.currentSrc || globalMedia.src;
-                pageVideo.currentTime = globalMedia.currentTime;
-                pageVideo.play().catch(() => { });
+            pageVideo.src = globalMedia.currentSrc || globalMedia.src;
+            pageVideo.currentTime = globalMedia.currentTime;
+            pageVideo.play().catch(()=>{});
 
-                globalMedia.pause();
-                document.getElementById('global-audio-player').classList.add('d-none');
-            }
-
-            if (outOfView && !movedToGlobal && !pageVideo.paused)
+            globalMedia.pause();
+            document.getElementById('global-audio-player').classList.add('d-none');
+        }
 
     });
 
-    });
+});
 
 </script>
 
