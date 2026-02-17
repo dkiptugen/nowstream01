@@ -53,6 +53,7 @@
     if (!media || !player) return;
 
     const playBtn = document.getElementById('player-play');
+         const prevBtn = document.getElementById('player-prev');
     const floatBtn = document.getElementById('player-float-toggle');
 
     const titleEl = document.getElementById('player-title');
@@ -75,6 +76,10 @@
             : '<i class="fas fa-pause"></i>';
     }
 
+         prevBtn?.addEventListener('click', () => {
+             if (currentIndex > 0) loadTrack(currentIndex - 1);
+         });
+         
     function destroyHLS() {
         if (hls) { hls.destroy(); hls = null; }
     }
