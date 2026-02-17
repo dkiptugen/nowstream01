@@ -43,7 +43,7 @@ return [
                                 <li class="quality">
                                     <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
                                     <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}</span>
-                                    <span class="ml-2 btn-primary">{{ $podcast->language }}</span>
+                                    <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                     <span class="popup-video"
  onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
                             Play All
