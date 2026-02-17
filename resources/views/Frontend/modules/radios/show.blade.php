@@ -13,7 +13,8 @@
 				<video id="player"
 					data-src="{{ $radio->stream_url }}"
 					data-title="{{ $radio->title }}"
-					data-thumb="{{ $radio->thumbnail_url }}">
+					data-thumb="{{ $radio->thumbnail_url }}"
+					data-type="audio">
 				</video>
     <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
