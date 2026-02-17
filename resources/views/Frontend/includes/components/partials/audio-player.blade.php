@@ -45,20 +45,29 @@
     <video id="global-audio" playsinline></video>
 
 </div>
-<script>
+ <script> 
 (function() {
 
     const media = document.getElementById('global-audio');
     const player = document.getElementById('global-audio-player');
     if (!media || !player) return;
 
-    const playBtn = document.getElementById('player-play');
-         const prevBtn = document.getElementById('player-prev');
-    const floatBtn = document.getElementById('player-float-toggle');
+    /* =====================
+       Elements
+    ===================== */
+    const playBtn   = document.getElementById('player-play');
+    const nextBtn   = document.getElementById('player-next');
+    const prevBtn   = document.getElementById('player-prev');
+    const muteBtn   = document.getElementById('player-mute');
+    const volumeEl  = document.getElementById('player-volume');
+    const progress  = document.getElementById('player-progress');
+    const currentEl = document.getElementById('sp-current');
+    const durationEl= document.getElementById('sp-duration');
+    const floatBtn  = document.getElementById('player-float-toggle');
 
-    const titleEl = document.getElementById('player-title');
+    const titleEl   = document.getElementById('player-title');
     const podcastEl = document.getElementById('player-podcast');
-    const thumbEl = document.getElementById('player-thumbnail');
+    const thumbEl   = document.getElementById('player-thumbnail');
     const miniVideo = document.getElementById('player-mini-video');
 
     const STORAGE_KEY = 'nowstream_player';
@@ -70,22 +79,29 @@
     /* =====================
        Helpers
     ===================== */
+    function formatTime(sec) {
+        sec = Math.floor(sec || 0);
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return m + ':' + (s < 10 ? '0' + s : s);
+    }
+
     function updatePlayIcon() {
         playBtn.innerHTML = media.paused
             ? '<i class="fas fa-play"></i>'
             : '<i class="fas fa-pause"></i>';
     }
 
-         prevBtn?.addEventListener('click', () => {
-             if (currentIndex > 0) loadTrack(currentIndex - 1);
-         });
-         
     function destroyHLS() {
-        if (hls) { hls.destroy(); hls = null; }
+        if (hls) {
+            hls.destroy();
+            hls = null;
+        }
     }
 
     function loadSource(src) {
         destroyHLS();
+
         if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
             hls = new Hls();
             hls.loadSource(src);
@@ -104,7 +120,7 @@
         if (track.type === 'video') {
             thumbEl.classList.add('d-none');
             miniVideo.classList.remove('d-none');
-            if (miniVideo.src !== track.src) miniVideo.src = track.src;
+            miniVideo.src = track.src;
             miniVideo.currentTime = media.currentTime;
             miniVideo.play().catch(()=>{});
         } else {
@@ -118,7 +134,10 @@
 
     function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            playlist, currentIndex, time: media.currentTime, playing: !media.paused
+            playlist,
+            currentIndex,
+            time: media.currentTime,
+            playing: !media.paused
         }));
     }
 
@@ -128,8 +147,8 @@
 
         playlist = state.playlist;
         currentIndex = state.currentIndex;
-        const track = playlist[currentIndex];
 
+        const track = playlist[currentIndex];
         loadSource(track.src);
         updateUI(track);
 
@@ -142,6 +161,7 @@
     function loadTrack(index) {
         if (!playlist[index]) return;
         currentIndex = index;
+
         const track = playlist[index];
         loadSource(track.src);
         updateUI(track);
@@ -149,71 +169,107 @@
         saveState();
     }
 
+    function nextTrack() {
+        if (playlist.length < 2) return;
+        currentIndex = (currentIndex + 1) % playlist.length;
+        loadTrack(currentIndex);
+    }
+
+    function prevTrack() {
+        if (playlist.length < 2) return;
+        currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+        loadTrack(currentIndex);
+    }
+
     /* =====================
        Controls
     ===================== */
+
+    // Play / Pause
     playBtn.addEventListener('click', () => {
-        if (media.paused) media.play(); else media.pause();
-        updatePlayIcon(); saveState();
+        media.paused ? media.play() : media.pause();
     });
 
-    media.addEventListener('play', () => {
-        if (!miniVideo.classList.contains('d-none')) {
-            miniVideo.currentTime = media.currentTime;
-            miniVideo.play().catch(()=>{});
-        }
-        updatePlayIcon();
+    media.addEventListener('play', updatePlayIcon);
+    media.addEventListener('pause', updatePlayIcon);
+
+    // Next / Prev
+    nextBtn.addEventListener('click', nextTrack);
+    prevBtn.addEventListener('click', prevTrack);
+
+    // Auto next when finished
+    media.addEventListener('ended', nextTrack);
+
+    /* =====================
+       Volume / Mute
+    ===================== */
+    volumeEl.value = media.volume;
+
+    volumeEl.addEventListener('input', () => {
+        media.volume = volumeEl.value;
+        media.muted = volumeEl.value == 0;
     });
 
-    media.addEventListener('pause', () => {
-        miniVideo.pause();
-        updatePlayIcon();
-    });
-
-    media.addEventListener('timeupdate', () => {
-        if (!miniVideo.classList.contains('d-none')) {
-            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3)
-                miniVideo.currentTime = media.currentTime;
-        }
-        saveState();
+    muteBtn.addEventListener('click', () => {
+        media.muted = !media.muted;
+        volumeEl.value = media.muted ? 0 : media.volume;
+        muteBtn.innerHTML = media.muted
+            ? '<i class="fas fa-volume-mute"></i>'
+            : '<i class="fas fa-volume-up"></i>';
     });
 
     /* =====================
-       Floating + Drag
+       Progress
+    ===================== */
+    media.addEventListener('loadedmetadata', () => {
+        progress.max = media.duration || 0;
+        durationEl.innerText = formatTime(media.duration);
+    });
+
+    media.addEventListener('timeupdate', () => {
+        progress.value = media.currentTime;
+        currentEl.innerText = formatTime(media.currentTime);
+
+        // sync mini video
+        if (!miniVideo.classList.contains('d-none')) {
+            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
+                miniVideo.currentTime = media.currentTime;
+            }
+        }
+
+        saveState();
+    });
+
+    progress.addEventListener('input', () => {
+        media.currentTime = progress.value;
+    });
+
+    /* =====================
+       Floating
     ===================== */
     floatBtn.addEventListener('click', () => {
         player.classList.toggle('floating');
-        floatBtn.innerHTML = player.classList.contains('floating') 
-            ? '<i class="fas fa-compress"></i>' 
-            : '<i class="fas fa-expand"></i>';
-        if (!player.classList.contains('floating')) {
-            player.style.top = ''; player.style.left = ''; player.style.bottom = '0'; player.style.right = '';
-        }
     });
-
-    let isDragging = false, offsetX = 0, offsetY = 0;
-    player.addEventListener('mousedown', e => {
-        if (!player.classList.contains('floating')) return;
-        isDragging = true;
-        const rect = player.getBoundingClientRect();
-        offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
-        player.style.right = 'auto'; player.style.bottom = 'auto';
-    });
-    document.addEventListener('mousemove', e => { if (!isDragging) return; player.style.left = (e.clientX - offsetX)+'px'; player.style.top = (e.clientY - offsetY)+'px'; });
-    document.addEventListener('mouseup', () => isDragging = false);
 
     /* =====================
        Global API
     ===================== */
+
+    // Playlist player (THIS fixes your error)
+    window.playGlobalAudio = (list, index = 0) => {
+        playlist = list.map(item => ({
+            src: item.src,
+            title: item.title || '',
+            podcast: item.podcast || '',
+            thumbnail: item.thumbnail || '',
+            type: item.type || 'audio'
+        }));
+        loadTrack(index);
+    };
+
     window.playSingleAudio = (src, title='', podcast='', thumbnail='') => {
         playlist = [{ src, title, podcast, thumbnail, type:'audio' }];
         loadTrack(0);
-    };
-
-    window.playGlobalAudio = (list, index = 0) => {
-        if (!Array.isArray(list) || !list.length) return;
-        playlist = list;
-        loadTrack(index);
     };
 
     window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
@@ -222,33 +278,13 @@
     };
 
     /* =====================
-       Scroll-to-Float for Page Videos
+       Restore on load
     ===================== */
-    document.addEventListener('DOMContentLoaded', () => restoreState());
-
-    const mainVideo = document.getElementById('player');
-    if (mainVideo) {
-        const src = mainVideo.dataset.src;
-        const title = mainVideo.dataset.title;
-        const thumb = mainVideo.dataset.thumb;
-        let moved = false;
-        window.addEventListener('scroll', () => {
-            const rect = mainVideo.getBoundingClientRect();
-            if (rect.bottom < 0 && !moved) { moved = true; playGlobalVideo(src,title,'Video',thumb); mainVideo.pause(); }
-            if (rect.top >= 0 && moved) { 
-                moved = false;
-                const globalMedia = document.getElementById('global-audio');
-                mainVideo.src = globalMedia.src;
-                mainVideo.currentTime = globalMedia.currentTime;
-                mainVideo.play();
-                globalMedia.pause();
-                player.classList.add('d-none');
-            }
-        });
-    }
+    document.addEventListener('DOMContentLoaded', restoreState);
 
 })();
 </script>
+ 
 
 <style>
 .spotify-player {

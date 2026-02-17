@@ -39,246 +39,219 @@
 
      <audio id="global-audio"></audio>
  </div>
- <script> 
-(function() {
+ <script>
+     (function() {
 
-    const media = document.getElementById('global-audio');
-    const player = document.getElementById('global-audio-player');
-    if (!media || !player) return;
+         /* ===============================
+            Element Bindings (Safe)
+         =============================== */
+         const audio = document.getElementById('global-audio');
+         const player = document.getElementById('global-audio-player');
 
-    /* =====================
-       Elements
-    ===================== */
-    const playBtn   = document.getElementById('player-play');
-    const nextBtn   = document.getElementById('player-next');
-    const prevBtn   = document.getElementById('player-prev');
-    const muteBtn   = document.getElementById('player-mute');
-    const volumeEl  = document.getElementById('player-volume');
-    const progress  = document.getElementById('player-progress');
-    const currentEl = document.getElementById('sp-current');
-    const durationEl= document.getElementById('sp-duration');
-    const floatBtn  = document.getElementById('player-float-toggle');
+         if (!audio || !player) return; // Exit if player not present
 
-    const titleEl   = document.getElementById('player-title');
-    const podcastEl = document.getElementById('player-podcast');
-    const thumbEl   = document.getElementById('player-thumbnail');
-    const miniVideo = document.getElementById('player-mini-video');
+         const playBtn = document.getElementById('player-play');
+         const prevBtn = document.getElementById('player-prev');
+         const nextBtn = document.getElementById('player-next');
+         const muteBtn = document.getElementById('player-mute');
 
-    const STORAGE_KEY = 'nowstream_player';
+         const progress = document.getElementById('player-progress');
+         const volume = document.getElementById('player-volume');
 
-    let playlist = [];
-    let currentIndex = 0;
-    let hls = null;
+         const titleEl = document.getElementById('player-title');
+         const podcastEl = document.getElementById('player-podcast');
+         const thumbEl = document.getElementById('player-thumbnail');
+         const currentTimeEl = document.getElementById('sp-current');
+         const durationEl = document.getElementById('sp-duration');
 
-    /* =====================
-       Helpers
-    ===================== */
-    function formatTime(sec) {
-        sec = Math.floor(sec || 0);
-        const m = Math.floor(sec / 60);
-        const s = sec % 60;
-        return m + ':' + (s < 10 ? '0' + s : s);
+         const STORAGE_KEY = 'audio_state';
+         let playlist = [];
+         let currentIndex = 0;
+
+         /* ===============================
+            Helpers
+         =============================== */
+         function formatTime(sec) {
+             if (!sec) return '0:00';
+             const m = Math.floor(sec / 60);
+             const s = Math.floor(sec % 60).toString().padStart(2, '0');
+             return `${m}:${s}`;
+         }
+
+         function updatePlayIcon() {
+             playBtn.innerHTML = audio.paused ?
+                 '<i class="fas fa-play"></i>' :
+                 '<i class="fas fa-pause"></i>';
+         }
+
+         function updateMuteIcon() {
+             muteBtn.innerHTML = audio.muted ?
+                 '<i class="fas fa-volume-mute"></i>' :
+                 '<i class="fas fa-volume-up"></i>';
+         }
+
+         function updateUI(track) {
+             titleEl.innerText = track.title || 'Unknown';
+             podcastEl.innerText = track.podcast || '';
+             thumbEl.src = track.thumbnail || '';
+             currentTimeEl.innerText = '0:00';
+             durationEl.innerText = '0:00';
+             player.classList.remove('d-none');
+
+             // Wait for metadata to load
+             audio.addEventListener('loadedmetadata', () => {
+                 durationEl.innerText = formatTime(audio.duration);
+             });
+         }
+
+         function saveState() {
+             try {
+                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                     playlist,
+                     currentIndex,
+                     time: audio.currentTime || 0,
+                     volume: audio.volume,
+                     muted: audio.muted,
+                     playing: !audio.paused
+                 }));
+             } catch (e) {}
+         }
+
+        function restoreState() {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!state?.playlist?.length) return;
+
+    playlist = state.playlist;
+    currentIndex = state.currentIndex || 0;
+
+    const track = playlist[currentIndex];
+
+    // Set src only if different (prevents restart flicker)
+    if (!audio.src || !audio.src.includes(track.src)) {
+        audio.src = track.src;
     }
 
-    function updatePlayIcon() {
-        playBtn.innerHTML = media.paused
-            ? '<i class="fas fa-play"></i>'
-            : '<i class="fas fa-pause"></i>';
-    }
+    updateUI(track);
 
-    function destroyHLS() {
-        if (hls) {
-            hls.destroy();
-            hls = null;
+    // Restore volume & mute
+    audio.volume = state.volume ?? 1;
+    audio.muted = state.muted ?? false;
+    volume.value = audio.volume;
+    updateMuteIcon();
+
+    // Wait for metadata before seeking
+    const seekToTime = () => {
+        audio.currentTime = state.time || 0;
+
+        if (state.playing) {
+            audio.play().catch(() => {});
         }
-    }
 
-    function loadSource(src) {
-        destroyHLS();
-
-        if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
-            hls = new Hls();
-            hls.loadSource(src);
-            hls.attachMedia(media);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => media.play().catch(()=>{}));
-        } else {
-            media.src = src;
-            media.play().catch(()=>{});
-        }
-    }
-
-    function updateUI(track) {
-        titleEl.innerText = track.title || '';
-        podcastEl.innerText = track.podcast || '';
-
-        if (track.type === 'video') {
-            thumbEl.classList.add('d-none');
-            miniVideo.classList.remove('d-none');
-            miniVideo.src = track.src;
-            miniVideo.currentTime = media.currentTime;
-            miniVideo.play().catch(()=>{});
-        } else {
-            miniVideo.classList.add('d-none');
-            thumbEl.classList.remove('d-none');
-            thumbEl.src = track.thumbnail || '/assets/img/default.png';
-        }
-
-        player.classList.remove('d-none');
-    }
-
-    function saveState() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            playlist,
-            currentIndex,
-            time: media.currentTime,
-            playing: !media.paused
-        }));
-    }
-
-    function restoreState() {
-        const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (!state?.playlist?.length) return;
-
-        playlist = state.playlist;
-        currentIndex = state.currentIndex;
-
-        const track = playlist[currentIndex];
-        loadSource(track.src);
-        updateUI(track);
-
-        media.addEventListener('loadedmetadata', () => {
-            media.currentTime = state.time || 0;
-            if (state.playing) media.play().catch(()=>{});
-        }, { once: true });
-    }
-
-    function loadTrack(index) {
-        if (!playlist[index]) return;
-        currentIndex = index;
-
-        const track = playlist[index];
-        loadSource(track.src);
-        updateUI(track);
         updatePlayIcon();
-        saveState();
-    }
-
-    function nextTrack() {
-        if (playlist.length < 2) return;
-        currentIndex = (currentIndex + 1) % playlist.length;
-        loadTrack(currentIndex);
-    }
-
-    function prevTrack() {
-        if (playlist.length < 2) return;
-        currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-        loadTrack(currentIndex);
-    }
-
-    /* =====================
-       Controls
-    ===================== */
-
-    // Play / Pause
-    playBtn.addEventListener('click', () => {
-        media.paused ? media.play() : media.pause();
-    });
-
-    media.addEventListener('play', updatePlayIcon);
-    media.addEventListener('pause', updatePlayIcon);
-
-    // Next / Prev
-    nextBtn.addEventListener('click', nextTrack);
-    prevBtn.addEventListener('click', prevTrack);
-
-    // Auto next when finished
-    media.addEventListener('ended', nextTrack);
-
-    /* =====================
-       Volume / Mute
-    ===================== */
-    volumeEl.value = media.volume;
-
-    volumeEl.addEventListener('input', () => {
-        media.volume = volumeEl.value;
-        media.muted = volumeEl.value == 0;
-    });
-
-    muteBtn.addEventListener('click', () => {
-        media.muted = !media.muted;
-        volumeEl.value = media.muted ? 0 : media.volume;
-        muteBtn.innerHTML = media.muted
-            ? '<i class="fas fa-volume-mute"></i>'
-            : '<i class="fas fa-volume-up"></i>';
-    });
-
-    /* =====================
-       Progress
-    ===================== */
-    media.addEventListener('loadedmetadata', () => {
-        progress.max = media.duration || 0;
-        durationEl.innerText = formatTime(media.duration);
-    });
-
-    media.addEventListener('timeupdate', () => {
-        progress.value = media.currentTime;
-        currentEl.innerText = formatTime(media.currentTime);
-
-        // sync mini video
-        if (!miniVideo.classList.contains('d-none')) {
-            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
-                miniVideo.currentTime = media.currentTime;
-            }
-        }
-
-        saveState();
-    });
-
-    progress.addEventListener('input', () => {
-        media.currentTime = progress.value;
-    });
-
-    /* =====================
-       Floating
-    ===================== */
-    floatBtn.addEventListener('click', () => {
-        player.classList.toggle('floating');
-    });
-
-    /* =====================
-       Global API
-    ===================== */
-
-    // Playlist player (THIS fixes your error)
-    window.playGlobalAudio = (list, index = 0) => {
-        playlist = list.map(item => ({
-            src: item.src,
-            title: item.title || '',
-            podcast: item.podcast || '',
-            thumbnail: item.thumbnail || '',
-            type: item.type || 'audio'
-        }));
-        loadTrack(index);
+        audio.removeEventListener('loadedmetadata', seekToTime);
     };
 
-    window.playSingleAudio = (src, title='', podcast='', thumbnail='') => {
-        playlist = [{ src, title, podcast, thumbnail, type:'audio' }];
-        loadTrack(0);
-    };
+    if (audio.readyState >= 1) {
+        seekToTime();
+    } else {
+        audio.addEventListener('loadedmetadata', seekToTime);
+    }
+}
 
-    window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
-        playlist = [{ src, title, podcast:channel, thumbnail, type:'video' }];
-        loadTrack(0);
-    };
 
-    /* =====================
-       Restore on load
-    ===================== */
-    document.addEventListener('DOMContentLoaded', restoreState);
 
-})();
-</script>
- 
+         /* ===============================
+            Core Playback
+         =============================== */
+         function loadTrack(index) {
+             if (!playlist[index]) return;
+
+             const track = playlist[index];
+             currentIndex = index;
+             audio.src = track.src;
+             audio.currentTime = 0;
+             updateUI(track);
+             audio.play().catch(() => {});
+             updatePlayIcon();
+             saveState();
+         }
+
+         /* ===============================
+            Controls
+         =============================== */
+         playBtn?.addEventListener('click', () => {
+             if (audio.paused) audio.play();
+             else audio.pause();
+             updatePlayIcon();
+             saveState();
+         });
+
+         prevBtn?.addEventListener('click', () => {
+             if (currentIndex > 0) loadTrack(currentIndex - 1);
+         });
+
+         nextBtn?.addEventListener('click', () => {
+             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+         });
+
+         muteBtn?.addEventListener('click', () => {
+             audio.muted = !audio.muted;
+             updateMuteIcon();
+             saveState();
+         });
+
+         volume?.addEventListener('input', () => {
+             audio.volume = volume.value;
+             audio.muted = false;
+             updateMuteIcon();
+             saveState();
+         });
+
+         progress?.addEventListener('input', () => {
+             if (!isNaN(audio.duration)) {
+                 audio.currentTime = (progress.value / 100) * audio.duration;
+             }
+         });
+
+         audio.addEventListener('timeupdate', () => {
+             currentTimeEl.innerText = formatTime(audio.currentTime);
+             if (!isNaN(audio.duration) && audio.duration > 0) {
+                 progress.value = (audio.currentTime / audio.duration) * 100;
+             }
+             saveState();
+         });
+
+         audio.addEventListener('ended', () => {
+             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+         });
+
+         /* ===============================
+            Global API
+         =============================== */
+         window.playGlobalAudio = function(list, index = 0) {
+             if (!Array.isArray(list) || !list.length) return;
+             playlist = list;
+             loadTrack(index);
+         };
+
+         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '') {
+             playlist = [{
+                 src,
+                 title,
+                 podcast,
+                 thumbnail
+             }];
+             loadTrack(0);
+         };
+
+         /* ===============================
+            Init
+         =============================== */
+         document.addEventListener('DOMContentLoaded', restoreState);
+
+     })();
+ </script>
+
 
  <style>
      .spotify-player {
