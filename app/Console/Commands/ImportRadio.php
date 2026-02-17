@@ -21,7 +21,7 @@ class ImportRadio extends Command
      * @var string
      */
         protected $signature = 'import:radio';
-        protected $base_url  = 'https://www.songaplay.com/engine/api/';
+
 
     /**
      * The console command description.
