@@ -75,7 +75,7 @@ class RadioController extends Controller
                 ->with('user')
                 ->orderBy('created_at', 'asc')
                 ->get();
-                
+
             $genres = Cache::remember("radio_genres_{$uuid}", 3600, function () use ($radio) {
                 return collect($radio->genre ?? [])
                     ->filter()
@@ -89,6 +89,7 @@ class RadioController extends Controller
                 return Content::where('content_group', 'radio')
                     ->where('uuid', '!=', $uuid)
                     ->whereNotNull('stream_url')
+                    ->where('status', 1)
                     ->latest()
                     ->limit(16)
                     ->get();
