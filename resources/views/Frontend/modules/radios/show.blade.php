@@ -52,10 +52,11 @@
 									<span>hd</span>
 								</li>
 								<li class="category"> 
-    @foreach($radio->genre as $genre) 
-        <a class="nav-link" href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
-            {{ ucfirst($genre) }}
-        </a> 
+    @foreach($radio->categories as $category)
+        <a href="{{ route('genre.show', $category->slug) }}">
+            {{ $category->name }}@if(!$loop->last),@endif
+        </a>
+    @endforeach
 </li>
 
 								<li class="release-time">
