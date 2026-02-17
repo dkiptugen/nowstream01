@@ -4,25 +4,48 @@
         <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
-            <div id="player-title" class="sp-title">No media</div>
+            <div id="player-title" class="sp-title">No audio</div>
             <div id="player-podcast" class="sp-artist"></div>
         </div>
     </div>
 
     <div class="sp-center">
-        <button id="player-play" class="sp-btn sp-play">
-            <i class="fas fa-play"></i>
-        </button>
+        <div class="sp-controls">
+            <button id="player-prev" class="sp-btn">
+                <i class="fas fa-step-backward"></i>
+            </button>
+
+            <button id="player-play" class="sp-btn sp-play">
+                <i class="fas fa-play"></i>
+            </button>
+
+            <button id="player-next" class="sp-btn">
+                <i class="fas fa-step-forward"></i>
+            </button>
+        </div>
+
+        <div class="sp-progress-wrap">
+            <span id="sp-current">0:00</span>
+            <input type="range" id="player-progress" value="0">
+            <span id="sp-duration">0:00</span>
+        </div>
     </div>
 
-    <button id="player-float-toggle" class="sp-btn">
-        <i class="fas fa-expand"></i>
-    </button>
+    <div class="sp-right">
+        <button id="player-mute" class="sp-btn">
+            <i class="fas fa-volume-up"></i>
+        </button>
+        <input type="range" id="player-volume" min="0" max="1" step="0.01">
 
-    <!-- Main media element -->
+    </div>
+       <button id="player-float-toggle" class="sp-btn">
+    <i class="fas fa-expand"></i>
+</button>
+
+
     <video id="global-audio" playsinline></video>
-</div>
 
+</div>
 <script>
 (function () {
 
@@ -335,7 +358,21 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
-/* Floating container */
+.spotify-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: #121212;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    color: #fff;
+}
+
+/* Floating mode */
 .spotify-player.floating {
     width: 360px;
     height: 220px;
@@ -343,20 +380,16 @@ document.addEventListener('DOMContentLoaded', function () {
     right: 20px;
     left: auto;
     border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5);
     overflow: hidden;
-    padding: 0;
+    cursor: move;
 }
 
-/* Hide controls in floating mode */
-.spotify-player.floating .sp-center,
-.spotify-player.floating .sp-right,
 .spotify-player.floating .sp-meta,
+.spotify-player.floating .sp-center,
 .spotify-player.floating #player-thumbnail {
     display: none;
 }
 
-/* Video fills container */
 .spotify-player.floating #player-mini-video {
     display: block !important;
     width: 100%;
@@ -364,13 +397,12 @@ document.addEventListener('DOMContentLoaded', function () {
     object-fit: cover;
 }
 
-/* Default (non-floating) video hidden */
-#player-mini-video {
+.sp-artwork {
     width: 56px;
     height: 56px;
     object-fit: cover;
-    border-radius: 4px;
 }
+
 
 
     .spotify-player {
