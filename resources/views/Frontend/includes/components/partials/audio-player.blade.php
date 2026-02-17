@@ -150,25 +150,44 @@
              } catch (e) {}
          }
 
-    function restoreState() {
-        const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (!state?.playlist?.length) return;
+   function restoreState() {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!state || !state.playlist || !state.playlist.length) return;
 
-        playlist = state.playlist;
-        currentIndex = state.currentIndex;
+    playlist = state.playlist;
+    currentIndex = state.currentIndex || 0;
 
-        const track = playlist[currentIndex];
-        loadSource(track.src);
-        updateUI(track); 
-    audio.volume = state.volume ?? 1;
-    audio.muted = state.muted ?? false;
-    volume.value = audio.volume;
+    const track = playlist[currentIndex];
 
-        media.addEventListener('loadedmetadata', () => {
-            media.currentTime = state.time || 0;
-            if (state.playing) media.play().catch(()=>{});
-        }, { once: true });
+    // Restore volume + mute immediately
+    if (typeof state.volume === 'number') {
+        media.volume = state.volume;
+        if (volumeEl) volumeEl.value = state.volume;
     }
+
+    if (typeof state.muted === 'boolean') {
+        media.muted = state.muted;
+        if (muteBtn) {
+            muteBtn.innerHTML = media.muted
+                ? '<i class="fas fa-volume-mute"></i>'
+                : '<i class="fas fa-volume-up"></i>';
+        }
+    }
+
+    // Load media
+    loadSource(track.src);
+    updateUI(track);
+
+    media.addEventListener('loadedmetadata', () => {
+        media.currentTime = state.time || 0;
+
+        if (state.playing) {
+            media.play().catch(() => {});
+        }
+
+    }, { once: true });
+}
+
 
     function loadTrack(index) {
         if (!playlist[index]) return;
