@@ -3,14 +3,17 @@
 @section('content')
 @php
 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
-return [
-'src' => $ep->stream_url,
-'title' => $ep->title,
-'podcast' => $podcast->title,
-'thumbnail' => $podcast->thumbnail_url
-];
+    return [
+        'src' => $ep->stream_url,
+        'title' => $ep->title,
+        'podcast' => $podcast->title,
+        'thumbnail' => $podcast->thumbnail_url,
+        'type' => 'audio', // explicitly set type
+    ];
 });
 @endphp
+
+
 
 <!-- main-area -->
 <main>
@@ -25,10 +28,12 @@ return [
                 <div class="col-xl-4 col-lg-4">
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
-                        <a class="popup-video"
- onclick='playGlobalAudio(@json($playlist), 0)'>
-                            <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
-                        </a>
+                       
+<a class="popup-video" 
+   href="javascript:void(0)" 
+   onclick='window.playGlobalAudio(@json($playlist), 0)'>
+    <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast">
+</a>
  
 
                     </div>
