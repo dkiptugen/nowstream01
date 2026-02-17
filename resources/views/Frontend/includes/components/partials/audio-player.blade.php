@@ -152,13 +152,13 @@
 
         playlist = state.playlist;
         currentIndex = state.currentIndex;
+    audio.volume = state.volume ?? 1;
+    audio.muted = state.muted ?? false;
+    volume.value = audio.volume;
 
         const track = playlist[currentIndex];
         loadSource(track.src);
         updateUI(track);
-    audio.volume = state.volume ?? 1;
-    audio.muted = state.muted ?? false;
-    volume.value = audio.volume;
     updateMuteIcon();
 
         media.addEventListener('loadedmetadata', () => {
