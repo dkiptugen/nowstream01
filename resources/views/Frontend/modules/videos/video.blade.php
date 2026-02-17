@@ -14,7 +14,8 @@
                             playsinline
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
-					</div>
+					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="30"></div>
+</div>
 
 					@php
 					$oldvid= $video;
@@ -474,6 +475,18 @@
 		.sticky {
 			z-index: 99;
 		}
+		.live-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 10;
+}
 	</style>
 	@endsection
 	@section('footer')
