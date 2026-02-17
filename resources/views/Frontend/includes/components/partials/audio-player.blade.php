@@ -466,24 +466,29 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
-    /* Floating mode */
+ /* Ensure player always visible above everything */
+.spotify-player {
+    z-index: 99999;
+}
+
+/* Floating mode */
 .spotify-player.floating {
-    position: fixed;
+    position: fixed !important;
     width: 320px;
     height: 80px;
-    border-radius: 10px;
-    bottom: 20px;
-    right: 20px;
     left: auto;
+    right: 20px;
+    bottom: 20px;
+    top: auto;
+    border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     cursor: grab;
-    transition: box-shadow 0.2s ease;
 }
 
 .spotify-player.floating.dragging {
     cursor: grabbing;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
 }
+
 
     .spotify-player {
         position: fixed;
