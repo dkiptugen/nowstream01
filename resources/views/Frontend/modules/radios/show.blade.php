@@ -1,4 +1,3 @@
-@php use App\Models\Channel; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
 
@@ -12,7 +11,7 @@
 <video id="player"
     src="{{ $radio->stream_url }}"
     data-title="{{ $radio->title }}"
-       data-thumb="{{ $video->thumbnail_url }}"
+       data-thumb="{{ $radio->thumbnail_url }}"
     data-type="audio"
     playsinline
 	controls
