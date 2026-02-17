@@ -14,7 +14,7 @@
                             playsinline
                             data-poster="{{ $video->thumbnail_url }}">
                         </video>
-					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="30"></div>
+					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
 
 					@php
