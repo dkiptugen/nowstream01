@@ -1,4 +1,3 @@
-@php use App\Models\Channel; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
 
@@ -7,12 +6,12 @@
 	<section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
-				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="radio-wrap">   
+				<div class="col-xl-9 col-lg-8"> 
+					<div id="videoWrap" class="radio-wrap">
 <video id="player"
     src="{{ $radio->stream_url }}"
     data-title="{{ $radio->title }}"
-    data-thumb="{{ $radio->thumbnail_url }}"
+       data-thumb="{{ $video->thumbnail_url }}"
     data-type="audio"
     playsinline
 	controls
