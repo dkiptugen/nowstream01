@@ -26,10 +26,12 @@ return [
                 <div class="col-xl-4 col-lg-4">
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
-                        <a class="popup-video"
- onclick='playGlobalAudio(@json($playlist), 0)'>
-                            <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
-                        </a>
+                       <a class="popup-video" 
+   href="#" 
+   onclick='window.playGlobalAudio(@json($playlist), 0)'>
+    <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast">
+</a>
+
  
 
                     </div>
