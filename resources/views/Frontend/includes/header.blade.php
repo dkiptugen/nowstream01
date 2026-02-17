@@ -131,16 +131,7 @@
 </head>
 
 <body>
-
-    <!-- preloader -->
-    <div id="preloader">
-        <div id="loading-center">
-            <div id="loading-center-absolute">
-                <img src="img/preloader.svg" alt="">
-            </div>
-        </div>
-    </div>
-    <!-- preloader-end -->
+ 
 
     <!-- Scroll-top -->
     <button class="scroll-top scroll-to-target" data-target="html">
