@@ -159,20 +159,28 @@
         else media.pause();
         updatePlayIcon();
         saveState();
-    });
+    }); 
 
-    media.addEventListener('play', () => {
-        if (!miniVideo.classList.contains('d-none')) {
-            miniVideo.currentTime = media.currentTime;
-            miniVideo.play().catch(()=>{});
-        }
-        updatePlayIcon();
-    });
+         prevBtn?.addEventListener('click', () => {
+             if (currentIndex > 0) loadTrack(currentIndex - 1);
+         });
 
-    media.addEventListener('pause', () => {
-        miniVideo.pause();
-        updatePlayIcon();
-    });
+         nextBtn?.addEventListener('click', () => {
+             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+         });
+
+         muteBtn?.addEventListener('click', () => {
+             audio.muted = !audio.muted;
+             updateMuteIcon();
+             saveState();
+         });
+
+         volume?.addEventListener('input', () => {
+             audio.volume = volume.value;
+             audio.muted = false;
+             updateMuteIcon();
+             saveState();
+         });
 
     media.addEventListener('timeupdate', () => {
         if (!miniVideo.classList.contains('d-none')) {
