@@ -38,9 +38,10 @@
         <input type="range" id="player-volume" min="0" max="1" step="0.01">
 
     </div>
-        <button id="player-float-toggle" class="sp-btn" title="Float player">
-    <i class="fas fa-up-right-and-down-left-from-center"></i>
+       <button id="player-float-toggle" class="sp-btn">
+    <i class="fas fa-expand"></i>
 </button>
+
 
     <video id="global-audio" playsinline></video>
 
