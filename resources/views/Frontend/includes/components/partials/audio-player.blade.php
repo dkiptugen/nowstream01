@@ -137,14 +137,18 @@
         player.classList.remove('d-none');
     }
 
-    function saveState() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            playlist,
-            currentIndex,
-            time: media.currentTime,
-            playing: !media.paused
-        }));
-    }
+         function saveState() {
+             try {
+                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                     playlist,
+                     currentIndex,
+                     time: audio.currentTime || 0,
+                     volume: audio.volume,
+                     muted: audio.muted,
+                     playing: !audio.paused
+                 }));
+             } catch (e) {}
+         }
 
     function restoreState() {
         const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
