@@ -53,12 +53,12 @@ class RadioController extends Controller
     /**
      * Single radio page
      */
-    public function show($uuid, $slug)
+    public function show( $slug)
     {
         try {
             // Cache single radio detail
-            $radio = Cache::remember("radio_{$uuid}_{$slug}", now()->addDay(), function () use ($uuid, $slug) {
-                return Content::where('uuid', $uuid)
+            $radio = Cache::remember("radio_{$slug}", now()->addDay(), function () use ($slug) {
+                return Content::where('slug', $slug)
                     ->where('slug', $slug)
                     ->where('content_group', 'radio')
                     ->where('status', 1)
@@ -69,7 +69,7 @@ class RadioController extends Controller
 
             // Increment live views (not cached)
             $radio->increment('views');
-
+            $uuid = $radio->uuid ?? null;
             // Related radios (cache)
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'radio')
