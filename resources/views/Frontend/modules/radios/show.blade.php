@@ -440,7 +440,7 @@
             }
 
             // Example video/live URL
-            const mediaUrl = '{{ Storage::url($video->content_path) }}'; // Replace with dynamic URL
+            const mediaUrl = '{{ Storage::url($radio->stream_url) }}'; // Replace with dynamic URL
 
             loadMedia(mediaUrl);
 
