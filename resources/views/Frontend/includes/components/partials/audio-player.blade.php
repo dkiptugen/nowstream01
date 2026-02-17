@@ -1,12 +1,12 @@
 <div id="global-audio-player" class="spotify-player d-none">
 
     <div class="sp-left">
+        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
             <div id="player-title" class="sp-title">No audio</div>
             <div id="player-podcast" class="sp-artist"></div>
         </div>
-        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
     </div>
 
     <div class="sp-center">
@@ -36,11 +36,11 @@
             <i class="fas fa-volume-up"></i>
         </button>
         <input type="range" id="player-volume" min="0" max="1" step="0.01">
+
+    </div>
         <button id="player-float-toggle" class="sp-btn" title="Float player">
     <i class="fas fa-up-right-and-down-left-from-center"></i>
 </button>
-
-    </div>
 
     <video id="global-audio" playsinline></video>
 
