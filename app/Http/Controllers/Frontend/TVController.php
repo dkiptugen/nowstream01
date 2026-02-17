@@ -79,7 +79,7 @@ class TVController extends Controller
     /**
      * Single TV page
      */
-    public function show($uuid, $slug)
+    public function show($slug)
     {
         try {
             // Cache TV detail
