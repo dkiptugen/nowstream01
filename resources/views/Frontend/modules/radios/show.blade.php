@@ -25,7 +25,7 @@
 				</div>
 				@include('Frontend.includes.components.partials.video-comments', [
     'comments' => $comments,
-    'commentableType' => 'tv',
+    'commentableType' => 'radio',
     'commentableId' => $radio->uuid
 ])
 
