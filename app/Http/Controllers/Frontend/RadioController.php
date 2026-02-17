@@ -81,7 +81,7 @@ class RadioController extends Controller
                     ->whereNotNull('stream_url')
                     ->where('status', 1)
                     ->latest()
-                    ->take(6)
+                    ->take(16)
                     ->get();
             });
 
