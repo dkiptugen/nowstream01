@@ -53,9 +53,6 @@
     if (!media || !player) return;
 
     const playBtn = document.getElementById('player-play');
-         const prevBtn = document.getElementById('player-prev');
-         const nextBtn = document.getElementById('player-next');
-         const muteBtn = document.getElementById('player-mute');
     const floatBtn = document.getElementById('player-float-toggle');
 
     const titleEl = document.getElementById('player-title');
@@ -79,10 +76,7 @@
     }
 
     function destroyHLS() {
-        if (hls) {
-            hls.destroy();
-            hls = null;
-        }
+        if (hls) { hls.destroy(); hls = null; }
     }
 
     function loadSource(src) {
@@ -105,7 +99,6 @@
         if (track.type === 'video') {
             thumbEl.classList.add('d-none');
             miniVideo.classList.remove('d-none');
-
             if (miniVideo.src !== track.src) miniVideo.src = track.src;
             miniVideo.currentTime = media.currentTime;
             miniVideo.play().catch(()=>{});
@@ -120,10 +113,7 @@
 
     function saveState() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            playlist,
-            currentIndex,
-            time: media.currentTime,
-            playing: !media.paused
+            playlist, currentIndex, time: media.currentTime, playing: !media.paused
         }));
     }
 
@@ -133,8 +123,8 @@
 
         playlist = state.playlist;
         currentIndex = state.currentIndex;
-
         const track = playlist[currentIndex];
+
         loadSource(track.src);
         updateUI(track);
 
@@ -158,38 +148,27 @@
        Controls
     ===================== */
     playBtn.addEventListener('click', () => {
-        if (media.paused) media.play();
-        else media.pause();
+        if (media.paused) media.play(); else media.pause();
+        updatePlayIcon(); saveState();
+    });
+
+    media.addEventListener('play', () => {
+        if (!miniVideo.classList.contains('d-none')) {
+            miniVideo.currentTime = media.currentTime;
+            miniVideo.play().catch(()=>{});
+        }
         updatePlayIcon();
-        saveState();
-    }); 
+    });
 
-         prevBtn?.addEventListener('click', () => {
-             if (currentIndex > 0) loadTrack(currentIndex - 1);
-         });
-
-         nextBtn?.addEventListener('click', () => {
-             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
-         });
-
-         muteBtn?.addEventListener('click', () => {
-             audio.muted = !audio.muted;
-             updateMuteIcon();
-             saveState();
-         });
-
-         volume?.addEventListener('input', () => {
-             audio.volume = volume.value;
-             audio.muted = false;
-             updateMuteIcon();
-             saveState();
-         });
+    media.addEventListener('pause', () => {
+        miniVideo.pause();
+        updatePlayIcon();
+    });
 
     media.addEventListener('timeupdate', () => {
         if (!miniVideo.classList.contains('d-none')) {
-            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
+            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3)
                 miniVideo.currentTime = media.currentTime;
-            }
         }
         saveState();
     });
@@ -202,12 +181,8 @@
         floatBtn.innerHTML = player.classList.contains('floating') 
             ? '<i class="fas fa-compress"></i>' 
             : '<i class="fas fa-expand"></i>';
-
         if (!player.classList.contains('floating')) {
-            player.style.top = '';
-            player.style.left = '';
-            player.style.bottom = '0';
-            player.style.right = '';
+            player.style.top = ''; player.style.left = ''; player.style.bottom = '0'; player.style.right = '';
         }
     });
 
@@ -216,35 +191,28 @@
         if (!player.classList.contains('floating')) return;
         isDragging = true;
         const rect = player.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-        player.style.right = 'auto';
-        player.style.bottom = 'auto';
+        offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
+        player.style.right = 'auto'; player.style.bottom = 'auto';
     });
-    document.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        player.style.left = (e.clientX - offsetX) + 'px';
-        player.style.top = (e.clientY - offsetY) + 'px';
-    });
+    document.addEventListener('mousemove', e => { if (!isDragging) return; player.style.left = (e.clientX - offsetX)+'px'; player.style.top = (e.clientY - offsetY)+'px'; });
     document.addEventListener('mouseup', () => isDragging = false);
 
     /* =====================
        Global API
     ===================== */
     window.playSingleAudio = (src, title='', podcast='', thumbnail='') => {
-        playlist = [{ src, title, podcast, thumbnail, type: 'audio' }];
+        playlist = [{ src, title, podcast, thumbnail, type:'audio' }];
         loadTrack(0);
     };
-         /* ===============================
-            Global API
-         =============================== */
-         window.playGlobalAudio = function(list, index = 0) {
-             if (!Array.isArray(list) || !list.length) return;
-             playlist = list;
-             loadTrack(index);
-         };
+
+    window.playGlobalAudio = (list, index = 0) => {
+        if (!Array.isArray(list) || !list.length) return;
+        playlist = list;
+        loadTrack(index);
+    };
+
     window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
-        playlist = [{ src, title, podcast: channel, thumbnail, type: 'video' }];
+        playlist = [{ src, title, podcast:channel, thumbnail, type:'video' }];
         loadTrack(0);
     };
 
@@ -259,15 +227,10 @@
         const title = mainVideo.dataset.title;
         const thumb = mainVideo.dataset.thumb;
         let moved = false;
-
         window.addEventListener('scroll', () => {
             const rect = mainVideo.getBoundingClientRect();
-            if (rect.bottom < 0 && !moved) {
-                moved = true;
-                playGlobalVideo(src, title, 'Video', thumb);
-                mainVideo.pause();
-            }
-            if (rect.top >= 0 && moved) {
+            if (rect.bottom < 0 && !moved) { moved = true; playGlobalVideo(src,title,'Video',thumb); mainVideo.pause(); }
+            if (rect.top >= 0 && moved) { 
                 moved = false;
                 const globalMedia = document.getElementById('global-audio');
                 mainVideo.src = globalMedia.src;
