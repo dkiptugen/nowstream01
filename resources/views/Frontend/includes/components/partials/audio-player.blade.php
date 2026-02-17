@@ -317,7 +317,68 @@ function restoreState() {
        restoreState();
     })();
 </script>
+<script>
+    /* =====================
+   Scroll-to-Float Video Handoff
+===================== */
+document.addEventListener('DOMContentLoaded', () => {
 
+    const pageVideo = document.getElementById('player'); // main page video
+    if (!pageVideo) return;
+
+    let movedToGlobal = false;
+
+    window.addEventListener('scroll', () => {
+
+        const rect = pageVideo.getBoundingClientRect();
+        const outOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+
+        // === Move to global when video leaves screen ===
+        if (outOfView && !movedToGlobal && !pageVideo.paused) {
+
+            movedToGlobal = true;
+
+            const src = pageVideo.currentSrc || pageVideo.src;
+
+            window.playGlobalVideo(
+                src,
+                pageVideo.dataset.title || '',
+                pageVideo.dataset.channel || 'Video',
+                pageVideo.dataset.thumb || ''
+            );
+
+            // Sync time after global loads
+            const globalMedia = document.getElementById('global-audio');
+
+            globalMedia.addEventListener('loadedmetadata', function syncOnce() {
+                globalMedia.currentTime = pageVideo.currentTime;
+                pageVideo.pause();
+                this.removeEventListener('loadedmetadata', syncOnce);
+            });
+
+            document.getElementById('global-audio-player').classList.remove('d-none');
+        }
+
+        // === Return to page video when back in view ===
+        if (!outOfView && movedToGlobal) {
+
+            movedToGlobal = false;
+
+            const globalMedia = document.getElementById('global-audio');
+
+            pageVideo.src = globalMedia.currentSrc || globalMedia.src;
+            pageVideo.currentTime = globalMedia.currentTime;
+            pageVideo.play().catch(()=>{});
+
+            globalMedia.pause();
+            document.getElementById('global-audio-player').classList.add('d-none');
+        }
+
+    });
+
+});
+
+</script>
 
 <style>
     .spotify-player {
