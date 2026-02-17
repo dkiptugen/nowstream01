@@ -67,25 +67,14 @@
                     </div>
                 </div>
                 </div>
-               
-            <div class="pcar-wrapper">
-
-                <!-- Outside container overlays -->
-                <div class="pcar-overlay pcar-overlay-left"></div>
-                <div class="pcar-overlay pcar-overlay-right"></div>
-
-                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
-                    data-mobile="1">
-
-                    <div class="pcar-track">
-                        @foreach($radios as $item)
-                            <div class="pcar-item">
-                                @include('Frontend.includes.components.cards.slider-card')
+              
+                    <div class="row tr-movie-active">
+                         @foreach($radios as $item)
+                            <div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
+                                @include('Frontend.includes.components.cards.slider-card', ['podcast' => $item])
                             </div>
                         @endforeach
                     </div>
-                </div>
-            </div>
         </section>
 
     </main>
