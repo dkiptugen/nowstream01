@@ -97,9 +97,8 @@ class PodcastController extends Controller
     {
         try {
             // Cache podcast detail
-            $podcast = Cache::remember("podcast_{$uuid}_{$slug}", now()->addDay(), function () use ($uuid, $slug) {
-                return Content::where('uuid', $uuid)
-                    ->where('slug', $slug)
+            $podcast = Cache::remember("podcast_{$slug}", now()->addDay(), function () use ( $slug) {
+                return Content::where('slug', $slug)
                     ->where('content_group', 'podcast')
                     ->first();
             });

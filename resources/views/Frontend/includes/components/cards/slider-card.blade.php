@@ -49,7 +49,7 @@
 
         <!-- Poster -->
         <div class="movie-poster">
-            <a href="{{ route($item->content_group . '.show', [$item->uuid, $item->slug]) }}">
+            <a href="{{ route($item->content_group . '.show',  $item->slug) }}">
                 <img src="{{ $item->thumbnail_url ?? asset('assets/images/default.png') }}"
                      class="movie-img" alt="{{ $item->title  }}" loading="lazy">
                 <div class="play-icon">
