@@ -11,6 +11,7 @@ return [
 ];
 });
 @endphp
+
 <!-- main-area -->
 <main>
 

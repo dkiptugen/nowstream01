@@ -36,18 +36,17 @@
             <i class="fas fa-volume-up"></i>
         </button>
         <input type="range" id="player-volume" min="0" max="1" step="0.01">
-
     </div>
-       <button id="player-float-toggle" class="sp-btn">
-    <i class="fas fa-expand"></i>
-</button>
 
+    <button id="player-float-toggle" class="sp-btn">
+        <i class="fas fa-expand"></i>
+    </button>
 
     <video id="global-audio" playsinline></video>
 
 </div>
 <script>
-(function () {
+(function() {
 
     const media = document.getElementById('global-audio');
     const player = document.getElementById('global-audio-player');
@@ -70,7 +69,6 @@
     /* =====================
        Helpers
     ===================== */
-
     function updatePlayIcon() {
         playBtn.innerHTML = media.paused
             ? '<i class="fas fa-play"></i>'
@@ -86,14 +84,11 @@
 
     function loadSource(src) {
         destroyHLS();
-
         if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
             hls = new Hls();
             hls.loadSource(src);
             hls.attachMedia(media);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                media.play().catch(()=>{});
-            });
+            hls.on(Hls.Events.MANIFEST_PARSED, () => media.play().catch(()=>{}));
         } else {
             media.src = src;
             media.play().catch(()=>{});
@@ -108,10 +103,7 @@
             thumbEl.classList.add('d-none');
             miniVideo.classList.remove('d-none');
 
-            if (miniVideo.src !== track.src) {
-                miniVideo.src = track.src;
-            }
-
+            if (miniVideo.src !== track.src) miniVideo.src = track.src;
             miniVideo.currentTime = media.currentTime;
             miniVideo.play().catch(()=>{});
         } else {
@@ -151,10 +143,8 @@
 
     function loadTrack(index) {
         if (!playlist[index]) return;
-
         currentIndex = index;
         const track = playlist[index];
-
         loadSource(track.src);
         updateUI(track);
         updatePlayIcon();
@@ -164,7 +154,6 @@
     /* =====================
        Controls
     ===================== */
-
     playBtn.addEventListener('click', () => {
         if (media.paused) media.play();
         else media.pause();
@@ -195,164 +184,81 @@
     });
 
     /* =====================
-       Floating Toggle
+       Floating + Drag
     ===================== */
-
     floatBtn.addEventListener('click', () => {
         player.classList.toggle('floating');
+        floatBtn.innerHTML = player.classList.contains('floating') 
+            ? '<i class="fas fa-compress"></i>' 
+            : '<i class="fas fa-expand"></i>';
+
+        if (!player.classList.contains('floating')) {
+            player.style.top = '';
+            player.style.left = '';
+            player.style.bottom = '0';
+            player.style.right = '';
+        }
     });
 
-    /* =====================
-       Dragging
-    ===================== */
-
-    let isDragging = false, offsetX, offsetY;
-
-    player.addEventListener('mousedown', (e) => {
+    let isDragging = false, offsetX = 0, offsetY = 0;
+    player.addEventListener('mousedown', e => {
         if (!player.classList.contains('floating')) return;
         isDragging = true;
-        offsetX = e.clientX - player.offsetLeft;
-        offsetY = e.clientY - player.offsetTop;
+        const rect = player.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        player.style.right = 'auto';
+        player.style.bottom = 'auto';
     });
-
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
         if (!isDragging) return;
         player.style.left = (e.clientX - offsetX) + 'px';
         player.style.top = (e.clientY - offsetY) + 'px';
-        player.style.bottom = 'auto';
     });
-
     document.addEventListener('mouseup', () => isDragging = false);
 
     /* =====================
        Global API
     ===================== */
-
-    window.playSingleAudio = function (src, title='', podcast='', thumbnail='') {
-        playlist = [{
-            src,
-            title,
-            podcast,
-            thumbnail,
-            type: 'audio'
-        }];
+    window.playSingleAudio = (src, title='', podcast='', thumbnail='') => {
+        playlist = [{ src, title, podcast, thumbnail, type: 'audio' }];
         loadTrack(0);
     };
-
-    window.playGlobalVideo = function (src, title='', channel='', thumbnail='') {
-        playlist = [{
-            src,
-            title,
-            podcast: channel,
-            thumbnail,
-            type: 'video'
-        }];
+    window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
+        playlist = [{ src, title, podcast: channel, thumbnail, type: 'video' }];
         loadTrack(0);
     };
 
     /* =====================
-       Init
+       Scroll-to-Float for Page Videos
     ===================== */
-
-    document.addEventListener('DOMContentLoaded', restoreState);
-
-})();
-</script>
- 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', () => restoreState());
 
     const mainVideo = document.getElementById('player');
-    if (!mainVideo) return;
+    if (mainVideo) {
+        const src = mainVideo.dataset.src;
+        const title = mainVideo.dataset.title;
+        const thumb = mainVideo.dataset.thumb;
+        let moved = false;
 
-    const src = mainVideo.dataset.src;
-    const title = mainVideo.dataset.title;
-    const thumb = mainVideo.dataset.thumb;
-
-    let moved = false;
-
-    window.addEventListener('scroll', function () {
-
-        const rect = mainVideo.getBoundingClientRect();
-
-        if (rect.bottom < 0 && !moved) {
-            moved = true;
-            playGlobalVideo(src, title, 'Video', thumb);
-            mainVideo.pause();
-        }
-
-        if (rect.top >= 0 && moved) {
-            moved = false;
-
-            const globalMedia = document.getElementById('global-audio');
-
-            mainVideo.src = globalMedia.src;
-            mainVideo.currentTime = globalMedia.currentTime;
-            mainVideo.play();
-
-            globalMedia.pause();
-            document.getElementById('global-audio-player').classList.add('d-none');
-        }
-
-    });
-
-});
-</script>
-<script>
-(function () {
-
-    const player = document.getElementById('global-audio-player');
-    const toggleBtn = document.getElementById('player-float-toggle');
-
-    if (!player || !toggleBtn) return;
-
-    /* ===============================
-       Toggle Floating Mode
-    =============================== */
-    toggleBtn.addEventListener('click', function () {
-        player.classList.toggle('floating');
-
-        if (player.classList.contains('floating')) {
-            toggleBtn.innerHTML = '<i class="fas fa-compress"></i>';
-        } else {
-            toggleBtn.innerHTML = '<i class="fas fa-expand"></i>';
-            // Reset position when exiting float
-            player.style.top = '';
-            player.style.left = '';
-            player.style.right = '';
-            player.style.bottom = '0';
-        }
-    });
-
-    /* ===============================
-       Draggable (only in floating mode)
-    =============================== */
-    let isDragging = false;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    player.addEventListener('mousedown', function (e) {
-        if (!player.classList.contains('floating')) return;
-
-        isDragging = true;
-        const rect = player.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
-
-        player.style.right = 'auto';
-        player.style.bottom = 'auto';
-    });
-
-    document.addEventListener('mousemove', function (e) {
-        if (!isDragging) return;
-
-        player.style.left = (e.clientX - offsetX) + 'px';
-        player.style.top = (e.clientY - offsetY) + 'px';
-    });
-
-    document.addEventListener('mouseup', function () {
-        isDragging = false;
-    });
+        window.addEventListener('scroll', () => {
+            const rect = mainVideo.getBoundingClientRect();
+            if (rect.bottom < 0 && !moved) {
+                moved = true;
+                playGlobalVideo(src, title, 'Video', thumb);
+                mainVideo.pause();
+            }
+            if (rect.top >= 0 && moved) {
+                moved = false;
+                const globalMedia = document.getElementById('global-audio');
+                mainVideo.src = globalMedia.src;
+                mainVideo.currentTime = globalMedia.currentTime;
+                mainVideo.play();
+                globalMedia.pause();
+                player.classList.add('d-none');
+            }
+        });
+    }
 
 })();
 </script>
@@ -372,7 +278,6 @@ document.addEventListener('DOMContentLoaded', function () {
     color: #fff;
 }
 
-/* Floating mode */
 .spotify-player.floating {
     width: 360px;
     height: 220px;
@@ -404,8 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 
-
-    .spotify-player {
+    /* .spotify-player {
         position: fixed;
         bottom: 0;
         left: 0;
@@ -420,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
         z-index: 9999;
         color: #fff;
         font-family: Arial, sans-serif;
-    }
+    } */
 
     #global-audio {
         height: 0;
