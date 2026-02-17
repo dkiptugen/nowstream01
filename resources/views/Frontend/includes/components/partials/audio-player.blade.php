@@ -53,6 +53,26 @@
        Elements
     =============================== */
     const media = document.getElementById('global-audio'); // video element used for all media
+    const miniVideo = document.getElementById('player-mini-video');
+
+// Sync video element with audio source
+audio.addEventListener('play', () => {
+    if (miniVideo && !miniVideo.classList.contains('d-none')) {
+        miniVideo.currentTime = audio.currentTime;
+        miniVideo.play().catch(()=>{});
+    }
+});
+
+audio.addEventListener('pause', () => {
+    if (miniVideo) miniVideo.pause();
+});
+
+audio.addEventListener('timeupdate', () => {
+    if (miniVideo && Math.abs(miniVideo.currentTime - audio.currentTime) > 0.3) {
+        miniVideo.currentTime = audio.currentTime;
+    }
+});
+
     const player = document.getElementById('global-audio-player');
     if (!media || !player) return;
 
@@ -100,30 +120,32 @@
     }
 
    function updateUI(track) {
-    // Update text
     titleEl.innerText = track.title || 'Unknown';
     podcastEl.innerText = track.podcast || '';
 
-    // Get mini video element safely
     const miniVideo = document.getElementById('player-mini-video');
 
-    if (track.type === 'video' && miniVideo) {
-        thumbEl.classList.add('d-none');       // hide thumbnail
-        miniVideo.classList.remove('d-none');  // show mini video
-        miniVideo.src = track.src;             // set video src
-    } else if (miniVideo) {
-        miniVideo.classList.add('d-none');    // hide mini video
-        thumbEl.classList.remove('d-none');   // show thumbnail
+    if (track.type === 'video') {
+        // Show video
+        miniVideo.classList.remove('d-none');
+        thumbEl.classList.add('d-none');
+
+        if (miniVideo.src !== track.src) {
+            miniVideo.src = track.src;
+        }
+
+        miniVideo.play().catch(()=>{});
+    } else {
+        // Audio mode
+        miniVideo.classList.add('d-none');
+        thumbEl.classList.remove('d-none');
         thumbEl.src = track.thumbnail || '/assets/img/default.png';
     }
 
-    // Reset time
     currentTimeEl.innerText = '0:00';
     durationEl.innerText = '0:00';
 
-    // Show player
     player.classList.remove('d-none');
-    player.style.display = 'flex';  // ensure visible
 }
 
     function destroyHls() {
@@ -270,7 +292,7 @@
         loadTrack(0);
     };
 
-    window.playGlobalVideo = function (src, title = '', channel = '', thumbnail = '') {
+    window.playGlobalVideo = function (src, title = '', channel = '', 'Video', thumbnail = '') {
         playlist = [{
             src,
             title,
@@ -393,42 +415,41 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
-/* Default bottom player */
-.spotify-player {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: #121212;
-    border-top: 1px solid #282828;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    z-index: 9999;
-    color: #fff;
-}
-
-/* Floating mini mode */
+/* Floating container */
 .spotify-player.floating {
-    width: 320px;
-    height: auto;
+    width: 360px;
+    height: 220px;
     bottom: 20px;
     right: 20px;
     left: auto;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    cursor: move;
+    overflow: hidden;
+    padding: 0;
 }
 
-/* Compact layout when floating */
+/* Hide controls in floating mode */
 .spotify-player.floating .sp-center,
-.spotify-player.floating .sp-right {
+.spotify-player.floating .sp-right,
+.spotify-player.floating .sp-meta,
+.spotify-player.floating #player-thumbnail {
     display: none;
 }
 
-.spotify-player.floating .sp-left {
+/* Video fills container */
+.spotify-player.floating #player-mini-video {
+    display: block !important;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Default (non-floating) video hidden */
+#player-mini-video {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 
