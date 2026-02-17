@@ -150,20 +150,26 @@
              } catch (e) {}
          }
 
-    
-        function restoreState() {
-    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state?.playlist?.length) return;
+    function restoreState() {
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!state?.playlist?.length) return;
 
-    playlist = state.playlist;
-    currentIndex = state.currentIndex || 0;
+        playlist = state.playlist;
+        currentIndex = state.currentIndex;
 
-    const track = playlist[currentIndex];
+        const track = playlist[currentIndex];
+        loadSource(track.src);
+        updateUI(track); 
+    audio.volume = state.volume ?? 1;
+    audio.muted = state.muted ?? false;
+    volume.value = audio.volume;
 
-    // Set src only if different (prevents restart flicker)
-    if (!audio.src || !audio.src.includes(track.src)) {
-        audio.src = track.src;
+        media.addEventListener('loadedmetadata', () => {
+            media.currentTime = state.time || 0;
+            if (state.playing) media.play().catch(()=>{});
+        }, { once: true });
     }
+
     function loadTrack(index) {
         if (!playlist[index]) return;
         currentIndex = index;
