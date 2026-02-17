@@ -79,10 +79,9 @@ class RadioController extends Controller
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'radio')
                     ->where('uuid', '!=', $uuid)
-                    ->whereNotNull('stream_url')
-                    ->where('status', 1)
+                    ->whereNotNull('stream_url') 
                     ->latest()
-                    ->take(16)
+                    ->limit(16)
                     ->get();
             });
 
