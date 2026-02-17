@@ -1,8 +1,8 @@
 <div class="col-xl-2 col-lg-2 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-60">
                     <div class="movie-poster">
-                        <a href="{{ route('podcast.show', [$podcast->uuid, $podcast->slug]) }}">
-                            <img src="{{$podcast->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
+                        <a href="{{ route('podcast.show',  $podcast->slug) }}">
+                            <img src="{{$podcast->thumbnail_url ?? asset('frontend-assets/img/default.png')}}"
                                 class="w-100 d-block w-100" alt="..." loading="lazy">
                             <div class="play fs-40">
                                 <i class="fadeIn animated bx bx-play-circle"></i>
@@ -24,7 +24,6 @@
                                 <li>
                                     <span class="channel"><i class="far fa-user"></i>
                                         {{ $podcast->author ? $podcast->author : 'Unknown' }}</span>
-                                    <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
                                 </li>
                             </ul>
                         </div>

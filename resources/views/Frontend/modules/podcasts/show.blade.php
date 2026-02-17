@@ -102,10 +102,10 @@ return [
                         <div class="episode-top-wrap">
                             <div class="section-title">
                                 <span class="sub-title">ONLINE STREAMING</span>
-                                <h2 class="title">Watch Full Episode</h2>
+                                <h2 class="title">Stream Full Episode</h2>
                             </div>
                             <div class="total-views-count">
-                                <p>{{ $podcast->views_count }} million <i class="far fa-eye"></i></p>
+                                <p>{{ $podcast->views }} million <i class="far fa-eye"></i></p>
                             </div>
                         </div>
                         <div class="episode-watch-wrap">
