@@ -10,9 +10,9 @@
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">  
    <video id="player"
-       data-src="{{ Storage::url($video->content_path) }}"
-       data-title="{{ $video->title }}"
-       data-thumb="{{ $video->thumbnail_url }}">
+       data-src="{{ Storage::url($tv->content_path) }}"
+       data-title="{{ $tv->title }}"
+       data-thumb="{{ $tv->thumbnail_url }}">
 </video>
 
     <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
