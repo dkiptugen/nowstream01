@@ -3,7 +3,6 @@
     @include('Frontend.includes.components.cards.slider-card')
 </div>
 @endforeach
-@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -48,5 +47,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
-
-@endsection
