@@ -66,11 +66,24 @@
                         <h2 class="title">Latest radios</h2>
                     </div>
                 </div>
-                <div class="row tr-movie-active">
+                </div>
+               
+            <div class="pcar-wrapper">
 
-                    @foreach($radios as $radio)
+                <!-- Outside container overlays -->
+                <div class="pcar-overlay pcar-overlay-left"></div>
+                <div class="pcar-overlay pcar-overlay-right"></div>
+
+                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
+                    data-mobile="1">
+
+                    <div class="pcar-track">
+                        @foreach($radios as $item)
+                            <div class="pcar-item">
                                 @include('Frontend.includes.components.cards.slider-card')
-                    @endforeach
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </section>
