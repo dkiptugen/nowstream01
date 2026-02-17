@@ -1,7 +1,7 @@
 <div id="global-audio-player" class="spotify-player d-none">
 
     <div class="sp-left">
-        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
+        <video id="player-mini-video" class="sp-artwork d-nones" muted playsinline></video>
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
             <div id="player-title" class="sp-title">No audio</div>
@@ -458,6 +458,9 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
+    .d-nones {
+        display: none;
+    }
     /* Floating mode */
 .spotify-player.floating {
     position: fixed;
