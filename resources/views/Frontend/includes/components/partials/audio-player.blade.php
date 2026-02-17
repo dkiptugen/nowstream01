@@ -47,6 +47,7 @@
 </div>
 <script>
     (function () {
+const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload";
 
         const media = document.getElementById('global-audio');
         const player = document.getElementById('global-audio-player');
@@ -137,64 +138,55 @@
             player.classList.remove('d-none');
         }
 
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                    playlist,
-                    currentIndex,
-                    time: audio.currentTime || 0,
-                    volume: audio.volume,
-                    muted: audio.muted,
-                    playing: !audio.paused
-                }));
-            } catch (e) { }
+       function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        playlist: playlist,
+        currentIndex: currentIndex,
+        time: media.currentTime,
+        playing: !media.paused,
+        volume: media.volume,
+        muted: media.muted
+    }));
+}
+media.addEventListener('play', saveState);
+media.addEventListener('pause', saveState);
+media.addEventListener('volumechange', saveState);
+
+
+      function restoreState() {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!state || !state.playlist || !state.playlist.length) return;
+
+    playlist = state.playlist;
+    currentIndex = state.currentIndex || 0;
+
+    const track = playlist[currentIndex];
+
+    // Restore volume + mute first
+    if (typeof state.volume === 'number') media.volume = state.volume;
+    if (typeof state.muted === 'boolean') media.muted = state.muted;
+
+    loadSource(track.src);
+    updateUI(track);
+
+    media.addEventListener('loadedmetadata', () => {
+        media.currentTime = state.time || 0;
+
+        // IMPORTANT: Only auto-play if it was playing before
+        if (state.playing) {
+            const playPromise = media.play();
+
+            // Handle autoplay block (Chrome/Safari)
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // If blocked, mute and try again (allowed by browsers)
+                    media.muted = true;
+                    media.play().catch(() => {});
+                });
+            }
         }
-
-        function restoreState() {
-            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (!state || !state.playlist || !state.playlist.length) return;
-
-            playlist = state.playlist;
-            currentIndex = state.currentIndex || 0;
-
-            const track = playlist[currentIndex];
-
-            // Restore volume + mute immediately
-            if (typeof state.volume === 'number') {
-                media.volume = state.volume;
-                if (volumeEl) volumeEl.value = state.volume;
-            }
-            // default volume if nothing saved
-            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-            if (saved && typeof saved.volume === 'number') {
-                media.volume = saved.volume;
-                volumeEl.value = saved.volume;
-            }
-
-
-            if (typeof state.muted === 'boolean') {
-                media.muted = state.muted;
-                if (muteBtn) {
-                    muteBtn.innerHTML = media.muted
-                        ? '<i class="fas fa-volume-mute"></i>'
-                        : '<i class="fas fa-volume-up"></i>';
-                }
-            }
-
-            // Load media
-            loadSource(track.src);
-            updateUI(track);
-
-            media.addEventListener('loadedmetadata', () => {
-                media.currentTime = state.time || 0;
-
-                if (state.playing) {
-                    media.play().catch(() => { });
-                }
-
-            }, { once: true });
-        }
-
+    }, { once: true });
+}
 
         function loadTrack(index) {
             if (!playlist[index]) return;
@@ -318,8 +310,7 @@
         /* =====================
            Restore on load
         ===================== */
-        document.addEventListener('DOMContentLoaded', restoreState);
-
+       restoreState();
     })();
 </script>
 
