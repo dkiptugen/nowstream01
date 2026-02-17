@@ -27,7 +27,7 @@ return [
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
                        <span class="popup-video" onclick='window.playGlobalAudio(@json($playlist), 0)'>
-    <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast">
+    <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast" style="cursor: pointer;">
 </span>
 
  
