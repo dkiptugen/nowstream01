@@ -618,6 +618,7 @@
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script>
+@if ($radios != null)
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -663,6 +664,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+@endif
 </body>
 
 </html>
