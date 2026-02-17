@@ -72,8 +72,9 @@ class RadioController extends Controller
             $uuid = $radio->uuid ?? null;
             $comments = $radio->comments()
                 ->with('user')
-                ->orderBy('created_at', 'asc') // oldest first
+                ->orderBy('created_at', 'asc')
                 ->get();
+
             // Related radios (cache)
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'radio')
