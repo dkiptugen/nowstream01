@@ -11,6 +11,7 @@ return [
         'type' => 'audio', // explicitly set type
     ];
 });
+dd($playlist->toArray()); // Debug the playlist structure
 @endphp
 
 <!-- main-area -->
