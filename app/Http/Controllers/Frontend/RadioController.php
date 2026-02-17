@@ -86,7 +86,7 @@ class RadioController extends Controller
                     ->get();
             });
 
-            return view('Frontend.modules.radios.show', compact('radio', 'related', 'comments'));
+            return view('Frontend.modules.radios.show', compact('radio', 'related', 'comments', 'genres'));
         } catch (\Exception $e) {
             abort(404, 'Radio not found');
         }
