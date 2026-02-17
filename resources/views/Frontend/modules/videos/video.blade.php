@@ -9,11 +9,12 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="video-wrap">
-  <video
-                            id="player"
-                            playsinline
-                            data-poster="{{ $video->thumbnail_url }}">
-                        </video>
+<video id="player"
+       data-src="{{ Storage::url($video->content_path) }}"
+       data-title="{{ $video->title }}"
+       data-thumb="{{ $video->thumbnail_url }}">
+</video>
+
 					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
 
