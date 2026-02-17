@@ -53,26 +53,6 @@
        Elements
     =============================== */
     const media = document.getElementById('global-audio'); // video element used for all media
-    const miniVideo = document.getElementById('player-mini-video');
-
-// Sync video element with audio source
-audio.addEventListener('play', () => {
-    if (miniVideo && !miniVideo.classList.contains('d-none')) {
-        miniVideo.currentTime = audio.currentTime;
-        miniVideo.play().catch(()=>{});
-    }
-});
-
-audio.addEventListener('pause', () => {
-    if (miniVideo) miniVideo.pause();
-});
-
-audio.addEventListener('timeupdate', () => {
-    if (miniVideo && Math.abs(miniVideo.currentTime - audio.currentTime) > 0.3) {
-        miniVideo.currentTime = audio.currentTime;
-    }
-});
-
     const player = document.getElementById('global-audio-player');
     if (!media || !player) return;
 
@@ -120,32 +100,30 @@ audio.addEventListener('timeupdate', () => {
     }
 
    function updateUI(track) {
+    // Update text
     titleEl.innerText = track.title || 'Unknown';
     podcastEl.innerText = track.podcast || '';
 
+    // Get mini video element safely
     const miniVideo = document.getElementById('player-mini-video');
 
-    if (track.type === 'video') {
-        // Show video
-        miniVideo.classList.remove('d-none');
-        thumbEl.classList.add('d-none');
-
-        if (miniVideo.src !== track.src) {
-            miniVideo.src = track.src;
-        }
-
-        miniVideo.play().catch(()=>{});
-    } else {
-        // Audio mode
-        miniVideo.classList.add('d-none');
-        thumbEl.classList.remove('d-none');
+    if (track.type === 'video' && miniVideo) {
+        thumbEl.classList.add('d-none');       // hide thumbnail
+        miniVideo.classList.remove('d-none');  // show mini video
+        miniVideo.src = track.src;             // set video src
+    } else if (miniVideo) {
+        miniVideo.classList.add('d-none');    // hide mini video
+        thumbEl.classList.remove('d-none');   // show thumbnail
         thumbEl.src = track.thumbnail || '/assets/img/default.png';
     }
 
+    // Reset time
     currentTimeEl.innerText = '0:00';
     durationEl.innerText = '0:00';
 
+    // Show player
     player.classList.remove('d-none');
+    player.style.display = 'flex';  // ensure visible
 }
 
     function destroyHls() {
