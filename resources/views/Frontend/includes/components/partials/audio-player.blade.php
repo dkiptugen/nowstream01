@@ -46,99 +46,101 @@
 
 </div>
 <script>
-    (function () {
-const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload";
+(function () {
 
-        const media = document.getElementById('global-audio');
-        const player = document.getElementById('global-audio-player');
-        if (!media || !player) return;
+const media = document.getElementById('global-audio');
+const player = document.getElementById('global-audio-player');
+if (!media || !player) return;
 
-        /* =====================
-           Elements
-        ===================== */
-        const playBtn = document.getElementById('player-play');
-        const nextBtn = document.getElementById('player-next');
-        const prevBtn = document.getElementById('player-prev');
-        const muteBtn = document.getElementById('player-mute');
-        const volumeEl = document.getElementById('player-volume');
-        const progress = document.getElementById('player-progress');
-        const currentEl = document.getElementById('sp-current');
-        const durationEl = document.getElementById('sp-duration');
-        const floatBtn = document.getElementById('player-float-toggle');
+const miniVideo = document.getElementById('player-mini-video');
+const thumbEl = document.getElementById('player-thumbnail');
+const titleEl = document.getElementById('player-title');
+const podcastEl = document.getElementById('player-podcast');
 
-        const titleEl = document.getElementById('player-title');
-        const podcastEl = document.getElementById('player-podcast');
-        const thumbEl = document.getElementById('player-thumbnail');
-        const miniVideo = document.getElementById('player-mini-video');
+const playBtn = document.getElementById('player-play');
+const nextBtn = document.getElementById('player-next');
+const prevBtn = document.getElementById('player-prev');
+const volumeSlider = document.getElementById('player-volume');
+const muteBtn = document.getElementById('player-mute');
 
-        const STORAGE_KEY = 'nowstream_player';
+const STORAGE_KEY = 'nowstream_player_v2';
 
-        let playlist = [];
-        let currentIndex = 0;
-        let hls = null;
+let playlist = [];
+let currentIndex = 0;
+let hls = null;
 
-        /* =====================
-           Helpers
-        ===================== */
-        function formatTime(sec) {
-            sec = Math.floor(sec || 0);
-            const m = Math.floor(sec / 60);
-            const s = sec % 60;
-            return m + ':' + (s < 10 ? '0' + s : s);
+/* ======================
+   Helpers
+====================== */
+
+function destroyHLS() {
+    if (hls) {
+        hls.destroy();
+        hls = null;
+    }
+}
+
+function isHLS(src) {
+    return src.includes('.m3u8');
+}
+
+function detectType(src, type) {
+    if (type) return type;
+    if (src.match(/\.(mp4|webm|mov)/)) return 'video';
+    if (isHLS(src)) return 'video';
+    return 'audio';
+}
+
+function loadSource(src) {
+    destroyHLS();
+
+    if (isHLS(src) && window.Hls && Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(media);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            media.play().catch(()=>{});
+        });
+    } else {
+        media.src = src;
+        media.play().catch(()=>{});
+    }
+}
+
+function updateUI(track) {
+
+    titleEl.textContent = track.title || '';
+    podcastEl.textContent = track.podcast || '';
+
+    if (track.type === 'video') {
+        thumbEl.classList.add('d-none');
+        miniVideo.classList.remove('d-none');
+
+        if (miniVideo.src !== track.src) {
+            miniVideo.src = track.src;
         }
+        miniVideo.currentTime = media.currentTime;
+        miniVideo.play().catch(()=>{});
+    } else {
+        miniVideo.classList.add('d-none');
+        thumbEl.classList.remove('d-none');
+        thumbEl.src = track.thumbnail || '/assets/img/default.png';
+    }
 
-        function updatePlayIcon() {
-            playBtn.innerHTML = media.paused
-                ? '<i class="fas fa-play"></i>'
-                : '<i class="fas fa-pause"></i>';
-        }
+    player.classList.remove('d-none');
+}
 
-        function updateMuteIcon() {
-            muteBtn.innerHTML = audio.muted ?
-                '<i class="fas fa-volume-mute"></i>' :
-                '<i class="fas fa-volume-up"></i>';
-        }
-        function destroyHLS() {
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-        }
+function updatePlayIcon() {
+    playBtn.innerHTML = media.paused
+        ? '<i class="fas fa-play"></i>'
+        : '<i class="fas fa-pause"></i>';
+}
 
-        function loadSource(src) {
-            destroyHLS();
+/* ======================
+   State Persistence
+====================== */
 
-            if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
-                hls = new Hls();
-                hls.loadSource(src);
-                hls.attachMedia(media);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => media.play().catch(() => { }));
-            } else {
-                media.src = src;
-                media.play().catch(() => { });
-            }
-        }
-
-        function updateUI(track) {
-            titleEl.innerText = track.title || '';
-            podcastEl.innerText = track.podcast || '';
-
-            if (track.type === 'video') {
-                thumbEl.classList.add('d-none');
-                miniVideo.classList.remove('d-none');
-                miniVideo.src = track.src;
-                miniVideo.currentTime = media.currentTime;
-                miniVideo.play().catch(() => { });
-            } else {
-                miniVideo.classList.add('d-none');
-                thumbEl.classList.remove('d-none');
-                thumbEl.src = track.thumbnail || '/assets/img/default.png';
-            }
-
-            player.classList.remove('d-none');
-        }
-
-   function saveState() {
+function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
         playlist,
         currentIndex,
@@ -149,174 +151,169 @@ const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload
     }));
 }
 
-media.addEventListener('play', saveState);
-media.addEventListener('pause', saveState);
-media.addEventListener('volumechange', saveState);
-
 function restoreState() {
     const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state?.playlist?.length) return;
+    if (!state || !state.playlist?.length) return;
 
     playlist = state.playlist;
-    currentIndex = state.currentIndex || 0;
+    currentIndex = state.currentIndex;
 
     const track = playlist[currentIndex];
-
-    // Restore user preferences first
-    media.volume = typeof state.volume === 'number' ? state.volume : 1;
-    media.muted = state.muted || false;
 
     loadSource(track.src);
     updateUI(track);
 
+    media.volume = state.volume ?? 1;
+    media.muted = state.muted ?? false;
+
     media.addEventListener('loadedmetadata', () => {
         media.currentTime = state.time || 0;
-
-        if (state.playing) {
-            const originalMuted = media.muted;
-
-            // Try normal play first
-            let playPromise = media.play();
-
-            if (playPromise !== undefined) {
-                playPromise.catch(() => {
-                    // Autoplay blocked → temporarily mute
-                    media.muted = true;
-                    media.play().then(() => {
-                        // Restore user's mute preference
-                        media.muted = originalMuted;
-                    }).catch(() => {});
-                });
-            }
-        }
+        if (state.playing) media.play().catch(()=>{});
     }, { once: true });
 }
 
-        function loadTrack(index) {
-            if (!playlist[index]) return;
-            currentIndex = index;
+/* ======================
+   Playlist Control
+====================== */
 
-            const track = playlist[index];
-            loadSource(track.src);
-            updateUI(track);
-            updatePlayIcon();
-            saveState();
+function loadTrack(index) {
+    if (!playlist[index]) return;
+
+    currentIndex = index;
+    const track = playlist[index];
+
+    loadSource(track.src);
+    updateUI(track);
+    updatePlayIcon();
+    saveState();
+}
+
+/* ======================
+   Controls
+====================== */
+
+playBtn.onclick = () => {
+    media.paused ? media.play() : media.pause();
+};
+
+nextBtn.onclick = () => {
+    if (currentIndex < playlist.length - 1) {
+        loadTrack(currentIndex + 1);
+    }
+};
+
+prevBtn.onclick = () => {
+    if (currentIndex > 0) {
+        loadTrack(currentIndex - 1);
+    }
+};
+
+volumeSlider.oninput = () => {
+    media.volume = volumeSlider.value;
+    media.muted = false;
+};
+
+muteBtn.onclick = () => {
+    media.muted = !media.muted;
+};
+
+media.addEventListener('play', () => {
+    updatePlayIcon();
+    saveState();
+});
+
+media.addEventListener('pause', () => {
+    updatePlayIcon();
+    saveState();
+});
+
+media.addEventListener('timeupdate', saveState);
+media.addEventListener('volumechange', saveState);
+
+/* ======================
+   Global API
+====================== */
+
+window.playGlobalMedia = function(list, index = 0) {
+
+    // normalize to array
+    playlist = Array.isArray(list) ? list : [list];
+
+    playlist = playlist.map(item => ({
+        src: item.src,
+        title: item.title || '',
+        podcast: item.podcast || '',
+        thumbnail: item.thumbnail || '',
+        type: detectType(item.src, item.type)
+    }));
+
+    loadTrack(index);
+};
+
+/* ======================
+   Scroll takeover
+====================== */
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    restoreState();
+
+    const mainVideo = document.getElementById('player');
+    if (!mainVideo) return;
+
+    const stream = mainVideo.dataset.stream || mainVideo.src;
+    const title = mainVideo.dataset.title;
+    const thumb = mainVideo.dataset.thumb;
+    const type = mainVideo.dataset.type || 'video';
+
+    // Init HLS for page player
+    if (isHLS(stream)) {
+        if (window.Hls && Hls.isSupported()) {
+            const hlsPage = new Hls();
+            hlsPage.loadSource(stream);
+            hlsPage.attachMedia(mainVideo);
+        } else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
+            mainVideo.src = stream;
+        }
+    }
+
+    let moved = false;
+
+    window.addEventListener('scroll', () => {
+
+        const rect = mainVideo.getBoundingClientRect();
+
+        if (rect.bottom < 0 && !moved) {
+            moved = true;
+
+            playGlobalMedia({
+                src: stream,
+                title: title,
+                podcast: 'Live',
+                thumbnail: thumb,
+                type: type
+            });
+
+            mainVideo.pause();
         }
 
-        function nextTrack() {
-            if (playlist.length < 2) return;
-            currentIndex = (currentIndex + 1) % playlist.length;
-            loadTrack(currentIndex);
+        if (rect.top >= 0 && moved) {
+            moved = false;
+
+            mainVideo.src = media.src;
+            mainVideo.currentTime = media.currentTime;
+            mainVideo.play();
+
+            media.pause();
+            player.classList.add('d-none');
         }
+    });
 
-        function prevTrack() {
-            if (playlist.length < 2) return;
-            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(currentIndex);
-        }
+});
 
-        /* =====================
-           Controls
-        ===================== */
-
-        // Play / Pause
-        playBtn.addEventListener('click', () => {
-            media.paused ? media.play() : media.pause();
-        });
-
-        media.addEventListener('play', updatePlayIcon);
-        media.addEventListener('pause', updatePlayIcon);
-
-        // Next / Prev
-        nextBtn.addEventListener('click', nextTrack);
-        prevBtn.addEventListener('click', prevTrack);
-
-        // Auto next when finished
-        media.addEventListener('ended', nextTrack);
-
-        /* =====================
-           Volume / Mute
-        ===================== */
-        volumeEl.value = media.volume;
-
-        volumeEl.addEventListener('input', () => {
-            media.volume = volumeEl.value;
-            media.muted = volumeEl.value == 0;
-        });
-
-        muteBtn.addEventListener('click', () => {
-            media.muted = !media.muted;
-            volumeEl.value = media.muted ? 0 : media.volume;
-            muteBtn.innerHTML = media.muted
-                ? '<i class="fas fa-volume-mute"></i>'
-                : '<i class="fas fa-volume-up"></i>';
-        });
-
-        /* =====================
-           Progress
-        ===================== */
-        media.addEventListener('loadedmetadata', () => {
-            progress.max = media.duration || 0;
-            durationEl.innerText = formatTime(media.duration);
-        });
-
-        media.addEventListener('timeupdate', () => {
-            progress.value = media.currentTime;
-            currentEl.innerText = formatTime(media.currentTime);
-
-            // sync mini video
-            if (!miniVideo.classList.contains('d-none')) {
-                if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
-                    miniVideo.currentTime = media.currentTime;
-                }
-            }
-
-            saveState();
-        });
-
-        progress.addEventListener('input', () => {
-            media.currentTime = progress.value;
-        });
-
-        /* =====================
-           Floating
-        ===================== */
-        floatBtn.addEventListener('click', () => {
-            player.classList.toggle('floating');
-        });
-
-        /* =====================
-           Global API
-        ===================== */
-
-        // Playlist player (THIS fixes your error)
-        window.playGlobalAudio = (list, index = 0) => {
-            playlist = list.map(item => ({
-                src: item.src,
-                title: item.title || '',
-                podcast: item.podcast || '',
-                thumbnail: item.thumbnail || '',
-                type: item.type || 'audio'
-            }));
-            loadTrack(index);
-        };
-
-        window.playSingleAudio = (src, title = '', podcast = '', thumbnail = '') => {
-            playlist = [{ src, title, podcast, thumbnail, type: 'audio' }];
-            loadTrack(0);
-        };
-
-        window.playGlobalVideo = (src, title = '', channel = '', thumbnail = '') => {
-            playlist = [{ src, title, podcast: channel, thumbnail, type: 'video' }];
-            loadTrack(0);
-        };
-
-        /* =====================
-           Restore on load
-        ===================== */
-       restoreState();
-    })();
+})();
 </script>
+
 <script>
     /* =====================
    Scroll-to-Float Video Handoff
