@@ -52,7 +52,7 @@
 									<span>hd</span>
 								</li>
 								<li class="category"> 
-    @foreach($radio->genre as $genre) 
+    @foreach($genres as $genre) 
         <a class="nav-link" href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
             {{ ucfirst($genre) }}
         </a> 
