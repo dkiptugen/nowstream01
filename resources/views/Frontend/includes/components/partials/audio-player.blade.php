@@ -138,33 +138,33 @@ const isReload = performance.getEntriesByType("navigation")[0]?.type === "reload
             player.classList.remove('d-none');
         }
 
-       function saveState() {
+   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        playlist: playlist,
-        currentIndex: currentIndex,
+        playlist,
+        currentIndex,
         time: media.currentTime,
         playing: !media.paused,
         volume: media.volume,
         muted: media.muted
     }));
 }
+
 media.addEventListener('play', saveState);
 media.addEventListener('pause', saveState);
 media.addEventListener('volumechange', saveState);
 
-
-      function restoreState() {
+function restoreState() {
     const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state || !state.playlist || !state.playlist.length) return;
+    if (!state?.playlist?.length) return;
 
     playlist = state.playlist;
     currentIndex = state.currentIndex || 0;
 
     const track = playlist[currentIndex];
 
-    // Restore volume + mute first
-    if (typeof state.volume === 'number') media.volume = state.volume;
-    if (typeof state.muted === 'boolean') media.muted = state.muted;
+    // Restore user preferences first
+    media.volume = typeof state.volume === 'number' ? state.volume : 1;
+    media.muted = state.muted || false;
 
     loadSource(track.src);
     updateUI(track);
@@ -172,16 +172,20 @@ media.addEventListener('volumechange', saveState);
     media.addEventListener('loadedmetadata', () => {
         media.currentTime = state.time || 0;
 
-        // IMPORTANT: Only auto-play if it was playing before
         if (state.playing) {
-            const playPromise = media.play();
+            const originalMuted = media.muted;
 
-            // Handle autoplay block (Chrome/Safari)
+            // Try normal play first
+            let playPromise = media.play();
+
             if (playPromise !== undefined) {
                 playPromise.catch(() => {
-                    // If blocked, mute and try again (allowed by browsers)
+                    // Autoplay blocked → temporarily mute
                     media.muted = true;
-                    media.play().catch(() => {});
+                    media.play().then(() => {
+                        // Restore user's mute preference
+                        media.muted = originalMuted;
+                    }).catch(() => {});
                 });
             }
         }
