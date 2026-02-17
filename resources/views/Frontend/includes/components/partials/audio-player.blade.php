@@ -4,48 +4,25 @@
         <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
-            <div id="player-title" class="sp-title">No audio</div>
+            <div id="player-title" class="sp-title">No media</div>
             <div id="player-podcast" class="sp-artist"></div>
         </div>
     </div>
 
     <div class="sp-center">
-        <div class="sp-controls">
-            <button id="player-prev" class="sp-btn">
-                <i class="fas fa-step-backward"></i>
-            </button>
-
-            <button id="player-play" class="sp-btn sp-play">
-                <i class="fas fa-play"></i>
-            </button>
-
-            <button id="player-next" class="sp-btn">
-                <i class="fas fa-step-forward"></i>
-            </button>
-        </div>
-
-        <div class="sp-progress-wrap">
-            <span id="sp-current">0:00</span>
-            <input type="range" id="player-progress" value="0">
-            <span id="sp-duration">0:00</span>
-        </div>
-    </div>
-
-    <div class="sp-right">
-        <button id="player-mute" class="sp-btn">
-            <i class="fas fa-volume-up"></i>
+        <button id="player-play" class="sp-btn sp-play">
+            <i class="fas fa-play"></i>
         </button>
-        <input type="range" id="player-volume" min="0" max="1" step="0.01">
-
     </div>
-       <button id="player-float-toggle" class="sp-btn">
-    <i class="fas fa-expand"></i>
-</button>
 
+    <button id="player-float-toggle" class="sp-btn">
+        <i class="fas fa-expand"></i>
+    </button>
 
+    <!-- Main media element -->
     <video id="global-audio" playsinline></video>
-
 </div>
+
 <script>
 (function () {
 
@@ -258,7 +235,7 @@
 
 })();
 </script>
-
+ 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
