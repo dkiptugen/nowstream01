@@ -9,12 +9,13 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">  
-   <video id="player"
-       src="{{ $tv->stream_url }}"
-       data-title="{{ $tv->title }}"
-       data-thumb="{{ $tv->thumbnail_url }}"
-       poster="{{ $tv->thumbnail_url }}">
-</video>
+    <video
+        id="player"
+        data-stream="{{ $tv->stream_url }}"
+        playsinline
+        controls
+        poster="{{ $tv->thumbnail_url }}">
+    </video>
 
     <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
