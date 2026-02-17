@@ -93,7 +93,7 @@ class PodcastController extends Controller
     /**
      * Single podcast view
      */
-    public function show($uuid, $slug)
+    public function show($slug)
     {
         try {
             // Cache podcast detail
@@ -102,6 +102,7 @@ class PodcastController extends Controller
                     ->where('content_group', 'podcast')
                     ->first();
             });
+            $uuid = $podcast->uuid ?? null;
 
             if (!$podcast) abort(404, 'Podcast not found');
 
