@@ -101,7 +101,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: rgb(20 19 27 / 93%);
+            background: rgb(17 16 24 / 89%);
             pointer-events: none;
             z-index: 95;
             display: none;
