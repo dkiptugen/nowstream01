@@ -74,6 +74,7 @@ class RadioController extends Controller
                 ->with('user')
                 ->orderBy('created_at', 'asc')
                 ->get();
+            $genres = $radio->genre ?? [];
 
             // Related radios (cache)
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
