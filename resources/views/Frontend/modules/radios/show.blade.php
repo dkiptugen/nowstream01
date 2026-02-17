@@ -10,7 +10,7 @@
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="radio-wrap">   
  <video id="player"
-       data-src="{{ $radio->stream_url }}"
+       src="{{ $radio->stream_url }}"
        data-title="{{ $radio->title }}"
        data-thumb="{{ $radio->thumbnail_url }}"
         data-stream="{{ $radio->stream_url }}"
