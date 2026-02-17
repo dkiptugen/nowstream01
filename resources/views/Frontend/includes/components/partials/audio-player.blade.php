@@ -292,7 +292,7 @@ audio.addEventListener('timeupdate', () => {
         loadTrack(0);
     };
 
-    window.playGlobalVideo = function (src, title = '', channel = '', 'Video', thumbnail = '') {
+    window.playGlobalVideo = function (src, title = '', channel = '', thumbnail = '') {
         playlist = [{
             src,
             title,
