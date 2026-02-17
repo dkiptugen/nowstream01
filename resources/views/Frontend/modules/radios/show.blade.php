@@ -8,14 +8,16 @@
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="radio-wrap">  
-    
-				<video id="player"
-					src="{{ $radio->stream_url }}"
-					data-title="{{ $radio->title }}"
-					data-thumb="{{ $radio->thumbnail_url }}"
-					data-type="audio">
-				</video>
+					<div id="videoWrap" class="radio-wrap">   
+ <video id="player"
+       data-src="{{ $radio->stream_url }}"
+       data-title="{{ $radio->title }}"
+       data-thumb="{{ $radio->thumbnail_url }}"
+        data-stream="{{ $radio->stream_url }}"
+        playsinline
+        controls
+        poster="{{ $radio->thumbnail_url }}">
+</video>
     <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
 
@@ -398,55 +400,152 @@
 	@section('footer')
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('player');
-            const player = new Plyr(video, {});
-            // Determine media type
-            function getMediaType(url) {
-                const ext = url.split('.').pop().toLowerCase();
-                if (ext === 'm3u8') return 'hls';
-                if (ext === 'mp4') return 'video/mp4';
-                if (ext === 'mp3') return 'audio/mp3';
-                if (ext === 'mov') return 'video/quicktime';
-                return '';
-            }
+    const video = document.getElementById('player');
+    if (!video) return;
 
-            // Load media dynamically
-            function loadMedia(url) {
-                const type = getMediaType(url);
+    const streamUrl = video.dataset.stream;
+    if (!streamUrl) return;
 
-                if (type === 'hls') {
-                    if (Hls.isSupported()) {
-                        const hls = new Hls();
-                        hls.loadSource(url);
-                        hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                    }
-                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
-                    {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => video.play());
-                    }
-                    else console.error('HLS not supported');
-                }
-                else if (video.canPlayType(type))
-                {
-                    video.src = url;
-                    video.addEventListener('loadedmetadata', () => video.play());
-                }
-                else console.error('Unsupported media type');
-            }
+    const player = new Plyr(video, {});
 
-            // Example video/live URL
-            const mediaUrl = '{{ Storage::url($radio->stream_url) }}'; // Replace with dynamic URL
+    let hls = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    const reconnectDelay = 3000;
 
-            loadMedia(mediaUrl);
+    function getMediaType(url) {
+        const ext = url.split('.').pop().toLowerCase();
+        if (ext === 'm3u8') return 'hls';
+        if (ext === 'mp4') return 'video/mp4';
+        return '';
+    }
 
+    function autoplayWithSound() {
+        video.muted = false;
+        video.volume = 1;
 
+        video.play().catch(() => {
+            // Browser blocked autoplay with sound
+            video.muted = true;
+            video.play().catch(() => {});
         });
-    </script> 
+    }
+
+    function destroyHls() {
+        if (hls) {
+            hls.destroy();
+            hls = null;
+        }
+    }
+
+    function reconnectStream() {
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            console.error('Max reconnect attempts reached');
+            return;
+        }
+
+        reconnectAttempts++;
+        console.log('Reconnecting stream...', reconnectAttempts);
+
+        setTimeout(() => {
+            loadStream(streamUrl);
+        }, reconnectDelay);
+    }
+
+    function loadStream(url) {
+        const type = getMediaType(url);
+
+        // Reset video
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+
+        destroyHls();
+
+        if (type === 'hls') {
+
+            if (Hls.isSupported()) {
+
+                hls = new Hls({
+                    maxBufferLength: 30,
+                    maxMaxBufferLength: 60,
+                    enableWorker: true,
+                    lowLatencyMode: true
+                });
+
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    reconnectAttempts = 0;
+                    autoplayWithSound();
+                });
+
+                hls.on(Hls.Events.ERROR, function (event, data) {
+
+                    if (data.fatal) {
+                        console.error('HLS fatal error:', data.type);
+
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                reconnectStream();
+                                break;
+
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                hls.recoverMediaError();
+                                break;
+
+                            default:
+                                reconnectStream();
+                                break;
+                        }
+                    }
+                });
+
+            }
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+                video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
+            }
+
+        } else {
+            video.src = url;
+            video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
+        }
+    }
+
+    /* ===============================
+       Network Recovery
+    =============================== */
+    window.addEventListener('offline', function () {
+        console.warn('Network lost');
+    });
+
+    window.addEventListener('online', function () {
+        console.log('Network restored — reconnecting');
+        reconnectAttempts = 0;
+        loadStream(streamUrl);
+    });
+
+    /* ===============================
+       Visibility Optimization
+    =============================== */
+    document.addEventListener('visibilitychange', function () {
+        if (!document.hidden && video.paused) {
+            video.play().catch(() => {});
+        }
+    });
+
+    /* ===============================
+       Start
+    =============================== */
+    loadStream(streamUrl);
+
+});
+</script>
 
 
 	<script>
