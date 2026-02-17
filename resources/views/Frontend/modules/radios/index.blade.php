@@ -66,15 +66,15 @@
                         <h2 class="title">Latest radios</h2>
                     </div>
                 </div>
-                </div>
               
                     <div class="row tr-movie-active">
                          @foreach($radios as $item)
-                            <div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
+                            <div class="col-xl-2 col-lg-3 col-sm-6 grid-item grid-sizer">
                                 @include('Frontend.includes.components.cards.slider-card', ['podcast' => $item])
                             </div>
                         @endforeach
                     </div>
+                </div>
         </section>
 
     </main>
