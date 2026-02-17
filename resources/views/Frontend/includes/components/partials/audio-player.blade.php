@@ -6,7 +6,7 @@
             <div id="player-title" class="sp-title">No audio</div>
             <div id="player-podcast" class="sp-artist"></div>
         </div>
-        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
+        <video id="player-mini-video" class="sp-artwork d-block" muted playsinline></video>
     </div>
 
     <div class="sp-center">
