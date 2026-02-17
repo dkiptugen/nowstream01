@@ -105,7 +105,7 @@ return [
                                 <h2 class="title">Stream Full Episode</h2>
                             </div>
                             <div class="total-views-count">
-                                <p>{{ $podcast->views }} million <i class="far fa-eye"></i></p>
+                                <p>{{ $podcast->views }},125 <i class="far fa-eye"></i></p>
                             </div>
                         </div>
                         <div class="episode-watch-wrap">
@@ -113,7 +113,7 @@ return [
                                 <div class="card">
                                     <div class="card-header" id="headingOne">
                                         <button class="btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                            <span class="season">Season 2</span>
+                                            <span class="season">By {{ $podcast->author }}</span>
                                             <span class="video-count">{{ $podcast->episodes_count}} Full Episodes</span>
                                         </button>
                                     </div>
