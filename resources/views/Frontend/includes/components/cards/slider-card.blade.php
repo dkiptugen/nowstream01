@@ -14,13 +14,13 @@
                 <i class="fadeIn animated bx bx-play-circle"></i>
             </div>
         </div>
-        <div class="movie-content">
+        <!-- <div class="movie-content">
             <div class="top">
                 <h6 class=" mt-0">
                     {{ucfirst($item->title)}}
                 </h6>
             </div>
-        </div>
+        </div> -->
     </div>
 @elseif ($item->content_group === 'tv')
     <div class="movie-item">
