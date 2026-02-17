@@ -6,7 +6,7 @@
             <div id="player-title" class="sp-title">No audio</div>
             <div id="player-podcast" class="sp-artist"></div>
         </div>
-        <video id="player-mini-video" class="sp-artwork d-block" muted playsinline></video>
+        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
     </div>
 
     <div class="sp-center">
@@ -36,6 +36,10 @@
             <i class="fas fa-volume-up"></i>
         </button>
         <input type="range" id="player-volume" min="0" max="1" step="0.01">
+        <button id="player-float-toggle" class="sp-btn" title="Float player">
+    <i class="fas fa-up-right-and-down-left-from-center"></i>
+</button>
+
     </div>
 
     <video id="global-audio" playsinline></video>
@@ -320,8 +324,159 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+<script>
+(function () {
+
+    const player = document.getElementById('global-audio-player');
+    const toggleBtn = document.getElementById('player-float-toggle');
+    if (!player || !toggleBtn) return;
+
+    const STORAGE_KEY = 'player_float_position';
+
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    /* ===============================
+       Toggle Floating Mode
+    =============================== */
+    toggleBtn.addEventListener('click', () => {
+        player.classList.toggle('floating');
+
+        if (!player.classList.contains('floating')) {
+            // Reset to bottom dock
+            player.style.top = '';
+            player.style.left = '';
+            player.style.right = '';
+            player.style.bottom = '';
+            localStorage.removeItem(STORAGE_KEY);
+        } else {
+            restorePosition();
+        }
+    });
+
+    /* ===============================
+       Drag Start
+    =============================== */
+    function startDrag(e) {
+        if (!player.classList.contains('floating')) return;
+
+        isDragging = true;
+        player.classList.add('dragging');
+
+        const rect = player.getBoundingClientRect();
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+    }
+
+    /* ===============================
+       Drag Move
+    =============================== */
+    function onDrag(e) {
+        if (!isDragging) return;
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        let left = clientX - offsetX;
+        let top = clientY - offsetY;
+
+        // Keep inside viewport
+        const maxLeft = window.innerWidth - player.offsetWidth;
+        const maxTop = window.innerHeight - player.offsetHeight;
+
+        left = Math.max(0, Math.min(left, maxLeft));
+        top = Math.max(0, Math.min(top, maxTop));
+
+        player.style.left = left + 'px';
+        player.style.top = top + 'px';
+        player.style.right = 'auto';
+        player.style.bottom = 'auto';
+    }
+
+    /* ===============================
+       Drag End + Snap
+    =============================== */
+    function endDrag() {
+        if (!isDragging) return;
+
+        isDragging = false;
+        player.classList.remove('dragging');
+
+        const rect = player.getBoundingClientRect();
+
+        // Snap to nearest horizontal edge
+        const snapLeft = rect.left < window.innerWidth / 2;
+
+        if (snapLeft) {
+            player.style.left = '10px';
+        } else {
+            player.style.left = (window.innerWidth - player.offsetWidth - 10) + 'px';
+        }
+
+        // Save position
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            left: player.style.left,
+            top: player.style.top
+        }));
+    }
+
+    /* ===============================
+       Restore Position
+    =============================== */
+    function restorePosition() {
+        const pos = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!pos) return;
+
+        player.classList.add('floating');
+        player.style.left = pos.left;
+        player.style.top = pos.top;
+        player.style.right = 'auto';
+        player.style.bottom = 'auto';
+    }
+
+    /* ===============================
+       Events
+    =============================== */
+    player.addEventListener('mousedown', startDrag);
+    player.addEventListener('touchstart', startDrag);
+
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('touchmove', onDrag, { passive: false });
+
+    document.addEventListener('mouseup', endDrag);
+    document.addEventListener('touchend', endDrag);
+
+    // Restore on load
+    document.addEventListener('DOMContentLoaded', restorePosition);
+
+})();
+</script>
 
 <style>
+    /* Floating mode */
+.spotify-player.floating {
+    position: fixed;
+    width: 320px;
+    height: 80px;
+    border-radius: 10px;
+    bottom: 20px;
+    right: 20px;
+    left: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    cursor: grab;
+    transition: box-shadow 0.2s ease;
+}
+
+.spotify-player.floating.dragging {
+    cursor: grabbing;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
     .spotify-player {
         position: fixed;
         bottom: 0;
