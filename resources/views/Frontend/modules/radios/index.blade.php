@@ -34,7 +34,7 @@
             </div>
         </section> <!-- breadcrumb-area-end -->
         <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-             <div class="container">
+            <div class="container">
                 <div class="episode-top-wrap">
                     <div class="section-title"> <span class="sub-title">Trending Radios</span>
                         <h2 class="title">Trending Radios</h2>
@@ -60,21 +60,22 @@
                     </div>
                 </div>
             </div>
-             <div class="container mt-md-5">
+            <div class="container mt-md-5">
                 <div class="episode-top-wrap">
                     <div class="section-title"> <span class="sub-title">Latest radios</span>
                         <h2 class="title">Latest radios</h2>
                     </div>
                 </div>
-              
-                    <div class="row tr-movie-active">
-                         @foreach($radios as $item)
-                            <div class="col-xl-2 col-lg-3 col-sm-6 grid-item grid-sizer">
-                                @include('Frontend.includes.components.cards.slider-card', ['podcast' => $item])
-                            </div>
-                        @endforeach
-                    </div>
+
+                <div class="row tr-movie-active" id="radio-container">
+                    @include('Frontend.modules.radios.partials.radio-items', ['radios' => $radios])
                 </div>
+
+                <div class="text-center my-4" id="loading" style="display:none;">
+                    <span class="text-light">Loading more radios...</span>
+                </div>
+
+            </div>
         </section>
 
     </main>
