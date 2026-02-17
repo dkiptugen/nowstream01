@@ -9,13 +9,13 @@
                     <div class="row align-items-center position-relative g-0">
 					<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">
-													<video id="player" controls playsinline data-poster="{{ $tv->thumbnail_url }}"></video> 	   
+													<video id="player" controls playsinline data-poster="{{ $radio->thumbnail_url }}"></video> 	   
                                                 </div>
                                                 
 @php
 
-	 $oldvid= $tv;
-	$vid = $tv->id;
+	 $oldvid= $radio;
+	$vid = $radio->id;
 @endphp
                         </div>
 						@include('Frontend.includes.components.partials.tv-comments') 
@@ -24,7 +24,7 @@
                             <div class="movie-details-content">
                                 <h5>New Episodes</h5>
                                 @php
-    $words = preg_split('/\s+/', trim(ucfirst($tv->title)));
+    $words = preg_split('/\s+/', trim(ucfirst($radio->title)));
     $half = (int) ceil(count($words) / 2);
 
     $firstHalf = implode(' ', array_slice($words, 0, $half));
@@ -52,7 +52,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <p>{{ $tv->description }}</p>
+                                <p>{{ $radio->description }}</p>
                                 <div class="movie-details-prime">
                                     <ul>
                                         <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
@@ -76,15 +76,15 @@
 				<div class="col-12 col-lg-8">
 					<div class="card radius-5 row mx-md-0">
 
-						<tv id="player" controls playsinline data-poster="{{ $tv->thumbnail }}"></tv>
+						<tv id="player" controls playsinline data-poster="{{ $radio->thumbnail }}"></tv>
 
 						@php
-						     $oldvid= $tv;
-							$vid = $tv->id;
+						     $oldvid= $radio;
+							$vid = $radio->id;
 						@endphp
 						<div class="card-body">
 							<h2 class="mb-0">
-								{{$tv->title}}
+								{{$radio->title}}
 							</h2>
 							<p class="text-danger mb-0 mt-1">Entertainment</p>
 							<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
@@ -98,14 +98,14 @@
 
 								@if(Auth::check())
 									<div id="favorite-btn">
-										@if(Auth::user()->favoritetvs->contains($tv->id))
+										@if(Auth::user()->favoritetvs->contains($radio->id))
 											<button class="btn btn-danger btn-sm"
-												onclick="toggleFavorite({{ $tv->id }}, false)">
+												onclick="toggleFavorite({{ $radio->id }}, false)">
 												Unlike tv
 											</button>
 										@else
 											<button class="btn btn-outline-primary btn-sm"
-												onclick="toggleFavorite({{ $tv->id }}, true)">
+												onclick="toggleFavorite({{ $radio->id }}, true)">
 												Like tv
 											</button>
 										@endif
@@ -129,7 +129,7 @@
 						<div class="card-body">
 							<h6>Event:</h6>
 							@php
-								$event = \App\Models\Event::find($tv->event_id);
+								$event = \App\Models\Event::find($radio->event_id);
 							@endphp
 							<p>
 								{{ $event ? $event->title : 'Unknown' }}
@@ -142,7 +142,7 @@
 							<p>Gospel , VVIP Exclusive , Gameplay , 1080p</p>
 							<h6>About :</h6> --}}
 							<p>
-								{!!$tv->description!!}
+								{!!$radio->description!!}
 							</p>
 							{{-- <h6>Tags :</h6>
 							<p class="tags mb-0">
