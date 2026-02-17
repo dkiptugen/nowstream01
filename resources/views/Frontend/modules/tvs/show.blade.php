@@ -9,7 +9,7 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="tv-wrap">  
-   <video id="player"
+   <video id="player-{{ $tv->uuid }}"
        data-src="{{ $tv->stream_url }}"
        data-title="{{ $tv->title }}"
        data-thumb="{{ $tv->thumbnail_url }}">

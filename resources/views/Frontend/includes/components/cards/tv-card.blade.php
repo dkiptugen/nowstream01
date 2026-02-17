@@ -1,7 +1,7 @@
 <div class="col-xl-2 col-lg-2 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-60">
                     <div class="movie-poster">
-                        <a href="{{ route('tv.show', [$tv->uuid, $tv->slug]) }}">
+                        <a href="{{ route('tv.show', $tv->slug) }}">
                             <img src="{{$tv->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                 class="w-100 d-block w-100" alt="..." style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                             <div class="play fs-40">
@@ -12,7 +12,7 @@
                     <div class="movie-content">
                         <div class="top">
                             <h6 class=" mt-0">
-                        <a href="{{ route('tv.show', [$tv->uuid, $tv->slug]) }}">
+                        <a href="{{ route('tv.show', $tv->slug) }}">
                                     {{ucfirst($tv->title)}}
                                 </a>
                             </h6>
