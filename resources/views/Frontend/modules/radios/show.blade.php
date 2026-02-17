@@ -8,7 +8,7 @@
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="tv-wrap">  
+					<div id="videoWrap" class="radio-wrap">  
     <video
         id="player"
         data-stream="{{ $radio->stream_url }}"
@@ -31,7 +31,7 @@
 
 				<div class="col-xl-7 col-lg-8 mt-4">
 					<div class="movie-details-content">
-						<h5>New Episodes</h5>
+						<h5>Live Radio</h5>
 						@php
 						$words = preg_split('/\s+/', trim(ucfirst($radio->title)));
 						$half = (int) ceil(count($words) / 2);
@@ -70,7 +70,7 @@
 							<ul>
 								<li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
 								<li class="streaming">
-									<h6>Prime tv</h6>
+									<h6>Prime radio</h6>
 									<span>Streaming Channels</span>
 								</li> 
 							</ul>
@@ -95,25 +95,25 @@
 							Started Streaming 12min ago </small>
 					</div>
 				</div>
-				<div class="card radius-5 single-tv-author box mb-3">
+				<div class="card radius-5 single-radio-author box mb-3">
 					<div class="">
 						<div class="float-right d-flex align-items-center">
 
 							@if(Auth::check())
 							<div id="favorite-btn">
 								@php
-								$favorites = Auth::user()->favoritetvs ?? collect();
+								$favorites = Auth::user()->favoriteradios ?? collect();
 								@endphp
 
 								@if($favorites->contains('uuid', $radio->uuid))
 								<button class="btn btn-danger btn-sm"
 									onclick="toggleFavorite('{{ $radio->uuid }}', false)">
-									Unlike tv
+									Unlike radio
 								</button>
 								@else
 								<button class="btn btn-outline-primary btn-sm"
 									onclick="toggleFavorite('{{ $radio->uuid }}', true)">
-									Like tv
+									Like radio
 								</button>
 								@endif
 							</div>
@@ -224,11 +224,11 @@
 			}
 		}
 
-		.plyr--tv {
+		.plyr--radio {
 			padding: 0;
 		}
 
-		#my-tv {
+		#my-radio {
 			width: 100%;
 			aspect-ratio: 16 / 9 !important;
 			height: auto;
@@ -255,7 +255,7 @@
 		}
 
 		/* Make both columns stretch to same height */
-		.tv-comments-row {
+		.radio-comments-row {
 			align-items: stretch !important;
 		}
 
@@ -335,8 +335,8 @@
 			overflow-y: auto;
 		}
 
-		/* tv wrapper uses 16:9 ratio like YouTube */
-		.tv-wrap {
+		/* radio wrapper uses 16:9 ratio like YouTube */
+		.radio-wrap {
 			position: relative;
 			width: 100%;
 			padding-top: 56.25%;
@@ -345,9 +345,9 @@
 			border-radius: 10px;
 		}
 
-		.tv-wrap tv,
-		.tv-wrap iframe,
-		.tv-wrap .plyr {
+		.radio-wrap radio,
+		.radio-wrap iframe,
+		.radio-wrap .plyr {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -355,7 +355,7 @@
 			height: 100%;
 		}
 
-		/* Comments card height must match tv height */
+		/* Comments card height must match radio height */
 		@media (min-width: 1200px) {
 			#commentsCard {
 				height: 100%;
