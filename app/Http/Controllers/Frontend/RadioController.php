@@ -74,13 +74,15 @@ class RadioController extends Controller
                 ->with('user')
                 ->orderBy('created_at', 'asc')
                 ->get();
-        $genres = Cache::remember('radio_genres', 3600, function () {
-            return Content::where('content_group', 'radio')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatten()
-                ->unique();
-        });
+       $genres = Cache::remember("radio_genres_{$uuid}", 3600, function () use ($radio) {
+    if (!$radio->genre) return collect();
+
+    return collect(json_decode($radio->genre, true))
+        ->filter()
+        ->unique()
+        ->values();
+});
+
 
             // Related radios (cache)
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
