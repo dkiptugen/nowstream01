@@ -53,7 +53,7 @@ class RadioController extends Controller
     /**
      * Single radio page
      */
-    public function show( $slug)
+    public function show($slug)
     {
         try {
             // Cache single radio detail

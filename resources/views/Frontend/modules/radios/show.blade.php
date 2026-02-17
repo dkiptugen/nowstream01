@@ -374,7 +374,7 @@
 				});
 
 				// Your video URL
-				const videoUrl = '{{ $tv->stream_url }}';
+				const videoUrl = '{{ $radio->stream_url }}';
 
 				// Function to determine video type
 				function getVideoType(url) {
