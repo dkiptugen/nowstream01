@@ -12,6 +12,7 @@
     src="{{ $radio->stream_url }}"
     data-title="{{ $radio->title }}"
        data-thumb="{{ $radio->thumbnail_url }}"
+       poster="{{ $radio->thumbnail_url }}"
     data-type="audio"
     playsinline
 	controls
