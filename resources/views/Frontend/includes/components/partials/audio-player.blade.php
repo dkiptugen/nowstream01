@@ -1,7 +1,7 @@
 <div id="global-audio-player" class="spotify-player d-none">
 
     <div class="sp-left">
-        <video id="player-mini-video" class="sp-artwork d-nones" muted playsinline></video>
+        <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
         <div class="sp-meta">
             <div id="player-title" class="sp-title">No audio</div>
@@ -98,24 +98,32 @@
             : '<i class="fas fa-volume-up"></i>';
     }
 
-    function updateUI(track) {
-        titleEl.innerText = track.title || 'Unknown';
-        podcastEl.innerText = track.podcast || '';
+   function updateUI(track) {
+    // Update text
+    titleEl.innerText = track.title || 'Unknown';
+    podcastEl.innerText = track.podcast || '';
 
-        if (track.type === 'video') {
-            thumbEl.classList.add('d-none');
-            miniVideo.classList.remove('d-none');
-            miniVideo.src = track.src;
-        } else {
-            miniVideo.classList.add('d-none');
-            thumbEl.classList.remove('d-none');
-            thumbEl.src = track.thumbnail || '/assets/img/default.png';
-        }
+    // Get mini video element safely
+    const miniVideo = document.getElementById('player-mini-video');
 
-        currentTimeEl.innerText = '0:00';
-        durationEl.innerText = '0:00';
-        player.classList.remove('d-none');
+    if (track.type === 'video' && miniVideo) {
+        thumbEl.classList.add('d-none');       // hide thumbnail
+        miniVideo.classList.remove('d-none');  // show mini video
+        miniVideo.src = track.src;             // set video src
+    } else if (miniVideo) {
+        miniVideo.classList.add('d-none');    // hide mini video
+        thumbEl.classList.remove('d-none');   // show thumbnail
+        thumbEl.src = track.thumbnail || '/assets/img/default.png';
     }
+
+    // Reset time
+    currentTimeEl.innerText = '0:00';
+    durationEl.innerText = '0:00';
+
+    // Show player
+    player.classList.remove('d-none');
+    player.style.display = 'flex';  // ensure visible
+}
 
     function destroyHls() {
         if (hlsInstance) {
@@ -458,9 +466,6 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <style>
-    .d-nones {
-        display: none;
-    }
     /* Floating mode */
 .spotify-player.floating {
     position: fixed;
