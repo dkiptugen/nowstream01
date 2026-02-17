@@ -3,7 +3,7 @@
 @section('content')
 @php
 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
-    return [
+return [
         'src' => $ep->stream_url,
         'title' => $ep->title,
         'podcast' => $podcast->title,
@@ -12,8 +12,6 @@ $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
     ];
 });
 @endphp
-
-
 
 <!-- main-area -->
 <main>
