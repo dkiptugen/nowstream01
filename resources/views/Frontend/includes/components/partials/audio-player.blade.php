@@ -224,6 +224,14 @@
         playlist = [{ src, title, podcast, thumbnail, type: 'audio' }];
         loadTrack(0);
     };
+         /* ===============================
+            Global API
+         =============================== */
+         window.playGlobalAudio = function(list, index = 0) {
+             if (!Array.isArray(list) || !list.length) return;
+             playlist = list;
+             loadTrack(index);
+         };
     window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
         playlist = [{ src, title, podcast: channel, thumbnail, type: 'video' }];
         loadTrack(0);
