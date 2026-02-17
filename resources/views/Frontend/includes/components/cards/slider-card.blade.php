@@ -1,27 +1,18 @@
 @if ($item->content_group === 'radio')
+ <div class="movie-card">
 
-    <div class="movie-item" onclick="playSingleAudio(
-            '{{ $item->stream_url }}',
-            '{{ addslashes($item->title) }}',
-            'Live Radio',
-            '{{ $item->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
-         )" style="cursor:pointer;">
-
+        <!-- Poster -->
         <div class="movie-poster">
-            <img src="{{$item->thumbnail_url ?? asset('assets/images/default.png')}}" class="w-100 d-block w-100"
-                alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
-            <div class="play fs-40">
-                <i class="fadeIn animated bx bx-play-circle"></i>
-            </div>
+            <a href="{{ route($item->content_group . '.show',  $item->slug) }}">
+                <img src="{{ $item->thumbnail_url ?? asset('assets/images/default.png') }}"
+                     class="movie-img" alt="{{ $item->title  }}" loading="lazy">
+                <div class="play-icon">
+                    <i class="bx bx-play-circle"></i>
+                </div>
+            </a>
         </div>
-        <!-- <div class="movie-content">
-            <div class="top">
-                <h6 class=" mt-0">
-                    {{ucfirst($item->title)}}
-                </h6>
-            </div>
-        </div> -->
-    </div>
+
+    </div> 
 @elseif ($item->content_group === 'tv')
     <div class="movie-item">
 

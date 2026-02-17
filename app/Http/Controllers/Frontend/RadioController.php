@@ -65,7 +65,8 @@ class RadioController extends Controller
                     ->first();
             });
 
-            if (!$radio) abort(404, 'Radio not found');
+            if (!$radio)
+                abort(404, 'Radio not found');
 
             // Increment live views (not cached)
             $radio->increment('views');
@@ -74,19 +75,20 @@ class RadioController extends Controller
                 ->with('user')
                 ->orderBy('created_at', 'asc')
                 ->get();
-     $genres = Cache::remember("radio_genres_{$uuid}", 3600, function () use ($radio) {
-    return collect($radio->genre ?? [])
-        ->filter()
-        ->unique()
-        ->values();
-});
+                
+            $genres = Cache::remember("radio_genres_{$uuid}", 3600, function () use ($radio) {
+                return collect($radio->genre ?? [])
+                    ->filter()
+                    ->unique()
+                    ->values();
+            });
 
 
             // Related radios (cache)
             $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
                 return Content::where('content_group', 'radio')
                     ->where('uuid', '!=', $uuid)
-                    ->whereNotNull('stream_url') 
+                    ->whereNotNull('stream_url')
                     ->latest()
                     ->limit(16)
                     ->get();
