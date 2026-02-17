@@ -121,7 +121,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container mb-30 mt-5">
             <div class="episode-top-wrap">
                 <div class="section-title"> <span class="sub-title">Trending Radios</span>
                     <h2 class="title">Trending Radios</h2>
