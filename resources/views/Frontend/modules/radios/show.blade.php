@@ -51,11 +51,12 @@
 									<span>Pg 18</span>
 									<span>hd</span>
 								</li>
-								<li class="category"> 
+					<li class="category">
     @foreach($genres as $genre) 
-        <a class="nav-link" href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
-            {{ ucfirst($genre) }}
-        </a> 
+            <a href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
+                {{ ucfirst($genre) }}
+            </a> 
+    @endforeach
 </li>
 
 								<li class="release-time">
