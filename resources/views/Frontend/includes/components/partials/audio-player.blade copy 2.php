@@ -6,7 +6,6 @@
              <div id="player-title" class="sp-title">No audio</div>
              <div id="player-podcast" class="sp-artist"></div>
          </div>
-         <video id="player-mini-video" class="sp-artwork d-none" muted playsinline></video>
      </div>
 
      <div class="sp-center">
@@ -38,8 +37,7 @@
          <input type="range" id="player-volume" min="0" max="1" step="0.01">
      </div>
 
-    <video id="global-audio" playsinline></video>
-
+     <audio id="global-audio"></audio>
  </div>
  <script>
      (function() {
@@ -159,56 +157,6 @@
         audio.addEventListener('loadedmetadata', seekToTime);
     }
 }
-window.playGlobalVideo = function(src, title = '', channel = '', thumbnail = '') {
-
-    const videoEl = audio; // reuse global media element
-
-    playlist = [{
-        src,
-        title,
-        podcast: channel,
-        thumbnail,
-        type: 'video'
-    }];
-
-    currentIndex = 0;
-
-    videoEl.src = src;
-    videoEl.muted = false;
-    videoEl.playsInline = true;
-
-    // HLS support
-    if (src.includes('.m3u8')) {
-        if (Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(src);
-            hls.attachMedia(videoEl);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => videoEl.play());
-        } else {
-            videoEl.src = src;
-            videoEl.play();
-        }
-    } else {
-        videoEl.play();
-    }
-
-    updateUI(playlist[0]);
-    updatePlayIcon();
-    player.classList.remove('d-none');
-
-    // Show mini video
-    const mini = document.getElementById('player-mini-video');
-    const img = document.getElementById('player-thumbnail');
-
-    if (mini) {
-        mini.src = src;
-        mini.classList.remove('d-none');
-    }
-
-    if (img) img.classList.add('d-none');
-
-    saveState();
-};
 
 
 
@@ -303,58 +251,7 @@ window.playGlobalVideo = function(src, title = '', channel = '', thumbnail = '')
 
      })();
  </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-    const mainVideo = document.getElementById('player');
-    if (!mainVideo) return;
-
-    const videoSrc = '{{ Storage::url($video->content_path) }}';
-    const title = @json($video->title);
-    const thumb = @json($video->thumbnail_url);
-
-    let movedToMini = false;
-
-    window.addEventListener('scroll', function () {
-
-        const rect = mainVideo.getBoundingClientRect();
-
-        // If video out of view → move to global player
-        if (rect.bottom < 0 && !movedToMini) {
-
-            movedToMini = true;
-
-            playGlobalVideo(
-                videoSrc,
-                title,
-                'Video',
-                thumb
-            );
-
-            // Pause main player
-            mainVideo.pause();
-        }
-
-        // If user scrolls back to top → restore
-        if (rect.top >= 0 && movedToMini) {
-
-            movedToMini = false;
-
-            const globalMedia = document.getElementById('global-audio');
-
-            mainVideo.src = globalMedia.src;
-            mainVideo.currentTime = globalMedia.currentTime;
-            mainVideo.play();
-
-            globalMedia.pause();
-            document.getElementById('global-audio-player').classList.add('d-none');
-        }
-
-    });
-
-});
-
-</script>
 
  <style>
      .spotify-player {
@@ -373,11 +270,6 @@ window.playGlobalVideo = function(src, title = '', channel = '', thumbnail = '')
          color: #fff;
          font-family: Arial, sans-serif;
      }
-#global-audio {
-    height: 0;
-    width: 0;
-    position: absolute;
-}
 
      /* LEFT */
      .sp-left {

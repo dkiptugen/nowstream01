@@ -17,10 +17,7 @@
 					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
 
-					@php
-					$oldvid= $video;
-					$vid = $video->id;
-					@endphp
+					 
 				</div>
 				@include('Frontend.includes.components.partials.video-comments', [
     'comments' => $comments,
@@ -85,11 +82,7 @@
 				<div class="card radius-5 row mx-md-0">
 
 					<video id="player" controls playsinline data-poster="{{ $video->thumbnail }}"></video>
-
-					@php
-					$oldvid= $video;
-					$vid = $video->id;
-					@endphp
+ 
 					<div class="card-body">
 						<h2 class="mb-0">
 							{{$video->title}}
