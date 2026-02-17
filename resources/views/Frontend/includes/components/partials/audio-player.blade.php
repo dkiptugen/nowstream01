@@ -92,6 +92,11 @@
             : '<i class="fas fa-pause"></i>';
     }
 
+         function updateMuteIcon() {
+             muteBtn.innerHTML = audio.muted ?
+                 '<i class="fas fa-volume-mute"></i>' :
+                 '<i class="fas fa-volume-up"></i>';
+         }
     function destroyHLS() {
         if (hls) {
             hls.destroy();
@@ -151,6 +156,10 @@
         const track = playlist[currentIndex];
         loadSource(track.src);
         updateUI(track);
+    audio.volume = state.volume ?? 1;
+    audio.muted = state.muted ?? false;
+    volume.value = audio.volume;
+    updateMuteIcon();
 
         media.addEventListener('loadedmetadata', () => {
             media.currentTime = state.time || 0;
