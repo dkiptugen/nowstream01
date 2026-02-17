@@ -4,7 +4,7 @@
         <!-- Poster -->
         <div class="movie-poster">
             <a href="{{ route($item->content_group . '.show',  $item->slug) }}">
-                <img src="{{  asset('assets/images/default.png') }}"
+                <img src="{{ $item->thumbnail_url ?? asset('assets/img/default.png') }}"
                      class="movie-img" alt="{{ $item->title  }}" loading="lazy">
                 <div class="play-icon">
                     <i class="bx bx-play-circle"></i>
@@ -18,7 +18,7 @@
 
         <div class="movie-poster">
             <a href="{{ route($item->content_group . '.show', $item->slug) }}">
-                <img src="{{$item->thumbnail_url ?? asset('assets/images/default.png')}}"
+                <img src="{{$item->thumbnail_url ?? asset('assets/img/default.png')}}"
                     class="w-100 d-block w-100" alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                 <div class="play fs-40">
                     <i class="fadeIn animated bx bx-play-circle"></i>
@@ -41,7 +41,7 @@
         <!-- Poster -->
         <div class="movie-poster">
             <a href="{{ route($item->content_group . '.show',  $item->slug) }}">
-                <img src="{{ $item->thumbnail_url ?? asset('assets/images/default.png') }}"
+                <img src="{{ $item->thumbnail_url ?? asset('assets/img/default.png') }}"
                      class="movie-img" alt="{{ $item->title  }}" loading="lazy">
                 <div class="play-icon">
                     <i class="bx bx-play-circle"></i>
@@ -55,7 +55,7 @@
 
         <div class="movie-poster">
             <a href="{{ route($item->content_group . '.show', $item->slug) }}">
-                <img src="{{$item->thumbnail_url ?? asset('assets/images/default.png')}}"
+                <img src="{{$item->thumbnail_url ?? asset('assets/img/default.png')}}"
                     class="w-100 d-block w-100" alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
                 <div class="play fs-40">
                     <i class="fadeIn animated bx bx-play-circle"></i>
@@ -75,7 +75,7 @@
 @else
     <div class="movie-item">
         <div class="movie-poster">
-            <img src="{{$item->thumbnail_url ?? asset('assets/images/default.png')}}" class="w-100 d-block w-100"
+            <img src="{{$item->thumbnail_url ?? asset('assets/img/default.png')}}" class="w-100 d-block w-100"
                 alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
         </div>
         <div class="movie-content">
