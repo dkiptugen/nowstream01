@@ -1,3 +1,4 @@
+@php use App\Models\Channel; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
 
