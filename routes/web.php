@@ -185,10 +185,10 @@ Route::middleware(['detectCountry'])->group(function () {
 Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
 
     // show tv
-    Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');
+    Route::get('/tv/{slug}', [TVController::class, 'show'])->name('tv.show');
     Route::get('/tvs', [TVController::class, 'index'])->name('tvs');
     // show radio
-    Route::get('/radio/{uuid}/{slug}', [RadioController::class, 'show'])->name('radio.show');
+    Route::get('/radio/{slug}', [RadioController::class, 'show'])->name('radio.show');
     Route::get('/radios', [RadioController::class, 'index'])->name('radios');
 
     // Social Auth Routes (Global)

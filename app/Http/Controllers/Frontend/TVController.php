@@ -83,9 +83,8 @@ class TVController extends Controller
     {
         try {
             // Cache TV detail
-            $tv = Cache::remember("tv_{$uuid}_{$slug}", now()->addDay(), function () use ($uuid, $slug) {
-                return Content::where('uuid', $uuid)
-                    ->where('slug', $slug)
+            $tv = Cache::remember("tv_{$slug}", now()->addDay(), function () use ($slug) {
+                return Content::where('slug', $slug)
                     ->where('content_group', 'tv')
                     ->first();
             });
@@ -95,7 +94,7 @@ class TVController extends Controller
 
             // Increment views (not cached)
             $tv->increment('views');
-
+            $uuid = $tv->uuid ?? null;
             $comments = $tv->comments()
                 ->with('user')
                 ->orderBy('created_at', 'asc') // oldest first
