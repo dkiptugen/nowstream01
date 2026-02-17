@@ -23,8 +23,7 @@
                             <ul>
                                 <li>
                                     <span class="channel"><i class="far fa-user"></i>
-                                        {{ $tv->author ? $tv->author : 'Unknown' }}</span>
-                                    <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
+                                        {{ $tv->author ? $tv->author : 'Unknown' }}</span> 
                                 </li>
                             </ul>
                         </div>
