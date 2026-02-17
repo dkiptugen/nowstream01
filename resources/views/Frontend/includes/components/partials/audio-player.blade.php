@@ -45,322 +45,329 @@
     <video id="global-audio" playsinline></video>
 
 </div>
- <script> 
-(function() {
+<script>
+    (function () {
 
-    const media = document.getElementById('global-audio');
-    const player = document.getElementById('global-audio-player');
-    if (!media || !player) return;
+        const media = document.getElementById('global-audio');
+        const player = document.getElementById('global-audio-player');
+        if (!media || !player) return;
 
-    /* =====================
-       Elements
-    ===================== */
-    const playBtn   = document.getElementById('player-play');
-    const nextBtn   = document.getElementById('player-next');
-    const prevBtn   = document.getElementById('player-prev');
-    const muteBtn   = document.getElementById('player-mute');
-    const volumeEl  = document.getElementById('player-volume');
-    const progress  = document.getElementById('player-progress');
-    const currentEl = document.getElementById('sp-current');
-    const durationEl= document.getElementById('sp-duration');
-    const floatBtn  = document.getElementById('player-float-toggle');
+        /* =====================
+           Elements
+        ===================== */
+        const playBtn = document.getElementById('player-play');
+        const nextBtn = document.getElementById('player-next');
+        const prevBtn = document.getElementById('player-prev');
+        const muteBtn = document.getElementById('player-mute');
+        const volumeEl = document.getElementById('player-volume');
+        const progress = document.getElementById('player-progress');
+        const currentEl = document.getElementById('sp-current');
+        const durationEl = document.getElementById('sp-duration');
+        const floatBtn = document.getElementById('player-float-toggle');
 
-    const titleEl   = document.getElementById('player-title');
-    const podcastEl = document.getElementById('player-podcast');
-    const thumbEl   = document.getElementById('player-thumbnail');
-    const miniVideo = document.getElementById('player-mini-video');
+        const titleEl = document.getElementById('player-title');
+        const podcastEl = document.getElementById('player-podcast');
+        const thumbEl = document.getElementById('player-thumbnail');
+        const miniVideo = document.getElementById('player-mini-video');
 
-    const STORAGE_KEY = 'nowstream_player';
+        const STORAGE_KEY = 'nowstream_player';
 
-    let playlist = [];
-    let currentIndex = 0;
-    let hls = null;
+        let playlist = [];
+        let currentIndex = 0;
+        let hls = null;
 
-    /* =====================
-       Helpers
-    ===================== */
-    function formatTime(sec) {
-        sec = Math.floor(sec || 0);
-        const m = Math.floor(sec / 60);
-        const s = sec % 60;
-        return m + ':' + (s < 10 ? '0' + s : s);
-    }
-
-    function updatePlayIcon() {
-        playBtn.innerHTML = media.paused
-            ? '<i class="fas fa-play"></i>'
-            : '<i class="fas fa-pause"></i>';
-    }
-
-         function updateMuteIcon() {
-             muteBtn.innerHTML = audio.muted ?
-                 '<i class="fas fa-volume-mute"></i>' :
-                 '<i class="fas fa-volume-up"></i>';
-         }
-    function destroyHLS() {
-        if (hls) {
-            hls.destroy();
-            hls = null;
-        }
-    }
-
-    function loadSource(src) {
-        destroyHLS();
-
-        if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
-            hls = new Hls();
-            hls.loadSource(src);
-            hls.attachMedia(media);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => media.play().catch(()=>{}));
-        } else {
-            media.src = src;
-            media.play().catch(()=>{});
-        }
-    }
-
-    function updateUI(track) {
-        titleEl.innerText = track.title || '';
-        podcastEl.innerText = track.podcast || '';
-
-        if (track.type === 'video') {
-            thumbEl.classList.add('d-none');
-            miniVideo.classList.remove('d-none');
-            miniVideo.src = track.src;
-            miniVideo.currentTime = media.currentTime;
-            miniVideo.play().catch(()=>{});
-        } else {
-            miniVideo.classList.add('d-none');
-            thumbEl.classList.remove('d-none');
-            thumbEl.src = track.thumbnail || '/assets/img/default.png';
+        /* =====================
+           Helpers
+        ===================== */
+        function formatTime(sec) {
+            sec = Math.floor(sec || 0);
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return m + ':' + (s < 10 ? '0' + s : s);
         }
 
-        player.classList.remove('d-none');
-    }
-
-         function saveState() {
-             try {
-                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                     playlist,
-                     currentIndex,
-                     time: audio.currentTime || 0,
-                     volume: audio.volume,
-                     muted: audio.muted,
-                     playing: !audio.paused
-                 }));
-             } catch (e) {}
-         }
-
-   function restoreState() {
-    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state || !state.playlist || !state.playlist.length) return;
-
-    playlist = state.playlist;
-    currentIndex = state.currentIndex || 0;
-
-    const track = playlist[currentIndex];
-
-    // Restore volume + mute immediately
-    if (typeof state.volume === 'number') {
-        media.volume = state.volume;
-        if (volumeEl) volumeEl.value = state.volume;
-    }
-
-    if (typeof state.muted === 'boolean') {
-        media.muted = state.muted;
-        if (muteBtn) {
-            muteBtn.innerHTML = media.muted
-                ? '<i class="fas fa-volume-mute"></i>'
-                : '<i class="fas fa-volume-up"></i>';
-        }
-    }
-
-    // Load media
-    loadSource(track.src);
-    updateUI(track);
-
-    media.addEventListener('loadedmetadata', () => {
-        media.currentTime = state.time || 0;
-
-        if (state.playing) {
-            media.play().catch(() => {});
+        function updatePlayIcon() {
+            playBtn.innerHTML = media.paused
+                ? '<i class="fas fa-play"></i>'
+                : '<i class="fas fa-pause"></i>';
         }
 
-    }, { once: true });
-}
-
-
-    function loadTrack(index) {
-        if (!playlist[index]) return;
-        currentIndex = index;
-
-        const track = playlist[index];
-        loadSource(track.src);
-        updateUI(track);
-        updatePlayIcon();
-        saveState();
-    }
-
-    function nextTrack() {
-        if (playlist.length < 2) return;
-        currentIndex = (currentIndex + 1) % playlist.length;
-        loadTrack(currentIndex);
-    }
-
-    function prevTrack() {
-        if (playlist.length < 2) return;
-        currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-        loadTrack(currentIndex);
-    }
-
-    /* =====================
-       Controls
-    ===================== */
-
-    // Play / Pause
-    playBtn.addEventListener('click', () => {
-        media.paused ? media.play() : media.pause();
-    });
-
-    media.addEventListener('play', updatePlayIcon);
-    media.addEventListener('pause', updatePlayIcon);
-
-    // Next / Prev
-    nextBtn.addEventListener('click', nextTrack);
-    prevBtn.addEventListener('click', prevTrack);
-
-    // Auto next when finished
-    media.addEventListener('ended', nextTrack);
-
-    /* =====================
-       Volume / Mute
-    ===================== */
-    volumeEl.value = media.volume;
-
-    volumeEl.addEventListener('input', () => {
-        media.volume = volumeEl.value;
-        media.muted = volumeEl.value == 0;
-    });
-
-    muteBtn.addEventListener('click', () => {
-        media.muted = !media.muted;
-        volumeEl.value = media.muted ? 0 : media.volume;
-        muteBtn.innerHTML = media.muted
-            ? '<i class="fas fa-volume-mute"></i>'
-            : '<i class="fas fa-volume-up"></i>';
-    });
-
-    /* =====================
-       Progress
-    ===================== */
-    media.addEventListener('loadedmetadata', () => {
-        progress.max = media.duration || 0;
-        durationEl.innerText = formatTime(media.duration);
-    });
-
-    media.addEventListener('timeupdate', () => {
-        progress.value = media.currentTime;
-        currentEl.innerText = formatTime(media.currentTime);
-
-        // sync mini video
-        if (!miniVideo.classList.contains('d-none')) {
-            if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
-                miniVideo.currentTime = media.currentTime;
+        function updateMuteIcon() {
+            muteBtn.innerHTML = audio.muted ?
+                '<i class="fas fa-volume-mute"></i>' :
+                '<i class="fas fa-volume-up"></i>';
+        }
+        function destroyHLS() {
+            if (hls) {
+                hls.destroy();
+                hls = null;
             }
         }
 
-        saveState();
-    });
+        function loadSource(src) {
+            destroyHLS();
 
-    progress.addEventListener('input', () => {
-        media.currentTime = progress.value;
-    });
+            if (src.includes('.m3u8') && window.Hls && Hls.isSupported()) {
+                hls = new Hls();
+                hls.loadSource(src);
+                hls.attachMedia(media);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => media.play().catch(() => { }));
+            } else {
+                media.src = src;
+                media.play().catch(() => { });
+            }
+        }
 
-    /* =====================
-       Floating
-    ===================== */
-    floatBtn.addEventListener('click', () => {
-        player.classList.toggle('floating');
-    });
+        function updateUI(track) {
+            titleEl.innerText = track.title || '';
+            podcastEl.innerText = track.podcast || '';
 
-    /* =====================
-       Global API
-    ===================== */
+            if (track.type === 'video') {
+                thumbEl.classList.add('d-none');
+                miniVideo.classList.remove('d-none');
+                miniVideo.src = track.src;
+                miniVideo.currentTime = media.currentTime;
+                miniVideo.play().catch(() => { });
+            } else {
+                miniVideo.classList.add('d-none');
+                thumbEl.classList.remove('d-none');
+                thumbEl.src = track.thumbnail || '/assets/img/default.png';
+            }
 
-    // Playlist player (THIS fixes your error)
-    window.playGlobalAudio = (list, index = 0) => {
-        playlist = list.map(item => ({
-            src: item.src,
-            title: item.title || '',
-            podcast: item.podcast || '',
-            thumbnail: item.thumbnail || '',
-            type: item.type || 'audio'
-        }));
-        loadTrack(index);
-    };
+            player.classList.remove('d-none');
+        }
 
-    window.playSingleAudio = (src, title='', podcast='', thumbnail='') => {
-        playlist = [{ src, title, podcast, thumbnail, type:'audio' }];
-        loadTrack(0);
-    };
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    playlist,
+                    currentIndex,
+                    time: audio.currentTime || 0,
+                    volume: audio.volume,
+                    muted: audio.muted,
+                    playing: !audio.paused
+                }));
+            } catch (e) { }
+        }
 
-    window.playGlobalVideo = (src, title='', channel='', thumbnail='') => {
-        playlist = [{ src, title, podcast:channel, thumbnail, type:'video' }];
-        loadTrack(0);
-    };
+        function restoreState() {
+            const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (!state || !state.playlist || !state.playlist.length) return;
 
-    /* =====================
-       Restore on load
-    ===================== */
-    document.addEventListener('DOMContentLoaded', restoreState);
+            playlist = state.playlist;
+            currentIndex = state.currentIndex || 0;
 
-})();
+            const track = playlist[currentIndex];
+
+            // Restore volume + mute immediately
+            if (typeof state.volume === 'number') {
+                media.volume = state.volume;
+                if (volumeEl) volumeEl.value = state.volume;
+            }
+            // default volume if nothing saved
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (saved && typeof saved.volume === 'number') {
+                media.volume = saved.volume;
+                volumeEl.value = saved.volume;
+            }
+
+
+            if (typeof state.muted === 'boolean') {
+                media.muted = state.muted;
+                if (muteBtn) {
+                    muteBtn.innerHTML = media.muted
+                        ? '<i class="fas fa-volume-mute"></i>'
+                        : '<i class="fas fa-volume-up"></i>';
+                }
+            }
+
+            // Load media
+            loadSource(track.src);
+            updateUI(track);
+
+            media.addEventListener('loadedmetadata', () => {
+                media.currentTime = state.time || 0;
+
+                if (state.playing) {
+                    media.play().catch(() => { });
+                }
+
+            }, { once: true });
+        }
+
+
+        function loadTrack(index) {
+            if (!playlist[index]) return;
+            currentIndex = index;
+
+            const track = playlist[index];
+            loadSource(track.src);
+            updateUI(track);
+            updatePlayIcon();
+            saveState();
+        }
+
+        function nextTrack() {
+            if (playlist.length < 2) return;
+            currentIndex = (currentIndex + 1) % playlist.length;
+            loadTrack(currentIndex);
+        }
+
+        function prevTrack() {
+            if (playlist.length < 2) return;
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentIndex);
+        }
+
+        /* =====================
+           Controls
+        ===================== */
+
+        // Play / Pause
+        playBtn.addEventListener('click', () => {
+            media.paused ? media.play() : media.pause();
+        });
+
+        media.addEventListener('play', updatePlayIcon);
+        media.addEventListener('pause', updatePlayIcon);
+
+        // Next / Prev
+        nextBtn.addEventListener('click', nextTrack);
+        prevBtn.addEventListener('click', prevTrack);
+
+        // Auto next when finished
+        media.addEventListener('ended', nextTrack);
+
+        /* =====================
+           Volume / Mute
+        ===================== */
+        volumeEl.value = media.volume;
+
+        volumeEl.addEventListener('input', () => {
+            media.volume = volumeEl.value;
+            media.muted = volumeEl.value == 0;
+        });
+
+        muteBtn.addEventListener('click', () => {
+            media.muted = !media.muted;
+            volumeEl.value = media.muted ? 0 : media.volume;
+            muteBtn.innerHTML = media.muted
+                ? '<i class="fas fa-volume-mute"></i>'
+                : '<i class="fas fa-volume-up"></i>';
+        });
+
+        /* =====================
+           Progress
+        ===================== */
+        media.addEventListener('loadedmetadata', () => {
+            progress.max = media.duration || 0;
+            durationEl.innerText = formatTime(media.duration);
+        });
+
+        media.addEventListener('timeupdate', () => {
+            progress.value = media.currentTime;
+            currentEl.innerText = formatTime(media.currentTime);
+
+            // sync mini video
+            if (!miniVideo.classList.contains('d-none')) {
+                if (Math.abs(miniVideo.currentTime - media.currentTime) > 0.3) {
+                    miniVideo.currentTime = media.currentTime;
+                }
+            }
+
+            saveState();
+        });
+
+        progress.addEventListener('input', () => {
+            media.currentTime = progress.value;
+        });
+
+        /* =====================
+           Floating
+        ===================== */
+        floatBtn.addEventListener('click', () => {
+            player.classList.toggle('floating');
+        });
+
+        /* =====================
+           Global API
+        ===================== */
+
+        // Playlist player (THIS fixes your error)
+        window.playGlobalAudio = (list, index = 0) => {
+            playlist = list.map(item => ({
+                src: item.src,
+                title: item.title || '',
+                podcast: item.podcast || '',
+                thumbnail: item.thumbnail || '',
+                type: item.type || 'audio'
+            }));
+            loadTrack(index);
+        };
+
+        window.playSingleAudio = (src, title = '', podcast = '', thumbnail = '') => {
+            playlist = [{ src, title, podcast, thumbnail, type: 'audio' }];
+            loadTrack(0);
+        };
+
+        window.playGlobalVideo = (src, title = '', channel = '', thumbnail = '') => {
+            playlist = [{ src, title, podcast: channel, thumbnail, type: 'video' }];
+            loadTrack(0);
+        };
+
+        /* =====================
+           Restore on load
+        ===================== */
+        document.addEventListener('DOMContentLoaded', restoreState);
+
+    })();
 </script>
- 
+
 
 <style>
-.spotify-player {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px;
-    background: #121212;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    color: #fff;
-}
+    .spotify-player {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: #121212;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        color: #fff;
+    }
 
-.spotify-player.floating {
-    width: 360px;
-    height: 220px;
-    bottom: 20px;
-    right: 20px;
-    left: auto;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: move;
-}
+    .spotify-player.floating {
+        width: 360px;
+        height: 220px;
+        bottom: 20px;
+        right: 20px;
+        left: auto;
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: move;
+    }
 
-.spotify-player.floating .sp-meta,
-.spotify-player.floating .sp-center,
-.spotify-player.floating #player-thumbnail {
-    display: none;
-}
+    .spotify-player.floating .sp-meta,
+    .spotify-player.floating .sp-center,
+    .spotify-player.floating #player-thumbnail {
+        display: none;
+    }
 
-.spotify-player.floating #player-mini-video {
-    display: block !important;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+    .spotify-player.floating #player-mini-video {
+        display: block !important;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-.sp-artwork {
-    width: 56px;
-    height: 56px;
-    object-fit: cover;
-}
+    .sp-artwork {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+    }
 
 
     /* .spotify-player {
