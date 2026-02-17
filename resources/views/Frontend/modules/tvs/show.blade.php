@@ -676,5 +676,25 @@ document.addEventListener('DOMContentLoaded', function () {
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const mainVideo = document.getElementById('player');
+    if (!mainVideo) return;
+
+    const stream = mainVideo.dataset.stream;
+
+    if (stream && stream.includes('.m3u8')) {
+        if (window.Hls && Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(stream);
+            hls.attachMedia(mainVideo);
+        } 
+        // Safari (native HLS)
+        else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
+            mainVideo.src = stream;
+        }
+    }
+});
+</script>
 
 	@endsection
