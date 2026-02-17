@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-             <div class="container">
+             <div class="container mt-md-5">
                 <div class="episode-top-wrap">
                     <div class="section-title"> <span class="sub-title">Latest radios</span>
                         <h2 class="title">Latest radios</h2>
@@ -69,7 +69,7 @@
                 <div class="row tr-movie-active">
 
                     @foreach($radios as $radio)
-                        @include('Frontend.includes.components.cards.radio-card')
+                                @include('Frontend.includes.components.cards.slider-card')
                     @endforeach
                 </div>
             </div>
