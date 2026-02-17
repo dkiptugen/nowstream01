@@ -21,7 +21,7 @@ return [
                 <div class="col-xl-8 col-lg-8">
                     <div class="row mx-0 g-3">
 
-                <div class="col-xl-5 col-lg-5">
+                <div class="col-xl-4 col-lg-4">
                     <div class="movie-details-img">
                         <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
                         <a class="popup-video"
@@ -32,7 +32,7 @@ return [
 
                     </div>
                 </div>
-                <div class="col-xl-7 col-lg-7">
+                <div class="col-xl-8 col-lg-8">
                     <div class="movie-details-content">
                         <h5>Top podcast</h5>
                         <h2>
