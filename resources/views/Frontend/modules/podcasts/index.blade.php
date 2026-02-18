@@ -48,16 +48,15 @@
                 <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
                     <h2 class="title">Latest Podcasts</h2>
                 </div>
-            </div>
-            <div class="row tr-movie-active">
-<div class="row tr-movie-active h-100" id="podcast-container" style="position: relative; height:auto !important;">
-                    @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
-                </div>
+            </div> 
+            <div class="row tr-movie-active" id="podcast-container">
+    @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
+</div>
 
-                <div class="text-center my-4" id="loading" style="display:none;">
-                    <span class="text-light">Loading more podcasts...</span>
-                </div>
-            </div>
+<div class="text-center my-4" id="loading" style="display:none;">
+    <span class="text-light">Loading more podcasts...</span>
+</div>
+
         </div>
     </section>
 
@@ -68,55 +67,46 @@
 @section('footer')
 
 <script>
-let page = 1;
+   let page = 1;
 let loading = false;
 let hasMore = true;
 
-window.addEventListener('scroll', function () {
+const container = document.getElementById('podcast-container');
+const loader = document.getElementById('loading');
 
+window.addEventListener('scroll', () => {
     if (loading || !hasMore) return;
 
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const triggerPoint = document.body.offsetHeight - 200;
-
-    if (scrollPosition >= triggerPoint) {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
         loadMore();
     }
 });
 
 function loadMore() {
     loading = true;
+    loader.style.display = 'block';
     page++;
 
-    document.getElementById('loading').style.display = 'block';
-
     fetch(`?page=${page}`, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
     })
-    .then(res => res.text())
-    .then(html => {
-
-        // If no more items returned → stop
-        if (html.trim() === '') {
-            hasMore = false;
-            document.getElementById('loading').innerText = 'No more podcasts';
-            return;
+    .then(res => res.json())
+    .then(data => {
+        if (data.html) {
+            container.insertAdjacentHTML('beforeend', data.html);
         }
 
-        document
-            .getElementById('podcast-container')
-            .insertAdjacentHTML('beforeend', html);
-
+        hasMore = data.hasMore;
         loading = false;
-        document.getElementById('loading').style.display = 'none';
+        loader.style.display = hasMore ? 'block' : 'none';
     })
     .catch(() => {
         loading = false;
-        document.getElementById('loading').style.display = 'none';
+        hasMore = false;
+        loader.style.display = 'none';
     });
 }
+
 </script>
 
 @endsection

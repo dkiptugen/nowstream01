@@ -20,8 +20,8 @@ class PodcastController extends Controller
      */
     public function index(Request $request)
 {
-    $perPage = 18;
-    $page = (int) $request->get('page', 1);
+    $perPage = 30;
+    $page = $request->get('page', 1);
 
     /**
      * Stable random seed (changes every 10 minutes)
@@ -30,31 +30,8 @@ class PodcastController extends Controller
     $seed = now()->format('YmdHi'); // time-based seed
 
     $cacheKey = "podcasts_page_{$page}_seed_{$seed}";
-
-    // Cached paginated podcasts
-    $podcasts = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage) {
-
-        return Content::query()
-            ->where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->where('status', 1)
-            ->inRandomOrder() // randomized but cached
-            ->paginate($perPage);
-    });
-
-    /**
-     * AJAX (Infinite Scroll)
-     */
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view(
-                'Frontend.includes.components.partials.podcast-list',
-                compact('podcasts')
-            )->render(),
-            'hasMore' => $podcasts->hasMorePages()
-        ]);
-    }
-
+ 
+   
     /**
      * Normal Page Load (Cached global blocks)
      */
@@ -80,6 +57,30 @@ class PodcastController extends Controller
             ->limit(16)
             ->get();
     });
+ /**
+     * AJAX (Infinite Scroll)
+     */
+    $perPage = 18;
+    $page = (int) $request->get('page', 1);
+
+    $podcasts = Cache::remember("podcasts_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
+        return Content::where('content_group', 'podcast')
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->latest()
+            ->paginate($perPage);
+    });
+
+    // AJAX request
+    if ($request->ajax()) {
+        return response()->json([
+            'html' => view(
+                'Frontend.includes.components.partials.podcast-list',
+                compact('podcasts')
+            )->render(),
+            'hasMore' => $podcasts->hasMorePages()
+        ]);
+    }
 
     return view('Frontend.modules.podcasts.index', compact(
         'podcasts',

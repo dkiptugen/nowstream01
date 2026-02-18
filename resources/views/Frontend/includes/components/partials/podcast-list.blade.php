@@ -1,5 +1,6 @@
-@foreach($podcasts as $item)
-<div class="col-xl-2 col-lg-3 col-sm-6 grid-item">
-    @include('Frontend.includes.components.cards.slider-card') 
-</div>
-@endforeach
+
+@if(isset($podcasts) && $podcasts->count())
+    @foreach($podcasts as $podcast) 
+    @include('Frontend.includes.components.cards.podcast-card')  
+    @endforeach
+@endif
