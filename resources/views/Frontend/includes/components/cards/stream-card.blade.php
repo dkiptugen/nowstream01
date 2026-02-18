@@ -90,9 +90,9 @@ if ($event) {
                 </li>
             </ul>
 
-            <small class="text-muted mt-1 d-block">
+            <!-- <small class="text-muted mt-1 d-block">
                 {{ $channel->name ?? 'Unknown' }}
-            </small>
+            </small> -->
 
             @if($stream)
                 <small class="text-muted d-block">
