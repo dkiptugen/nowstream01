@@ -118,7 +118,7 @@ class PodcastController extends Controller
         /**
          * Increment views (not cached)
          */
-        Content::where('id', $podcast->id)->increment('views');
+        Content::where('uuid', $podcast->uuid)->increment('views');
 
 
         /**
