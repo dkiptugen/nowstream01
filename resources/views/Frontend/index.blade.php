@@ -170,7 +170,7 @@
             <div class="pcar-track">
                 @foreach($topradios as $item)
                 <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
+                    @include('Frontend.includes.components.cards.radio-card')
                 </div>
                 @endforeach
             </div>

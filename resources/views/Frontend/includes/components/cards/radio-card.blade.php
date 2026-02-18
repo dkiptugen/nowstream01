@@ -1,4 +1,4 @@
-<div class="col-xl-2 col-lg-2 col-sm-6 grid-item grid-sizer"
+<div class="w-100"
      onclick="playSingleAudio(
         '{{ $radio->stream_url }}',
         '{{ addslashes($radio->title) }}',
