@@ -138,7 +138,7 @@
                 <div class="pcar-track">
                     @foreach($events as $event)
                     <div class="pcar-item">
-					@include('Frontend.includes.components.cards.event-card')
+					@include('Frontend.includes.components.cards.events')
                     </div>
                     @endforeach
                 </div>
