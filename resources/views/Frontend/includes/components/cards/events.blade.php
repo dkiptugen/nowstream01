@@ -24,7 +24,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
             <!-- <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy"> -->
 
             <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy" style="
-    aspect-ratio: 1.5 / 2.2;">
+    aspect-ratio: 1.5 / 2;">
         </a>
         <!-- 
             <h5 class="card-title mb-0 mt-3">
