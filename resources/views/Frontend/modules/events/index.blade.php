@@ -23,6 +23,35 @@
 		</div>
 	</section>
 	<!-- breadcrumb-area-end -->
+	 
+    <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+        <div class="container">
+            <div class="episode-top-wrap">
+                <div class="section-title"> <span class="sub-title">Trending TVs</span>
+                    <h2 class="title">Trending TVs</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="pcar-wrapper">
+
+            <!-- Outside container overlays -->
+            <div class="pcar-overlay pcar-overlay-left"></div>
+            <div class="pcar-overlay pcar-overlay-right"></div>
+
+            <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
+                data-mobile="1">
+
+                <div class="pcar-track">
+                    @foreach($events as $item)
+                    <div class="pcar-item">
+                        @include('Frontend.includes.components.cards.slider-card')
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
 	<!-- movie-area -->
 	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
 		<div class="container">
@@ -45,7 +74,9 @@
 			</div>
 			<div class="row tr-movie-active">
 				@foreach($events as $event)  
+				<div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
 					@include('Frontend.includes.components.cards.events')
+				</div>
 				@endforeach
 			</div>
 			<div class="row">

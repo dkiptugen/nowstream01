@@ -17,50 +17,50 @@
                 </div>
             </div>
 
-                <div class="ucm-nav-wrap">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($categories as $category)
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab" href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}" aria-selected="false">
-                                {{ ucfirst($category->name) }}
-                            </a>
-                        </li>
-                        @endforeach
+            <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    @foreach($categories as $category)
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab" href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}" aria-selected="false">
+                            {{ ucfirst($category->name) }}
+                        </a>
+                    </li>
+                    @endforeach
 
-                    </ul>
-                </div>
+                </ul>
+            </div>
         </div>
     </section> <!-- breadcrumb-area-end -->
     <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container"> 
-        <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
-                                <h2 class="title">Latest Podcasts</h2>
-                            </div> 
-        </div>
-        <div class="row tr-movie-active">
+        <div class="container">
+            <div class="episode-top-wrap">
+                <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
+                    <h2 class="title">Latest Podcasts</h2>
+                </div>
+            </div>
+            <div class="row tr-movie-active">
 
-            @foreach($topPodcasts as $podcast)
-            @include('Frontend.includes.components.cards.podcast-card')
-            @endforeach
-        </div>
-        <div class="episode-top-wrap">
-                            <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
-                                <h2 class="title">Latest Podcasts</h2>
-                            </div>
-                        </div>
-        <div class="row tr-movie-active">
+                @foreach($topPodcasts as $podcast)
+                @include('Frontend.includes.components.cards.podcast-card')
+                @endforeach
+            </div>
+            <div class="episode-top-wrap">
+                <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
+                    <h2 class="title">Latest Podcasts</h2>
+                </div>
+            </div>
+            <div class="row tr-movie-active">
 
-            @foreach($podcasts as $podcast)
-            @include('Frontend.includes.components.cards.podcast-card')
-            @endforeach
+                @foreach($podcasts as $podcast)
+                @include('Frontend.includes.components.cards.podcast-card')
+                @endforeach
+            </div>
         </div>
-    </div>
-</section>
-  
-</main> 
-@endsection 
-@section('header') 
-@endsection 
-@section('footer') 
+    </section>
+
+</main>
+@endsection
+@section('header')
+@endsection
+@section('footer')
 @endsection
