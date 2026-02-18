@@ -3,7 +3,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('events') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-calendar-event"></i>
                 </div>
                 <div class="menu-title">Events</div>
@@ -12,7 +12,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('streams') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-play-circle"></i>
                 </div>
                 <div class="menu-title">Streams</div>
@@ -21,7 +21,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('all-videos') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-video"></i>
                 </div>
                 <div class="menu-title">Videos</div>
@@ -30,7 +30,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('radios') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-radio"></i>
                 </div>
                 <div class="menu-title">Radios</div>
@@ -39,7 +39,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('podcasts') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-microphone"></i>
                 </div>
                 <div class="menu-title">Podcasts</div>
@@ -48,7 +48,7 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('tvs') }}">
-                <div class="parent-icon mr-2">
+                <div class="parent-icon mr-1">
                     <i class="bx bx-tv"></i>
                 </div>
                 <div class="menu-title">Live TV</div>
