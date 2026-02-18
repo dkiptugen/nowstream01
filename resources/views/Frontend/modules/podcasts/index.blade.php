@@ -48,14 +48,14 @@
                 <div class="section-title"> <span class="sub-title">Latest Podcasts</span>
                     <h2 class="title">Latest Podcasts</h2>
                 </div>
-            </div> 
-            <div class="row tr-movie-active" id="podcast-container">
-    @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
-</div>
+            </div>
+            <div class="row tr-movie-active" id="podcast-container" style="position: relative; height:auto !important;">
+                @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
+            </div>
 
-<div class="text-center my-4" id="loading" style="display:none;">
-    <span class="text-light">Loading more podcasts...</span>
-</div>
+            <div class="text-center my-4" id="loading" style="display:none;">
+                <span class="text-light">Loading more podcasts...</span>
+            </div>
 
         </div>
     </section>
@@ -67,46 +67,47 @@
 @section('footer')
 
 <script>
-   let page = 1;
-let loading = false;
-let hasMore = true;
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
 
-const container = document.getElementById('podcast-container');
-const loader = document.getElementById('loading');
+    const container = document.getElementById('podcast-container');
+    const loader = document.getElementById('loading');
 
-window.addEventListener('scroll', () => {
-    if (loading || !hasMore) return;
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
-        loadMore();
-    }
-});
-
-function loadMore() {
-    loading = true;
-    loader.style.display = 'block';
-    page++;
-
-    fetch(`?page=${page}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.html) {
-            container.insertAdjacentHTML('beforeend', data.html);
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
         }
-
-        hasMore = data.hasMore;
-        loading = false;
-        loader.style.display = hasMore ? 'block' : 'none';
-    })
-    .catch(() => {
-        loading = false;
-        hasMore = false;
-        loader.style.display = 'none';
     });
-}
 
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
 </script>
 
 @endsection
