@@ -16,65 +16,144 @@ class TVController extends Controller
     /**
      * TV listing page
      */
-    public function index()
-    {
-        // TV countries (distinct)
-        $tv_countries = Cache::remember('tv_countries', 3600, function () {
-            return Content::where('content_group', 'tv')
-                ->pluck('country')
-                ->unique();
-        });
+   public function index(Request $request)
+{
+    $perPage = 30;
+    $page    = $request->get('page', 1);
 
-        // TVs for Kenya (or default country)
-        $tvs = Cache::remember('tvs_kenya', 600, function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->where('country', 'Kenya')
-                ->with('categories')
-                ->take(30)
-                ->get();
-        });
-        // for categories of tv
+    // Optional filters
+    $country  = $request->get('country', 'Kenya');
+    $language = $request->get('language');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Paginated TVs (Cache per page + filter)
+    |--------------------------------------------------------------------------
+    */
+    $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
 
-        // Categories where type "type" => "["podcast"]"
-        // Categories where type contains "tv"
-        $categories = Cache::remember('tv_categories', 3600, function () {
-            return Category::where('type', 'like', '%tv%')->get();
-        });
-        // genres
-        $genres = Cache::remember('tv_genres', 3600, function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatten()
-                ->unique();
-        });
+    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language) {
 
-        // Top TVs
-        $toptvs = Cache::remember('top_tvs', 600, function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->orderByDesc('views')
-                ->with('categories')
-                ->limit(39)
-                ->get();
-        });
+        $query = Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->with('categories');
 
-        // English channels
-        $english_tvs = Cache::remember('english_tvs', 600, function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->where('language', 'en')
-                ->orderByDesc('views')
-                ->limit(6)
-                ->get();
-        });
+        if ($country) {
+            $query->where('country', $country);
+        }
 
-        $this->data = compact('tv_countries', 'tvs', 'categories', 'toptvs', 'english_tvs', 'genres');
+        if ($language) {
+            $query->where('language', $language);
+        }
 
-        return view('Frontend.modules.tvs.index', $this->data);
+        return $query
+            ->orderByDesc('views')
+            ->paginate($perPage);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | AJAX (Infinite Scroll)
+    |--------------------------------------------------------------------------
+    */
+    if ($request->ajax()) {
+        return response()->json([
+            'html' => view(
+                'Frontend.includes.components.partials.tv-list',
+                ['tvs' => $tvs]
+            )->render(),
+            'hasMore' => $tvs->hasMorePages()
+        ]);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Static Data (Longer Cache)
+    |--------------------------------------------------------------------------
+    */
+
+    // Countries
+    $tv_countries = Cache::remember('tv_countries', 3600, function () {
+        return Content::where('content_group', 'tv')
+            ->whereNotNull('country')
+            ->distinct()
+            ->pluck('country');
+    });
+
+    // Categories
+    $categories = Cache::remember('tv_categories', 3600, function () {
+        return Category::where('type', 'like', '%tv%')->get();
+    });
+
+    // Genres
+    $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+
+    return Content::where('content_group', 'tv')
+        ->whereNotNull('genre')
+        ->pluck('genre')
+        ->flatMap(function ($genre) {
+
+            // Handle different storage formats
+            if (is_array($genre)) {
+                return $genre;
+            }
+
+            // JSON stored as string
+            if (is_string($genre) && str_starts_with($genre, '[')) {
+                return json_decode($genre, true) ?? [];
+            }
+
+            // Comma-separated string
+            if (is_string($genre) && str_contains($genre, ',')) {
+                return array_map('trim', explode(',', $genre));
+            }
+
+            // Single value
+            return [$genre];
+        })
+        ->filter()                 // remove null / empty
+        ->map(fn ($g) => trim($g))
+        ->unique()
+        ->sort()
+        ->values();
+});
+
+
+    // Top TVs (global)
+    $toptvs = Cache::remember('top_tvs', 600, function () {
+        return Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->orderByDesc('views')
+            ->with('categories')
+            ->limit(40)
+            ->get();
+    });
+
+    // English channels
+    $english_tvs = Cache::remember('english_tvs', 600, function () {
+        return Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->where('language', 'en')
+            ->orderByDesc('views')
+            ->limit(6)
+            ->get();
+    });
+
+    return view('Frontend.modules.tvs.index', compact(
+        'tvs',
+        'tv_countries',
+        'categories',
+        'toptvs',
+        'english_tvs',
+        'genres',
+        'country',
+        'language'
+    ));
+}
+
 
     /**
      * Single TV page

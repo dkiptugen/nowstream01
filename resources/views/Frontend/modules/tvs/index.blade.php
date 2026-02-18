@@ -19,15 +19,20 @@
 
             <div class="ucm-nav-wrap">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    @foreach($genres as $genre)
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="{{ route('genre.show', ['genre' => Str::slug($genre)]) }}">
-                            {{ ucfirst($genre) }}
-                        </a>
-                    </li>
-                    @endforeach
-
-
+                   
+ @foreach($genres->filter()->unique() as $genre)
+    @php
+        $slug = Str::slug($genre);
+        $label = ucfirst(trim($genre));
+    @endphp
+    @if(!empty($slug))
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ route('genre.show', ['genre' => $slug]) }}">
+                {{ $label }}
+            </a>
+        </li>
+    @endif
+@endforeach
 
                 </ul>
             </div>
@@ -70,13 +75,7 @@
                 <div class="section-title"> <span class="sub-title">Trending TVs</span>
                     <h2 class="title">Trending TVs</h2>
                 </div>
-            </div>
-            <div class="row tr-movie-active">
-
-                @foreach($toptvs as $tv)
-                @include('Frontend.includes.components.cards.tv-card')
-                @endforeach
-            </div>
+            </div> 
             <div class="row tr-movie-active">
 
                 @foreach($english_tvs as $tv)
@@ -90,9 +89,14 @@
             </div>
             <div class="row tr-movie-active">
 
-                @foreach($tvs as $tv)
-                @include('Frontend.includes.components.cards.tv-card')
-                @endforeach
+
+                <div class="row tr-movie-active h-100" id="tv-container">
+                    @include('Frontend.includes.components.partials.tv-list', ['tvs' => $tvs])
+                </div>
+
+                <div class="text-center my-4" id="loading" style="display:none;">
+                    <span class="text-light">Loading more tvs...</span>
+                </div>
             </div>
         </div>
     </section>
@@ -101,6 +105,50 @@
 @endsection
 @push('styles')
 @endpush
-@push('scripts')
+@section('footer')
 
-@endpush
+<script>
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
+
+    const container = document.getElementById('tv-container');
+    const loader = document.getElementById('loading');
+
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
+
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
+        }
+    });
+
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
+</script>
+
+@endsection

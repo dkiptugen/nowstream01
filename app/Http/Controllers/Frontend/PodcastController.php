@@ -59,9 +59,7 @@ class PodcastController extends Controller
     });
  /**
      * AJAX (Infinite Scroll)
-     */
-    $perPage = 18;
-    $page = (int) $request->get('page', 1);
+     */ 
 
     $podcasts = Cache::remember("podcasts_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
         return Content::where('content_group', 'podcast')
