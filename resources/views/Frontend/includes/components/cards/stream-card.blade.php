@@ -1,71 +1,75 @@
+@php
+    use Carbon\Carbon;
+
+    $isFree = $stream->rates->isEmpty();
+    $url = $isFree
+        ? url("/stream/free/{$stream->slug}")
+        : url("/stream/{$stream->slug}");
+
+    $event = $stream->event;
+    $channel = $stream->channel;
+    $now = Carbon::now();
+
+    $status = 'Upcoming';
+    $timeText = '';
+
+    if ($event) {
+        if ($event->end_time <= $now) {
+            $status = 'Watch';
+            $timeText = 'Ended';
+        } elseif ($event->start_time <= $now && $event->end_time > $now) {
+            $status = 'Live';
+            $timeText = 'Started ' . $event->start_time->diffForHumans();
+        } else {
+            $status = 'Upcoming';
+            $timeText = 'Starts in ' . $event->start_time->diffForHumans();
+        }
+    }
+@endphp
+
 <div class="card radius-5 h-100">
     <div class="image">
-        @php
-            use App\Models\ContentRate;
-            $checkRate = ContentRate::where('content_id', $stream->id)->count();
-            $freeStream = $checkRate == 0;
-        @endphp
 
-        @if($freeStream)
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}" loading="lazy">
-            </a>
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <div class="play fs-40">
-                    <i class="fadeIn animated bx bx-play-circle"></i>
-                </div>
-            </a>
-        @else
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}">
-            </a>
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <div class="play fs-40">
-                    <i class="fadeIn animated bx bx-play-circle"></i>
-                </div>
-            </a>
-        @endif
-        @php
-            $event = \App\Models\Event::find($stream->event_id);
-            use Carbon\Carbon;
-            $current_time = Carbon::now();
-        @endphp
+        <a href="{{ $url }}">
+            <img src="{{ $stream->thumbnail_url }}"
+                 class="w-100 d-block aspect16"
+                 alt="{{ $stream->title }}"
+                 loading="lazy">
+        </a>
 
-        @if($event->end_time <= $current_time)
-            <div class="time align-items-center d-flex">Watch <i class="lni lni-play"></i></div>
-        @elseif($event->start_time <= $current_time && $event->end_time > $current_time)
+        <a href="{{ $url }}">
+            <div class="play fs-40">
+                <i class="fadeIn animated bx bx-play-circle"></i>
+            </div>
+        </a>
+
+        {{-- Status Badge --}}
+        @if($status === 'Watch')
+            <div class="time d-flex align-items-center">
+                Watch <i class="lni lni-play"></i>
+            </div>
+        @elseif($status === 'Live')
             <div class="time">Live</div>
         @else
             <div class="time">Upcoming</div>
         @endif
+
     </div>
+
     <div class="card-body pb-0">
-        @if($freeStream)
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <h6 class="mb-0">{{$stream->title}}</h6>
-            </a>
-        @else
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <h6 class="mb-0">{{$stream->title}}</h6>
-            </a>
+        <a href="{{ $url }}">
+            <h6 class="mb-0">{{ $stream->title }}</h6>
+        </a>
+
+        <small class="text-muted mt-1 d-block">
+            {{ $channel->name ?? 'Unknown' }}
+        </small>
+
+        @if($event)
+            <small class="text-muted">
+                <i class="lni lni-calendar"></i>
+                {{ $timeText }}
+            </small>
         @endif
-        @php
-            $channel = \App\Models\Channel::find($stream->channel_id);
-        @endphp
-
-        <small class="text-muted mb-0 mt-1">
-            {{ $channel ? $channel->name : 'Unknown' }}
-        </small>
-        <br><small class="text-muted">
-            <i class="lni lni-calendar"></i>
-
-            @if($event->start_time > $current_time)
-                <small class="text-muted">Starts in {{ $event->start_time->diffForHumans() }}</small>
-            @elseif($event->end_time > $current_time)
-                <small class="text-muted">Started {{ $event->start_time->diffForHumans() }}</small>
-            @else
-                <small class="text-muted">Ended</small>
-            @endif
-        </small>
     </div>
 </div>

@@ -38,7 +38,10 @@ class StreamController extends Controller
     use Meta;
 	public function index()
 	{
-		$streams = Content::where('status', 0)->take(8)->get();
+		$streams = Content::where('content_group', 'livestream')->with(['event', 'channel', 'rates'])
+		->orderByDesc('created_at')
+		->get();
+
 		$this->data['streams'] = $streams;
 		return view('Frontend.modules.channels.streams.index', $this->data);
 	}
@@ -354,10 +357,12 @@ class StreamController extends Controller
 	 * Display the specified resource.
 	 */
 
-	public function freeShow($id, $slug = "")
+	public function freeShow($slug = "")
 {
     try { 
-        $stream = Cache::rememberOnce('stream_'.$id,now()->addDay(),Content::findOrFail($id));
+				$uuid = Content::where('content_group', 'livestream')->where('slug', $slug)->value('uuid');
+
+        $stream = Cache::rememberOnce('stream_'.$uuid,now()->addDay(),Content::where('uuid', $uuid)->firstOrFail());
  
         $user = Auth::user();
 
@@ -384,7 +389,7 @@ class StreamController extends Controller
             $stream->increment('viewers');
         }
  
-        $streams = Content::where('status', 1)->where('uuid', '<>', $id)->take(4)->get();
+        $streams = Content::where('status', 1)->where('uuid', '<>', $stream->uuid)->take(4)->get();
         $channels = Channel::where('status', 1)->take(8)->get();
         $videos = Content::where('type', 'video')->take(12)->get();
         $comments = $stream->comments()->with('user')->get();
