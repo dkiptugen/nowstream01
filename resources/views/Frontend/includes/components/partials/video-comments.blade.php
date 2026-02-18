@@ -19,16 +19,25 @@
                 @else
                     @foreach($comments as $comment)
                         <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
-                            @if($comment->user->image)
-                                <img src="{{ asset($comment->user->image) }}"
-                                     class="mr-3 rounded-circle"
-                                     style="width:42px;height:42px;object-fit:cover;">
-                            @else
-                                <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                                     style="width:42px;height:42px;font-weight:bold;">
-                                    {{ strtoupper(substr($comment->user->name,0,1)) }}
-                                </div>
-                            @endif
+                           @php
+    $user = $comment->user;
+    $initials = collect(explode(' ', $user->name))
+                    ->map(fn($n) => strtoupper(substr($n,0,1)))
+                    ->join('');
+@endphp
+
+@if($user->image)
+    <img src="{{ asset($user->image) }}"
+         class="mr-3 rounded-circle"
+         style="width:42px;height:42px;object-fit:cover;"
+         onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+@endif
+
+<div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+     style="width:42px;height:42px;font-weight:bold; {{ $user->image ? 'display:none;' : 'display:flex;' }}">
+    {{ $initials }}
+</div>
+
                             
                             <div class="media-body">
                                 <strong class="text-white">{{ $comment->user->name }}</strong>
