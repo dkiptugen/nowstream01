@@ -62,7 +62,12 @@ class HomeController extends Controller
                     $q->orderBy('price', 'asc');
                 }])->where('status', 1)->orderByDesc('views')->get(),
                 'videos' => Content::where('content_group', 'video')->latest()->paginate(12),
-                'top_videos' => Content::where('content_group', 'video')->orderByDesc('views')->paginate(12),
+        'top_videos' => Cache::remember('top_videos_home', now()->addMinutes(10), function () {
+            return Content::where('content_group', 'video')
+                ->orderByDesc('views')
+                ->take(4)
+                ->get();
+        }),
                 'current_event' => Content::latest()->limit(1)->get(),
                 'toptvs' => Content::where('content_group', 'tv')
                     ->whereNotNull('stream_url')
