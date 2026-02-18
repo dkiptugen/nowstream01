@@ -84,6 +84,7 @@
 @section('header')
 @endsection
 @section('footer')
+
 <script>
 let page = 1;
 let loading = false;

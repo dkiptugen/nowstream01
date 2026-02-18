@@ -19,77 +19,79 @@ class PodcastController extends Controller
      * Podcast listing page
      */
     public function index(Request $request)
-    {
-        $perPage = 18;
-        $page = $request->get('page', 1); // for caching pagination
+{
+    $perPage = 18;
+    $page = (int) $request->get('page', 1);
 
-        // Cache podcasts pagination per page
-        $podcasts = Cache::remember("podcasts_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
-            return Content::where('content_group', 'podcast')
-                ->whereNull('parent_id')
-                ->paginate($perPage);
-        });
+    /**
+     * Stable random seed (changes every 10 minutes)
+     * Prevents reshuffling during scroll
+     */
+    $seed = now()->format('YmdHi'); // time-based seed
 
-        // Handle AJAX request (infinite scroll)
-        if ($request->ajax()) {
-            return view('Frontend.includes.podcast-list', compact('podcasts'))->render();
-        }
+    $cacheKey = "podcasts_page_{$page}_seed_{$seed}";
 
-        // Normal page load — cache other data
-        $channels = Cache::remember('channels_global', 600, function () {
-            return $this->get_channels();
-        });
+    // Cached paginated podcasts
+    $podcasts = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage) {
 
-        $videos = Cache::remember('videos_global', 600, function () {
-            return $this->get_videos(6);
-        });
+        return Content::query()
+            ->where('content_group', 'podcast')
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->inRandomOrder() // randomized but cached
+            ->paginate($perPage);
+    });
 
-        $categories = Cache::remember('podcast_categories', 3600, function () {
-            return Category::where('type', 'podcast')->limit(6)->get();
-        });
-
-        $topPodcasts = Cache::remember('top_podcasts_global', 600, function () {
-            return Content::where('content_group', 'podcast')
-                ->whereNull('parent_id')
-                ->orderByDesc('views')
-                ->limit(16)
-                ->get();
-        });
-
-        return view('Frontend.modules.podcasts.index', compact(
-            'podcasts', 'channels', 'videos', 'categories', 'topPodcasts'
-        ));
+    /**
+     * AJAX (Infinite Scroll)
+     */
+    if ($request->ajax()) {
+        return response()->json([
+            'html' => view(
+                'Frontend.includes.components.partials.podcast-list',
+                compact('podcasts')
+            )->render(),
+            'hasMore' => $podcasts->hasMorePages()
+        ]);
     }
 
     /**
-     * Load more podcasts (AJAX / infinite scroll)
+     * Normal Page Load (Cached global blocks)
      */
-    public function loadMore(Request $request)
-    {
-        $perPage = 6;
-        $page = $request->get('page', 1);
+    $channels = Cache::remember('channels_global', 600, function () {
+        return $this->get_channels();
+    });
 
-        $podcasts = Cache::remember("podcasts_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
-            return Content::where('content_group', 'podcast')
-                ->whereNull('parent_id')
-                ->paginate($perPage);
-        });
+    $videos = Cache::remember('videos_global', 600, function () {
+        return $this->get_videos(6);
+    });
 
-        // Return partial view for AJAX
-        if ($request->ajax()) {
-            return view('Frontend.includes.podcast-list', compact('podcasts'))->render();
-        }
+    $categories = Cache::remember('podcast_categories', 3600, function () {
+        return Category::where('type', 'podcast')
+            ->limit(6)
+            ->get();
+    });
 
-        // Normal page load
-        $categories = Cache::remember('podcast_categories', 3600, function () {
-            return Category::where('type', 'podcast')->limit(6)->get();
-        });
+    $topPodcasts = Cache::remember('top_podcasts_global', 600, function () {
+        return Content::where('content_group', 'podcast')
+            ->whereNull('parent_id')
+            ->where('status', 1)
+            ->orderByDesc('views')
+            ->limit(16)
+            ->get();
+    });
 
-        return view('Frontend.modules.podcasts.index', compact(
-            'podcasts', 'categories'
-        ));
-    }
+    return view('Frontend.modules.podcasts.index', compact(
+        'podcasts',
+        'channels',
+        'videos',
+        'categories',
+        'topPodcasts'
+    ));
+}
 
+
+   
     /**
      * Single podcast view
      */
