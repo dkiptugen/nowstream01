@@ -50,7 +50,7 @@
                 </div>
             </div>
             <div class="row tr-movie-active">
-<div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
+<div class="row tr-movie-active h-100" id="podcast-container" style="position: relative; height:auto !important;">
                     @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
                 </div>
 
@@ -101,12 +101,12 @@ function loadMore() {
         // If no more items returned → stop
         if (html.trim() === '') {
             hasMore = false;
-            document.getElementById('loading').innerText = 'No more radios';
+            document.getElementById('loading').innerText = 'No more podcasts';
             return;
         }
 
         document
-            .getElementById('radio-container')
+            .getElementById('podcast-container')
             .insertAdjacentHTML('beforeend', html);
 
         loading = false;
