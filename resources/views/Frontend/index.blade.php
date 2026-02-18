@@ -225,17 +225,15 @@
                             </div>
                         </a>
                     </div>
-                    <div class="movie-content">
-                        <div class="top">
+                    <div class="movie-content"> 
+                        <div class="bottom" style="position: relative;">
+                            <!-- Display number of views -->
+
                             <h5 class="title mt-0">
                                 <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
                                     {{ucfirst($video->title)}}
                                 </a>
                             </h5>
-                        </div>
-                        <div class="bottom" style="position: relative;">
-                            <!-- Display number of views -->
-
                             <ul>
                                 <li><span class="quality">hd</span></li>
                                 <li>
