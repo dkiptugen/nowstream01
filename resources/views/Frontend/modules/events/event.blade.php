@@ -2,6 +2,10 @@
 @extends('Frontend.includes.layout')
 @section('content')
 <!-- main-area -->
+ @php
+	$country = session('country', 'US'); // Default to 'US' if not set
+	$thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
+@endphp
 <main>
 
 	<!-- movie-details-area -->
@@ -10,7 +14,7 @@
 			<div class="row align-items-center position-relative">
 				<div class="col-xl-4 col-lg-4">
 					<div class="movie-details-img">
-                <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}">
+                <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}">
 						<a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video">
 							<!-- <img src="{{ asset('assets/img/images/play_icon.png') }}" alt=""> -->
 						</a>
