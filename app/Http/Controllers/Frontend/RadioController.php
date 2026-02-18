@@ -15,89 +15,162 @@ class RadioController extends Controller
     /**
      * Radio listing page
      */
-    public function index(Request $request)
-    {
-        $perPage = 30;
-        $page = $request->get('page', 1); // pagination page
+   public function index(Request $request)
+{
+    $perPage = 30;
+    $page = $request->get('page', 1);
 
-        // Paginated radios per page (cached)
-        $radios = Cache::remember("radios_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
+    /**
+     * Radios pagination (page cache)
+     */
+    $radios = Cache::remember(
+        "radios_page_{$page}",
+        now()->addMinutes(10),
+        function () use ($perPage) {
             return Content::where('content_group', 'radio')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
+                ->latest()
                 ->paginate($perPage);
-        });
+        }
+    );
 
-        // Categories (cache)
-        $categories = Cache::remember('radio_categories', 3600, function () {
+
+    /**
+     * Categories (long cache)
+     */
+    $categories = Cache::remember(
+        'radio_categories',
+        now()->addHours(6),
+        function () {
             return Category::where('type', 'radio')
                 ->limit(6)
                 ->get();
-        });
+        }
+    );
 
-        // Top radios (cache)
-        $topradios = Cache::remember('top_radios', 600, function () {
+
+    /**
+     * Top Radios Pool (cache larger set)
+     * Then randomize per request
+     */
+    $topRadiosPool = Cache::remember(
+        'top_radios_pool',
+        now()->addMinutes(10),
+        function () {
             return Content::where('content_group', 'radio')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
                 ->orderByDesc('views')
-                ->limit(16)
+                ->limit(50)   // bigger pool
                 ->get();
-        });
+        }
+    );
 
-        $this->data = compact('radios', 'categories', 'topradios');
+    $topradios = $topRadiosPool->shuffle()->take(16);
 
-        return view('Frontend.modules.radios.index', $this->data);
-    }
 
-    /**
-     * Single radio page
-     */
-    public function show($slug)
-    {
-        try {
-            // Cache single radio detail
-            $radio = Cache::remember("radio_{$slug}", now()->addDay(), function () use ($slug) {
+    return view('Frontend.modules.radios.index', compact(
+        'radios',
+        'categories',
+        'topradios'
+    ));
+}
+public function show($slug)
+{
+    try {
+
+        /**
+         * Radio detail (cache)
+         */
+        $radio = Cache::remember(
+            "radio_detail_{$slug}",
+            now()->addHours(12),
+            function () use ($slug) {
                 return Content::where('slug', $slug)
-                    ->where('slug', $slug)
                     ->where('content_group', 'radio')
                     ->where('status', 1)
                     ->first();
-            });
+            }
+        );
 
-            if (!$radio)
-                abort(404, 'Radio not found');
+        if (!$radio) {
+            abort(404, 'Radio not found');
+        }
 
-            // Increment live views (not cached)
-            $radio->increment('views');
-            $uuid = $radio->uuid ?? null;
-            $comments = $radio->comments()
-                ->with('user')
-                ->orderBy('created_at', 'asc')
-                ->get();
+        $uuid = $radio->uuid;
 
-            $genres = Cache::remember("radio_genres_{$uuid}", 3600, function () use ($radio) {
+
+        /**
+         * Increment views (avoid cached model mutation)
+         */
+        Content::where('id', $radio->id)->increment('views');
+
+
+        /**
+         * Comments (short cache)
+         */
+        $comments = Cache::remember(
+            "radio_comments_{$uuid}",
+            now()->addMinutes(5),
+            function () use ($radio) {
+                return $radio->comments()
+                    ->with('user')
+                    ->oldest()
+                    ->get();
+            }
+        );
+
+
+        /**
+         * Genres (cache)
+         */
+        $genres = Cache::remember(
+            "radio_genres_{$uuid}",
+            now()->addHours(6),
+            function () use ($radio) {
                 return collect($radio->genre ?? [])
                     ->filter()
                     ->unique()
                     ->values();
-            });
+            }
+        );
 
 
-            // Related radios (cache)
-            $related = Cache::remember("radio_related_{$uuid}", now()->addDay(), function () use ($uuid) {
+        /**
+         * Related Radios Pool (global cache)
+         * Then randomize per request
+         */
+        $relatedPool = Cache::remember(
+            'radio_related_pool',
+            now()->addHours(6),
+            function () {
                 return Content::where('content_group', 'radio')
-                    ->where('uuid', '!=', $uuid)
                     ->whereNotNull('stream_url')
                     ->where('status', 1)
                     ->latest()
-                    ->limit(16)
+                    ->limit(60)   // large pool
                     ->get();
-            });
+            }
+        );
 
-            return view('Frontend.modules.radios.show', compact('radio', 'related', 'comments', 'genres'));
-        } catch (\Exception $e) {
-            abort(404, 'Radio not found');
-        }
+        $related = $relatedPool
+            ->where('uuid', '!=', $uuid)
+            ->shuffle()
+            ->take(16)
+            ->values();
+
+
+        return view('Frontend.modules.radios.show', compact(
+            'radio',
+            'related',
+            'comments',
+            'genres'
+        ));
+
+    } catch (\Exception $e) {
+        abort(404, 'Radio not found');
     }
+}
+
 }
