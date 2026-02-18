@@ -84,49 +84,56 @@
 @section('header')
 @endsection
 @section('footer')
-
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+let page = 1;
+let loading = false;
+let hasMore = true;
 
-    let page = {{ $radios->currentPage() }};
-    let lastPage = {{ $radios->lastPage() }};
-    let loading = false;
+window.addEventListener('scroll', function () {
 
-    function loadMore() {
-        if (loading) return;
-        if (page >= lastPage) return;
+    if (loading || !hasMore) return;
 
-        loading = true;
-        page++;
+    const scrollPosition = window.innerHeight + window.scrollY;
+    const triggerPoint = document.body.offsetHeight - 200;
 
-        document.getElementById('loading').style.display = 'block';
-
-        fetch(`?page=${page}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('radio-container')
-                .insertAdjacentHTML('beforeend', html);
-
-            loading = false;
-            document.getElementById('loading').style.display = 'none';
-        })
-        .catch(() => {
-            loading = false;
-            document.getElementById('loading').style.display = 'none';
-        });
+    if (scrollPosition >= triggerPoint) {
+        loadMore();
     }
-
-    // Scroll trigger
-    window.addEventListener('scroll', function () {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
-            loadMore();
-        }
-    });
-
 });
+
+function loadMore() {
+    loading = true;
+    page++;
+
+    document.getElementById('loading').style.display = 'block';
+
+    fetch(`?page=${page}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.text())
+    .then(html => {
+
+        // If no more items returned → stop
+        if (html.trim() === '') {
+            hasMore = false;
+            document.getElementById('loading').innerText = 'No more radios';
+            return;
+        }
+
+        document
+            .getElementById('radio-container')
+            .insertAdjacentHTML('beforeend', html);
+
+        loading = false;
+        document.getElementById('loading').style.display = 'none';
+    })
+    .catch(() => {
+        loading = false;
+        document.getElementById('loading').style.display = 'none';
+    });
+}
 </script>
+
 @endsection

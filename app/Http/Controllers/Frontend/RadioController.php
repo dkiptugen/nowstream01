@@ -73,15 +73,11 @@ class RadioController extends Controller
      * If AJAX request → return ONLY items
      */
     if ($request->ajax()) {
-    return response()->json([
-        'html' => view(
+        return view(
             'Frontend.includes.components.partials.radio-items',
             compact('radios')
-        )->render(),
-        'hasMore' => $radios->hasMorePages()
-    ]);
-}
-
+        )->render();
+    }
 
     return view('Frontend.modules.radios.index', compact(
         'radios',
