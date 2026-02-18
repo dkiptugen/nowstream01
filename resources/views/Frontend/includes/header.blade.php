@@ -165,6 +165,7 @@
             transform: translate(-50%, -50%);
             color: white;
             font-size: 30px;
+            display: none;
         }
     </style>
 

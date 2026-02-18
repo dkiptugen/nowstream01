@@ -58,6 +58,9 @@ class HomeController extends Controller
                 'channels' => $this->get_channels(),
                 'streams' => $this->get_streams(null, 6),
                 'events' => $this->get_events(),
+                'topevents' => Event::with(['eventRates' => function ($q) {
+                    $q->orderBy('price', 'asc');
+                }])->where('status', 1)->orderByDesc('views')->get(),
                 'videos' => Content::where('content_group', 'video')->latest()->paginate(12),
                 'top_videos' => Content::where('content_group', 'video')->orderByDesc('views')->paginate(12),
                 'current_event' => Content::latest()->limit(1)->get(),

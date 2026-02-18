@@ -75,6 +75,36 @@
     @endforeach
 </div>
 
+<section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+    <div class="container">
+        <div class="episode-top-wrap">
+            <div class="section-title">
+                <span class="sub-title">Trending Events</span>
+                <h2 class="title">Trending Events</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="pcar-wrapper">
+
+        <!-- Outside container overlays -->
+        <div class="pcar-overlay pcar-overlay-left"></div>
+        <div class="pcar-overlay pcar-overlay-right"></div>
+
+        <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
+            data-mobile="1">
+
+            <div class="pcar-track">
+                @foreach($topevents as $event)
+                <div class="pcar-item">
+                    @include('Frontend.includes.components.cards.events')
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- top-rated-movie -->
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
