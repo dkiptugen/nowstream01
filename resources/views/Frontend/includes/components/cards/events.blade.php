@@ -25,12 +25,12 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 
                 <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
             </a>
-
+<!-- 
             <h5 class="card-title mb-0 mt-3">
                 <a href="{{ $url }}">
                    {{ $event->event_name }}
                 </a>
-            </h5>
+            </h5> -->
         </div>
 
         <!-- <div class="movie-content mt-3">
