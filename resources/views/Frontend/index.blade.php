@@ -233,7 +233,7 @@
                                 </a>
                             </h5>
                         </div>
-                        <div class="bottom">
+                        <div class="bottom" style="position: relative;">
                             <!-- Display number of views -->
 
                             <ul>
