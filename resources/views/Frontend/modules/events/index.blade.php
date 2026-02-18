@@ -27,8 +27,8 @@
     <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
         <div class="container">
             <div class="episode-top-wrap">
-                <div class="section-title"> <span class="sub-title">Trending TVs</span>
-                    <h2 class="title">Trending TVs</h2>
+                <div class="section-title"> <span class="sub-title">Trending Events</span>
+                    <h2 class="title">Trending Events</h2>
                 </div>
             </div>
         </div>
@@ -43,9 +43,9 @@
                 data-mobile="1">
 
                 <div class="pcar-track">
-                    @foreach($events as $item)
+                    @foreach($events as $event)
                     <div class="pcar-item">
-                        @include('Frontend.includes.components.cards.slider-card')
+					@include('Frontend.includes.components.cards.events')
                     </div>
                     @endforeach
                 </div>
