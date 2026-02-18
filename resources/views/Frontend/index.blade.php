@@ -226,10 +226,10 @@
                         </a>
                     </div>
                     <div class="movie-content"> 
-                        <div class="bottom" style="position: relative;">
+                        <div class="bottom pt-2" style="position: relative;">
                             <!-- Display number of views -->
 
-                            <h5 class="title mt-0">
+                            <h5 class="title mt-0 mb-2">
                                 <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
                                     {{ucfirst($video->title)}}
                                 </a>
