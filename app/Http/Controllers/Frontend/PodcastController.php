@@ -93,57 +93,110 @@ class PodcastController extends Controller
     /**
      * Single podcast view
      */
-    public function show($slug)
-    {
-        try {
-            // Cache podcast detail
-            $podcast = Cache::remember("podcast_{$slug}", now()->addDay(), function () use ( $slug) {
+   public function show($slug)
+{
+    try {
+        /**
+         * 1. Podcast (cache core model)
+         */
+        $podcast = Cache::remember(
+            "podcast_detail_{$slug}",
+            now()->addHours(12),
+            function () use ($slug) {
                 return Content::where('slug', $slug)
                     ->where('content_group', 'podcast')
                     ->first();
-            });
-            $uuid = $podcast->uuid ?? null;
+            }
+        );
 
-            if (!$podcast) abort(404, 'Podcast not found');
+        if (!$podcast) {
+            abort(404, 'Podcast not found');
+        }
 
-            // Increment view count (do not cache increment)
-            $podcast->increment('views');
+        $uuid = $podcast->uuid;
 
-            $comments = $podcast->comments()
-                ->with('user')
-                ->orderBy('created_at', 'asc') // oldest first
-                ->get();
+        /**
+         * Increment views (not cached)
+         */
+        Content::where('id', $podcast->id)->increment('views');
 
-            // Episodes (cache per podcast)
-            $episodes = Cache::remember("podcast_episodes_{$uuid}", now()->addMinutes(30), function () use ($podcast) {
-                return Content::where('parent_id', $podcast->uuid)
+
+        /**
+         * 2. Episodes (cache)
+         */
+        $episodes = Cache::remember(
+            "podcast_episodes_{$uuid}",
+            now()->addMinutes(20),
+            function () use ($uuid) {
+                return Content::where('parent_id', $uuid)
                     ->where('content_group', 'podcast_episode')
+                    ->orderBy('created_at', 'desc')
                     ->get();
-            });
+            }
+        );
 
-            $podcast->episodes_count = $episodes->count();
-            $podcast->episodes = $episodes;
+        $podcast->episodes = $episodes;
+        $podcast->episodes_count = $episodes->count();
 
-            // Related podcasts (cache)
-            $related = Cache::remember("podcast_related_{$uuid}", now()->addDay(), function () use ($uuid) {
+
+        /**
+         * 3. Comments (short cache – frequently changing)
+         */
+        $comments = Cache::remember(
+            "podcast_comments_{$uuid}",
+            now()->addMinutes(5),
+            function () use ($podcast) {
+                return $podcast->comments()
+                    ->with('user')
+                    ->latest()
+                    ->get();
+            }
+        );
+
+
+        /**
+         * 4. Related Podcasts Pool (cache bigger set)
+         *    Then RANDOMIZE per request
+         */
+        $relatedPool = Cache::remember(
+            "podcast_related_pool",
+            now()->addHours(6),
+            function () use ($uuid) {
                 return Content::where('content_group', 'podcast')
                     ->where('uuid', '!=', $uuid)
                     ->latest()
-                    ->take(6)
+                    ->take(30)   // bigger pool
                     ->get();
-            });
+            }
+        );
 
-            // Sidebar videos
-            $videos = Cache::remember('videos_global', 600, function () {
+        // Randomize on each request (fast, in-memory)
+        $related = $relatedPool->shuffle()->take(6);
+
+
+        /**
+         * 5. Sidebar Videos (global cache)
+         */
+        $videos = Cache::remember(
+            'videos_global_sidebar',
+            now()->addMinutes(10),
+            function () {
                 return $this->get_videos(6);
-            });
+            }
+        );
 
-            return view('Frontend.modules.podcasts.show', compact(
-                'podcast', 'related', 'videos', 'episodes', 'comments'
-            ));
 
-        } catch (\Exception $e) {
-            abort(404, 'Podcast not found');
-        }
+        return view('Frontend.modules.podcasts.show', compact(
+            'podcast',
+            'related',
+            'videos',
+            'episodes',
+            'comments'
+        ));
+
+    } catch (\Exception $e) {
+        abort(404, 'Podcast not found');
     }
+}
+
 }
