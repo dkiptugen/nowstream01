@@ -170,8 +170,8 @@
 		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
 		    <div class="container">
                 <div class="episode-top-wrap">
-                    <div class="section-title"> <span class="sub-title">Related Radios</span>
-                        <h2 class="title">Trending Radios</h2>
+                    <div class="section-title"> <span class="sub-title">Related Tvs</span>
+                        <h2 class="title">Trending Tvs</h2>
                     </div>
                 </div>
             </div>

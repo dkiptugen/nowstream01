@@ -7,17 +7,26 @@
 	<section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
-				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="video-wrap">
-						<video id="player" controls playsinline data-poster="{{ $stream->thumbnail }}"></video>
+				<div class="col-xl-9 col-lg-8 mb-3">
+					<div id="videoWrap" class="stream-wrap">
+						<video
+							id="player"
+							data-stream="{{ $stream->stream_url }}"
+							playsinline
+							controls
+							poster="{{ $stream->thumbnail_url }}">
+						</video>
+						<div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 					</div>
 
-					@php
-					$oldvid= $stream;
-					$vid = $stream->id;
-					@endphp
+
+
 				</div>
-				@include('Frontend.includes.components.partials.stream-comments', ['comments' => $comments, 'stream' => $stream])
+				@include('Frontend.includes.components.partials.video-comments', [
+				'comments' => $comments,
+				'commentableType' => 'stream',
+				'commentableId' => $stream->uuid
+				])
 
 				<div class="col-xl-7 col-lg-8 mt-4">
 					<div class="movie-details-content">
@@ -42,9 +51,9 @@
 									<span>hd</span>
 								</li>
 								<li class="category">
-									<a href="#">Romance,</a>
-									<a href="#">Drama</a>
+
 								</li>
+
 								<li class="release-time">
 									<span><i class="far fa-calendar-alt"></i> 2021</span>
 									<span><i class="far fa-clock"></i> 128 min</span>
@@ -56,16 +65,12 @@
 							<ul>
 								<li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
 								<li class="streaming">
-									<h6>Prime Video</h6>
+									<h6>Prime stream</h6>
 									<span>Streaming Channels</span>
 								</li>
-								<li class="watch"><a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i class="fas fa-play"></i> Watch Now</a></li>
 							</ul>
 						</div>
 					</div>
-				</div>
-				<div class="movie-details-btn">
-					<a href="img/poster/movie_details_img.jpg" class="download-btn" download="">Download <img src="fonts/download.svg" alt=""></a>
 				</div>
 			</div>
 		</div>
@@ -75,12 +80,6 @@
 			<div class="col-12 col-lg-8">
 				<div class="card radius-5 row mx-md-0">
 
-					<video id="player" controls playsinline data-poster="{{ $stream->thumbnail }}"></video>
-
-					@php
-					$oldvid= $stream;
-					$vid = $stream->uuid;
-					@endphp
 					<div class="card-body">
 						<h2 class="mb-0">
 							{{$stream->title}}
@@ -91,59 +90,39 @@
 							Started Streaming 12min ago </small>
 					</div>
 				</div>
-				<div class="card radius-5 single-video-author box mb-3">
+				<div class="card radius-5 single-stream-author box mb-3">
 					<div class="">
 						<div class="float-right d-flex align-items-center">
 
+							@if(Auth::check())
+							<div id="favorite-btn">
+								@php
+								$favorites = Auth::user()->favoritestreams ?? collect();
+								@endphp
+
+								@if($favorites->contains('uuid', $stream->uuid))
+								<button class="btn btn-danger btn-sm"
+									onclick="toggleFavorite('{{ $stream->uuid }}', false)">
+									Unlike stream
+								</button>
+								@else
+								<button class="btn btn-outline-primary btn-sm"
+									onclick="toggleFavorite('{{ $stream->uuid }}', true)">
+									Like stream
+								</button>
+								@endif
+							</div>
+							@endif
 
 							<div class="mx-1">.</div>
 
-							<script>
-								function toggleFavorite(videoId, isFavorite) {
-									const url = isFavorite ?
-										'{{ route("video.favorite", ":uuid") }}'.replace(':uuid', videoId) :
-										'{{ route("video.unfavorite", ":uuid") }}'.replace(':uuid', videoId);
-
-									$.ajax({
-										url: url,
-										type: 'POST',
-										data: {
-											_token: '{{ csrf_token() }}',
-										},
-										success: function(response) {
-											if (isFavorite) {
-												$('#favorite-btn').html(`
-											<button class="btn btn-danger btn-sm" onclick="toggleFavorite(${videoId}, false)">
-											Unlike Video
-											</button>
-										`);
-											} else {
-												$('#favorite-btn').html(`
-											<button class="btn btn-outline-primary btn-sm" onclick="toggleFavorite(${videoId}, true)">
-												Like
-											</button>
-										`);
-											}
-										},
-										error: function(xhr) {
-											console.error('Error:', xhr.responseText);
-										}
-									});
-								}
-							</script>
 
 
-							@php
-							$channel = Channel::find('4ebc64f9-7e5d-4e72-89e2-8e24b9b0e9d5');
-							@endphp
-							@if(Auth::check())
-
-							@endif
 						</div>
-						<img class="ratio1" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}" alt="">
+
 						<p><a href="#"><strong>
 
-									{{ $channel ? $channel->name : 'Unknown' }}
+
 								</strong></a> <span title="" data-placement="top" data-toggle="tooltip"
 								data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
 						</p>
@@ -183,23 +162,37 @@
 
 			</div>
 	</section>
-
-
-
-	@if($channels->isNotEmpty())
-	<section>
-		<h5 class="mb-3">Popular Channels</h5>
-		<div class="d-flex scrolling">
-			@foreach ($channels as $channel)
-			<div class="col-6 col-lg-2 me-3 mb-3">
-				@include('Frontend.includes.components.cards.channels')
+	@if($streams->isNotEmpty())
+	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
+		<div class="container">
+			<div class="episode-top-wrap">
+				<div class="section-title"> <span class="sub-title">Related Streams</span>
+					<h2 class="title">Trending Streams</h2>
+				</div>
 			</div>
-
-			@endforeach
 		</div>
-		<!--end row-->
+
+		<div class="pcar-wrapper">
+
+			<!-- Outside container overlays -->
+			<div class="pcar-overlay pcar-overlay-left"></div>
+			<div class="pcar-overlay pcar-overlay-right"></div>
+
+			<div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
+				data-mobile="1">
+
+				<div class="pcar-track">
+					@foreach($streams as $item)
+					<div class="pcar-item">
+						@include('Frontend.includes.components.cards.slider-card')
+					</div>
+					@endforeach
+				</div>
+			</div>
+		</div>
 	</section>
 	@endif
+
 	@endsection
 	@section('header')
 	<style>
@@ -226,11 +219,11 @@
 			}
 		}
 
-		.plyr--video {
+		.plyr--stream {
 			padding: 0;
 		}
 
-		#my-video {
+		#my-stream {
 			width: 100%;
 			aspect-ratio: 16 / 9 !important;
 			height: auto;
@@ -257,7 +250,7 @@
 		}
 
 		/* Make both columns stretch to same height */
-		.video-comments-row {
+		.stream-comments-row {
 			align-items: stretch !important;
 		}
 
@@ -337,8 +330,8 @@
 			overflow-y: auto;
 		}
 
-		/* Video wrapper uses 16:9 ratio like YouTube */
-		.video-wrap {
+		/* stream wrapper uses 16:9 ratio like YouTube */
+		.stream-wrap {
 			position: relative;
 			width: 100%;
 			padding-top: 56.25%;
@@ -347,9 +340,9 @@
 			border-radius: 10px;
 		}
 
-		.video-wrap video,
-		.video-wrap iframe,
-		.video-wrap .plyr {
+		.stream-wrap stream,
+		.stream-wrap iframe,
+		.stream-wrap .plyr {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -357,7 +350,7 @@
 			height: 100%;
 		}
 
-		/* Comments card height must match video height */
+		/* Comments card height must match stream height */
 		@media (min-width: 1200px) {
 			#commentsCard {
 				height: 100%;
@@ -383,72 +376,175 @@
 		.sticky {
 			z-index: 99;
 		}
+
+		.live-badge {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background: red;
+			color: #fff;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 4px 8px;
+			border-radius: 4px;
+			z-index: 10;
+		}
 	</style>
 	@endsection
 	@section('footer')
-
 	<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
 	<script>
-		document.addEventListener('DOMContentLoaded', () => {
+		document.addEventListener('DOMContentLoaded', function() {
+
 			const video = document.getElementById('player');
-			const player = new Plyr(video, {
-				// You can customize Plyr options here
-			});
+			if (!video) return;
 
-			// Your video URL
-			const videoUrl = '{{ $oldvid->video_path }}';
+			const streamUrl = video.dataset.stream;
+			if (!streamUrl) return;
 
-			// Function to determine video type
-			function getVideoType(url) {
-				const extension = url.split('.').pop();
-				if (extension === 'm3u8') {
-					return 'application/vnd.apple.mpegurl';
-				} else if (extension === 'mp4') {
-					return 'video/mp4';
-				} else if (extension === 'mov') {
-					return 'video/quicktime';
-				} else {
-					return '';
+			const player = new Plyr(video, {});
+
+			let hls = null;
+			let reconnectAttempts = 0;
+			const maxReconnectAttempts = 10;
+			const reconnectDelay = 3000;
+
+			function getMediaType(url) {
+				const ext = url.split('.').pop().toLowerCase();
+				if (ext === 'm3u8') return 'hls';
+				if (ext === 'mp4') return 'video/mp4';
+				return '';
+			}
+
+			function autoplayWithSound() {
+				video.muted = false;
+				video.volume = 1;
+
+				video.play().catch(() => {
+					// Browser blocked autoplay with sound
+					video.muted = true;
+					video.play().catch(() => {});
+				});
+			}
+
+			function destroyHls() {
+				if (hls) {
+					hls.destroy();
+					hls = null;
 				}
 			}
 
-			// Function to load video based on its type
-			function loadVideo(url) {
-				const type = getVideoType(url);
+			function reconnectStream() {
+				if (reconnectAttempts >= maxReconnectAttempts) {
+					console.error('Max reconnect attempts reached');
+					return;
+				}
 
-				if (type === 'application/vnd.apple.mpegurl') {
+				reconnectAttempts++;
+				console.log('Reconnecting stream...', reconnectAttempts);
+
+				setTimeout(() => {
+					loadStream(streamUrl);
+				}, reconnectDelay);
+			}
+
+			function loadStream(url) {
+				const type = getMediaType(url);
+
+				// Reset video
+				video.pause();
+				video.removeAttribute('src');
+				video.load();
+
+				destroyHls();
+
+				if (type === 'hls') {
+
 					if (Hls.isSupported()) {
-						const hls = new Hls();
+
+						hls = new Hls({
+							maxBufferLength: 30,
+							maxMaxBufferLength: 60,
+							enableWorker: true,
+							lowLatencyMode: true
+						});
+
 						hls.loadSource(url);
 						hls.attachMedia(video);
-						hls.on(Hls.Events.MANIFEST_PARSED, () => {
-							video.play();
+
+						hls.on(Hls.Events.MANIFEST_PARSED, function() {
+							reconnectAttempts = 0;
+							autoplayWithSound();
 						});
-					} else if (video.canPlayType(type)) {
+
+						hls.on(Hls.Events.ERROR, function(event, data) {
+
+							if (data.fatal) {
+								console.error('HLS fatal error:', data.type);
+
+								switch (data.type) {
+									case Hls.ErrorTypes.NETWORK_ERROR:
+										reconnectStream();
+										break;
+
+									case Hls.ErrorTypes.MEDIA_ERROR:
+										hls.recoverMediaError();
+										break;
+
+									default:
+										reconnectStream();
+										break;
+								}
+							}
+						});
+
+					} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
 						video.src = url;
-						video.addEventListener('loadedmetadata', () => {
-							video.play();
+						video.addEventListener('loadedmetadata', autoplayWithSound, {
+							once: true
 						});
-					} else {
-						console.error('HLS is not supported in this browser');
 					}
-				} else if (video.canPlayType(type)) {
-					video.src = url;
-					video.addEventListener('loadedmetadata', () => {
-						video.play();
-					});
+
 				} else {
-					console.error('This video format is not supported in this browser');
+					video.src = url;
+					video.addEventListener('loadedmetadata', autoplayWithSound, {
+						once: true
+					});
 				}
 			}
 
-			// Load the video
-			loadVideo(videoUrl);
+			/* ===============================
+			   Network Recovery
+			=============================== */
+			window.addEventListener('offline', function() {
+				console.warn('Network lost');
+			});
+
+			window.addEventListener('online', function() {
+				console.log('Network restored — reconnecting');
+				reconnectAttempts = 0;
+				loadStream(streamUrl);
+			});
+
+			/* ===============================
+			   Visibility Optimization
+			=============================== */
+			document.addEventListener('visibilitychange', function() {
+				if (!document.hidden && video.paused) {
+					video.play().catch(() => {});
+				}
+			});
+
+			/* ===============================
+			   Start
+			=============================== */
+			loadStream(streamUrl);
+
 		});
 	</script>
-	
+
+
 	<script>
 		$(document).ready(function() {
 
@@ -542,6 +638,7 @@
 
 		});
 	</script>
+
 	<!-- <script>
 			document.addEventListener('DOMContentLoaded', function () {
 				const player = document.getElementById('player');
@@ -576,6 +673,26 @@
 			// delay to allow Plyr render
 			setTimeout(syncCommentsHeight, 300);
 			setTimeout(syncCommentsHeight, 1000);
+		});
+	</script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const mainVideo = document.getElementById('player');
+			if (!mainVideo) return;
+
+			const stream = mainVideo.dataset.stream;
+
+			if (stream && stream.includes('.m3u8')) {
+				if (window.Hls && Hls.isSupported()) {
+					const hls = new Hls();
+					hls.loadSource(stream);
+					hls.attachMedia(mainVideo);
+				}
+				// Safari (native HLS)
+				else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
+					mainVideo.src = stream;
+				}
+			}
 		});
 	</script>
 
