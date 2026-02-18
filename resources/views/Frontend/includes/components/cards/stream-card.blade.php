@@ -6,8 +6,8 @@ $event = $stream->event;
 $channel = $stream->channel;
 
 // Stream thumbnail fallback
-$thumbnail = $stream->stream_image
-    ? Storage::disk(config('filesystems.default'))->url($stream->stream_image)
+$thumbnail = $stream->thumbnail_url
+    ? Storage::disk(config('filesystems.default'))->url($stream->thumbnail_url)
     : asset('frontend-assets/images/default.png');
 
 // Event start/end
