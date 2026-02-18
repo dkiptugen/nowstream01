@@ -15,6 +15,7 @@ class RadioController extends Controller
     /**
      * Radio listing page
      */
+    
    public function index(Request $request)
 {
     $perPage = 30;
@@ -68,7 +69,15 @@ class RadioController extends Controller
     );
 
     $topradios = $topRadiosPool->shuffle()->take(16);
-
+ /**
+     * If AJAX request → return ONLY items
+     */
+    if ($request->ajax()) {
+        return view(
+            'Frontend.includes.components.partials.radio-items',
+            compact('radios')
+        )->render();
+    }
 
     return view('Frontend.modules.radios.index', compact(
         'radios',
