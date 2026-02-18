@@ -15,14 +15,14 @@ $url = $freeStream
 ? route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug])
 : route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug]);
 
-$thumbnail = $event->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($event->thumbnail_url) : asset('frontend-assets/images/default.png');
+$thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
 @endphp
 
 <div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
     <div class="movie-item mb-60">
         <div class="movie-poster">
             <a href="{{ $url }}">
-                <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
+                <img src="{{ $event->event_image ?? $thumbnail}}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
             </a>
 
             <h5 class="card-title mb-0 mt-3">
