@@ -1,46 +1,52 @@
 @php
-    use Carbon\Carbon;
+use Carbon\Carbon;
 
-    $isFree = $stream->rates->isEmpty();
-    $url = $isFree
-        ? url("/stream/free/{$stream->slug}")
-        : url("/stream/{$stream->slug}");
+// Event & Stream data
+$event = $stream->event;
+$channel = $stream->channel;
 
-    $event = $stream->event;
-    $channel = $stream->channel;
-    $now = Carbon::now();
+// Stream thumbnail fallback
+$thumbnail = $stream->stream_image
+    ? Storage::disk(config('filesystems.default'))->url($stream->stream_image)
+    : asset('frontend-assets/images/default.png');
 
-    $status = 'Upcoming';
-    $timeText = '';
+// Event start/end
+$startDate = $event ? Carbon::parse($event->start_time) : null;
+$endTime = $event ? Carbon::parse($event->end_time) : null;
+$now = Carbon::now();
 
-    if ($event) {
-        if ($event->end_time <= $now) {
-            $status = 'Watch';
-            $timeText = 'Ended';
-        } elseif ($event->start_time <= $now && $event->end_time > $now) {
-            $status = 'Live';
-            $timeText = 'Started ' . $event->start_time->diffForHumans();
-        } else {
-            $status = 'Upcoming';
-            $timeText = 'Starts in ' . $event->start_time->diffForHumans();
-        }
+// Tickets
+$tickets = $event->tickets ?? collect();
+$ticket = $tickets->sortBy('price')->first();
+$hasPaidTickets = $tickets->count() > 0;
+$freeStream = !$hasPaidTickets;
+
+// Stream URL
+$url = $freeStream
+    ? route('free.show', ['slug' => $stream->slug])
+    : route('stream.show', ['slug' => $stream->slug]);
+
+// Event status & time text
+$status = 'Upcoming';
+$timeText = '';
+if ($event) {
+    if ($event->end_time <= $now) {
+        $status = 'Watch';
+        $timeText = 'Ended';
+    } elseif ($event->start_time <= $now && $event->end_time > $now) {
+        $status = 'Live';
+        $timeText = 'Started ' . $event->start_time->diffForHumans();
+    } else {
+        $status = 'Upcoming';
+        $timeText = 'Starts in ' . $event->start_time->diffForHumans();
     }
+}
 @endphp
 
-<div class="card radius-5 h-100">
-    <div class="image">
-
+<div class="movie-item mb-60">
+    <div class="movie-poster">
         <a href="{{ $url }}">
-            <img src="{{ $stream->thumbnail_url }}"
-                 class="w-100 d-block aspect16"
-                 alt="{{ $stream->title }}"
-                 loading="lazy">
-        </a>
-
-        <a href="{{ $url }}">
-            <div class="play fs-40">
-                <i class="fadeIn animated bx bx-play-circle"></i>
-            </div>
+            <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $stream->title }}" loading="lazy" style="aspect-ratio: 1.5 / 2;">
         </a>
 
         {{-- Status Badge --}}
@@ -53,23 +59,46 @@
         @else
             <div class="time">Upcoming</div>
         @endif
-
     </div>
 
-    <div class="card-body pb-0">
-        <a href="{{ $url }}">
-            <h6 class="mb-0">{{ $stream->title }}</h6>
-        </a>
+    <div class="movie-content mt-3">
+        <div class="top d-flex justify-content-between align-items-center mb-2">
+            @if($startDate)
+                <small>{{ strtoupper($startDate->format('d M, Y')) }}</small>
+                <span class="date">
+                    <small class="card-text">
+                        <i class="fas fa-clock"></i>
+                        {{ $startDate->format('h:i A') }} - {{ $endTime->format('h:i A') }}
+                    </small>
+                </span>
+            @endif
+        </div>
 
-        <small class="text-muted mt-1 d-block">
-            {{ $channel->name ?? 'Unknown' }}
-        </small>
+        <div class="bottom">
+            <ul class="list-unstyled mb-1">
+                <li>
+                    <h6 class="quality">
+                        <i class="bx bx-money"></i>
+                        {{ $ticket ? "From KES {$ticket->price}" : 'Free' }}
+                    </h6>
+                </li>
+                <li>
+                    <span class="duration">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Venue: {{ $stream->venue ?? 'Unknown' }}
+                    </span>
+                </li>
+            </ul>
 
-        @if($event)
-            <small class="text-muted">
-                <i class="lni lni-calendar"></i>
-                {{ $timeText }}
+            <small class="text-muted mt-1 d-block">
+                {{ $channel->name ?? 'Unknown' }}
             </small>
-        @endif
+
+            @if($stream)
+                <small class="text-muted d-block">
+                    <i class="lni lni-calendar"></i> {{ $timeText }}
+                </small>
+            @endif
+        </div>
     </div>
 </div>
