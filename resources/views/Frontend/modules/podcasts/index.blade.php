@@ -49,7 +49,7 @@
                     <h2 class="title">Latest Podcasts</h2>
                 </div>
             </div>
-            <div class="row tr-movie-active" id="podcast-container" style="position: relative; height:auto !important;">
+            <div class="row tr-movie-active h-100" id="podcast-container">
                 @include('Frontend.includes.components.partials.podcast-list', ['podcasts' => $podcasts])
             </div>
 
