@@ -206,7 +206,13 @@
             </div>
         </div>
         <div class="row tr-movie-active">
-
+<style>
+    .tr-movie-bg {
+    background-position: top center;
+    background-size: cover;
+    padding: 40px 0 60px;
+}
+</style>
             @foreach($top_videos as $video)
             <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-4">
