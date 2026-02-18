@@ -11,7 +11,7 @@
 					<div id="videoWrap" class="stream-wrap">
 						<video
 							id="player"
-							data-stream="{{ $stream->stream_url }}"
+							data-stream="https://tv.a21network.ru/stream/37909/index.m3u8"
 							playsinline
 							controls
 							poster="{{ $stream->thumbnail_url }}">
