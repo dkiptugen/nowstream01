@@ -42,7 +42,7 @@ class StreamController extends Controller
 		->orderByDesc('created_at')
 		->get();
 		$topstreams = Content::where('content_group', 'livestream')->with(['event', 'channel', 'rates'])
-		->orderByDesc('views')
+		->orderByDesc('viewers')
 		->get();
 
 		$this->data['streams'] = $streams;
