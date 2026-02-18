@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="{{ asset('assets')}}/css/magnific-popup.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/owl.carousel.min.css">
+    <!-- Boxicons CDN -->
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ asset('assets')}}/css/flaticon.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/odometer.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/aos.css">
@@ -42,6 +44,9 @@
         .page-wrapper {
             overflow-y: scroll !important;
         }
+            .navbar-wrap > ul > li > a{
+                display: inline-flex;
+            }
     </style>
 
     @yield('header')
