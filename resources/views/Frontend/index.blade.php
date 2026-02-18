@@ -210,7 +210,7 @@
             @foreach($top_videos as $video)
             <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-60">
-                    <div class="movie-poster">
+                    <div class="movie-poster mb-2">
                         <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
                             @php
                             $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
@@ -229,7 +229,7 @@
                         <div class="bottom pt-2" style="position: relative;">
                             <!-- Display number of views -->
 
-                            <h5 class="title mt-0 mb-2">
+                            <h5 class="title mt-0 mb-3">
                                 <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
                                     {{ucfirst($video->title)}}
                                 </a>
