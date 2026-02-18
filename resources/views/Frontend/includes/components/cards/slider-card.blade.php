@@ -21,18 +21,7 @@
                 <small class=" mt-0">
                     {{ucfirst($item->title)}}
                 </small>
-            </div>
-            <div class="bottom">
-
-
-                <ul>
-                    <li>
-                        <span class="channel"><i class="far fa-user"></i>
-                            {{ $item->author ? $item->author : 'Unknown' }}</span>
-                        <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
-                    </li>
-                </ul>
-            </div>
+            </div> 
         </div>
     </div>
 </div>
