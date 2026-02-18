@@ -44,7 +44,7 @@
                 data-mobile="1">
 
                 <div class="pcar-track">
-                    @foreach($streams as $stream)
+                    @foreach($topstreams as $stream)
                     <div class="pcar-item">
 					@include('Frontend.includes.components.cards.stream-card')
                     </div>

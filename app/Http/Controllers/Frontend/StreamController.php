@@ -41,8 +41,12 @@ class StreamController extends Controller
 		$streams = Content::where('content_group', 'livestream')->with(['event', 'channel', 'rates'])
 		->orderByDesc('created_at')
 		->get();
+		$topstreams = Content::where('content_group', 'livestream')->with(['event', 'channel', 'rates'])
+		->orderByDesc('views')
+		->get();
 
 		$this->data['streams'] = $streams;
+		$this->data['topstreams'] = $topstreams;
 		return view('Frontend.modules.channels.streams.index', $this->data);
 	}
 
@@ -387,6 +391,7 @@ class StreamController extends Controller
             }
         } else { 
             $stream->increment('viewers');
+            $stream->increment('views');
         }
  
         $streams = Content::where('status', 1)->where('uuid', '<>', $stream->uuid)->take(4)->get();
