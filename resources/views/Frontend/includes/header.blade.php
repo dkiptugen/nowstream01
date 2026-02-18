@@ -158,7 +158,7 @@
             letter-spacing: 1px;
         }
 
-        .play-icon {
+        .play-icon, .play {
             position: absolute;
             top: 50%;
             left: 50%;
