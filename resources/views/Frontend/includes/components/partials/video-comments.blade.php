@@ -29,6 +29,7 @@
                                     {{ strtoupper(substr($comment->user->name,0,1)) }}
                                 </div>
                             @endif
+                            
                             <div class="media-body">
                                 <strong class="text-white">{{ $comment->user->name }}</strong>
                                 <small class="text-light-50 ml-2">{{ $comment->created_at->diffForHumans() }}</small>

@@ -18,6 +18,14 @@
 
         </li>
         <li class="nav-item">
+            <a class="nav-link" href=" {{ url('streams') }}">
+                <div class="parent-icon"><i class="bx bx-calendar"></i>
+                </div>
+                <div class="menu-title">Streams</div>
+            </a>
+
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href=" {{ url('all-videos') }}">
                 <div class="parent-icon"><i class="bx bx-video"></i>
                 </div>
