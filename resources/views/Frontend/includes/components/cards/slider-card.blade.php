@@ -18,9 +18,9 @@
         </div>
         <div class="movie-content">
             <div class="top">
-                <h6 class=" mt-0">
+                <small class=" mt-0">
                     {{ucfirst($item->title)}}
-                </h6>
+                </small>
             </div>
             <div class="bottom">
 
