@@ -21,11 +21,14 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::with(['eventRates' => function($q) {
-    $q->orderBy('price', 'asc');
-}])->where('status', 1)->get();
- 
-        return view('Frontend.modules.events.index', compact('events'));
+        $events = Event::with(['eventRates' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }])->where('status', 1)->get();
+        $topevents = Event::with(['eventRates' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }])->where('status', 1)->orderByDesc('views')->get();
+
+        return view('Frontend.modules.events.index', compact('events', 'topevents'));
     }
 
     /**
@@ -77,7 +80,7 @@ class EventController extends Controller
      * Show success page after successful payment.
      */
     public function succeed($eventId)
-    { 
+    {
         $event = Cache::rememberOnce(
             'event_' . $eventId,
             now()->addDay(),
@@ -90,17 +93,17 @@ class EventController extends Controller
     /**
      * Display details for a single event.
      */
-public function show($eventId, $slug)
-{
-    $event  = $this->get_event($eventId, $slug);
-    if (!$event) abort(404, 'Event not found.');
+    public function show($eventId, $slug)
+    {
+        $event  = $this->get_event($eventId, $slug);
+        if (!$event) abort(404, 'Event not found.');
+        // increment views
+        
+        $event->increment('views');
+        $events = $this->get_events($eventId);
+        $videos = $this->get_videos();
+        $rates  = $this->get_event_ticket_rates($eventId);
 
-    $events = $this->get_events($eventId);
-    $videos = $this->get_videos();
-    $rates  = $this->get_event_ticket_rates($eventId);
-
-    return view('Frontend.modules.events.event', compact('event', 'events', 'videos', 'rates'));
-}
-
-
+        return view('Frontend.modules.events.event', compact('event', 'events', 'videos', 'rates'));
+    }
 }
