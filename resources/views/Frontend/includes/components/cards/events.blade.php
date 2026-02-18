@@ -1,41 +1,41 @@
 @php
-    use Carbon\Carbon;
+use Carbon\Carbon;
 
-    $startDate = Carbon::parse($event->start_time);
-    $endTime   = Carbon::parse($event->end_time);
+$startDate = Carbon::parse($event->start_time);
+$endTime = Carbon::parse($event->end_time);
 
-    $tickets = $event->tickets ?? collect(); // fallback to empty collection
+$tickets = $event->tickets ?? collect(); // fallback to empty collection
 
-    $hasPaidTickets = $tickets->count() > 0;
-    $freeStream     = !$hasPaidTickets;
+$hasPaidTickets = $tickets->count() > 0;
+$freeStream = !$hasPaidTickets;
 
-    $ticket = $tickets->sortBy('price')->first();
+$ticket = $tickets->sortBy('price')->first();
 
- $url = $freeStream 
-    ? route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug])
-    : route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug]);
+$url = $freeStream
+? route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug])
+: route('event.show', ['eventId' => $event->uuid, 'slug' => $event->slug]);
 
+$thumbnail = $event->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($event->thumbnail_url) : asset('frontend-assets/images/default.png');
 @endphp
-
 
 <div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
     <div class="movie-item mb-60">
         <div class="movie-poster">
             <a href="{{ $url }}">
-                <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
+                <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
             </a>
 
             <h5 class="card-title mb-0 mt-3">
-                    <a href="{{ $url }}">
-                       <b>{{ $event->event_name }}</b>
-                    </a>
+                <a href="{{ $url }}">
+                    <b>{{ $event->event_name }}</b>
+                </a>
             </h5>
         </div>
 
         <div class="movie-content mt-3">
             <div class="top">
                 <small class=" mb-0">
-               {{ strtoupper($startDate->format('d M, Y')) }}
+                    {{ strtoupper($startDate->format('d M, Y')) }}
                 </small>
 
                 <span class="date">
