@@ -209,7 +209,7 @@
 
             @foreach($top_videos as $video)
             <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
-                <div class="movie-item mb-60">
+                <div class="movie-item mb-4">
                     <div class="movie-poster mb-2">
                         <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
                             @php
