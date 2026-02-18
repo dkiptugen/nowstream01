@@ -23,7 +23,8 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
             <a href="{{ $url }}">
                                 <!-- <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy"> -->
 
-                <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy">
+                <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}" loading="lazy" style="
+    aspect-ratio: 1.5 / 2.2;">
             </a>
 <!-- 
             <h5 class="card-title mb-0 mt-3">
@@ -33,7 +34,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
             </h5> -->
         </div>
 
-        <!-- <div class="movie-content mt-3">
+        <div class="movie-content mt-3">
             <div class="top">
                 <small class=" mb-0">
                     {{ strtoupper($startDate->format('d M, Y')) }}
@@ -64,5 +65,5 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
                     </li>
                 </ul>
             </div>
-        </div> -->
+        </div>
     </div> 
