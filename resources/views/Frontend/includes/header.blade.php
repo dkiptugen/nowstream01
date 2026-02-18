@@ -191,6 +191,7 @@
                                     <ul>
                                         <li class="header-search"><a href="#" data-toggle="modal"
                                                 data-target="#search-modal"><i class="fas fa-search"></i></a></li>
+                                        <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
 
                                         <li class="menu-item-has-children header-lang d-none">
                                             <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"
