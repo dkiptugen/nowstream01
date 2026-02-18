@@ -36,7 +36,7 @@ class EventController extends Controller
     public function index()
     {
 
-        $this->data['title'] = 'Events : ' . $this->data['title'];
+        $this->data['title'] = 'Events : ' . $this->data['title']; 
         return view('Backend.modules.event.index', $this->data);
     }
 

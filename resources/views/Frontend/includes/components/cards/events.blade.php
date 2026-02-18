@@ -28,12 +28,12 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 
             <h5 class="card-title mb-0 mt-3">
                 <a href="{{ $url }}">
-                    <b>{{ $event->event_name }}</b>
+                   {{ $event->event_name }}
                 </a>
             </h5>
         </div>
 
-        <div class="movie-content mt-3">
+        <!-- <div class="movie-content mt-3">
             <div class="top">
                 <small class=" mb-0">
                     {{ strtoupper($startDate->format('d M, Y')) }}
@@ -64,5 +64,5 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> -->
     </div> 
