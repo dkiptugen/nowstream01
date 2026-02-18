@@ -120,21 +120,32 @@ document.addEventListener('DOMContentLoaded', function () {
         const safeText = document.createElement('div'); safeText.innerText = text;
 
         // Add comment instantly
-        const html = `
-            <div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
-                <img src="${userImage}" class="mr-3 rounded-circle"
-                     style="width:42px;height:42px;object-fit:cover;">
-                <div class="media-body">
-                    <strong class="text-white">${userName}</strong>
-                    <small class="text-light-50 ml-2">just now</small>
-                    <div class="text-light mt-1">${safeText.innerHTML}</div>
-                    <div class="mt-2 yt-actions">
-                        <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
-                        <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
-                    </div>
-                </div>
-            </div>`;
-        list.insertAdjacentHTML('beforeend', html);
+       const userInitials = userName.split(' ')
+    .map(n => n.charAt(0).toUpperCase())
+    .join('');
+
+const html = `
+<div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
+    <img src="${userImage}" class="mr-3 rounded-circle"
+         style="width:42px;height:42px;object-fit:cover;"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+    <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+         style="width:42px;height:42px;font-weight:bold; display: none;">
+        ${userInitials}
+    </div>
+    <div class="media-body">
+        <strong class="text-white">${userName}</strong>
+        <small class="text-light-50 ml-2">just now</small>
+        <div class="text-light mt-1">${safeText.innerHTML}</div>
+        <div class="mt-2 yt-actions">
+            <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
+            <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
+        </div>
+    </div>
+</div>`;
+
+list.insertAdjacentHTML('beforeend', html);
+
 
         countEl.textContent = parseInt(countEl.textContent) + 1;
         input.value = '';
