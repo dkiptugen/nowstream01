@@ -27,7 +27,8 @@
     <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
         <div class="container">
             <div class="episode-top-wrap">
-                <div class="section-title"> <span class="sub-title">Trending Events</span>
+                <div class="section-title"> 
+					<span class="sub-title">Trending Events</span>
                     <h2 class="title">Trending Events</h2>
                 </div>
             </div>
