@@ -48,7 +48,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
             </span>
         </div>
 
-        <div class="bottom">
+        <div class="bottom" style="position: relative;">
             <ul>
                 <li>
                     <h6 class="quality">
