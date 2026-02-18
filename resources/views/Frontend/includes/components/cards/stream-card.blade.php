@@ -50,7 +50,7 @@ if ($event) {
         </a>
 
         {{-- Status Badge --}}
-        @if($status === 'Watch')
+        <!-- @if($status === 'Watch')
             <div class="time d-flex align-items-center">
                 Watch <i class="lni lni-play"></i>
             </div>
@@ -58,7 +58,7 @@ if ($event) {
             <div class="time">Live</div>
         @else
             <div class="time">Upcoming</div>
-        @endif
+        @endif -->
     </div>
 
     <div class="movie-content mt-3">
