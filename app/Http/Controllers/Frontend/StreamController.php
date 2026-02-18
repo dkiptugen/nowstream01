@@ -394,7 +394,7 @@ class StreamController extends Controller
             $stream->increment('views');
         }
  
-        $streams = Content::where('status', 1)->where('uuid', '<>', $stream->uuid)->take(4)->get();
+        $streams = Content::where('status', 1)->where('uuid', '<>', $stream->uuid)->take(4)->where('content_group', 'livestream')->get();
         $channels = Channel::where('status', 1)->take(8)->get();
         $videos = Content::where('type', 'video')->take(12)->get();
         $comments = $stream->comments()->with('user')->get();
