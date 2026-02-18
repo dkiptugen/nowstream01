@@ -69,7 +69,7 @@
                     method="POST">
                     @csrf
                     <div class="input-group">
-                        <input type="text" name="comment" id="comment-input" class="form-control" placeholder="Add a comment..." required>
+                        <input type="text" name="comment" id="comment-input" class="form-control bg-dark text-light border-dark" placeholder="Add a comment..." required>
                         <div class="input-group-append">
                             <button class="btn btn-sm btn-send" id="comment-submit-btn">
                                 <i class="fa fa-paper-plane"></i>
