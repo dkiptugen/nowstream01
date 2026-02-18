@@ -23,7 +23,7 @@ class EventController extends Controller
     {
         $events = Event::with(['eventRates' => function ($q) {
             $q->orderBy('price', 'asc');
-        }])->where('status', 1)->get();
+        }])->where('status', 1)->orderBy('created_at', 'desc')->get();
         $topevents = Event::with(['eventRates' => function ($q) {
             $q->orderBy('price', 'asc');
         }])->where('status', 1)->orderByDesc('views')->get();
