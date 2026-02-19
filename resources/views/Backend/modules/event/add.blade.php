@@ -60,7 +60,7 @@
 
                         </div>
                         <div class="form-group mt-4">
-                            <button type="button" id="addTicketBtn" class="btn btn-dark btn-link mb-3 text-nowrap">
+                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link mb-3 text-nowrap">
                                 <i class="fas fa-plus"></i>
                                 Add Ticket
                             </button>
