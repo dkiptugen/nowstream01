@@ -95,7 +95,7 @@
             </div>
 
             <div class="row tr-movie-active h-100" id="tv-container">
-                @include('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])
+                @include('Frontend.includes.components.partials.tvs-list')
             </div>
 
             <div class="text-center my-4" id="loading" style="display:none;">
@@ -129,22 +129,25 @@
         page++;
 
         fetch(`?page=${page}`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.html) {
-                container.insertAdjacentHTML('beforeend', data.html);
-            }
-            hasMore = data.hasMore;
-            loading = false;
-            loader.style.display = hasMore ? 'block' : 'none';
-        })
-        .catch(() => {
-            loading = false;
-            hasMore = false;
-            loader.style.display = 'none';
-        });
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
     }
 </script>
 @endsection
