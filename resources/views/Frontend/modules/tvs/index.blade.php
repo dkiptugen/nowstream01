@@ -95,7 +95,7 @@
             </div>
 
             <div class="row tr-movie-active h-100" id="tv-container" style="position: relative; height:auto !important;">
-                    @include('Frontend.includes.components.partials.radio-items', ['radios' => $tvs])
+@include('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])
                 </div>
 
                 <div class="text-center my-4" id="loading" style="display:none;">
@@ -128,7 +128,11 @@
         loader.style.display = 'block';
         page++;
 
-        fetch(`?page=${page}`, {
+     const params = new URLSearchParams(window.location.search);
+params.set('page', page);
+
+fetch(`?${params.toString()}`, {
+
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
