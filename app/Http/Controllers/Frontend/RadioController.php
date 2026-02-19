@@ -57,17 +57,13 @@ class RadioController extends Controller
     /**
      * Top Radios (randomized inside cache, not per request)
      */
-    $radios = Cache::remember(
-        "radios_page_{$page}",
-        now()->addMinutes(10),
-        function () use ($perPage) {
-            return Content::where('content_group', 'radio')
+    $topradios = Cache::remember('top_radios_home', now()->addMinutes(15), function () {
+        return Content::where('content_group', 'radio')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
                 ->latest()
-                ->paginate($perPage);
-        }
-    );
+                ->paginate(30);
+    });
 
 
     /**
