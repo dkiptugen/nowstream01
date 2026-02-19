@@ -60,7 +60,10 @@
 
                         </div>
                         <div class="form-group mt-4">
-                            <button type="button" id="addTicketBtn" class="btn btn-primary mb-3">Add Ticket</button>
+                            <button type="button" id="addTicketBtn" class="btn btn-dark btn-link mb-3 text-nowrap">
+                                <i class="fas fa-plus"></i>
+                                Add Ticket
+                            </button>
                             <div id="ticketsContainer"></div>
                         </div>
 
