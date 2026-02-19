@@ -19,17 +19,14 @@ public function index(Request $request)
 {
     $perPage = 30;
     $page = $request->get('page', 1);
-    $country  = $request->get('country', 'Kenya');
-    $language = $request->get('language');
-
-    // Normalize null language for cache key
-    $langKey = $language ?? 'all';
+    $country  = $request->get('country', 'Kenya'); 
+ 
 
     // Cache key depends on page and filters
-    $cacheKey = "tvs_{$country}_{$langKey}_page_{$page}";
+    $cacheKey = "tvs_{$country}_page_{$page}";
 
     // Paginated TVs
-    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language, $page) {
+    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $page) {
         $query = Content::query()
             ->where('content_group', 'tv')
             ->whereNotNull('stream_url');
@@ -37,10 +34,7 @@ public function index(Request $request)
         if ($country) {
             $query->where('country', $country);
         }
-
-        if ($language) {
-            $query->where('language', $language);
-        }
+ 
 
         // Page explicitly passed (same pattern as radios)
         return $query->orderByDesc('views')
