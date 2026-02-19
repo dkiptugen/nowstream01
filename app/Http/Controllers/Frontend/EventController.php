@@ -121,8 +121,7 @@ public function show($slug)
     if (!$data) {
         abort(404, 'Event not found.');
     }
-
-    // Increment views (outside cache)
+ 
     Event::where('uuid', $data['event']->uuid)->increment('views');
 
     return view('Frontend.modules.events.event', [

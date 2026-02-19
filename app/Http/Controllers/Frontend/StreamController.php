@@ -361,71 +361,84 @@ class StreamController extends Controller
 	 * Display the specified resource.
 	 */
 
-	public function freeShow($slug = "")
+public function freeShow($slug = "")
 {
-    try { 
-				$uuid = Content::where('content_group', 'livestream')->where('slug', $slug)->value('uuid');
+    try {
+        // Fetch UUID
+        $uuid = Content::where('content_group', 'livestream')
+                       ->where('slug', $slug)
+                       ->value('uuid');
 
-        $stream = Cache::rememberOnce('stream_'.$uuid,now()->addDay(),Content::where('uuid', $uuid)->firstOrFail());
- 
+        if (!$uuid) abort(404, 'Content not found');
+
+        // Cache the main stream (static info only)
+        $stream = Cache::remember("stream_{$uuid}", now()->addDay(), function () use ($uuid) {
+            return Content::where('uuid', $uuid)->firstOrFail();
+        });
+
         $user = Auth::user();
 
-         if ($user) {
+        // Viewer tracking (dynamic)
+        if ($user) {
             $uniqueViewKey = "stream_view_{$stream->uuid}_{$user->id}";
 
-             if (!Cache::has($uniqueViewKey)) {
-                // Increment the viewer count
+            if (!Cache::has($uniqueViewKey)) {
                 $stream->increment('viewers');
 
-                 Cache::put($uniqueViewKey, true, 3600);
+                Cache::put($uniqueViewKey, true, now()->addHour());
 
-                 $stream->watch()
-                    ->updateOrCreate(
-                        [
-                            'user_id' => $user->id,
-                        ],
-                        [
-                            'watched_at' => now(),
-                        ]
-                    );
+                $stream->watch()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    ['watched_at' => now()]
+                );
             }
-        } else { 
+        } else {
             $stream->increment('viewers');
             $stream->increment('views');
         }
- 
-        $streams = Content::where('status', 1)->where('uuid', '<>', $stream->uuid)->take(4)->where('content_group', 'livestream')->get();
-        $channels = Channel::where('status', 1)->take(8)->get();
-        $videos = Content::where('type', 'video')->take(12)->get();
-        $comments = $stream->comments()->with('user')->get();
-		//dd($stream); 
-        $data = [
-            'stream' => $stream,
-            'streams' => $streams,
-            'channels' => $channels,
-            'videos' => $videos,
-            'comments' => $comments
-        ]; 
 
-        return view('Frontend.modules.channels.streams.stream', $data);
-    } catch (Exception $e) {
-        // Log the exception for debugging
+        // Related streams (cache static list only)
+        $streams = Cache::remember("related_streams_{$uuid}", now()->addDay(), function () use ($uuid) {
+            return Content::where('status', 1)
+                ->where('uuid', '<>', $uuid)
+                ->where('content_group', 'livestream')
+                ->take(4)
+                ->get();
+        });
+
+        // Channels & videos (cache)
+        $channels = Cache::remember('channels_top_8', now()->addDay(), fn() =>
+            Channel::where('status', 1)->take(8)->get()
+        );
+
+        $videos = Cache::remember('videos_top_12', now()->addDay(), fn() =>
+            Content::where('type', 'video')->take(12)->get()
+        );
+
+        // Comments are dynamic per stream — do NOT cache
+        $comments = $stream->comments()->with('user')->latest()->get();
+
+        return view('Frontend.modules.channels.streams.stream', compact(
+            'stream', 'streams', 'channels', 'videos', 'comments'
+        ));
+
+    } catch (\Exception $e) {
         Log::error('Content not found: ' . $e->getMessage());
-
-        // Return a 404 error
         abort(404, 'Content not found');
     }
 }
-
-	public function show($uuid, $slug = "")
+public function show($uuid, $slug = "")
 {
-    try { 
-        $stream = Content::where('uuid', $uuid)->firstOrFail();
+    try {
+        // Cache the main stream (static info only)
+        $stream = Cache::remember("stream_{$uuid}", now()->addDay(), function () use ($uuid) {
+            return Content::where('uuid', $uuid)->firstOrFail();
+        });
 
         $user = Auth::user();
- 
-        if ($user && $stream->event_id) {
 
+        // Event subscription check for logged-in users
+        if ($user && $stream->event_id) {
             $subscription = Subscription::where('user_id', $user->id)
                 ->where('event_id', $stream->event_id)
                 ->where('status', 1)
@@ -434,17 +447,18 @@ class StreamController extends Controller
             if (!$subscription) {
                 return redirect()->route('event.show', [
                     'eventId' => $stream->event_id,
-                    'slug' => $stream->slug
+                    'slug'    => $stream->slug
                 ]);
             }
         }
 
-        // Viewer tracking
+        // Viewer tracking (dynamic)
         if ($user) {
             $uniqueViewKey = "stream_view_{$stream->uuid}_{$user->id}";
 
             if (!Cache::has($uniqueViewKey)) {
                 $stream->increment('viewers');
+
                 Cache::put($uniqueViewKey, true, now()->addHour());
 
                 $stream->watch()->updateOrCreate(
@@ -456,37 +470,35 @@ class StreamController extends Controller
             $stream->increment('viewers');
         }
 
-        // Related data
-        $streams = Content::where('status', 1)
-            ->where('uuid', '<>', $uuid)
-            ->take(4)
-            ->get();
+        // Related streams (cached static)
+        $streams = Cache::remember("related_streams_{$uuid}", now()->addDay(), function () use ($uuid) {
+            return Content::where('status', 1)
+                ->where('uuid', '<>', $uuid)
+                ->where('content_group', 'livestream')
+                ->take(4)
+                ->get();
+        });
 
-        $channels = Channel::where('status', 1)->take(8)->get();
+        // Channels & videos (cached)
+        $channels = Cache::remember('channels_top_8', now()->addDay(), fn() =>
+            Channel::where('status', 1)->take(8)->get()
+        );
 
-        $videos = Content::where('type', 'video')
-            ->where('status', 1)
-            ->take(12)
-            ->get();
+        $videos = Cache::remember('videos_top_12', now()->addDay(), fn() =>
+            Content::where('type', 'video')->take(12)->get()
+        );
 
-        $comments = $stream->comments()
-            ->with('user')
-            ->latest()
-            ->get();
+        // Comments are dynamic per stream — do NOT cache
+        $comments = $stream->comments()->with('user')->latest()->get();
 
-        return view('Frontend.modules.channels.streams.stream', [
-            'stream' => $stream,
-            'streams' => $streams,
-            'channels' => $channels,
-            'videos' => $videos,
-            'comments' => $comments
-        ]);
+        return view('Frontend.modules.channels.streams.stream', compact(
+            'stream', 'streams', 'channels', 'videos', 'comments'
+        ));
 
     } catch (\Exception $e) {
         Log::error('Stream not found: ' . $e->getMessage());
-        abort(404);
+        abort(404, 'Content not found');
     }
 }
-
 
 }
