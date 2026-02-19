@@ -59,9 +59,8 @@
                             </label>
 
                         </div>
-                        <div class="container mt-4">
+                        <div class="form-group mt-4">
                             <button type="button" id="addTicketBtn" class="btn btn-primary mb-3">Add Ticket</button>
-
                             <div id="ticketsContainer"></div>
                         </div>
 
