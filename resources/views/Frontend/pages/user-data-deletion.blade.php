@@ -17,7 +17,7 @@
     </section>
 
     <!-- User Data Deletion Info -->
-    <section class="privacy-area pt-5 pb-5">
+    <section class="movie-area movie-bg" data-background="{{ asset('assets/img/bg/movie_bg.jpg') }}">
         <div class="container">
             <h3>Requesting Deletion of Your Data</h3>
             <p>At Streamer.co.ke, we respect your privacy and give you control over your personal data. If you wish to delete your account and associated data, please follow the steps below:</p>
