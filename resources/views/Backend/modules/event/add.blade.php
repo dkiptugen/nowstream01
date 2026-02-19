@@ -60,7 +60,7 @@
 
                         </div>
                         <div class="form-group mt-4">
-                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link mb-3 text-nowrap">
+                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link  text-decoration-none mb-3 text-nowrap">
                                 <i class="fas fa-plus"></i>
                                 Add Ticket
                             </button>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="form-group">
                             <!-- Add Row button -->
-                            <button type="button" id="addStreamBtn" class="btn btext-dark btn-link mb-3 text-nowrap" style="display:none;"> <i class="fas fa-plus"></i>Add Stream Price</button>
+                            <button type="button" id="addStreamBtn" class="btn text-dark text-decoration-none btn-link mb-3 text-nowrap" style="display:none;"> <i class="fas fa-plus"></i>Add Stream Price</button>
 
                             <!-- Container for stream pricing rows -->
                             <div id="streamsContainer"></div>
