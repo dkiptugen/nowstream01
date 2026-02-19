@@ -1,17 +1,13 @@
-{{-- CSRF --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
-{{-- Basic SEO --}}
+ 
 <meta name="description" content="@yield('description', config('site.description'))">
 <meta name="keywords" content="@yield('keywords', config('site.keywords'))">
 <meta name="author" content="{{ config('site.name') }}">
 <meta name="copyright" content="{{ config('site.name') }}">
 <meta name="application-name" content="@yield('title', config('site.title'))">
-
-{{-- Canonical --}}
+ 
 <link rel="canonical" href="{{ request()->fullUrl() }}">
-
-{{-- Favicon --}}
+ 
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/favicon/apple-touch-icon.png') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicon/favicon-32x32.png') }}">
 <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/favicon/favicon-16x16.png') }}">
