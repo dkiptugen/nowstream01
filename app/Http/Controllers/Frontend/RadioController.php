@@ -72,6 +72,8 @@ class RadioController extends Controller
  /**
      * If AJAX request → return ONLY items
      */
+   
+    // AJAX request
     if ($request->ajax()) {
         return response()->json([
             'html' => view(
@@ -81,7 +83,6 @@ class RadioController extends Controller
             'hasMore' => $radios->hasMorePages()
         ]);
     }
-
     return view('Frontend.modules.radios.index', compact(
         'radios',
         'categories',
