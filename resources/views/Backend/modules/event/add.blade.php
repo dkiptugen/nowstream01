@@ -124,9 +124,7 @@
     <script>
         $(document).ready(function () {
             $('#hasTickets, #hasStream, #hasMerch').each(function() {
-                if ($(this).is(':checked')) {
-                    $(this).trigger('change'); // show Add button & existing rows
-                }
+                $(this).trigger('change'); // respects backend value
             });
             // Default currency
             const defaultCurrency = 'USD';
