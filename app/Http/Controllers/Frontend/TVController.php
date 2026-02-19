@@ -15,15 +15,18 @@ class TVController extends Controller
     /**
      * TV listing page with filters, caching, and infinite scroll
      */
-  public function index(Request $request)
+public function index(Request $request)
 {
     $perPage = 30;
     $page = $request->get('page', 1);
     $country  = $request->get('country', 'Kenya');
     $language = $request->get('language');
 
+    // Normalize null language for cache key
+    $langKey = $language ?? 'all';
+
     // Cache key depends on page and filters
-    $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
+    $cacheKey = "tvs_{$country}_{$langKey}_page_{$page}";
 
     // Paginated TVs
     $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language, $page) {
@@ -31,11 +34,22 @@ class TVController extends Controller
             ->where('content_group', 'tv')
             ->whereNotNull('stream_url');
 
-        if ($country) $query->where('country', $country);
-        if ($language) $query->where('language', $language);
+        if ($country) {
+            $query->where('country', $country);
+        }
 
-        return $query->orderByDesc('views')->paginate($perPage, ['*'], 'page', $page);
+        if ($language) {
+            $query->where('language', $language);
+        }
+
+        // Page explicitly passed (same pattern as radios)
+        return $query->orderByDesc('views')
+            ->paginate($perPage, ['*'], 'page', $page);
     });
+
+    // IMPORTANT: keep filters during pagination
+    $tvs->appends($request->all());
+
 
     // AJAX request
     if ($request->ajax()) {
@@ -47,9 +61,14 @@ class TVController extends Controller
             'hasMore' => $tvs->hasMorePages()
         ]);
     }
+
+
     // Static / global data
     $tv_countries = Cache::remember('tv_countries', 3600, fn() =>
-        Content::where('content_group', 'tv')->whereNotNull('country')->distinct()->pluck('country')
+        Content::where('content_group', 'tv')
+            ->whereNotNull('country')
+            ->distinct()
+            ->pluck('country')
     );
 
     $categories = Cache::remember('tv_categories', 3600, fn() =>
@@ -60,7 +79,16 @@ class TVController extends Controller
         return Content::where('content_group', 'tv')
             ->whereNotNull('genre')
             ->pluck('genre')
-            ->flatMap(fn($genre) => is_array($genre) ? $genre : (str_starts_with($genre, '[') ? json_decode($genre, true) : (str_contains($genre, ',') ? array_map('trim', explode(',', $genre)) : [$genre])))
+            ->flatMap(fn($genre) => is_array($genre)
+                ? $genre
+                : (str_starts_with($genre, '[')
+                    ? json_decode($genre, true)
+                    : (str_contains($genre, ',')
+                        ? array_map('trim', explode(',', $genre))
+                        : [$genre]
+                    )
+                )
+            )
             ->filter()
             ->map(fn($g) => trim($g))
             ->unique()
@@ -89,7 +117,14 @@ class TVController extends Controller
     );
 
     return view('Frontend.modules.tvs.index', compact(
-        'tvs', 'tv_countries', 'categories', 'toptvs', 'english_tvs', 'genres', 'country', 'language'
+        'tvs',
+        'tv_countries',
+        'categories',
+        'toptvs',
+        'english_tvs',
+        'genres',
+        'country',
+        'language'
     ));
 }
 
