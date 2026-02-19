@@ -33,7 +33,7 @@
                             self::setEnv($key ,$value);
                         }
                     shell_exec('php ' . base_path('artisan') . ' config:clear');
-                    return self::success('Configuration' ,'Added successfully' ,route('configuration.index'));
+                    return self::success('Configuration' ,'Added successfully' ,route('backend.configuration.index'));
                 }
 
 
