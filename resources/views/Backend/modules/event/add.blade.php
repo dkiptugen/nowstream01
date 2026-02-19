@@ -59,6 +59,11 @@
                             </label>
 
                         </div>
+                        <div class="container mt-4">
+                            <button type="button" id="addTicketBtn" class="btn btn-primary mb-3">Add Ticket</button>
+
+                            <div id="ticketsContainer"></div>
+                        </div>
 
                         <div class="form-group d-flex justify-content-end mt-2">
                             <button type="submit" name="" id="" class="btn btn-sm btn-primary">Add Event</button>
@@ -74,4 +79,43 @@
 @section('header')
 @endsection
 @section('footer')
+
+    <script>
+        $(document).ready(function() {
+            $('#addTicketBtn').on('click', function() {
+                let container = $('#ticketsContainer');
+
+                let row = $(`
+            <div class="form-group form-row border p-2 mb-2">
+                <div class="col">
+                    <label class="control-label">Ticket Type</label>
+                    <input type="text" name="ticket[type][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Quantity</label>
+                    <input type="number" name="ticket[quantity][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Currency</label>
+                    <input type="text" name="ticket[currency][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Cost</label>
+                    <input type="number" name="ticket[cost][]" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger removeTicketBtn mt-4">Remove</button>
+                </div>
+            </div>
+        `);
+
+                container.append(row);
+            });
+
+            // Remove a ticket row
+            $('#ticketsContainer').on('click', '.removeTicketBtn', function() {
+                $(this).closest('.form-group').remove();
+            });
+        });
+    </script>
 @endsection
