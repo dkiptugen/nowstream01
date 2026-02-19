@@ -93,8 +93,9 @@ class EventController extends Controller
     /**
      * Display details for a single event.
      */
-    public function show($eventId, $slug)
+    public function show($slug)
     {
+        $eventId = Event::where('slug', $slug)->first();
         $event  = $this->get_event($eventId, $slug);
         if (!$event) abort(404, 'Event not found.');
         // increment views
