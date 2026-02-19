@@ -123,7 +123,7 @@ public function show($slug)
     }
 
     // Increment views (outside cache)
-    Event::where('id', $data['event']->id)->increment('views');
+    Event::where('uuid', $data['event']->uuid)->increment('views');
 
     return view('Frontend.modules.events.event', [
         'event'  => $data['event'],
