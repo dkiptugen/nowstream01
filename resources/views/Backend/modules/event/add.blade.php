@@ -47,14 +47,7 @@
                             <label for="venue" class="control-label"> Venue</label>
                             <input type="text" name="venue" id="venue" class="form-control">
                         </div>
-                        <div class="form-group">
 
-                            <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="featured" value="1">
-                                <span class="form-check-label">Is Featured</span>
-                            </label>
-
-                        </div>
 
 
                         <!-- TICKETS -->
@@ -86,6 +79,14 @@
                             <button type="button" id="addMerchBtn" class="btn btn-primary mb-2" style="display:none;">Add Merchandise</button>
                             <div id="merchContainer"></div>
                         </div>
+                        <div class="form-group">
+
+                            <label class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="featured" value="1">
+                                <span class="form-check-label">Is Featured</span>
+                            </label>
+
+                        </div>
 
                         <div class="form-group d-flex justify-content-end mt-2">
                             <button type="submit" name="" id="" class="btn btn-sm btn-primary">Add Event</button>
@@ -105,6 +106,9 @@
     <script>
         $(document).ready(function() {
 
+            // Default currency
+            const defaultCurrency = 'USD';
+
             /*** TICKETS ***/
             $('#hasTickets').on('change', function() {
                 $('#addTicketBtn').toggle(this.checked);
@@ -112,10 +116,11 @@
             });
 
             $('#addTicketBtn').on('click', function() {
+                let index = $('#ticketsContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
                 <div class="col">
-                    <label class="control-label">Ticket Type</label>
+                    <label class="control-label">Ticket #${index} Type</label>
                     <input type="text" name="ticket[type][]" class="form-control">
                 </div>
                 <div class="col">
@@ -124,7 +129,7 @@
                 </div>
                 <div class="col">
                     <label class="control-label">Currency</label>
-                    <input type="text" name="ticket[currency][]" class="form-control">
+                    <input type="text" name="ticket[currency][]" class="form-control" value="${defaultCurrency}">
                 </div>
                 <div class="col">
                     <label class="control-label">Cost</label>
@@ -150,15 +155,16 @@
             });
 
             $('#addStreamBtn').on('click', function() {
+                let index = $('#streamsContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
                 <div class="col">
-                    <label class="control-label">Rate Name</label>
+                    <label class="control-label">Stream #${index} Rate Name</label>
                     <input type="text" name="stream[rate_name][]" class="form-control">
                 </div>
                 <div class="col">
                     <label class="control-label">Currency</label>
-                    <input type="text" name="stream[currency][]" class="form-control">
+                    <input type="text" name="stream[currency][]" class="form-control" value="${defaultCurrency}">
                 </div>
                 <div class="col">
                     <label class="control-label">Price</label>
@@ -184,19 +190,24 @@
             });
 
             $('#addMerchBtn').on('click', function() {
+                let index = $('#merchContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
                 <div class="col">
-                    <label class="control-label">Merch Name</label>
+                    <label class="control-label">Merch #${index} Name</label>
                     <input type="text" name="merch[name][]" class="form-control">
                 </div>
                 <div class="col">
                     <label class="control-label">Currency</label>
-                    <input type="text" name="merch[currency][]" class="form-control">
+                    <input type="text" name="merch[currency][]" class="form-control" value="${defaultCurrency}">
                 </div>
                 <div class="col">
                     <label class="control-label">Price</label>
                     <input type="number" name="merch[price][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Image</label>
+                    <input type="file" name="merch[image][]" class="form-control">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button>
