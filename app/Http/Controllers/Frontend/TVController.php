@@ -117,8 +117,7 @@ public function index(Request $request)
         'toptvs',
         'english_tvs',
         'genres',
-        'country',
-        'language'
+        'country', 
     ));
 }
 
