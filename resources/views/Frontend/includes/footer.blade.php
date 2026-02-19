@@ -1,25 +1,26 @@
-<!-- newsletter-area -->
-<section class="newsletter-area newsletter-bg" data-background="{{ asset('assets/img')}}/bg/newsletter_bg.jpg">
-    <div class="container">
-        <div class="newsletter-inner-wrap">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <div class="newsletter-content">
-                        <h4>Trial Start First 30 Days.</h4>
-                        <p>Enter your email to create or restart your membership.</p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <form action="#" class="newsletter-form">
-                        <input type="email" required placeholder="Enter your email">
-                        <button class="btn">get started</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- newsletter-area-end -->
+
+	<!-- newsletter-area -->
+	<section class="newsletter-area newsletter-bg" data-background="{{ asset('assets/img')}}/bg/newsletter_bg.jpg">
+		<div class="container">
+			<div class="newsletter-inner-wrap">
+				<div class="row align-items-center">
+					<div class="col-lg-6">
+						<div class="newsletter-content">
+							<h4>Trial Start First 30 Days.</h4>
+							<p>Enter your email to create or restart your membership.</p>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<form action="#" class="newsletter-form">
+							<input type="email" required placeholder="Enter your email">
+							<button class="btn">get started</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- newsletter-area-end -->
 
 </main>
 <!-- main-area-end -->
@@ -32,7 +33,7 @@
                     <div class="col-lg-3">
                         <div class="footer-logo">
                             <a href="{{url('/')}}">
-                                <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
+                                        <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
                             </a>
                         </div>
                     </div>
@@ -40,39 +41,39 @@
                         <div class="footer-menu">
                             <nav>
                                 <ul class="navigation">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href=" {{ url('events') }}">
-                                            <div class="parent-icon"><i class="bx bx-calendar"></i>
-                                            </div>
-                                            <div class="menu-title">Events</div>
-                                        </a>
+                                <li class="nav-item">
+                        <a class="nav-link" href=" {{ url('events') }}">
+                            <div class="parent-icon"><i class="bx bx-calendar"></i>
+                            </div>
+                            <div class="menu-title">Events</div>
+                        </a>
 
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href=" {{ url('all-videos') }}">
-                                            <div class="parent-icon"><i class="bx bx-video"></i>
-                                            </div>
-                                            <div class="menu-title">Videos</div>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href=" {{ url('channels') }}">
-                                            <div class="parent-icon"><i class='bx bx-tv'></i>
-                                            </div>
-                                            <div class="menu-title">Channels</div>
-                                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" {{ url('all-videos') }}">
+                            <div class="parent-icon"><i class="bx bx-video"></i>
+                            </div>
+                            <div class="menu-title">Videos</div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" {{ url('channels') }}">
+                            <div class="parent-icon"><i class='bx bx-tv'></i>
+                            </div>
+                            <div class="menu-title">Channels</div>
+                        </a>
 
-                                    </li>
+                    </li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link" href=" {{ url('streams') }}">
-                                            <div class="parent-icon"><i class="bx bx-video-recording"></i>
-                                            </div>
-                                            <div class="menu-title">Streams</div>
-                                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" {{ url('streams') }}">
+                            <div class="parent-icon"><i class="bx bx-video-recording"></i>
+                            </div>
+                            <div class="menu-title">Streams</div>
+                        </a>
 
-                                    </li>
-                                    <!-- <li class="nav-item">
+                    </li>
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href=" {{ url('continue') }}">
                             <div class="parent-icon"> <i class="bx bx-video"></i>
                             </div>
@@ -80,14 +81,14 @@
                         </a>
 
                     </li> -->
-                                    <li class="nav-item">
-                                        <a class="nav-link" href=" {{ url('/favorites') }}">
-                                            <div class="parent-icon"><i class="bx bx-heart"></i>
-                                            </div>
-                                            <div class="menu-title">Favorites</div>
-                                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href=" {{ url('/favorites') }}">
+                            <div class="parent-icon"><i class="bx bx-heart"></i>
+                            </div>
+                            <div class="menu-title">Favorites</div>
+                        </a>
 
-                                    </li>
+                    </li>
                                 </ul>
                                 <div class="footer-search">
                                     <form action="#">
@@ -105,7 +106,7 @@
                     <div class="col-md-7">
                         <div class="quick-link-list">
                             <ul>
-                                <li><a href="{{ route('faq') }}">FAQ</a></li>
+                                   <li><a href="{{ route('faq') }}">FAQ</a></li>
                                 <li><a href="{{ route('help.center') }}">Help Center</a></li>
                                 <li><a href="{{ route('terms') }}">Terms of Use</a></li>
                                 <li><a href="{{ route('privacy') }}">Privacy</a></li>
@@ -198,15 +199,15 @@
         </li>
         <div class="user-box dropdown px-3">
             <a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                @guest
+                @guest 
                 <a href="{{ route('user.login') }}">
-                    <img src="{{ asset('avatar.png') }}" class="user-img" alt="user avatar">
-                    <div class="user-info">
-                        <p class="user-name mb-0">Login</p>
-                    </div>
-                </a>
+                <img src="{{ asset('avatar.png') }}" class="user-img" alt="user avatar">
+                <div class="user-info">
+                    <p class="user-name mb-0">Login</p>
+                </div>
+            </a>
                 @else
-
+               
                 <img src="{{ Auth::user()->image ??  asset('avatar.png')}} " class="user-img" alt="user avatar">
                 <div class="user-info">
                     <p class="user-name mb-0">{{ Auth::user()->name }}</p>
@@ -239,7 +240,7 @@
             @csrf
         </form>
     </ul>
-
+   
 </footer>
 </div>
 <!--end wrapper-->
@@ -284,33 +285,35 @@
 @if(Auth::check())
 <script>
     // pusherScript.js
-    // Pusher.logToConsole = true;
+   // Pusher.logToConsole = true;
     var pusher = new Pusher("cfc4e18a5372052374ee", {
         cluster: 'mt1',
         encrypted: true,
         authEndpoint: '/pusher/auth',
     });
-
+    
     var channel = pusher.subscribe('login.{{Auth::user()->id}}');
-    channel.bind('new_login', function(data) {
-        // console.log(data);
-        if (data.status) {
+    channel.bind('new_login', function (data) {
+       // console.log(data);
+        if(data.status)
+        {
             window.location.reload();
         }
-
+        
     });
-    channel.bind('new_payment', function(data) {
-        window.location.href = data;
-
+    channel.bind('new_payment', function (data) {
+        window.location.href=data;
+        
     });
-    channel.bind('pusher:subscription_count', function(members) {
+    channel.bind('pusher:subscription_count', function (members) {
         //console.log('successfully subscribed!');
     });
-    channel.bind('pusher:subscription_succeeded', function(members) {
+    channel.bind('pusher:subscription_succeeded', function (members) {
         //console.log('successfully subscribed!' + members);
     });
 
-    @endif
+@endif
+
 </script>
 
 
@@ -372,7 +375,7 @@
         }
     });
 </script>
-
+ 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         var subscribeButton = document.getElementById("subscribe-button");
@@ -512,111 +515,111 @@
 </script>
 <script type="text/javascript">
     history.pushState(null, document.title, location.href);
-    window.addEventListener('popstate', function(event) {
+    window.addEventListener('popstate', function (event) {
         history.pushState(null, document.title, location.href);
     });
 </script>
 
 <script>
-    (function() {
+(function () {
 
-        function initCarousel(carousel) {
+    function initCarousel(carousel) {
 
-            const track = carousel.querySelector('.pcar-track');
-            const items = carousel.querySelectorAll('.pcar-item');
+        const track = carousel.querySelector('.pcar-track');
+        const items = carousel.querySelectorAll('.pcar-item');
 
-            if (!track || items.length === 0) return;
+        if (!track || items.length === 0) return;
 
-            let index = 0;
-            let visibleItems = 1;
-            let itemWidth = 0;
+        let index = 0;
+        let visibleItems = 1;
+        let itemWidth = 0;
 
-            const gap = 16;
+        const gap = 16;
 
-            function getVisibleItems() {
-                const w = window.innerWidth;
+        function getVisibleItems() {
+            const w = window.innerWidth;
 
-                if (w >= 992) return parseInt(carousel.dataset.desktop) || 5;
-                if (w >= 768) return parseInt(carousel.dataset.tablet) || 3;
-                return parseInt(carousel.dataset.mobile) || 1;
-            }
-
-            function setSizes() {
-                visibleItems = getVisibleItems();
-
-                const containerWidth = carousel.offsetWidth;
-                itemWidth = (containerWidth - (gap * (visibleItems - 1))) / visibleItems;
-
-                items.forEach(item => {
-                    item.style.width = itemWidth + 'px';
-                });
-
-                move();
-            }
-
-            function move() {
-                const distance = index * (itemWidth + gap);
-                track.style.transform = `translateX(-${distance}px)`;
-            }
-
-            function next() {
-                if (index < items.length - visibleItems) {
-                    index++;
-                } else {
-                    index = 0;
-                }
-                move();
-            }
-
-            /* Autoplay */
-            if (carousel.dataset.autoplay === "true") {
-                const interval = parseInt(carousel.dataset.interval) || 4000;
-                setInterval(next, interval);
-            }
-
-            window.addEventListener('resize', setSizes);
-
-            setSizes();
+            if (w >= 992) return parseInt(carousel.dataset.desktop) || 5;
+            if (w >= 768) return parseInt(carousel.dataset.tablet) || 3;
+            return parseInt(carousel.dataset.mobile) || 1;
         }
 
-        /* Initialize all carousels */
-        document.querySelectorAll('.pcar').forEach(initCarousel);
+        function setSizes() {
+            visibleItems = getVisibleItems();
 
-        /* Set container width variable for overlay */
-        function updateOverlayWidth() {
-            const container = document.querySelector('.container');
-            if (!container) return;
+            const containerWidth = carousel.offsetWidth;
+            itemWidth = (containerWidth - (gap * (visibleItems - 1))) / visibleItems;
 
-            const width = container.offsetWidth;
-            document.documentElement.style.setProperty('--pcar-container-width', width + 'px');
+            items.forEach(item => {
+                item.style.width = itemWidth + 'px';
+            });
+
+            move();
         }
 
-        window.addEventListener('load', updateOverlayWidth);
-        window.addEventListener('resize', updateOverlayWidth);
+        function move() {
+            const distance = index * (itemWidth + gap);
+            track.style.transform = `translateX(-${distance}px)`;
+        }
 
-    })();
-</script>
-<script>
-    function syncCommentsHeight() {
-        if (window.innerWidth < 1200) return;
+        function next() {
+            if (index < items.length - visibleItems) {
+                index++;
+            } else {
+                index = 0;
+            }
+            move();
+        }
 
-        let videoWrap = document.getElementById('videoWrap');
-        let commentsCard = document.getElementById('commentsCard');
+        /* Autoplay */
+        if (carousel.dataset.autoplay === "true") {
+            const interval = parseInt(carousel.dataset.interval) || 4000;
+            setInterval(next, interval);
+        }
 
-        if (!videoWrap || !commentsCard) return;
+        window.addEventListener('resize', setSizes);
 
-        commentsCard.style.height = videoWrap.offsetHeight + "px";
+        setSizes();
     }
 
-    $(document).ready(function() {
-        syncCommentsHeight();
-        $(window).on('resize', syncCommentsHeight);
+    /* Initialize all carousels */
+    document.querySelectorAll('.pcar').forEach(initCarousel);
 
-        // delay to allow Plyr render
-        setTimeout(syncCommentsHeight, 300);
-        setTimeout(syncCommentsHeight, 1000);
-    });
+    /* Set container width variable for overlay */
+    function updateOverlayWidth() {
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        const width = container.offsetWidth;
+        document.documentElement.style.setProperty('--pcar-container-width', width + 'px');
+    }
+
+    window.addEventListener('load', updateOverlayWidth);
+    window.addEventListener('resize', updateOverlayWidth);
+
+})();
 </script>
+	<script>
+		function syncCommentsHeight() {
+			if (window.innerWidth < 1200) return;
+
+			let videoWrap = document.getElementById('videoWrap');
+			let commentsCard = document.getElementById('commentsCard');
+
+			if (!videoWrap || !commentsCard) return;
+
+			commentsCard.style.height = videoWrap.offsetHeight + "px";
+		}
+
+		$(document).ready(function() {
+			syncCommentsHeight();
+			$(window).on('resize', syncCommentsHeight);
+
+			// delay to allow Plyr render
+			setTimeout(syncCommentsHeight, 300);
+			setTimeout(syncCommentsHeight, 1000);
+		});
+	</script> 
 </body>
 
 </html>
