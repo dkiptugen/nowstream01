@@ -108,50 +108,58 @@
 
 @section('footer')
 <script>
-let page = 1;
-let loading = false;
-let hasMore = true;
+(function () {
 
-const container = document.getElementById('tv-container');
-const loader = document.getElementById('loading');
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
 
-window.addEventListener('scroll', () => {
-    if (loading || !hasMore) return;
+    const container = document.getElementById('tv-container');
+    const loader = document.getElementById('loading');
 
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
-        loadMore();
-    }
-});
+    if (!container) return;
 
-function loadMore() {
-    loading = true;
-    loader.style.display = 'block';
-    page++;
+    window.addEventListener('scroll', function () {
+        if (loading || !hasMore) return;
 
-    const params = new URLSearchParams(window.location.search);
-    params.set('page', page);
-
-    fetch(`?${params.toString()}`, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
         }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.html) {
-            container.insertAdjacentHTML('beforeend', data.html);
-        }
-
-        hasMore = data.hasMore;
-        loading = false;
-        loader.style.display = hasMore ? 'block' : 'none';
-    })
-    .catch(() => {
-        loading = false;
-        hasMore = false;
-        loader.style.display = 'none';
     });
-}
+
+    function loadMore() {
+        loading = true;
+        if (loader) loader.style.display = 'block';
+
+        page++;
+
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', page);
+
+        fetch('?' + params.toString(), {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.html) {
+                container.insertAdjacentHTML('beforeend', data.html);
+            }
+
+            hasMore = data.hasMore;
+            loading = false;
+
+            if (loader) {
+                loader.style.display = hasMore ? 'block' : 'none';
+            }
+        })
+        .catch(function () {
+            loading = false;
+            hasMore = false;
+            if (loader) loader.style.display = 'none';
+        });
+    }
+
+})();
 </script>
 
 @endsection
