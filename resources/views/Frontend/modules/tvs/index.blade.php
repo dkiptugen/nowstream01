@@ -94,13 +94,13 @@
                 </div>
             </div>
 
-            <div class="row tr-movie-active h-100" id="tv-container">
-                @include('Frontend.includes.components.partials.tvs-list')
-            </div>
+            <div class="row tr-movie-active h-100" id="tv-container" style="position: relative; height:auto !important;">
+                    @include('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])
+                </div>
 
-            <div class="text-center my-4" id="loading" style="display:none;">
-                <span class="text-light">Loading more TVs...</span>
-            </div>
+                <div class="text-center my-4" id="loading" style="display:none;">
+                    <span class="text-light">Loading more tvs...</span>
+                </div>
         </div>
     </section>
 </main>
