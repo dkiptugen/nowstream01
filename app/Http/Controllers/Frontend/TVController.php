@@ -37,14 +37,16 @@ class TVController extends Controller
         return $query->orderByDesc('views')->paginate($perPage, ['*'], 'page', $page);
     });
 
-    // Handle AJAX (infinite scroll)
+    // AJAX request
     if ($request->ajax()) {
         return response()->json([
-            'html'    => view('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])->render(),
-            'hasMore' => $tvs->hasMorePages(),
+            'html' => view(
+                'Frontend.includes.components.partials.tvs-list',
+                compact('tvs')
+            )->render(),
+            'hasMore' => $tvs->hasMorePages()
         ]);
     }
-
     // Static / global data
     $tv_countries = Cache::remember('tv_countries', 3600, fn() =>
         Content::where('content_group', 'tv')->whereNotNull('country')->distinct()->pluck('country')
