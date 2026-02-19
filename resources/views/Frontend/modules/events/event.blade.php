@@ -136,7 +136,7 @@
                 data-mobile="1">
 
                 <div class="pcar-track">
-                    @foreach($events as $event)
+                    @foreach($relatedEvents as $event)
                     <div class="pcar-item">
 					@include('Frontend.includes.components.cards.events')
                     </div>
