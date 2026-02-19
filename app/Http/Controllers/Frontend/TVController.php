@@ -17,8 +17,8 @@ class TVController extends Controller
      */
   public function index(Request $request)
 {
-    $perPage  = 30;
-    $page     = $request->get('page', 1);
+    $perPage = 30;
+    $page = $request->get('page', 1);
     $country  = $request->get('country', 'Kenya');
     $language = $request->get('language');
 
