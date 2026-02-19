@@ -213,6 +213,7 @@ Route::view('/faq', 'Frontend.pages.faq')->name('faq');
 Route::view('/help-center', 'Frontend.pages.help-center')->name('help.center');
 Route::view('/terms-of-use', 'Frontend.pages.terms')->name('terms');
 Route::view('/privacy', 'Frontend.pages.privacy')->name('privacy');
+Route::view('/user-data-deletion', 'Frontend.pages.user-data-deletion')->name('user.data.deletion');
 
 Route::middleware('auth')->group(function () {
     Route::post('comment/{comment}/like', [CommentController::class, 'like'])->name('comment.like');
