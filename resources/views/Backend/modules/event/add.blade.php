@@ -53,30 +53,38 @@
                                 <input class="form-check-input" type="checkbox" name="featured" value="1">
                                 <span class="form-check-label">Is Featured</span>
                             </label>
-                            <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="has_stream" value="1" id="hasStream">
-                                <span class="form-check-label">Has Streams?</span>
-                            </label>
-                            <!-- Checkbox to indicate if tickets are available -->
-                            <div class="form-check form-check-inline">
+
+                        </div>
+
+
+                        <!-- TICKETS -->
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
                                 <input type="checkbox" id="hasTickets" class="form-check-input">
                                 <label for="hasTickets" class="form-check-label">Has Tickets?</label>
                             </div>
-
-                        </div>
-                        <div class="form-group mt-4">
-                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link  text-decoration-none mb-3 text-nowrap"  style="display:none;">
-                                <i class="fas fa-plus"></i>
-                                Add Ticket
-                            </button>
+                            <button type="button" id="addTicketBtn" class="btn btn-primary mb-2" style="display:none;">Add Ticket</button>
                             <div id="ticketsContainer"></div>
                         </div>
-                        <div class="form-group">
-                            <!-- Add Row button -->
-                            <button type="button" id="addStreamBtn" class="btn text-dark text-decoration-none btn-link mb-3 text-nowrap" style="display:none;"> <i class="fas fa-plus"></i>Add Stream Price</button>
 
-                            <!-- Container for stream pricing rows -->
+                        <!-- STREAMS -->
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" id="hasStream" class="form-check-input">
+                                <label for="hasStream" class="form-check-label">Has Stream?</label>
+                            </div>
+                            <button type="button" id="addStreamBtn" class="btn btn-primary mb-2" style="display:none;">Add Stream Price</button>
                             <div id="streamsContainer"></div>
+                        </div>
+
+                        <!-- MERCHANDISE -->
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input type="checkbox" id="hasMerch" class="form-check-input">
+                                <label for="hasMerch" class="form-check-label">Has Merchandise?</label>
+                            </div>
+                            <button type="button" id="addMerchBtn" class="btn btn-primary mb-2" style="display:none;">Add Merchandise</button>
+                            <div id="merchContainer"></div>
                         </div>
 
                         <div class="form-group d-flex justify-content-end mt-2">
@@ -97,20 +105,13 @@
     <script>
         $(document).ready(function() {
 
-            // Toggle Add Ticket button based on checkbox
+            /*** TICKETS ***/
             $('#hasTickets').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#addTicketBtn').show();
-                } else {
-                    $('#addTicketBtn').hide();
-                    $('#ticketsContainer').empty(); // remove all ticket rows if unchecked
-                }
+                $('#addTicketBtn').toggle(this.checked);
+                if (!this.checked) $('#ticketsContainer').empty();
             });
 
-            // Add a new ticket row
             $('#addTicketBtn').on('click', function() {
-                let container = $('#ticketsContainer');
-
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
                 <div class="col">
@@ -134,30 +135,21 @@
                 </div>
             </div>
         `);
-
-                container.append(row);
+                $('#ticketsContainer').append(row);
             });
 
-            // Remove a ticket row
             $('#ticketsContainer').on('click', '.removeTicketBtn', function() {
                 $(this).closest('.form-group').remove();
             });
 
 
-            // Toggle add button when has_stream is checked
+            /*** STREAMS ***/
             $('#hasStream').on('change', function() {
-                if ($(this).is(':checked')) {
-                    $('#addStreamBtn').show();
-                } else {
-                    $('#addStreamBtn').hide();
-                    $('#streamsContainer').empty(); // remove all rows if unchecked
-                }
+                $('#addStreamBtn').toggle(this.checked);
+                if (!this.checked) $('#streamsContainer').empty();
             });
 
-            // Add a new stream pricing row
             $('#addStreamBtn').on('click', function() {
-                let container = $('#streamsContainer');
-
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
                 <div class="col">
@@ -177,12 +169,44 @@
                 </div>
             </div>
         `);
-
-                container.append(row);
+                $('#streamsContainer').append(row);
             });
 
-            // Remove a stream pricing row
             $('#streamsContainer').on('click', '.removeStreamBtn', function() {
+                $(this).closest('.form-group').remove();
+            });
+
+
+            /*** MERCHANDISE ***/
+            $('#hasMerch').on('change', function() {
+                $('#addMerchBtn').toggle(this.checked);
+                if (!this.checked) $('#merchContainer').empty();
+            });
+
+            $('#addMerchBtn').on('click', function() {
+                let row = $(`
+            <div class="form-group form-row border p-2 mb-2">
+                <div class="col">
+                    <label class="control-label">Merch Name</label>
+                    <input type="text" name="merch[name][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Currency</label>
+                    <input type="text" name="merch[currency][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Price</label>
+                    <input type="number" name="merch[price][]" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button>
+                </div>
+            </div>
+        `);
+                $('#merchContainer').append(row);
+            });
+
+            $('#merchContainer').on('click', '.removeMerchBtn', function() {
                 $(this).closest('.form-group').remove();
             });
 
