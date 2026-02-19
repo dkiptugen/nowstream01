@@ -54,7 +54,7 @@
                                 <span class="form-check-label">Is Featured</span>
                             </label>
                             <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="has_stream" value="1">
+                                <input class="form-check-input" type="checkbox" name="has_stream" value="1" id="hasStream">
                                 <span class="form-check-label">Has Stream</span>
                             </label>
 
@@ -64,7 +64,14 @@
                                 <i class="fas fa-plus"></i>
                                 Add Ticket
                             </button>
-                            <div id="ticketsContainer" class="border shadow"></div>
+                            <div id="ticketsContainer"></div>
+                        </div>
+                        <div class="form-group">
+                            <!-- Add Row button -->
+                            <button type="button" id="addStreamBtn" class="btn btext-dark btn-link mb-3 text-nowrap" style="display:none;"> <i class="fas fa-plus"></i>Add Stream Price</button>
+
+                            <!-- Container for stream pricing rows -->
+                            <div id="streamsContainer"></div>
                         </div>
 
                         <div class="form-group d-flex justify-content-end mt-2">
@@ -118,6 +125,51 @@
             $('#ticketsContainer').on('click', '.removeTicketBtn', function() {
                 $(this).closest('.form-group').remove();
             });
+        });
+        $(document).ready(function() {
+
+            // Toggle add button when has_stream is checked
+            $('#hasStream').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#addStreamBtn').show();
+                } else {
+                    $('#addStreamBtn').hide();
+                    $('#streamsContainer').empty(); // remove all rows if unchecked
+                }
+            });
+
+            // Add a new stream pricing row
+            $('#addStreamBtn').on('click', function() {
+                let container = $('#streamsContainer');
+
+                let row = $(`
+            <div class="form-group form-row border p-2 mb-2">
+                <div class="col">
+                    <label class="control-label">Rate Name</label>
+                    <input type="text" name="stream[rate_name][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Currency</label>
+                    <input type="text" name="stream[currency][]" class="form-control">
+                </div>
+                <div class="col">
+                    <label class="control-label">Price</label>
+                    <input type="number" name="stream[price][]" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger removeStreamBtn mt-4">Remove</button>
+                </div>
+            </div>
+        `);
+
+                container.append(row);
+            });
+
+            // Remove a stream pricing row
+            $('#streamsContainer').on('click', '.removeStreamBtn', function() {
+                $(this).closest('.form-group').remove();
+            });
+
         });
     </script>
 @endsection
