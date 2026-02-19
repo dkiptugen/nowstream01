@@ -72,11 +72,14 @@
 
                         <!-- MERCHANDISE -->
                         <div class="mb-4">
-                            <div class="form-check mb-2">
-                                <input type="checkbox" id="hasMerch" class="form-check-input">
-                                <label for="hasMerch" class="form-check-label">Has Merchandise?</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" id="hasMerch" class="form-check-input">
+                                    <label for="hasMerch" class="form-check-label">Has Merchandise?</label>
+                                </div>
+                                <button type="button" id="addMerchBtn" class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;"><i class="fas fa-plus"></i> Merchandise</button>
                             </div>
-                            <button type="button" id="addMerchBtn" class="btn btn-primary mb-2" style="display:none;">Add Merchandise</button>
+
                             <div id="merchContainer"></div>
                         </div>
                         <div class="form-group">
