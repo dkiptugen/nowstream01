@@ -205,8 +205,7 @@ Route::middleware(['detectCountry'])->group(function () {
         ->name('auth.social_delete');
 
     Route::get('success/{eventId}', [SubscriptionController::class, 'succeed'])->name('success');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+    Route::get('/home', [HomeController::class, 'index'])->name('home'); 
 });
 // Informational pages
 Route::view('/faq', 'Frontend.pages.faq')->name('faq');
