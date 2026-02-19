@@ -75,7 +75,7 @@
                     <h2 class="title">More Channels</h2>
                 </div>
             </div>
-
+{{dd($tvs)}}
             <div class="row tr-movie-active">
                 @foreach($tvs as $tv)
                 @include('Frontend.includes.components.cards.tv-card', ['tv' => $tv])
