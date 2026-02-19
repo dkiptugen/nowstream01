@@ -58,7 +58,7 @@
                                 <span class="form-check-label">Has Streams?</span>
                             </label>
                             <!-- Checkbox to indicate if tickets are available -->
-                            <div class="form-check mb-3">
+                            <div class="form-check form-check-inline">
                                 <input type="checkbox" id="hasTickets" class="form-check-input">
                                 <label for="hasTickets" class="form-check-label">Has Tickets?</label>
                             </div>
