@@ -13,7 +13,8 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\ContentController;
 use App\Http\Controllers\Backend\EventStreamController;
 use App\Http\Controllers\Backend\EventVideoController;
-use App\Http\Controllers\Backend\PodcastController;
+    use App\Http\Controllers\Backend\MicrositeController;
+    use App\Http\Controllers\Backend\PodcastController;
 use App\Http\Controllers\Backend\PodcastEpisodeController;
 use App\Http\Controllers\Backend\RadioController;
 use App\Http\Controllers\Backend\StreamController;
@@ -116,6 +117,11 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
         Route::resource('video', VideoController::class);
         Route::post('video/datatable', 'datatable')->name('video.datatable');
     });
+    Route::controller(MicrositeController::class)->group( function (){
+        Route::resource('microsite', MicrositeController::class);
+        Route::post('microsite/datatable', 'datatable')->name('microsite.datatable');
+    });
+
     Route::name('event.')->prefix('event')->group(function (){
         Route::controller(EventStreamController::class)->group( function (){
             Route::resource('stream', EventStreamController::class);
