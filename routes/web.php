@@ -115,8 +115,7 @@ Route::middleware(['detectCountry'])->group(function () {
 
         // Password reset routes
         Route::post('/forgot-password', 'forgotPassword')->name('password.email');
-        Route::post('/reset-password', 'resetPassword')->name('password.update');
-        ;
+        Route::post('/reset-password', 'resetPassword')->name('password.update');;
         // Email verification route
         Route::get('/email/verify', function () {
             return view('Frontend.auth.verify-email');
@@ -165,7 +164,7 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
-        Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
+    Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
     // Content within a category (specific)
     Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
@@ -182,7 +181,7 @@ Route::middleware(['detectCountry'])->group(function () {
     // show podcast
     Route::get('/podcast/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
-Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
+    Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
 
     // show tv
     Route::get('/tv/{slug}', [TVController::class, 'show'])->name('tv.show');
@@ -209,6 +208,12 @@ Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 });
+// Informational pages
+Route::view('/faq', 'Frontend.pages.faq')->name('faq');
+Route::view('/help-center', 'Frontend.pages.help-center')->name('help.center');
+Route::view('/terms-of-use', 'Frontend.pages.terms')->name('terms');
+Route::view('/privacy', 'Frontend.pages.privacy')->name('privacy');
+
 Route::middleware('auth')->group(function () {
     Route::post('comment/{comment}/like', [CommentController::class, 'like'])->name('comment.like');
     Route::post('comment/{comment}/dislike', [CommentController::class, 'dislike'])->name('comment.dislike');
