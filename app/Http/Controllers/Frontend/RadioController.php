@@ -16,21 +16,15 @@ class RadioController extends Controller
      * Radio listing page
      */
     
- public function index(Request $request)
+public function index(Request $request)
 {
     $perPage = 30;
     $page = $request->get('page', 1);
-    $country = $request->get('country'); // optional filter
+    $country = $request->get('country');
 
-    /**
-     * Build dynamic cache key
-     */
     $cacheKey = "radios_page_{$page}_" . ($country ?? 'all');
 
-    /**
-     * Paginated Radios
-     */
-    $radios = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($perPage, $country) {
+    $radios = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($perPage, $page, $country) {
 
         $query = Content::where('content_group', 'radio')
             ->whereNotNull('stream_url')
@@ -40,12 +34,15 @@ class RadioController extends Controller
             $query->where('country', $country);
         }
 
-        return $query->latest()->paginate($perPage);
+        // IMPORTANT: pass page manually
+        return $query->latest()->paginate($perPage, ['*'], 'page', $page);
     });
 
+    // Preserve query parameters in links
+    $radios->appends($request->all());
 
     /**
-     * Categories (rarely change)
+     * Categories
      */
     $categories = Cache::remember('radio_categories', now()->addHours(12), function () {
         return Category::where('type', 'radio')
@@ -53,22 +50,22 @@ class RadioController extends Controller
             ->get();
     });
 
-
     /**
-     * Top Radios (randomized inside cache, not per request)
+     * Top radios
      */
     $topradios = Cache::remember('top_radios_home', now()->addMinutes(15), function () {
         return Content::where('content_group', 'radio')
-                ->whereNotNull('stream_url')
-                ->where('status', 1)
-                ->latest()
-                ->paginate(30);
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->orderByDesc('views')
+            ->limit(100)
+            ->get()
+            ->shuffle()
+            ->take(16)
+            ->values();
     });
 
-
-    /**
-     * AJAX (infinite scroll)
-     */
+    // AJAX
     if ($request->ajax()) {
         return response()->json([
             'html' => view(
