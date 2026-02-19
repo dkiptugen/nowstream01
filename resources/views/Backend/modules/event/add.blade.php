@@ -1,7 +1,6 @@
 @extends('Backend.includes.layout')
 @section('content')
 
-
     <div class="row">
         <div class="col">
             <div class="card card-border-primary">
@@ -11,7 +10,8 @@
                 <div class="card-body">
 
 
-                    <form action="{{ route('backend.event.store') }}" class="form form-horizontal create-form" enctype="multipart/form-data" method="post">
+                    <form action="{{ route('backend.event.store') }}" class="form form-horizontal create-form"
+                          enctype="multipart/form-data" method="post">
                         @csrf
                         <div class="form-group">
                             <label for="event_name" class="control-label"> Event Name</label>
@@ -19,17 +19,20 @@
                         </div>
                         <div class="form-group mt-2">
                             <label for="event_description" class="control-label">Description</label>
-                            <textarea name="event_description" id="event_description" class="form-control editor" rows="10"></textarea>
+                            <textarea name="event_description" id="event_description" class="form-control editor"
+                                      rows="10"></textarea>
                         </div>
                         <div class="form-group form-row">
                             <div class="col">
                                 <label for="thumbnail" class="control-label">Event Image/ Flyer</label>
-                                <input type="file" name="thumbnail" id="thumbnail_image" class="form-control-file"  accept="image/*">
+                                <input type="file" name="thumbnail" id="thumbnail_image" class="form-control-file"
+                                       accept="image/*">
 
                             </div>
                             <div class="col">
                                 <label for="stream_thumbnail" class="control-label">Stream Thumbnail</label>
-                                <input type="file" name="stream_thumbnail" id="stream_thumbnail" class="form-control-file" accept="image/*">
+                                <input type="file" name="stream_thumbnail" id="stream_thumbnail"
+                                       class="form-control-file" accept="image/*">
                             </div>
 
                         </div>
@@ -49,24 +52,33 @@
                         </div>
 
 
-
                         <!-- TICKETS -->
                         <div class="mb-4">
-                            <div class="form-check mb-2">
-                                <input type="checkbox" id="hasTickets" class="form-check-input">
-                                <label for="hasTickets" class="form-check-label">Has Tickets?</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" id="hasTickets" class="form-check-input">
+                                    <label for="hasTickets" class="form-check-label">Has Tickets</label>
+                                </div>
+                                <button type="button" id="addTicketBtn"
+                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
+                                    <i class="fas fa-plus"></i> Ticket
+                                </button>
                             </div>
-                            <button type="button" id="addTicketBtn" class="btn btn-primary mb-2" style="display:none;">Add Ticket</button>
                             <div id="ticketsContainer"></div>
                         </div>
 
                         <!-- STREAMS -->
                         <div class="mb-4">
-                            <div class="form-check mb-2">
-                                <input type="checkbox" id="hasStream" class="form-check-input">
-                                <label for="hasStream" class="form-check-label">Has Stream?</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="form-check mb-2">
+                                    <input type="checkbox" id="hasStream" class="form-check-input">
+                                    <label for="hasStream" class="form-check-label">Has Stream</label>
+                                </div>
+                                <button type="button" id="addStreamBtn"
+                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
+                                    <i class="fas fa-plus"></i> Stream Price
+                                </button>
                             </div>
-                            <button type="button" id="addStreamBtn" class="btn btn-primary mb-2" style="display:none;">Add Stream Price</button>
                             <div id="streamsContainer"></div>
                         </div>
 
@@ -75,9 +87,12 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check mb-2">
                                     <input type="checkbox" id="hasMerch" class="form-check-input">
-                                    <label for="hasMerch" class="form-check-label">Has Merchandise?</label>
+                                    <label for="hasMerch" class="form-check-label">Has Merchandise</label>
                                 </div>
-                                <button type="button" id="addMerchBtn" class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;"><i class="fas fa-plus"></i> Merchandise</button>
+                                <button type="button" id="addMerchBtn"
+                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
+                                    <i class="fas fa-plus"></i> Merchandise
+                                </button>
                             </div>
 
                             <div id="merchContainer"></div>
@@ -107,18 +122,18 @@
 @section('footer')
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             // Default currency
             const defaultCurrency = 'USD';
 
             /*** TICKETS ***/
-            $('#hasTickets').on('change', function() {
+            $('#hasTickets').on('change', function () {
                 $('#addTicketBtn').toggle(this.checked);
                 if (!this.checked) $('#ticketsContainer').empty();
             });
 
-            $('#addTicketBtn').on('click', function() {
+            $('#addTicketBtn').on('click', function () {
                 let index = $('#ticketsContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
@@ -146,18 +161,18 @@
                 $('#ticketsContainer').append(row);
             });
 
-            $('#ticketsContainer').on('click', '.removeTicketBtn', function() {
+            $('#ticketsContainer').on('click', '.removeTicketBtn', function () {
                 $(this).closest('.form-group').remove();
             });
 
 
             /*** STREAMS ***/
-            $('#hasStream').on('change', function() {
+            $('#hasStream').on('change', function () {
                 $('#addStreamBtn').toggle(this.checked);
                 if (!this.checked) $('#streamsContainer').empty();
             });
 
-            $('#addStreamBtn').on('click', function() {
+            $('#addStreamBtn').on('click', function () {
                 let index = $('#streamsContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
@@ -181,18 +196,18 @@
                 $('#streamsContainer').append(row);
             });
 
-            $('#streamsContainer').on('click', '.removeStreamBtn', function() {
+            $('#streamsContainer').on('click', '.removeStreamBtn', function () {
                 $(this).closest('.form-group').remove();
             });
 
 
             /*** MERCHANDISE ***/
-            $('#hasMerch').on('change', function() {
+            $('#hasMerch').on('change', function () {
                 $('#addMerchBtn').toggle(this.checked);
                 if (!this.checked) $('#merchContainer').empty();
             });
 
-            $('#addMerchBtn').on('click', function() {
+            $('#addMerchBtn').on('click', function () {
                 let index = $('#merchContainer .form-group').length + 1;
                 let row = $(`
             <div class="form-group form-row border p-2 mb-2">
@@ -220,7 +235,7 @@
                 $('#merchContainer').append(row);
             });
 
-            $('#merchContainer').on('click', '.removeMerchBtn', function() {
+            $('#merchContainer').on('click', '.removeMerchBtn', function () {
                 $(this).closest('.form-group').remove();
             });
 
