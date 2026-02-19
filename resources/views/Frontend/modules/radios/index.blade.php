@@ -85,56 +85,49 @@
 @endsection
 @section('footer')
 
+
 <script>
-let page = 1;
-let loading = false;
-let hasMore = true;
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
 
-window.addEventListener('scroll', function () {
+    const container = document.getElementById('radio-container');
+    const loader = document.getElementById('loading');
 
-    if (loading || !hasMore) return;
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
 
-    const scrollPosition = window.innerHeight + window.scrollY;
-    const triggerPoint = document.body.offsetHeight - 200;
-
-    if (scrollPosition >= triggerPoint) {
-        loadMore();
-    }
-});
-
-function loadMore() {
-    loading = true;
-    page++;
-
-    document.getElementById('loading').style.display = 'block';
-
-    fetch(`?page=${page}`, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
         }
-    })
-    .then(res => res.text())
-    .then(html => {
-
-        // If no more items returned → stop
-        if (html.trim() === '') {
-            hasMore = false;
-            document.getElementById('loading').innerText = 'No more radios';
-            return;
-        }
-
-        document
-            .getElementById('radio-container')
-            .insertAdjacentHTML('beforeend', html);
-
-        loading = false;
-        document.getElementById('loading').style.display = 'none';
-    })
-    .catch(() => {
-        loading = false;
-        document.getElementById('loading').style.display = 'none';
     });
-}
+
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
 </script>
 
 @endsection
