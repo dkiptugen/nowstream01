@@ -93,18 +93,44 @@ class EventController extends Controller
     /**
      * Display details for a single event.
      */
-    public function show($slug)
-    {
-        $eventId = Event::where('slug', $slug)->first();
-        $event  = $this->get_event($eventId, $slug);
-        if (!$event) abort(404, 'Event not found.');
-        // increment views
-        
-        $event->increment('views');
-        $events = $this->get_events($eventId);
-        $videos = $this->get_videos();
-        $rates  = $this->get_event_ticket_rates($eventId);
 
-        return view('Frontend.modules.events.event', compact('event', 'events', 'videos', 'rates'));
+
+public function show($slug)
+{
+    // Cache key per event
+    $cacheKey = "event_page_{$slug}";
+
+    $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
+
+    $event = Event::where('slug', $slug)->firstOrFail();
+
+        if (!$event) {
+            return null;
+        }
+
+        $eventId = $event->uuid;
+
+        return [
+            'event'  => $event,
+            'events' => $this->get_events($eventId),
+            'videos' => $this->get_videos(),
+            'rates'  => $this->get_event_ticket_rates($eventId),
+        ];
+    });
+
+    if (!$data) {
+        abort(404, 'Event not found.');
     }
+
+    // Increment views (outside cache)
+    Event::where('id', $data['event']->id)->increment('views');
+
+    return view('Frontend.modules.events.event', [
+        'event'  => $data['event'],
+        'events' => $data['events'],
+        'videos' => $data['videos'],
+        'rates'  => $data['rates'],
+    ]);
+}
+
 }
