@@ -18,22 +18,17 @@ class TVController extends Controller
 public function index(Request $request)
 {
     $perPage = 30;
-    $page = $request->get('page', 1);
-    $country  = $request->get('country', 'Kenya'); 
+    $page = $request->get('page', 1); 
  
 
     // Cache key depends on page and filters
-    $cacheKey = "tvs_{$country}_page_{$page}";
+    $cacheKey = "tvs_page_{$page}";
 
     // Paginated TVs
-    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $page) {
+    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $page) {
         $query = Content::query()
             ->where('content_group', 'tv')
             ->whereNotNull('stream_url');
-
-        if ($country) {
-            $query->where('country', $country);
-        }
  
 
         // Page explicitly passed (same pattern as radios)
@@ -116,8 +111,7 @@ public function index(Request $request)
         'categories',
         'toptvs',
         'english_tvs',
-        'genres',
-        'country', 
+        'genres', 
     ));
 }
 
