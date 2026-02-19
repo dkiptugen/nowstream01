@@ -122,7 +122,7 @@ public function show($slug)
     $relatedEvents = Cache::remember("related_events_{$data['event']->uuid}", now()->addDay(), function () use ($data) {
         return Content::where('status', 1)
             ->where('uuid', '<>', $data['event']->uuid)
-            ->where('content_group', 'livestream')
+            ->where('content_group', 'event')
             ->take(4)
             ->get();
     });
