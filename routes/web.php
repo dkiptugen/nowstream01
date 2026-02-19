@@ -165,7 +165,7 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
-        Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
+        Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
     // Content within a category (specific)
     Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
