@@ -55,12 +55,17 @@
                             </label>
                             <label class="form-check form-check-inline">
                                 <input class="form-check-input" type="checkbox" name="has_stream" value="1" id="hasStream">
-                                <span class="form-check-label">Has Stream</span>
+                                <span class="form-check-label">Has Streams?</span>
                             </label>
+                            <!-- Checkbox to indicate if tickets are available -->
+                            <div class="form-check mb-3">
+                                <input type="checkbox" id="hasTickets" class="form-check-input">
+                                <label for="hasTickets" class="form-check-label">Has Tickets?</label>
+                            </div>
 
                         </div>
                         <div class="form-group mt-4">
-                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link  text-decoration-none mb-3 text-nowrap">
+                            <button type="button" id="addTicketBtn" class="btn text-dark btn-link  text-decoration-none mb-3 text-nowrap"  style="display:none;">
                                 <i class="fas fa-plus"></i>
                                 Add Ticket
                             </button>
@@ -91,6 +96,18 @@
 
     <script>
         $(document).ready(function() {
+
+            // Toggle Add Ticket button based on checkbox
+            $('#hasTickets').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#addTicketBtn').show();
+                } else {
+                    $('#addTicketBtn').hide();
+                    $('#ticketsContainer').empty(); // remove all ticket rows if unchecked
+                }
+            });
+
+            // Add a new ticket row
             $('#addTicketBtn').on('click', function() {
                 let container = $('#ticketsContainer');
 
@@ -125,8 +142,7 @@
             $('#ticketsContainer').on('click', '.removeTicketBtn', function() {
                 $(this).closest('.form-group').remove();
             });
-        });
-        $(document).ready(function() {
+
 
             // Toggle add button when has_stream is checked
             $('#hasStream').on('change', function() {
