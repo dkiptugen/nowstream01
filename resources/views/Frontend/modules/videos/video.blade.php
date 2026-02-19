@@ -9,17 +9,16 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
 					<div id="videoWrap" class="video-wrap">
-  <video
-                            id="player"
-                            playsinline
-                            data-poster="{{ $video->thumbnail_url }}">
-                        </video>
-					</div>
+<video id="player"
+       data-src="{{ Storage::url($video->content_path) }}"
+       data-title="{{ $video->title }}"
+       data-thumb="{{ $video->thumbnail_url }}">
+</video>
 
-					@php
-					$oldvid= $video;
-					$vid = $video->id;
-					@endphp
+					 <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
+</div>
+
+					 
 				</div>
 				@include('Frontend.includes.components.partials.video-comments', [
     'comments' => $comments,
@@ -84,11 +83,7 @@
 				<div class="card radius-5 row mx-md-0">
 
 					<video id="player" controls playsinline data-poster="{{ $video->thumbnail }}"></video>
-
-					@php
-					$oldvid= $video;
-					$vid = $video->id;
-					@endphp
+ 
 					<div class="card-body">
 						<h2 class="mb-0">
 							{{$video->title}}
@@ -278,7 +273,7 @@
 
 
 	@if($channels->isNotEmpty())
-	<section>
+	<section class="d-none">
 		<h5 class="mb-3">Popular Channels</h5>
 		<div class="d-flex scrolling">
 			@foreach ($channels as $channel)
@@ -474,6 +469,18 @@
 		.sticky {
 			z-index: 99;
 		}
+		.live-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    z-index: 10;
+}
 	</style>
 	@endsection
 	@section('footer')

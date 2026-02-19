@@ -7,10 +7,12 @@ return [
 'src' => $ep->stream_url,
 'title' => $ep->title,
 'podcast' => $podcast->title,
-'thumbnail' => $podcast->thumbnail_url
+'thumbnail' => $podcast->thumbnail_url,
+'type' => 'audio', // explicitly set type
 ];
 });
 @endphp
+
 <!-- main-area -->
 <main>
 
@@ -21,76 +23,80 @@ return [
                 <div class="col-xl-8 col-lg-8">
                     <div class="row mx-0 g-3">
 
-                <div class="col-xl-5 col-lg-5">
-                    <div class="movie-details-img">
-                        <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
-                        <a class="popup-video"
- onclick='playGlobalAudio(@json($playlist), 0)'>
-                            <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="">
-                        </a>
- 
+                        <div class="col-xl-4 col-lg-4">
+                            <div class="movie-details-img">
+                                <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
+                                <span class="popup-video" onclick='window.playGlobalAudio(@json($playlist), 0)'>
+                                    <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast" style="cursor: pointer;">
+                                </span>
 
-                    </div>
-                </div>
-                <div class="col-xl-7 col-lg-7">
-                    <div class="movie-details-content">
-                        <h5>Top podcast</h5>
-                        <h2>
-                            {{ $podcast->title }}
-                        </h2>
-                        <div class="banner-meta">
-                            <ul>
-                                <li class="quality">
-                                    <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                    <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}</span>
-                                    <span>{{ $podcast->language }}</span>
-                                </li>
-                            </ul>
-                            <ul>
-                                <li class="category">
-                                    <a href="#">{{ ucfirst($podcast->author) }}</a>
-                                </li>
-                                <li class="release-time">
 
-                                    <span><i class="far fa-calendar-alt"></i>
-                                        Newest {{ strtoupper(Carbon::parse($podcast->last_edited)->format('d M, Y')) }}
-                                    </span>
-                                    <span>
-                                        <i class="far fa-clock"></i>
-                                        Oldest {{ Carbon::parse($podcast->created_at)->format('d M, Y') }}
-                                    </span>
-                                </li>
-                            </ul>
+
+                            </div>
                         </div>
-                        <p class="mb-3 clamp-4">
-                            {!! $podcast->description !!}
-                        </p>
-                        <div class="movie-details-prime d-none">
-                            <ul>
-                                <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
-                                <li class="streaming">
-                                    <h6>Prime Video</h6>
-                                    <span>Streaming Channels</span>
-                                </li>
-                                <li class="watch">
-                                    <a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i
-                                            class="fas fa-play"></i> Watch Now</a>
-                                </li>
-                            </ul>
+                        <div class="col-xl-8 col-lg-8">
+                            <div class="movie-details-content">
+                                <h5>Top podcast</h5>
+                                <h2>
+                                    {{ $podcast->title }}
+                                </h2>
+                                <div class="banner-meta">
+                                    <ul>
+                                        <li class="quality">
+                                            <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
+                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}</span>
+                                            <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
+                                            <span class="popup-video"
+                                                onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
+                                                Play All
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    <ul>
+                                        <li class="category">
+                                            <a href="#">{{ ucfirst($podcast->author) }}</a>
+                                        </li>
+                                        <li class="release-time">
+
+                                            <span><i class="far fa-calendar-alt"></i>
+                                                Newest {{ strtoupper(Carbon::parse($podcast->last_edited)->format('d M, Y')) }}
+                                            </span>
+                                            <span>
+                                                <i class="far fa-clock"></i>
+                                                Oldest {{ Carbon::parse($podcast->created_at)->format('d M, Y') }}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <p class="mb-3 clamp-4">
+                                    {!! $podcast->description !!}
+                                </p>
+                                <div class="movie-details-prime d-none">
+                                    <ul>
+                                        <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
+                                        <li class="streaming">
+                                            <h6>Prime Video</h6>
+                                            <span>Streaming Channels</span>
+                                        </li>
+                                        <li class="watch">
+                                            <a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="btn popup-video"><i
+                                                    class="fas fa-play"></i> Watch Now</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
                     </div>
                 </div>
                 <!-- <div class="movie-details-btn">
 					<a href="{{ asset('assets/img/poster/movie_details_img.jpg') }}" class="download-btn"
 						download="">Create podcast <img src="fonts/download.svg" alt=""></a>
-				</div> --> 
-                    		@include('Frontend.includes.components.partials.video-comments', [
-    'comments' => $comments,
-    'commentableType' => 'podcast',
-    'commentableId' => $podcast->uuid
-]) 
+				</div> -->
+                @include('Frontend.includes.components.partials.video-comments', [
+                'comments' => $comments,
+                'commentableType' => 'podcast',
+                'commentableId' => $podcast->uuid
+                ])
             </div>
         </div>
     </section>
@@ -102,10 +108,10 @@ return [
                         <div class="episode-top-wrap">
                             <div class="section-title">
                                 <span class="sub-title">ONLINE STREAMING</span>
-                                <h2 class="title">Watch Full Episode</h2>
+                                <h2 class="title">Stream Full Episode</h2>
                             </div>
                             <div class="total-views-count">
-                                <p>{{ $podcast->views_count }} million <i class="far fa-eye"></i></p>
+                                <p>{{ $podcast->views }},125 <i class="far fa-eye"></i></p>
                             </div>
                         </div>
                         <div class="episode-watch-wrap">
@@ -113,7 +119,7 @@ return [
                                 <div class="card">
                                     <div class="card-header" id="headingOne">
                                         <button class="btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                            <span class="season">Season 2</span>
+                                            <span class="season">By {{ $podcast->author }}</span>
                                             <span class="video-count">{{ $podcast->episodes_count}} Full Episodes</span>
                                         </button>
                                     </div>
@@ -185,151 +191,151 @@ return [
 @endsection
 @section('header')
 
-	<style>
-		.btn-send {
-			padding: 5px;
-			border: 1px solid #2a2b2c;
-		}
+<style>
+    .btn-send {
+        padding: 5px;
+        border: 1px solid #2a2b2c;
+    }
 
-		/* Make both columns stretch to same height */
-		.tv-comments-row {
-			align-items: stretch !important;
-		}
+    /* Make both columns stretch to same height */
+    .tv-comments-row {
+        align-items: stretch !important;
+    }
 
-		/* comments card takes full height of the column */
-		.yt-comments-card {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
+    /* comments card takes full height of the column */
+    .yt-comments-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
 
-		/* scroll area */
-		.yt-comments-body {
-			flex: 1;
-			overflow-y: auto;
-		}
+    /* scroll area */
+    .yt-comments-body {
+        flex: 1;
+        overflow-y: auto;
+    }
 
-		.text-light-50 {
-			color: rgba(255, 255, 255, .55) !important;
-		}
+    .text-light-50 {
+        color: rgba(255, 255, 255, .55) !important;
+    }
 
-		.yt-comments-card {
-			border: 1px solid rgba(255, 255, 255, .08);
-			border-radius: 14px;
-			background: rgba(10, 10, 10, 0.55);
-			backdrop-filter: blur(14px);
-			-webkit-backdrop-filter: blur(14px);
-			box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
-			overflow: hidden;
-		}
+    .yt-comments-card {
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 14px;
+        background: rgba(10, 10, 10, 0.55);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+        overflow: hidden;
+    }
 
-		.yt-comments-header,
-		.yt-comments-footer {
-			background: rgba(0, 0, 0, .35);
-			backdrop-filter: blur(10px);
-			-webkit-backdrop-filter: blur(10px);
-		}
+    .yt-comments-header,
+    .yt-comments-footer {
+        background: rgba(0, 0, 0, .35);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
 
-		.yt-comments-body {
-			max-height: 520px;
-			overflow-y: auto;
-		}
+    .yt-comments-body {
+        max-height: 520px;
+        overflow-y: auto;
+    }
 
-		.yt-comments-body::-webkit-scrollbar {
-			width: 6px;
-		}
+    .yt-comments-body::-webkit-scrollbar {
+        width: 6px;
+    }
 
-		.yt-comments-body::-webkit-scrollbar-thumb {
-			background: rgba(255, 255, 255, .15);
-			border-radius: 20px;
-		}
+    .yt-comments-body::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, .15);
+        border-radius: 20px;
+    }
 
-		.yt-comment-input {
-			background: rgba(255, 255, 255, .06) !important;
-			border: 1px solid rgba(255, 255, 255, .10) !important;
-			color: #fff !important;
-			border-radius: 10px 0 0 !important;
-			padding: 10px 12px !important;
-		}
+    .yt-comment-input {
+        background: rgba(255, 255, 255, .06) !important;
+        border: 1px solid rgba(255, 255, 255, .10) !important;
+        color: #fff !important;
+        border-radius: 10px 0 0 !important;
+        padding: 10px 12px !important;
+    }
 
-		.yt-comment-input::placeholder {
-			color: rgba(255, 255, 255, .55) !important;
-		}
+    .yt-comment-input::placeholder {
+        color: rgba(255, 255, 255, .55) !important;
+    }
 
-		.yt-actions a {
-			color: rgba(255, 255, 255, .55);
-			text-decoration: none;
-			transition: .2s;
-		}
+    .yt-actions a {
+        color: rgba(255, 255, 255, .55);
+        text-decoration: none;
+        transition: .2s;
+    }
 
-		.yt-actions a:hover {
-			color: #fff;
-			text-decoration: none;
-		}
+    .yt-actions a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
 
-		#comment-list {
-			max-height: 520px;
-			overflow-y: auto;
-		}
+    #comment-list {
+        max-height: 520px;
+        overflow-y: auto;
+    }
 
-		/* tv wrapper uses 16:9 ratio like YouTube */
-		.tv-wrap {
-			position: relative;
-			width: 100%;
-			padding-top: 56.25%;
-			/* 16:9 */
-			overflow: hidden;
-			border-radius: 10px;
-		}
+    /* tv wrapper uses 16:9 ratio like YouTube */
+    .tv-wrap {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        /* 16:9 */
+        overflow: hidden;
+        border-radius: 10px;
+    }
 
-		.tv-wrap tv,
-		.tv-wrap iframe,
-		.tv-wrap .plyr {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-		}
+    .tv-wrap tv,
+    .tv-wrap iframe,
+    .tv-wrap .plyr {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
 
-		/* Comments card height must match tv height */
-		@media (min-width: 1200px) {
-			#commentsCard {
-				height: 100%;
-				display: flex;
-				flex-direction: column;
-			}
+    /* Comments card height must match tv height */
+    @media (min-width: 1200px) {
+        #commentsCard {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
-			/* Scroll only the comment list */
-			#comment-list {
-				flex: 1 1 auto;
-				overflow-y: auto;
-				min-height: 0;
-			}
-		}
+        /* Scroll only the comment list */
+        #comment-list {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            min-height: 0;
+        }
+    }
 
-		/* Dark translucent */
-		.yt-comments-card {
-			background: rgba(0, 0, 0, .55);
-			backdrop-filter: blur(10px);
-			border: 1px solid rgba(255, 255, 255, .08);
-		}
+    /* Dark translucent */
+    .yt-comments-card {
+        background: rgba(0, 0, 0, .55);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, .08);
+    }
 
-		.sticky {
-			z-index: 99;
-		}
-		.live-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: red;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    z-index: 10;
-}
+    .sticky {
+        z-index: 99;
+    }
 
-	</style>
+    .live-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: red;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+        z-index: 10;
+    }
+</style>
 @endsection

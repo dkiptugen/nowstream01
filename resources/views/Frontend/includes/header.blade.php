@@ -7,7 +7,10 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZYTX2YPFH4"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
         gtag('js', new Date());
         gtag('config', 'G-ZYTX2YPFH4');
     </script>
@@ -28,6 +31,8 @@
     <link rel="stylesheet" href="{{ asset('assets')}}/css/magnific-popup.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/owl.carousel.min.css">
+    <!-- Boxicons CDN -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ asset('assets')}}/css/flaticon.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/odometer.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/aos.css">
@@ -39,11 +44,15 @@
         .page-wrapper {
             overflow-y: scroll !important;
         }
+
+        .navbar-wrap>ul>li>a {
+            display: inline-flex;
+        }
     </style>
 
     @yield('header')
     <script>
-        (function () {
+        (function() {
             const storageKey = 'theme';
             const darkThemeClass = 'dark-theme';
             const storedTheme = localStorage.getItem(storageKey);
@@ -101,7 +110,7 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            background: rgb(20 19 27 / 93%);
+            background: rgb(17 16 24 / 89%);
             pointer-events: none;
             z-index: 95;
             display: none;
@@ -124,6 +133,40 @@
                 width: calc((100% - var(--pcar-container-width, 1320px)) / 2);
             }
         }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #4f46e5;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-initials {
+            letter-spacing: 1px;
+        }
+
+        .play-icon, .play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 30px;
+            display: none;
+        }
     </style>
 
 
@@ -132,15 +175,6 @@
 
 <body>
 
-    <!-- preloader -->
-    <div id="preloader">
-        <div id="loading-center">
-            <div id="loading-center-absolute">
-                <img src="img/preloader.svg" alt="">
-            </div>
-        </div>
-    </div>
-    <!-- preloader-end -->
 
     <!-- Scroll-top -->
     <button class="scroll-top scroll-to-target" data-target="html">
@@ -168,57 +202,58 @@
                                     <ul>
                                         <li class="header-search"><a href="#" data-toggle="modal"
                                                 data-target="#search-modal"><i class="fas fa-search"></i></a></li>
+                                        <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
 
                                         <li class="menu-item-has-children header-lang d-none">
                                             <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"
                                                 href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 @guest
 
-                                                    <div class="user-info">
-                                                        <a class="dropdown-item d-flex align-items-center pe-3"
-                                                            href="{{ route('user.login') }}">
-                                                            <div class="icon text-white"><i class="flaticon-globe"></i>
-                                                                Login</div>
-                                                        </a>
-                                                    </div>
+                                                <div class="user-info">
+                                                    <a class="dropdown-item d-flex align-items-center pe-3"
+                                                        href="{{ route('user.login') }}">
+                                                        <div class="icon text-white"><i class="flaticon-globe"></i>
+                                                            Login</div>
+                                                    </a>
+                                                </div>
                                                 @else
-                                                    <img src="{{ Auth::user()->image ?? asset('avatar.png')}} "
-                                                        class="user-img" alt="user avatar">
-                                                    <div class="user-info">
-                                                        <p class="user-name mb-0">
-                                                            {{ Auth::user()->name }}
-                                                        </p>
-                                                    </div>
+                                                <img src="{{ Auth::user()->image ?? asset('avatar.png')}} "
+                                                    class="user-img" alt="user avatar">
+                                                <div class="user-info">
+                                                    <p class="user-name mb-0">
+                                                        {{ Auth::user()->name }}
+                                                    </p>
+                                                </div>
                                                 @endguest
                                             </a>
                                             <ul class="submenu d-none">
                                                 @guest
-                                                    @if (Route::has('login'))
-                                                        <li><a class="dropdown-item d-flex align-items-center"
-                                                                href="{{ route('user.login') }}"><i
-                                                                    class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
-                                                        </li>
-                                                    @endif
-                                                    @if (Route::has('register'))
-                                                        <li><a class="dropdown-item d-flex align-items-center"
-                                                                href="{{ route('user.register') }}"><i
-                                                                    class="bx bx-user-plus fs-5"></i><span>Register</span></a>
-                                                        </li>
-                                                    @endif
+                                                @if (Route::has('login'))
+                                                <li><a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('user.login') }}"><i
+                                                            class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
+                                                </li>
+                                                @endif
+                                                @if (Route::has('register'))
+                                                <li><a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('user.register') }}"><i
+                                                            class="bx bx-user-plus fs-5"></i><span>Register</span></a>
+                                                </li>
+                                                @endif
                                                 @else
-                                                    <li><a class="dropdown-item d-flex align-items-center"
-                                                            href="{{ route('profile.show') }}"><i
-                                                                class="bx bx-user fs-5"></i><span>Profile</span></a></li>
-                                                    <li>
-                                                        <div class="dropdown-divider mb-0"></div>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center"
-                                                            href="{{ route('user.logout') }}"
-                                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                            <i class="bx bx-log-out-circle"></i><span>Logout</span>
-                                                        </a>
-                                                    </li>
+                                                <li><a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('profile.show') }}"><i
+                                                            class="bx bx-user fs-5"></i><span>Profile</span></a></li>
+                                                <li>
+                                                    <div class="dropdown-divider mb-0"></div>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('user.logout') }}"
+                                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                        <i class="bx bx-log-out-circle"></i><span>Logout</span>
+                                                    </a>
+                                                </li>
                                                 @endguest
                                             </ul>
                                         </li>
@@ -227,7 +262,7 @@
                                             style="display: none;">
                                             @csrf
                                         </form>
-                                        <li class="header-btn"> 
+                                        <li class="header-btn">
                                             <a href="{{ route('events') }}"
                                                 class="btn btn-danger btn-sm shadow-sm px-2 d-inline-flex align-items-center gap-2 border-0 rounded-0"
                                                 aria-label="buttons">Buy Ticket</a>
@@ -236,7 +271,7 @@
                                 </div>
                             </nav>
                         </div>
- 
+
                         <!-- Mobile Menu  -->
                         <div class="mobile-menu">
                             <div class="close-btn"><i class="fas fa-times"></i></div>

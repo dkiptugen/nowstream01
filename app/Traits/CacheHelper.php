@@ -120,9 +120,9 @@ trait CacheHelper
         });
     }
 
-  	public function get_streams ($id = null, $not = 0)
+  	public function get_streams ($uuid = null, $not = 0)
 				{
-					if (is_null ($id))
+					if (is_null ($uuid))
 						{
 							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
@@ -132,7 +132,7 @@ trait CacheHelper
 						}
 					else
 						{
-							$stream = Content::find ($id);
+							$stream = Content::where('uuid', $uuid)->with('channel')->first();
 						}
 					return $stream;
 				}

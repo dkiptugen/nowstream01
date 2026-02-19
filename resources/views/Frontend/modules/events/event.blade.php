@@ -2,6 +2,10 @@
 @extends('Frontend.includes.layout')
 @section('content')
 <!-- main-area -->
+ @php
+	$country = session('country', 'US'); // Default to 'US' if not set
+	$thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
+@endphp
 <main>
 
 	<!-- movie-details-area -->
@@ -10,7 +14,7 @@
 			<div class="row align-items-center position-relative">
 				<div class="col-xl-4 col-lg-4">
 					<div class="movie-details-img">
-                <img src="{{ $event->event_image }}" class="img-fluid" alt="{{ $event->event_name }}">
+                <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $event->event_name }}">
 						<a href="https://www.youtube.com/watch?v=R2gbPxeNk2E" class="popup-video">
 							<!-- <img src="{{ asset('assets/img/images/play_icon.png') }}" alt=""> -->
 						</a>
@@ -110,47 +114,38 @@
 		</div>
 	</section>
 
-	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
-		<div class="container">
-			<h5 class="mb-3 section-title">
-				<!-- Error Alert -->
-				@if (session('success'))
-				You dont Have an active subscription. Pick an Event Below <br>
+	@if($events->isNotEmpty())
+	
+    <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+        <div class="container">
+            <div class="episode-top-wrap">
+                <div class="section-title"> 
+					<span class="sub-title">Related Events</span>
+                    <h2 class="title">Related Events</h2>
+                </div>
+            </div>
+        </div>
 
-				@endif
-			</h5>
-			<div class="row align-items-end mb-60">
-				<div class="col-lg-6">
-					<div class="section-title text-center text-lg-left">
-						<span class="sub-title">.......</span>
-						<h2 class="title">Related <span>Events</span></h2>
-					</div>
-				</div>
-				<div class="col-lg-6">
-				</div>
-			</div>
-			<div class="row tr-movie-active">
-				@foreach($events as $event)
-				@include('Frontend.includes.components.cards.events')
-				@endforeach
-			</div>
-			<div class="row">
-				<div class="col-12">
-					<div class="pagination-wrap mt-30">
-						<nav>
-							<ul>
-								<li class="active"><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">Next</a></li>
-							</ul>
-						</nav>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+        <div class="pcar-wrapper">
+
+            <!-- Outside container overlays -->
+            <div class="pcar-overlay pcar-overlay-left"></div>
+            <div class="pcar-overlay pcar-overlay-right"></div>
+
+            <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
+                data-mobile="1">
+
+                <div class="pcar-track">
+                    @foreach($events as $event)
+                    <div class="pcar-item">
+					@include('Frontend.includes.components.cards.events')
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+	@endif
 
 	@endsection
 	@section('header')

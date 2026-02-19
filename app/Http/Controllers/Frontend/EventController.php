@@ -21,11 +21,14 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::with(['eventRates' => function($q) {
-    $q->orderBy('price', 'asc');
-}])->where('status', 1)->get();
- 
-        return view('Frontend.modules.events.index', compact('events'));
+        $events = Event::with(['eventRates' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }])->where('status', 1)->orderBy('created_at', 'desc')->get();
+        $topevents = Event::with(['eventRates' => function ($q) {
+            $q->orderBy('price', 'asc');
+        }])->where('status', 1)->orderByDesc('views')->get();
+
+        return view('Frontend.modules.events.index', compact('events', 'topevents'));
     }
 
     /**
@@ -77,7 +80,7 @@ class EventController extends Controller
      * Show success page after successful payment.
      */
     public function succeed($eventId)
-    { 
+    {
         $event = Cache::rememberOnce(
             'event_' . $eventId,
             now()->addDay(),
@@ -90,17 +93,46 @@ class EventController extends Controller
     /**
      * Display details for a single event.
      */
-public function show($eventId, $slug)
-{
-    $event  = $this->get_event($eventId, $slug);
-    if (!$event) abort(404, 'Event not found.');
 
-    $events = $this->get_events($eventId);
-    $videos = $this->get_videos();
-    $rates  = $this->get_event_ticket_rates($eventId);
+    public function show($slug)
+    {
+        // Cache key per event page
+        $cacheKey = "event_page_{$slug}";
 
-    return view('Frontend.modules.events.event', compact('event', 'events', 'videos', 'rates'));
-}
+        $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
+            $event = Event::where('slug', $slug)->firstOrFail();
+            $eventId = $event->uuid;
 
+            return [
+                'event'  => $event,
+                'events' => $this->get_events($eventId),
+                'videos' => $this->get_videos(),
+                'rates'  => $this->get_event_ticket_rates($eventId),
+            ];
+        });
 
+        if (!$data) {
+            abort(404, 'Event not found.');
+        }
+
+        // Increment views dynamically (not cached)
+        Event::where('uuid', $data['event']->uuid)->increment('views');
+
+        // Related events (cached separately)
+        $relatedEvents = Cache::remember("related_events_{$data['event']->uuid}", now()->addDay(), function () use ($data) {
+            return Content::where('status', 1)
+                ->where('uuid', '<>', $data['event']->uuid)
+                ->where('content_group', 'event')
+                ->take(4)
+                ->get();
+        });
+
+        return view('Frontend.modules.events.event', [
+            'event'          => $data['event'],
+            'events'         => $data['events'],
+            'videos'         => $data['videos'],
+            'rates'          => $data['rates'],
+            'relatedEvents'  => $relatedEvents, // pass related events to the view
+        ]);
+    }
 }

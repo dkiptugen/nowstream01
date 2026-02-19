@@ -115,8 +115,7 @@ Route::middleware(['detectCountry'])->group(function () {
 
         // Password reset routes
         Route::post('/forgot-password', 'forgotPassword')->name('password.email');
-        Route::post('/reset-password', 'resetPassword')->name('password.update');
-        ;
+        Route::post('/reset-password', 'resetPassword')->name('password.update');;
         // Email verification route
         Route::get('/email/verify', function () {
             return view('Frontend.auth.verify-email');
@@ -140,10 +139,10 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::get('/profile/password', [ProfileController::class, 'passwordEdit'])->name('profile.password.edit');
         Route::post('/profile/password', [ProfileController::class, 'passwordUpdate'])->name('profile.password.update');
-        Route::get('/stream/free/{stream}/{slug?}', [StreamController::class, 'freeShow'])
+        Route::get('/stream/free/{slug?}', [StreamController::class, 'freeShow'])
             ->name('free.show');
 
-        Route::get('/stream/{uuid}/{slug}', [StreamController::class, 'show'])
+        Route::get('/stream/{slug}', [StreamController::class, 'show'])
             ->name('stream.show');
 
         Route::post('/video/{video}/favorite', [VideoFavoriteController::class, 'favorite'])->name('video.favorite');
@@ -159,13 +158,13 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::middleware(['check.event.payment'])->group(function () {
             Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
         });
-        Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
         Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
         Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
         Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
+    Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
     // Content within a category (specific)
     Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
@@ -180,15 +179,15 @@ Route::middleware(['detectCountry'])->group(function () {
         ->name('categories.index');
 
     // show podcast
-    Route::get('/podcast/{uuid}/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
+    Route::get('/podcast/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
-Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
+    Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
 
     // show tv
-    Route::get('/tv/{uuid}/{slug}', [TVController::class, 'show'])->name('tv.show');
+    Route::get('/tv/{slug}', [TVController::class, 'show'])->name('tv.show');
     Route::get('/tvs', [TVController::class, 'index'])->name('tvs');
     // show radio
-    Route::get('/radio/{uuid}/{slug}', [RadioController::class, 'show'])->name('radio.show');
+    Route::get('/radio/{slug}', [RadioController::class, 'show'])->name('radio.show');
     Route::get('/radios', [RadioController::class, 'index'])->name('radios');
 
     // Social Auth Routes (Global)
@@ -206,9 +205,15 @@ Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name
         ->name('auth.social_delete');
 
     Route::get('success/{eventId}', [SubscriptionController::class, 'succeed'])->name('success');
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
+    Route::get('/home', [HomeController::class, 'index'])->name('home'); 
 });
+// Informational pages
+Route::view('/faq', 'Frontend.pages.faq')->name('faq');
+Route::view('/help-center', 'Frontend.pages.help-center')->name('help.center');
+Route::view('/terms-of-use', 'Frontend.pages.terms')->name('terms');
+Route::view('/privacy', 'Frontend.pages.privacy')->name('privacy');
+Route::view('/user-data-deletion', 'Frontend.pages.user-data-deletion')->name('user.data.deletion');
+
 Route::middleware('auth')->group(function () {
     Route::post('comment/{comment}/like', [CommentController::class, 'like'])->name('comment.like');
     Route::post('comment/{comment}/dislike', [CommentController::class, 'dislike'])->name('comment.dislike');

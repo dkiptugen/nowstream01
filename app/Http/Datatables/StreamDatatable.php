@@ -23,7 +23,7 @@ class StreamDatatable
                 $query         = Content::query();
                 $query
                     ->where('channel_id', $request->user()->channel_id)
-                    ->where('content_group', 'stream');
+                    ->where('content_group', 'livestream');
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');
