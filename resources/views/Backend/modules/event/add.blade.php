@@ -227,7 +227,7 @@
                 </div>
                 <div class="col">
                     <label class="control-label">Image</label>
-                    <input type="file" name="merch[image][]" class="form-control">
+                    <input type="file" name="merch[image][]" class="form-control-file" accept="image/*">
                 </div>
                 <div class="col-auto">
                     <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button>
