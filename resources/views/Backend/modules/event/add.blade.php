@@ -64,7 +64,7 @@
                                 <i class="fas fa-plus"></i>
                                 Add Ticket
                             </button>
-                            <div id="ticketsContainer"></div>
+                            <div id="ticketsContainer" class="border shadow"></div>
                         </div>
 
                         <div class="form-group d-flex justify-content-end mt-2">
