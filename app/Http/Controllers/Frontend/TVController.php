@@ -7,191 +7,128 @@ use App\Models\Content;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use App\Traits\CacheHelper;
 
 class TVController extends Controller
 {
     protected $data = [];
 
     /**
-     * TV listing page
+     * TV listing page with filters, caching, and infinite scroll
      */
     public function index(Request $request)
     {
-        $perPage = 30;
-        $page    = $request->get('page', 1);
-
-        // Optional filters
+        $perPage  = 30;
+        $page     = $request->get('page', 1);
         $country  = $request->get('country', 'Kenya');
         $language = $request->get('language');
 
-        /*
-    |--------------------------------------------------------------------------
-    | Paginated TVs (Cache per page + filter)
-    |--------------------------------------------------------------------------
-    */
+        // Cache paginated TVs per page and filter
         $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
-
         $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language) {
-
-            $query = Content::where('content_group', 'tv')
+            $query = Content::query()
+                ->where('content_group', 'tv')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
                 ->with('categories');
 
-            if ($country) {
-                $query->where('country', $country);
-            }
+            if ($country) $query->where('country', $country);
+            if ($language) $query->where('language', $language);
 
-            if ($language) {
-                $query->where('language', $language);
-            }
-
-            return $query
-                ->orderByDesc('views')
-                ->paginate($perPage);
+            return $query->orderByDesc('views')->paginate($perPage);
         });
 
-        /*
-    |--------------------------------------------------------------------------
-    | AJAX (Infinite Scroll)
-    |--------------------------------------------------------------------------
-    */
+        // AJAX response for infinite scroll
         if ($request->ajax()) {
             return response()->json([
-                'html' => view(
-                    'Frontend.includes.components.partials.tv-list',
-                    ['tvs' => $tvs]
-                )->render(),
-                'hasMore' => $tvs->hasMorePages()
+                'html'    => view('Frontend.includes.components.partials.tv-list', ['tvs' => $tvs])->render(),
+                'hasMore' => $tvs->hasMorePages(),
             ]);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Static Data (Longer Cache)
-    |--------------------------------------------------------------------------
-    */
+        // Static data (longer cache)
+        $tv_countries = Cache::remember('tv_countries', 3600, fn() =>
+            Content::where('content_group', 'tv')->whereNotNull('country')->distinct()->pluck('country')
+        );
 
-        // Countries
-        $tv_countries = Cache::remember('tv_countries', 3600, function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('country')
-                ->distinct()
-                ->pluck('country');
-        });
+        $categories = Cache::remember('tv_categories', 3600, fn() =>
+            Category::where('type', 'like', '%tv%')->get()
+        );
 
-        // Categories
-        $categories = Cache::remember('tv_categories', 3600, function () {
-            return Category::where('type', 'like', '%tv%')->get();
-        });
-
-        // Genres
         $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
-
             return Content::where('content_group', 'tv')
                 ->whereNotNull('genre')
                 ->pluck('genre')
                 ->flatMap(function ($genre) {
-
-                    // Handle different storage formats
-                    if (is_array($genre)) {
-                        return $genre;
-                    }
-
-                    // JSON stored as string
-                    if (is_string($genre) && str_starts_with($genre, '[')) {
-                        return json_decode($genre, true) ?? [];
-                    }
-
-                    // Comma-separated string
-                    if (is_string($genre) && str_contains($genre, ',')) {
-                        return array_map('trim', explode(',', $genre));
-                    }
-
-                    // Single value
+                    if (is_array($genre)) return $genre;
+                    if (is_string($genre) && str_starts_with($genre, '[')) return json_decode($genre, true) ?? [];
+                    if (is_string($genre) && str_contains($genre, ',')) return array_map('trim', explode(',', $genre));
                     return [$genre];
                 })
-                ->filter()                 // remove null / empty
+                ->filter()
                 ->map(fn($g) => trim($g))
                 ->unique()
                 ->sort()
                 ->values();
         });
 
-
-        // Top TVs (global)
-        $toptvs = Cache::remember('top_tvs', 600, function () {
-            return Content::where('content_group', 'tv')
+        $toptvs = Cache::remember('top_tvs', 600, fn() =>
+            Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
-                ->orderByDesc('views')
                 ->with('categories')
+                ->orderByDesc('views')
                 ->limit(40)
-                ->get();
-        });
+                ->get()
+        );
 
-        // English channels
-        $english_tvs = Cache::remember('english_tvs', 600, function () {
-            return Content::where('content_group', 'tv')
+        $english_tvs = Cache::remember('english_tvs', 600, fn() =>
+            Content::where('content_group', 'tv')
                 ->whereNotNull('stream_url')
                 ->where('status', 1)
                 ->where('language', 'en')
                 ->orderByDesc('views')
                 ->limit(6)
-                ->get();
-        });
+                ->get()
+        );
 
         return view('Frontend.modules.tvs.index', compact(
-            'tvs',
-            'tv_countries',
-            'categories',
-            'toptvs',
-            'english_tvs',
-            'genres',
-            'country',
-            'language'
+            'tvs', 'tv_countries', 'categories', 'toptvs', 'english_tvs', 'genres', 'country', 'language'
         ));
     }
 
-
     /**
-     * Single TV page
+     * Single TV page with randomized related TVs
      */
     public function show($slug)
     {
         try {
-            // Cache TV detail
-            $tv = Cache::remember("tv_{$slug}", now()->addDay(), function () use ($slug) {
-                return Content::where('slug', $slug)
-                    ->where('content_group', 'tv')
-                    ->first();
-            });
+            $tv = Cache::remember("tv_{$slug}", now()->addDay(), fn() =>
+                Content::where('slug', $slug)->where('content_group', 'tv')->first()
+            );
 
-            if (!$tv)
-                abort(404, 'TV not found');
+            if (!$tv) abort(404, 'TV not found');
 
-            // Increment views (not cached)
-            $tv->increment('views');
-            $uuid = $tv->uuid ?? null;
-            $comments = $tv->comments()
-                ->with('user')
-                ->orderBy('created_at', 'asc') // oldest first
-                ->get();
+            $tv->increment('views'); // not cached
+            $uuid = $tv->uuid;
             $genres = $tv->genre ?? [];
-            // Related TVs (cache)
+
+            $comments = $tv->comments()->with('user')->orderBy('created_at', 'asc')->get();
+
+            // Randomized related TVs
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid, $genres) {
-                return Content::where('content_group', 'tv')
+                $query = Content::where('content_group', 'tv')
                     ->where('uuid', '!=', $uuid)
-                    ->whereNotNull('stream_url')
-                    ->where(function ($query) use ($genres) {
+                    ->whereNotNull('stream_url');
+
+                if (!empty($genres)) {
+                    $query->where(function ($q) use ($genres) {
                         foreach ($genres as $genre) {
-                            $query->orWhereJsonContains('genre', $genre);
+                            $q->orWhereJsonContains('genre', $genre);
                         }
-                    })
-                    ->latest()
-                    ->take(16)
-                    ->get();
+                    });
+                }
+
+                return $query->inRandomOrder()->limit(16)->get(); // randomized
             });
 
             return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments'));
