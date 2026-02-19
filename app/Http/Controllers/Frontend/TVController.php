@@ -16,143 +16,143 @@ class TVController extends Controller
     /**
      * TV listing page
      */
-   public function index(Request $request)
-{
-    $perPage = 30;
-    $page    = $request->get('page', 1);
+    public function index(Request $request)
+    {
+        $perPage = 30;
+        $page    = $request->get('page', 1);
 
-    // Optional filters
-    $country  = $request->get('country', 'Kenya');
-    $language = $request->get('language');
+        // Optional filters
+        $country  = $request->get('country', 'Kenya');
+        $language = $request->get('language');
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Paginated TVs (Cache per page + filter)
     |--------------------------------------------------------------------------
     */
-    $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
+        $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
 
-    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language) {
+        $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language) {
 
-        $query = Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('status', 1)
-            ->with('categories');
+            $query = Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('status', 1)
+                ->with('categories');
 
-        if ($country) {
-            $query->where('country', $country);
-        }
+            if ($country) {
+                $query->where('country', $country);
+            }
 
-        if ($language) {
-            $query->where('language', $language);
-        }
+            if ($language) {
+                $query->where('language', $language);
+            }
 
-        return $query
-            ->orderByDesc('views')
-            ->paginate($perPage);
-    });
+            return $query
+                ->orderByDesc('views')
+                ->paginate($perPage);
+        });
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | AJAX (Infinite Scroll)
     |--------------------------------------------------------------------------
     */
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view(
-                'Frontend.includes.components.partials.tv-list',
-                ['tvs' => $tvs]
-            )->render(),
-            'hasMore' => $tvs->hasMorePages()
-        ]);
-    }
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.tv-list',
+                    ['tvs' => $tvs]
+                )->render(),
+                'hasMore' => $tvs->hasMorePages()
+            ]);
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Static Data (Longer Cache)
     |--------------------------------------------------------------------------
     */
 
-    // Countries
-    $tv_countries = Cache::remember('tv_countries', 3600, function () {
-        return Content::where('content_group', 'tv')
-            ->whereNotNull('country')
-            ->distinct()
-            ->pluck('country');
-    });
+        // Countries
+        $tv_countries = Cache::remember('tv_countries', 3600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('country')
+                ->distinct()
+                ->pluck('country');
+        });
 
-    // Categories
-    $categories = Cache::remember('tv_categories', 3600, function () {
-        return Category::where('type', 'like', '%tv%')->get();
-    });
+        // Categories
+        $categories = Cache::remember('tv_categories', 3600, function () {
+            return Category::where('type', 'like', '%tv%')->get();
+        });
 
-    // Genres
-    $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+        // Genres
+        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
 
-    return Content::where('content_group', 'tv')
-        ->whereNotNull('genre')
-        ->pluck('genre')
-        ->flatMap(function ($genre) {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('genre')
+                ->pluck('genre')
+                ->flatMap(function ($genre) {
 
-            // Handle different storage formats
-            if (is_array($genre)) {
-                return $genre;
-            }
+                    // Handle different storage formats
+                    if (is_array($genre)) {
+                        return $genre;
+                    }
 
-            // JSON stored as string
-            if (is_string($genre) && str_starts_with($genre, '[')) {
-                return json_decode($genre, true) ?? [];
-            }
+                    // JSON stored as string
+                    if (is_string($genre) && str_starts_with($genre, '[')) {
+                        return json_decode($genre, true) ?? [];
+                    }
 
-            // Comma-separated string
-            if (is_string($genre) && str_contains($genre, ',')) {
-                return array_map('trim', explode(',', $genre));
-            }
+                    // Comma-separated string
+                    if (is_string($genre) && str_contains($genre, ',')) {
+                        return array_map('trim', explode(',', $genre));
+                    }
 
-            // Single value
-            return [$genre];
-        })
-        ->filter()                 // remove null / empty
-        ->map(fn ($g) => trim($g))
-        ->unique()
-        ->sort()
-        ->values();
-});
+                    // Single value
+                    return [$genre];
+                })
+                ->filter()                 // remove null / empty
+                ->map(fn($g) => trim($g))
+                ->unique()
+                ->sort()
+                ->values();
+        });
 
 
-    // Top TVs (global)
-    $toptvs = Cache::remember('top_tvs', 600, function () {
-        return Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('status', 1)
-            ->orderByDesc('views')
-            ->with('categories')
-            ->limit(40)
-            ->get();
-    });
+        // Top TVs (global)
+        $toptvs = Cache::remember('top_tvs', 600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('status', 1)
+                ->orderByDesc('views')
+                ->with('categories')
+                ->limit(40)
+                ->get();
+        });
 
-    // English channels
-    $english_tvs = Cache::remember('english_tvs', 600, function () {
-        return Content::where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('status', 1)
-            ->where('language', 'en')
-            ->orderByDesc('views')
-            ->limit(6)
-            ->get();
-    });
+        // English channels
+        $english_tvs = Cache::remember('english_tvs', 600, function () {
+            return Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('status', 1)
+                ->where('language', 'en')
+                ->orderByDesc('views')
+                ->limit(6)
+                ->get();
+        });
 
-    return view('Frontend.modules.tvs.index', compact(
-        'tvs',
-        'tv_countries',
-        'categories',
-        'toptvs',
-        'english_tvs',
-        'genres',
-        'country',
-        'language'
-    ));
-}
+        return view('Frontend.modules.tvs.index', compact(
+            'tvs',
+            'tv_countries',
+            'categories',
+            'toptvs',
+            'english_tvs',
+            'genres',
+            'country',
+            'language'
+        ));
+    }
 
 
     /**
