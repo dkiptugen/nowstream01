@@ -29,9 +29,7 @@ class TVController extends Controller
     $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language, $page) {
         $query = Content::query()
             ->where('content_group', 'tv')
-            ->whereNotNull('stream_url')
-            ->where('status', 1)
-            ->with('categories');
+            ->whereNotNull('stream_url');
 
         if ($country) $query->where('country', $country);
         if ($language) $query->where('language', $language);
@@ -42,7 +40,7 @@ class TVController extends Controller
     // Handle AJAX (infinite scroll)
     if ($request->ajax()) {
         return response()->json([
-            'html'    => view('Frontend.includes.components.partials.tv-list', ['tvs' => $tvs])->render(),
+            'html'    => view('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])->render(),
             'hasMore' => $tvs->hasMorePages(),
         ]);
     }

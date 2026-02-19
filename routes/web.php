@@ -159,13 +159,13 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::middleware(['check.event.payment'])->group(function () {
             Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
         });
-        Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
         Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
         Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
         Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
         Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
     });
+        Route::get('/event/{eventId}/{slug}', [EventController::class, 'show'])->name('event.show');
 
     // Content within a category (specific)
     Route::get('/category/{slug}/{contentGroup}', [CategoryController::class, 'contentCategory'])
