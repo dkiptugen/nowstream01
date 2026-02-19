@@ -71,13 +71,13 @@
         <div class="container">
             <div class="episode-top-wrap">
                 <div class="section-title">
-                    <span class="sub-title">More Channels</span>
-                    <h2 class="title">More Channels</h2>
+                    <span class="sub-title">English Channels</span>
+                    <h2 class="title">English Channels</h2>
                 </div>
             </div>
-{{dd($tvs)}}
+
             <div class="row tr-movie-active">
-                @foreach($tvs as $tv)
+                @foreach($english_tvs as $tv)
                 @include('Frontend.includes.components.cards.tv-card', ['tv' => $tv])
                 @endforeach
             </div>
