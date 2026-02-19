@@ -15,86 +15,83 @@ class TVController extends Controller
     /**
      * TV listing page with filters, caching, and infinite scroll
      */
-    public function index(Request $request)
-    {
-        $perPage  = 30;
-        $page     = $request->get('page', 1);
-        $country  = $request->get('country', 'Kenya');
-        $language = $request->get('language');
+  public function index(Request $request)
+{
+    $perPage  = 30;
+    $page     = $request->get('page', 1);
+    $country  = $request->get('country', 'Kenya');
+    $language = $request->get('language');
 
-        // Cache paginated TVs per page and filter
-        $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
-        $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language) {
-            $query = Content::query()
-                ->where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->where('status', 1)
-                ->with('categories');
+    // Cache key depends on page and filters
+    $cacheKey = "tvs_{$country}_{$language}_page_{$page}";
 
-            if ($country) $query->where('country', $country);
-            if ($language) $query->where('language', $language);
+    // Paginated TVs
+    $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $country, $language, $page) {
+        $query = Content::query()
+            ->where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->with('categories');
 
-            return $query->orderByDesc('views')->paginate($perPage);
-        });
+        if ($country) $query->where('country', $country);
+        if ($language) $query->where('language', $language);
 
-        // AJAX response for infinite scroll
-        if ($request->ajax()) {
-            return response()->json([
-                'html'    => view('Frontend.includes.components.partials.tv-list', ['tvs' => $tvs])->render(),
-                'hasMore' => $tvs->hasMorePages(),
-            ]);
-        }
+        return $query->orderByDesc('views')->paginate($perPage, ['*'], 'page', $page);
+    });
 
-        // Static data (longer cache)
-        $tv_countries = Cache::remember('tv_countries', 3600, fn() =>
-            Content::where('content_group', 'tv')->whereNotNull('country')->distinct()->pluck('country')
-        );
-
-        $categories = Cache::remember('tv_categories', 3600, fn() =>
-            Category::where('type', 'like', '%tv%')->get()
-        );
-
-        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatMap(function ($genre) {
-                    if (is_array($genre)) return $genre;
-                    if (is_string($genre) && str_starts_with($genre, '[')) return json_decode($genre, true) ?? [];
-                    if (is_string($genre) && str_contains($genre, ',')) return array_map('trim', explode(',', $genre));
-                    return [$genre];
-                })
-                ->filter()
-                ->map(fn($g) => trim($g))
-                ->unique()
-                ->sort()
-                ->values();
-        });
-
-        $toptvs = Cache::remember('top_tvs', 600, fn() =>
-            Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->where('status', 1)
-                ->with('categories')
-                ->orderByDesc('views')
-                ->limit(40)
-                ->get()
-        );
-
-        $english_tvs = Cache::remember('english_tvs', 600, fn() =>
-            Content::where('content_group', 'tv')
-                ->whereNotNull('stream_url')
-                ->where('status', 1)
-                ->where('language', 'en')
-                ->orderByDesc('views')
-                ->limit(6)
-                ->get()
-        );
-
-        return view('Frontend.modules.tvs.index', compact(
-            'tvs', 'tv_countries', 'categories', 'toptvs', 'english_tvs', 'genres', 'country', 'language'
-        ));
+    // Handle AJAX (infinite scroll)
+    if ($request->ajax()) {
+        return response()->json([
+            'html'    => view('Frontend.includes.components.partials.tv-list', ['tvs' => $tvs])->render(),
+            'hasMore' => $tvs->hasMorePages(),
+        ]);
     }
+
+    // Static / global data
+    $tv_countries = Cache::remember('tv_countries', 3600, fn() =>
+        Content::where('content_group', 'tv')->whereNotNull('country')->distinct()->pluck('country')
+    );
+
+    $categories = Cache::remember('tv_categories', 3600, fn() =>
+        Category::where('type', 'like', '%tv%')->get()
+    );
+
+    $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+        return Content::where('content_group', 'tv')
+            ->whereNotNull('genre')
+            ->pluck('genre')
+            ->flatMap(fn($genre) => is_array($genre) ? $genre : (str_starts_with($genre, '[') ? json_decode($genre, true) : (str_contains($genre, ',') ? array_map('trim', explode(',', $genre)) : [$genre])))
+            ->filter()
+            ->map(fn($g) => trim($g))
+            ->unique()
+            ->sort()
+            ->values();
+    });
+
+    $toptvs = Cache::remember('top_tvs', 600, fn() =>
+        Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->with('categories')
+            ->orderByDesc('views')
+            ->limit(40)
+            ->get()
+    );
+
+    $english_tvs = Cache::remember('english_tvs', 600, fn() =>
+        Content::where('content_group', 'tv')
+            ->whereNotNull('stream_url')
+            ->where('status', 1)
+            ->where('language', 'en')
+            ->orderByDesc('views')
+            ->limit(6)
+            ->get()
+    );
+
+    return view('Frontend.modules.tvs.index', compact(
+        'tvs', 'tv_countries', 'categories', 'toptvs', 'english_tvs', 'genres', 'country', 'language'
+    ));
+}
 
     /**
      * Single TV page with randomized related TVs
