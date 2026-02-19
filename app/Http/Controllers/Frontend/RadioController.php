@@ -16,63 +16,64 @@ class RadioController extends Controller
      * Radio listing page
      */
     
- public function index(Request $request)
+   public function index(Request $request)
 {
     $perPage = 30;
     $page = $request->get('page', 1);
-    $country = $request->get('country'); // optional filter
 
     /**
-     * Build dynamic cache key
+     * Radios pagination (page cache)
      */
-    $cacheKey = "radios_page_{$page}_" . ($country ?? 'all');
-
-    /**
-     * Paginated Radios
-     */
-    $radios = Cache::remember($cacheKey, now()->addMinutes(15), function () use ($perPage, $country) {
-
-        $query = Content::where('content_group', 'radio')
-            ->whereNotNull('stream_url')
-            ->where('status', 1);
-
-        if ($country) {
-            $query->where('country', $country);
+    $radios = Cache::remember(
+        "radios_page_{$page}",
+        now()->addMinutes(10),
+        function () use ($perPage) {
+            return Content::where('content_group', 'radio')
+                ->whereNotNull('stream_url')
+                ->where('status', 1)
+                ->latest()
+                ->paginate($perPage);
         }
-
-        return $query->latest()->paginate($perPage);
-    });
+    );
 
 
     /**
-     * Categories (rarely change)
+     * Categories (long cache)
      */
-    $categories = Cache::remember('radio_categories', now()->addHours(12), function () {
-        return Category::where('type', 'radio')
-            ->limit(6)
-            ->get();
-    });
+    $categories = Cache::remember(
+        'radio_categories',
+        now()->addHours(6),
+        function () {
+            return Category::where('type', 'radio')
+                ->limit(6)
+                ->get();
+        }
+    );
 
 
     /**
-     * Top Radios (randomized inside cache, not per request)
+     * Top Radios Pool (cache larger set)
+     * Then randomize per request
      */
-    $topradios = Cache::remember('top_radios_home', now()->addMinutes(15), function () {
-        return Content::where('content_group', 'radio')
-            ->whereNotNull('stream_url')
-            ->where('status', 1)
-            ->orderByDesc('views')
-            ->limit(100)
-            ->get()
-            ->shuffle()
-            ->take(16)
-            ->values();
-    });
+    $topRadiosPool = Cache::remember(
+        'top_radios_pool',
+        now()->addMinutes(10),
+        function () {
+            return Content::where('content_group', 'radio')
+                ->whereNotNull('stream_url')
+                ->where('status', 1)
+                ->orderByDesc('views')
+                ->limit(50)   // bigger pool
+                ->get();
+        }
+    );
 
-
-    /**
-     * AJAX (infinite scroll)
+    $topradios = $topRadiosPool->shuffle()->take(16);
+ /**
+     * If AJAX request → return ONLY items
      */
+   
+    // AJAX request
     if ($request->ajax()) {
         return response()->json([
             'html' => view(
@@ -82,14 +83,12 @@ class RadioController extends Controller
             'hasMore' => $radios->hasMorePages()
         ]);
     }
-
     return view('Frontend.modules.radios.index', compact(
         'radios',
         'categories',
         'topradios'
     ));
 }
-
 public function show($slug)
 {
     try {
