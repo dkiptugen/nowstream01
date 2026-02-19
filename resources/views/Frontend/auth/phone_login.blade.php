@@ -47,7 +47,7 @@
                             @endif
 
                             <div class="mb-3 text-center">
-                                <img src="{{ asset('logo1.png') }}" width="150" alt="" />
+                                <img src="{{ asset('assets/img/logo/logo2.png') }}" width="150" alt="" />
                             </div>
                             <div class="form-body">
                                 <form class="row g-3" method="post" action="{{ route('phonelogin') }}">

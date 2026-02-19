@@ -5,7 +5,7 @@
             <div class="card-body">
                 <div class="p-3">
                     <div class="text-center">
-                        <img src="assets/images/icons/forgot-2.png" width="100" alt="" />
+                                <img src="{{ asset('assets/img/logo/logo2.png') }}" width="100" alt="" />
                     </div>
                     <h4 class="mt-5 font-weight-bold">Forgot Password?</h4>
                     <p class="text-muted">Enter your registered email ID to reset the password</p>
