@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('microsites', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('domain');
             $table->string('slug');
             $table->string('logo')->nullable();
             $table->text('colorscheme')->comment('JSON');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0);
             $table->unsignedBigInteger('system_user_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
