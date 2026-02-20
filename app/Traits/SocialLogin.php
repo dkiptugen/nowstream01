@@ -19,7 +19,6 @@
          * @var string
          */
             public $access = 'web';
-
         /**
          * @param $provider
          *
