@@ -7,5 +7,10 @@ use Illuminate\Http\Request;
 
 class TenantController extends Controller
 {
-    //
+    public function index()
+        {
+            $tenant = app()->tenant();
+            dd($tenant);
+
+        }
 }
