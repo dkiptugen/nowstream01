@@ -26,7 +26,7 @@
                         }
 
                     // Make tenant globally available
-                    app()->instance('tenant', collect($tenant)->only(['name','logo']));
+                    app()->instance('tenant', collect($tenant)->only(['name','logo','domain','banner','cover','colorscheme','favicon','description','keywords','views','followers']));
 
                     return $next($request);
                 }
