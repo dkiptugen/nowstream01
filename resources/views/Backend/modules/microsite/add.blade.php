@@ -42,17 +42,20 @@
                         </div>
                     </div>
                     </div>
-                    <div class="form-group form-group-file">
-                        <label for="logo" class="control-label-file">Logo</label>
-                        <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
-                    </div>
-                    <div class="form-group-file">
-                        <label for="cover" class="control-label-file">Cover Image</label>
-                        <input type="file" name="cover" id="cover" class="form-control-file" accept="image/*">
-                    </div>
-                    <div class="form-group-file">
-                        <label for="banner" class="control-label-file">Banner Image</label>
-                        <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
+                    <div class="form-row form-group">
+                        <div class="col form-group-file">
+                            <label for="logo" class="control-label-file">Logo</label>
+                            <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
+                        </div>
+                        <div class="col form-group-file">
+                            <label for="cover" class="control-label-file">Cover Image</label>
+                            <input type="file" name="cover" id="cover" class="form-control-file" accept="image/*">
+                        </div>
+                        <div class="col form-group-file">
+                            <label for="banner" class="control-label-file">Banner Image</label>
+                            <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
+
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="socialmedia" class="control-label">Social Media Links</label>
