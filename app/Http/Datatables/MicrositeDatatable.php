@@ -15,7 +15,7 @@
             public function data($request)
             : array
                 {
-                    if (!$request->user()->can('view_Microsite'))
+                    if (!$request->user()->canAny('view_microsite', 'view_specific_microsite'))
                         {
                             abort(403);
                         }
@@ -64,7 +64,7 @@
                                         "cover"        => $row->cover,
                                         "description"  => $row->description,
                                         "keywords"     => $row->keywords,
-                                        "social_links" => $row->social_links,
+                                        "social_links" => collect($row->social_links)->implode(','),
                                         "views"        => $row->views,
                                         "followers"    => $row->followers,
                                         "status"       => $row->status,
