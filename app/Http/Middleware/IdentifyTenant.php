@@ -26,7 +26,7 @@
 
                     if (!$tenant)
                     {
-                        return $next($request);
+                        return redirect()->route('home');
                     }
 
                     // Make tenant globally available

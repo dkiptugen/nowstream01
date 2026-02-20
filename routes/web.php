@@ -58,7 +58,7 @@
                 });
             Route::domain(config('app.base_domain'))
                  ->group(function(){
-                        Route::get('/', [HomeController::class, 'index']);
+                        Route::get('/', [HomeController::class, 'index'])->name('home');
                         Route::get('/events', [EventController::class, 'index'])->name('events');
                         Route::get('/event', [EventController::class, 'show']);
                         Route::get('/all-videos', [StreamVideoController::class, 'index'])->name('videos');
@@ -209,7 +209,7 @@
                  ->name('auth.social_delete');
 
             Route::get('success/{eventId}', [SubscriptionController::class, 'succeed'])->name('success');
-            Route::get('/home', [HomeController::class, 'index'])->name('home');
+
         });
 // Informational pages
     Route::view('/faq', 'Frontend.pages.faq')->name('faq');
