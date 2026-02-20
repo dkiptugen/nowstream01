@@ -26,7 +26,7 @@
          */
             public function index()
                 {
-                    return view('backend.modules.microsite.index', $this->data);
+                    return view('Backend.modules.microsite.index', $this->data);
                 }
 
         /**
@@ -34,7 +34,7 @@
          */
             public function create()
                 {
-                    return view('backend.modules.microsite.add', $this->data);
+                    return view('Backend.modules.microsite.add', $this->data);
                 }
 
         /**
@@ -91,7 +91,7 @@
             public function edit(Microsite $microsite)
                 {
                     $this->data['microsite'] = $microsite;
-                    return view('backend.modules.microsite.edit', $this->data);
+                    return view('Backend.modules.microsite.edit', $this->data);
                 }
 
         /**
