@@ -49,6 +49,14 @@
             "PUSHER_APP_KEY"     => env("PUSHER_APP_KEY"),
             "PUSHER_APP_SECRET"  => env("PUSHER_APP_SECRET"),
             "PUSHER_APP_CLUSTER" => env("PUSHER_APP_CLUSTER"),
+        ],
+        'TYPESENSE'=>[
+            'SCOUT_DRIVER'=>env('SCOUT_DRIVER','typesense'),
+            'TYPESENSE_API_KEY' => env('TYPESENSE_API_KEY'),
+            'TYPESENSE_HOST' => env('TYPESENSE_HOST','localhost'),
+            'TYPESENSE_PORT' => env('TYPESENSE_PORT','8108'),
+            'TYPESENSE_PROTOCOL' => env('TYPESENSE_PROTOCOL','http')
+
         ]
 
     ];
