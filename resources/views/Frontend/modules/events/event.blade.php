@@ -89,9 +89,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 
 								</tbody>
 							</table>
-							<!-- <a href="{{ route('ticket.download', $ticket->uuid) }}" class="btn btn-primary">
-								Download Ticket
-							</a> -->
+							 
 
 						</div>
 						<div class="movie-details-prime d-none">
