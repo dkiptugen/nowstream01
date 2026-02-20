@@ -64,11 +64,7 @@ class Event extends Model
 	public function rates()
 	{
 		return $this->hasMany(ContentRate::class, 'event_id', 'uuid');
-	}
-	public function products()
-	{
-		return $this->hasMany(Product::class, 'event_id', 'uuid');
-	}
+	} 
 
 	/**
 	 * Optional: Return system user ID automatically

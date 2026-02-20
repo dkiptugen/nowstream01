@@ -153,8 +153,7 @@ class EventController extends Controller
     public function edit(Event $event)
     {
 
-        $this->data['event'] = $event; 
-        dd($event);
+        $this->data['event'] = $event;  
         $this->data['title'] = $this->data['event']->title . ' Event : ' . $this->data['title'];
         return view('Backend.modules.event.edit', $this->data);
     }
