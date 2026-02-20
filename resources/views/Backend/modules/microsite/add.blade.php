@@ -18,8 +18,17 @@
                 </div>
                 <div class="form-group form-row">
                     <div class="col">
-                        <label for="colorscheme-primary" class="control-label">Primary Color</label>
-                        <input type="color" name="colorscheme[primary]" id="colorscheme-primary" class="form-control">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                Primary Color
+                                    </span>
+                            </div>
+                            <input type="color" name="colorscheme[primary]" id="colorscheme-primary" class="form-control">
+                        </div>
+
+
                     </div>
                     <div class="col">
                         <label for="colorscheme-accent" class="control-label">Accent Color</label>
