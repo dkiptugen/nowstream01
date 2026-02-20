@@ -70,7 +70,7 @@ return Application::configure(basePath: dirname(__DIR__))
                           $middleware->append(ConvertEmptyStringsToNull::class);
                           $middleware->append(Cors::class);
                           $middleware->append(SetCacheHeaders::class);
-                          $middleware->append(IdentifyTenant::class);
+                          //$middleware->append(IdentifyTenant::class);
 
 
                           // Middleware groups
@@ -113,6 +113,7 @@ return Application::configure(basePath: dirname(__DIR__))
                               'check.event.payment' => CheckEventPayment::class,
                               'auth'                => Authenticate::class,
                               'choose.channel'      => ChooseChannel::class,
+                              'tenant'              => IdentifyTenant::class,
 
 
                           ]);
