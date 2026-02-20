@@ -116,7 +116,7 @@
                         'explicit'          => (bool)$this->is_explicit,
                         'language'          => $this->language,
                         'country'           => $this->country,
-                        'publishdate'       => $this->publishdate,
+                        'publishdate'       => strtotime($this->publishdate)??0,
                     ];
                 }
 
