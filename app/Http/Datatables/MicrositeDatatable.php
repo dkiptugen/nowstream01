@@ -15,10 +15,6 @@
             public function data($request)
             : array
                 {
-                    if (!$request->user()->canAny('view_microsite', 'view_specific_microsite'))
-                        {
-                            abort(403);
-                        }
 
                     $limit = (int)$request->input('length', 10);
                     $start = (int)$request->input('start', 0);
