@@ -188,7 +188,6 @@ return [
                             ['name' => 'id', 'type' => 'string'],
                             ['name' => 'title', 'type' => 'string'],
                             ['name' => 'description', 'type' => 'string'],
-
                             ['name' => 'content_group', 'type' => 'string', 'facet' => true],
                             ['name' => 'type', 'type' => 'string', 'facet' => true],
                             ['name' => 'status', 'type' => 'int32', 'facet' => true],
