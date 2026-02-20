@@ -138,9 +138,20 @@
                 {
                     //
                 }
+
             public function datatable(Request $request, MicrositeDatatable $datatable)
                 {
-                    $datatable->columns = [0=>'id'];
+                    $datatable->columns = [
+                        0  => 'id',
+                        1  => 'name',
+                        2  => 'domain',
+                        5  => 'description',
+                        6  => 'keywords',
+                        7  => 'social_links',
+                        8  => 'views',
+                        9  => 'followers',
+                        10 => 'status'
+                    ];
                     return response()->json($datatable->data($request));
                 }
         }
