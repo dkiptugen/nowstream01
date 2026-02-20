@@ -5,7 +5,8 @@
             'SITE_URL'        => env('SITE_URL', "https://live.baze.co.ke"),
             'ENCRYPTION_KEY'  => env('ENCRYPTION_KEY', 'LJHb1fc6f$2j5FnO7W3@NphwHFmOcMlsg'),
             'ENCRYPTION_SALT' => env('ENCRYPTION_SALT', 'zMjDBmWoUd'),
-            'APP_BASE_DOMAIN' => env('APP_BASE_DOMAIN', 'streamer.co.ke')
+            'APP_BASE_DOMAIN' => env('APP_BASE_DOMAIN', 'streamer.co.ke'),
+            'CLOUDFLARE_API_TOKEN' => env('CLOUDFLARE_API_TOKEN','mGLaLwqDk2oPRgjPdxy13smIp1pTK054mgOYuaNO')
         ], 'AUTHENTICATION' => [
             'PASSWORD_EXPIRY' => env('PASSWORD_EXPIRY', 30),
             'LOGIN_EXPIRY'    => env('LOGIN_EXPIRY', 30),
