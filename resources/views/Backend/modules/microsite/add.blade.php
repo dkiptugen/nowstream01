@@ -26,7 +26,7 @@
                                 Primary Color</span>
                             </div>
                             <input type="color" name="colorscheme[primary]" id="colorscheme-primary"
-                                   class="form-control">
+                                   class="form-control" value="#007bff">
                         </div>
 
 
@@ -38,7 +38,7 @@
                                     Accent Color
                                 </span>
                             </div>
-                            <input type="color" name="colorscheme[accent]" id="colorscheme-accent" class="form-control">
+                            <input type="color" name="colorscheme[accent]" id="colorscheme-accent" class="form-control" value="#EEEEEE">
                         </div>
                     </div>
                     <div class="form-group form-group-file">
