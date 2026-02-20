@@ -45,6 +45,10 @@ class Event extends Model
 	{
 		return $this->hasMany(Content::class, 'event_id', 'uuid');
 	}
+	public function tickets()
+	{
+		return $this->hasMany(Ticket::class, 'event_id', 'uuid');
+	}
 
 	/**
 	 * Event belongs to a channel
