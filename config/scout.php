@@ -196,7 +196,7 @@ return [
                             ['name' => 'category_ids', 'type' => 'int32[]', 'facet' => true],
                             ['name' => 'views', 'type' => 'int32'],
                         ],
-                        'default_sorting_field' => 'content_group',
+                        'default_sorting_field' => 'publish_date',
                     ],
                 ],
 
