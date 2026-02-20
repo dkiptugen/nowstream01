@@ -41,6 +41,14 @@
                         ],
                     ];
                 }
+            public function shouldBeSearchable()
+                {
+                    return $this->status == 1 && is_null($this->deleted_at);
+                }
+            public function toSearchableArray(): array
+                {
+                    return $this->getAttributes();
+                }
 
         /**
          * Event has many streams (Content)
