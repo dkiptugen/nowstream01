@@ -192,11 +192,11 @@ return [
                             ['name' => 'content_group', 'type' => 'string', 'facet' => true],
                             ['name' => 'type', 'type' => 'string', 'facet' => true],
                             ['name' => 'status', 'type' => 'int32', 'facet' => true],
-                            ['name' => 'publish_date', 'type' => 'int64', 'facet' => true],
+                            ['name' => 'publishdate', 'type' => 'int64', 'facet' => true],
                             ['name' => 'category_ids', 'type' => 'int32[]', 'facet' => true],
                             ['name' => 'views', 'type' => 'int32'],
                         ],
-                        'default_sorting_field' => 'publish_date',
+                        'default_sorting_field' => 'publishdate',
                     ],
                 ],
 
