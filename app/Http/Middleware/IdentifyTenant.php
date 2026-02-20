@@ -19,7 +19,7 @@
 
                     // Extract subdomain
                     $subdomain = str_replace('.'.$baseDomain, '', $host);
-
+                    dd($subdomain) ;
                     $tenant = Microsite::where('domain', $subdomain)
                                        ->where('status', 1)
                                        ->first();
