@@ -9,7 +9,7 @@ class TenantController extends Controller
 {
     public function index()
         {
-            $tenant = app()->tenant();
+            $tenant = app('tenant');
             dd($tenant);
 
         }
