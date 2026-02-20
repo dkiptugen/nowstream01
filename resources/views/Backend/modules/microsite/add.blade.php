@@ -41,6 +41,7 @@
                             <input type="color" name="colorscheme[accent]" id="colorscheme-accent" class="form-control" value="#EEEEEE">
                         </div>
                     </div>
+                    </div>
                     <div class="form-group form-group-file">
                         <label for="logo" class="control-label-file">Logo</label>
                         <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
