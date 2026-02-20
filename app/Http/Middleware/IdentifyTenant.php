@@ -26,7 +26,7 @@
                         }
 
                     // Make tenant globally available
-                    app()->instance('tenant', collect($tenant));
+                    app()->instance('tenant', collect($tenant)->only(['name','logo']));
 
                     return $next($request);
                 }
