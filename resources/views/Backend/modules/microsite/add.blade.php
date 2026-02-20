@@ -42,19 +42,21 @@
                         </div>
                     </div>
                     </div>
-                    <div class="form-row form-group">
+                    <div class="form-row form-group align-items-center">
                         <div class="col form-group-file">
                             <label for="logo" class="control-label-file">Logo</label>
                             <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
+                            <small class="text text-muted">Image should be 512x512 pixels</small>
                         </div>
                         <div class="col form-group-file">
                             <label for="cover" class="control-label-file">Cover Image</label>
                             <input type="file" name="cover" id="cover" class="form-control-file" accept="image/*">
+                            <small class="text text-muted">Image should be 1024x672 pixels</small>
                         </div>
                         <div class="col form-group-file">
                             <label for="banner" class="control-label-file">Banner Image</label>
                             <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
-
+                            <small class="text text-muted">Image should be 728x90 pixels</small>
                         </div>
                     </div>
                     <div class="form-group">
