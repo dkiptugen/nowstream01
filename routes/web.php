@@ -49,11 +49,11 @@
                     {
                         Route::get('/', 'index')->name('home');
                         Route::get('/events', 'events')->name('events');
-                        Route::get('/event/{event}', 'single_event')->name('event');
+                        Route::get('/event/{event}', 'single_event')->name('single_event');
                         Route::get('/streams', 'streams')->name('streams');
-                        Route::get('/stream/{stream}', 'single_stream')->name('stream');
+                        Route::get('/stream/{stream}', 'single_stream')->name('single_stream');
                         Route::get('/mercherndise', 'merchendise')->name('merchendise');
-                        Route::get('/merchendise/{merchendise}', 'single_merchendise')->name('merchendise');
+                        Route::get('/merchendise/{merchendise}', 'single_merchendise')->name('single_merchendise');
 
                 });
             Route::domain(config('app.base_domain'))
