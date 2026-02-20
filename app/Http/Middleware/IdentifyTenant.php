@@ -26,7 +26,7 @@
                         }
 
                     // Make tenant globally available
-                    app()->instance('tenant', $tenant);
+                    app()->instance('tenant', collect($tenant));
 
                     return $next($request);
                 }
