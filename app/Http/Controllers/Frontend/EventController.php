@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Event;
+use App\Models\Ticket;
 use App\Models\Content;
 use App\Models\ContentRate;
 use App\Traits\CacheHelper;
@@ -98,6 +99,8 @@ class EventController extends Controller
     {
         // Cache key per event page
         $cacheKey = "event_page_{$slug}";
+        
+        $ticket = Ticket::first();
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
@@ -127,11 +130,14 @@ class EventController extends Controller
                 ->get();
         });
 
+
+
         return view('Frontend.modules.events.event', [
             'event'          => $data['event'],
             'events'         => $data['events'],
             'videos'         => $data['videos'],
             'rates'          => $data['rates'],
+            'ticket'          => $ticket,
             'relatedEvents'  => $relatedEvents, // pass related events to the view
         ]);
     }

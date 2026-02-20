@@ -13,6 +13,7 @@ use App\Http\Controllers\Frontend\PodcastController as FrontendPodcastController
 use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\TVController;
 use App\Http\Controllers\Frontend\RadioController;
+use App\Http\Controllers\Frontend\TicketController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Frontend\StreamController;
 use App\Http\Controllers\Frontend\ChannelController;
@@ -182,6 +183,11 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::get('/podcast/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
     Route::get('/genre/{genre}', [CategoryController::class, 'genreContents'])->name('genre.show');
+Route::get('/ticket/{uuid}', [TicketController::class, 'download'])
+    ->name('ticket.download')
+    ->middleware('auth');
+Route::get('/ticket/verify/{uuid}', [TicketController::class, 'verify'])
+    ->name('ticket.verify');
 
     // show tv
     Route::get('/tv/{slug}', [TVController::class, 'show'])->name('tv.show');
