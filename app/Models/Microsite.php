@@ -30,17 +30,17 @@
                 {
                     static::creating(function ($model)
                         {
-
+                            $baseDomain = config('app.base_domain');
                             if (empty($model->domain))
                                 {
                                     $base   = Str::slug($model->name, '');
                                     $domain = $base;
                                     $count  = 1;
-                                    while (self::where('domain', $domain . '.streamer.co.ke')->exists())
+                                    while (self::where('domain', $domain .'.'.$baseDomain)->exists())
                                         {
                                             $domain = $base . $count++;
                                         }
-                                    $model->domain = $domain . '.streamer.co.ke';
+                                    $model->domain = $domain.'.'.$baseDomain;
                                 }
                         });
                 }

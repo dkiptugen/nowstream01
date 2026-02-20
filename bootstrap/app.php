@@ -9,7 +9,8 @@ use App\Http\Middleware\CheckEventPayment;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\GetRegion;
-use App\Http\Middleware\PasswordExpired;
+    use App\Http\Middleware\IdentifyTenant;
+    use App\Http\Middleware\PasswordExpired;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
@@ -68,6 +69,8 @@ return Application::configure(basePath: dirname(__DIR__))
                           $middleware->append(TrimStrings::class);
                           $middleware->append(ConvertEmptyStringsToNull::class);
                           $middleware->append(Cors::class);
+                          $middleware->append(SetCacheHeaders::class);
+                          $middleware->append(IdentifyTenant::class);
 
 
                           // Middleware groups
