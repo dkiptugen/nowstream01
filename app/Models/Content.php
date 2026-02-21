@@ -16,7 +16,8 @@
             use Sluggable;
             use SoftDeletes;
             use HasUuid;
-            use Searchable;
+
+
 
             protected $keyType      = 'string';
             public    $incrementing = false;
@@ -105,7 +106,7 @@
                     return self::where('slug', $slug)->first();
                 }
 
-            public function shouldBeSearchable()
+           /* public function shouldBeSearchable()
                 {
                     return $this->status == 1 && is_null($this->deleted_at);
                 }
@@ -138,7 +139,7 @@
                         'country'           => $this->country,
                         'publishdate'       => strtotime($this->publishdate) ?? 0,
                     ];
-                }
+                }*/
 
             public function children()
                 {
