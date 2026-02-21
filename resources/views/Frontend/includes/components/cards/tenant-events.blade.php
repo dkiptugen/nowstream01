@@ -1,21 +1,23 @@
 @php
 use Carbon\Carbon;
+ 
+if (empty($event) || empty($event->slug)) {
+    return; // Skip rendering this card completely
+}
 
-$startDate = Carbon::parse($event->start_time);
-$endTime = Carbon::parse($event->end_time);
-
-$tickets = $event->tickets ?? collect(); // fallback to empty collection
-
-$hasPaidTickets = $tickets->count() > 0;
-$freeStream = !$hasPaidTickets;
-
-$ticket = $tickets->sortBy('price')->first();
-
-$url = route('tenant.single_event', $event->slug);
-
-
-$thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
+$startDate = $event->start_time ? Carbon::parse($event->start_time) : null;
+$endTime   = $event->end_time ? Carbon::parse($event->end_time) : null;
+ 
+$tickets = $event->tickets ?? collect();
+$ticket  = $tickets->sortBy('price')->first();
+ 
+$url = route('tenant.single_event', ['slug' => $event->slug]);
+ 
+$thumbnail = $event->event_image
+    ? Storage::disk(config('filesystems.default'))->url($event->event_image)
+    : asset('frontend-assets/images/default.png');
 @endphp
+
 
 <div class="movie-item mb-60">
     <div class="movie-poster">
