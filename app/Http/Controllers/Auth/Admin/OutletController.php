@@ -85,6 +85,7 @@
 
                             if ($result)
                                 {
+                                    dd($microsite);
                                     $user = Auth::guard('admin')->user();
 
                                     if(!$user->hasRole('Super Admin'))
