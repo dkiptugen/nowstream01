@@ -52,6 +52,7 @@
                             $user             = Auth::user();
                             $user->microsite_id = $request->microsite;
                             $user->save();
+
                             return redirect()->route('backend.admin_dashboard');
                         }
 
