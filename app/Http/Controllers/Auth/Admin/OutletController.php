@@ -105,7 +105,11 @@
                                     $user->save();
                                     //dd($user);
                                     //DB::commit();
-                                    return redirect()->route('backend.admin_dashboard');
+                                    return self::success(
+                                        'Microsite',
+                                        'Store successful',
+                                        route('backend.admin_dashboard')
+                                    );
                                 }
 
                             return self::failed(
