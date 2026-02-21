@@ -15,7 +15,7 @@
                 </div>
                 <div class="form-group">
                     <label for="Description" class="control-label">Description</label>
-                    <input type="text" name="Description" id="Description" class="form-control editor">
+                    <input type="text" name="description" id="Description" class="form-control editor">
                 </div>
                 <div class="form-group form-row">
                     <div class="col">
