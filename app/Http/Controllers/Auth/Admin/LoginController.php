@@ -89,7 +89,7 @@
                     $login      = $request->input('email');
                     $login_type = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
                     $request->merge([$login_type => $login, 'status' => 1]);
-                    if ($login_type == 'email')
+                    if ($login_type === 'email')
                         {
 
                             $this->validate($request, [
@@ -116,7 +116,7 @@
                     try
                         {
                             $user                      = $this->guard()->user();
-                            $user->channel_id          = null;
+                            $user->microsite_id          = null;
                             $user->save();
                         }
                     catch (Exception $e)

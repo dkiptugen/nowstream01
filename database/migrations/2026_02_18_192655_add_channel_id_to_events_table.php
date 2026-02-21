@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::table('events', function (Blueprint $table) { 
-             $table->uuid('channel_id')->nullable()->after('status');
-        });  
+         Schema::table('events', function (Blueprint $table) {
+             $table->uuid('microsite_id')->nullable()->after('status');
+        });
     }
 
     /**

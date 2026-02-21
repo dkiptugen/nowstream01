@@ -6,14 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SystemUserChannel extends Pivot
+class SystemUserMicrosite extends Pivot
     {
         use HasFactory;
-        protected $table = 'system_user_channel';
+        protected $table = 'system_user_microsite';
         protected $fillable = ['created_by'];
-        public function channel()
+        public function microsite()
             {
-                return $this->belongsTo(Channel::class,'channel_id','uuid');
+                return $this->belongsTo(Microsite::class);
             }
         public function system_user()
             {

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class ChooseChannel
+class ChooseBrand
 {
     /**
      * Handle an incoming request.
@@ -18,9 +18,9 @@ class ChooseChannel
     {
         if(Auth::check())
             {
-                if(is_null(Auth::user()->channel_id))
+                if(is_null(Auth::user()->microsite_id))
                     {
-                        return redirect()->route('backend.choose_channel');
+                        return redirect()->route('backend.choose_brand');
                     }
             }
         return $next($request);

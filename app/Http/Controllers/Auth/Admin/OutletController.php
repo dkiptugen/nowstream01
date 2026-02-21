@@ -24,7 +24,7 @@
                     $this->data = self::product_def();
                 }
 
-            public function choose_channel(Request $request)
+            public function choose_brand(Request $request)
                 {
                     $this->data['product'] = SystemUserChannel::with([
                                                                          'channel'

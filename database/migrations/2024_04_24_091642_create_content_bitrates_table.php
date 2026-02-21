@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('content_bitrates', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->uuid('content_id');
+            $table->uuid('content_id')->index();
             $table->string('resolution');
             $table->integer('bitrate');
             $table->string('url');

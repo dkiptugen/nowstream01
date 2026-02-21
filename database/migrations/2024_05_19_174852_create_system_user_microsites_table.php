@@ -12,19 +12,19 @@
 			public function up ()
 			: void
 				{
-					Schema::create ('system_user_channel', function (Blueprint $table)
+					Schema::create ('system_user_microsite', function (Blueprint $table)
 						{
 							$table->id ();
 							$table->unsignedBigInteger ('system_user_id');
-							$table->uuid ('channel_id')->index()->nullable();
+							$table->uuid('microsite_id')->index();
 							$table->foreign ('system_user_id')
                                   ->references ('id')
                                   ->on ('system_users')
                                   ->cascadeOnDelete ()
                                   ->cascadeOnUpdate ();
-							$table->foreign ('channel_id')
+                            $table->foreign ('microsite_id')
                                   ->references ('uuid')
-                                  ->on ('channels')
+                                  ->on ('microsites')
                                   ->cascadeOnDelete ()
                                   ->cascadeOnUpdate ();
                             $table->unsignedBigInteger('role_id')->index();

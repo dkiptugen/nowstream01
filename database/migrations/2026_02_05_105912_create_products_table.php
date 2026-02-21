@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('organizer_id')->constrained()->cascadeOnDelete();
-            $table->uuid('event_id')->nullable()->index();
-            $table->enum('type', ['ticket','merch','package']);
-            $table->integer('free_pass')->default(0);;
+            $table->uuid('microsite_id')->nullable()->index();
+            $table->uuidMorphs('payable');
+            $table->enum('type', ['ticket','merch','package','content']);
+            $table->integer('free_pass')->default(0);
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
