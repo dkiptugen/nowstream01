@@ -84,7 +84,9 @@
                             $logoPath = "$tenantPath/logo/" . Str::uuid() . ".webp";
 
                             // toWebp() returns an EncodedImage object; use (string) or ->toString()
-                            Storage::disk($disk)->put($logoPath, $logoImage->toWebp(90)->toString());
+                            Storage::disk($disk)->put($logoPath,
+                                                      $logoImage->toWebp(90)->toString(),
+                                                      ['visibility' => 'public']);
                             $data['logo'] = $logoPath;
 
                             // --- 2. Favicon (512x512) ---
@@ -95,7 +97,9 @@
                             $faviconImage->pad(512, 512);
 
                             $faviconPath = "$tenantPath/favicon/favicon-" . Str::uuid() . ".png";
-                            Storage::disk($disk)->put($faviconPath, $faviconImage->toPng()->toString());
+                            Storage::disk($disk)->put($faviconPath,
+                                                      $faviconImage->toPng()->toString(),
+                                                      ['visibility' => 'public']);
 
                             $data['favicon'] = $faviconPath;
                         }
@@ -116,7 +120,9 @@
                                     $image->scaleDown(width: $dims['w'], height: $dims['h']);
 
                                     $path = "$tenantPath/$field/" . Str::uuid() . ".webp";
-                                    Storage::disk($disk)->put($path, $image->toWebp(90)->toString());
+                                    Storage::disk($disk)->put($path,
+                                                              $image->toWebp(90)->toString(),
+                                                              ['visibility' => 'public']);
 
                                     $data[$field] = $path;
                                 }

@@ -62,93 +62,70 @@
 
             public function validated($key = null, $default = null)
                 {
-                    $data = parent::validated();
+                    $data       = parent::validated();
+                    $disk       = config('filesystems.default');
+                    $tenantPath = "nowstream/tenant/" . Str::slug($data['name']);
 
-                    $tenantPath = 'nowstream/tenant/' . Str::slug($data['name']);
-
-                    // Initialize Image Manager
-                    $manager = new ImageManager(new Driver()); // or 'imagick' if installed
+                    // 1. Initialize Manager with a specific driver (v3 requirement)
+                    $manager = new ImageManager(new Driver());
 
                     // ----------- LOGO & FAVICON -----------
                     if ($this->hasFile('logo'))
                         {
-                            $file = $this->file('logo');
+                            $logoFile = $this->file('logo');
 
                             // --- 1. Logo WebP ---
-                            $logoImage = $manager->make($file->getRealPath());
-                            $logoImage->resize(512, 512, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                            // read() replaces make()
+                            $logoImage = $manager->read($logoFile->getRealPath());
 
-                            $logoFilename = Str::uuid() . '.webp';
-                            $logoPath     = $tenantPath . '/logo/' . $logoFilename;
+                            // scaleDown() handles both aspectRatio and upsize constraints automatically
+                            $logoImage->scaleDown(width: 512, height: 512);
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($logoPath, (string)$logoImage->encode('webp', 90));
+                            $logoPath = "$tenantPath/logo/" . Str::uuid() . ".webp";
 
+                            // toWebp() returns an EncodedImage object; use (string) or ->toString()
+                            Storage::disk($disk)->put($logoPath,
+                                                      $logoImage->toWebp(90)->toString(),
+                                                      ['visibility' => 'public']);
                             $data['logo'] = $logoPath;
 
-                            // --- 2. Favicon 512x512 transparent ---
-                            $faviconCanvas = $manager->canvas(512, 512);
+                            // --- 2. Favicon (512x512) ---
+                            // We re-read the file to ensure we start from the source, not the resized logo
+                            $faviconImage = $manager->read($logoFile->getRealPath());
 
-                            $faviconLogo = $manager->make($file->getRealPath());
-                            $faviconLogo->resize(400, 400, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                            // pad() is the new way to fit an image into a canvas with a background (transparent by default)
+                            $faviconImage->pad(512, 512);
 
-                            $faviconCanvas->insert($faviconLogo, 'center');
-
-                            $faviconFilename = 'favicon-' . Str::uuid() . '.png';
-                            $faviconPath     = $tenantPath . '/favicon/' . $faviconFilename;
-
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($faviconPath, (string)$faviconCanvas->encode('png'));
+                            $faviconPath = "$tenantPath/favicon/favicon-" . Str::uuid() . ".png";
+                            Storage::disk($disk)->put($faviconPath,
+                                                      $faviconImage->toPng()->toString(),
+                                                      ['visibility' => 'public']);
 
                             $data['favicon'] = $faviconPath;
                         }
 
-                    // ----------- COVER -----------
-                    if ($this->hasFile('cover'))
+                    // ----------- COVER & BANNER -----------
+                    // Using a loop to keep things DRY (Don't Repeat Yourself)
+                    $uploads = [
+                        'cover'  => ['w' => 1200, 'h' => 600],
+                        'banner' => ['w' => 1200, 'h' => 400],
+                    ];
+
+                    foreach ($uploads as $field => $dims)
                         {
-                            $coverFile  = $this->file('cover');
-                            $coverImage = $manager->make($coverFile->getRealPath());
-                            $coverImage->resize(1200, 600, function ($constraint)
+                            if ($this->hasFile($field))
                                 {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                                    $image = $manager->read($this->file($field)->getRealPath());
 
-                            $coverFilename = Str::uuid() . '.webp';
-                            $coverPath     = $tenantPath . '/cover/' . $coverFilename;
+                                    $image->scaleDown(width: $dims['w'], height: $dims['h']);
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($coverPath, (string)$coverImage->encode('webp', 90));
+                                    $path = "$tenantPath/$field/" . Str::uuid() . ".webp";
+                                    Storage::disk($disk)->put($path,
+                                                              $image->toWebp(90)->toString(),
+                                                              ['visibility' => 'public']);
 
-                            $data['cover'] = $coverPath;
-                        }
-
-                    // ----------- BANNER -----------
-                    if ($this->hasFile('banner'))
-                        {
-                            $bannerFile  = $this->file('banner');
-                            $bannerImage = $manager->make($bannerFile->getRealPath());
-                            $bannerImage->resize(1200, 400, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
-
-                            $bannerFilename = Str::uuid() . '.webp';
-                            $bannerPath     = $tenantPath . '/banner/' . $bannerFilename;
-
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($bannerPath, (string)$bannerImage->encode('webp', 90));
-
-                            $data['banner'] = $bannerPath;
+                                    $data[$field] = $path;
+                                }
                         }
 
                     // ----------- SYSTEM INFO -----------
