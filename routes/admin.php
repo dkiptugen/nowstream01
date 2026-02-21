@@ -62,10 +62,10 @@ Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function () {
 
 });
 Route::middleware(['auth:admin'])->name('backend.')->prefix('backend')->controller(OutletController::class)->group(function () {
-    Route::get('/choose-channel',  'choose_channel')->name('choose_channel');
-    Route::post('/select-channel',  'select_channel')->name('select_channel');
-    Route::get('/create-channel',  'create_channel_view')->name('create_channel');
-    Route::post('/create-channel',  'store_channel')->name('store_channel');
+    Route::get('/choose-brand',  'choose_brand')->name('choose_brand');
+    Route::post('/select-brand',  'select_brand')->name('select_brand');
+    Route::get('/create-brand',  'create_brand_view')->name('create_brand');
+    Route::post('/create-brand',  'store_brand')->name('store_brand');
 });
 Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('backend.')->group(function () {
 
