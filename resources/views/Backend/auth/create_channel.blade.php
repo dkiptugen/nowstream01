@@ -11,31 +11,41 @@
                         <div class="text-center">
                             <img src="{{ $logo }}" width="154" alt="">
                         </div>
-                        <form action="{{ route('backend.store_channel') }}" class="form form-horizontal create-form"
+                        <form action="{{ route('backend.store_brand') }}" class="form form-horizontal create-form"
                               method="post" enctype="multipart/form-data">
                             @csrf
+                            @csrf
                             <div class="form-group">
-                                <label for="channel_name" class="control-label"> Channel Name</label>
-                                <input type="text" name="channel_name" id="channel_name"
-                                       class="form-control form-control-sm">
+                                <label for="name" class="control-label">Name</label>
+                                <input type="text" name="name" id="name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="description" class="control-label">Description</label>
+                                <textarea rows="4" name="description" id="description" class="form-control "></textarea>
+                            </div>
+                            <div class="form-row form-group align-items-center">
+                                <div class="col form-group-file">
+                                    <label for="logo" class="control-label-file">Logo</label>
+                                    <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
+                                    <small class="text text-muted">Image should be 512x512 pixels</small>
+                                </div>
+                                <div class="col form-group-file">
+                                    <label for="cover" class="control-label-file">Cover Image</label>
+                                    <input type="file" name="cover" id="cover" class="form-control-file" accept="image/*">
+                                    <small class="text text-muted">Image should be 1024x672 pixels</small>
+                                </div>
+                                <div class="col form-group-file">
+                                    <label for="banner" class="control-label-file">Banner Image</label>
+                                    <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
+                                    <small class="text text-muted">Image should be 728x90 pixels</small>
+                                </div>
                             </div>
                             <div class="form-group ">
-                                <label for="channel_description" class="control-label">Description</label>
-                                <textarea name="channel_description" id="channel_description" class="form-control"
-                                          rows="6"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label for="thumbnail" class="control-label">Thumbnail</label>
-                                <input type="file" name="thumbnail" id="thumbnail_image" class="form-control-file">
-                                <small class="text-muted">Should be 150x150PX</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="cover_image" class="control-label">Cover Image</label>
-                                <input type="file" name="cover_image" id="cover_image" class="form-control-file">
-                                <small class="text-muted">Should be 1024x300PX</small>
+                                <label for="keywords" class="control-label">Keywords</label>
+                                <input type="text" name="keywords" id="keywords" class="form-control tags-input"  placeholder="Enter keywords separated by comma eg tech, programming,">
                             </div>
                             <div class="form-group d-flex justify-content-end ">
-                                <button type="submit" name="" id="" class="btn btn-sm btn-primary">Add Channel</button>
+                                <button type="submit" name="" id="" class="btn btn-sm btn-primary">Add Brand</button>
                             </div>
                         </form>
 
@@ -44,7 +54,7 @@
             </div>
             @if($message = Session::get('error'))
                 <div class="alert alert-danger alert-block">
-                    <button type="button" class="close" data-d.ismiss="alert">×</button>
+                    <button type="button" class="close" data-dismiss="alert">×</button>
                     <strong>{{ $message }}</strong>
                 </div>
             @endif
