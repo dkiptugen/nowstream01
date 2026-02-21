@@ -47,7 +47,7 @@
                     try
                         {
                             $microsite = new Microsite();
-                            $result    = $microsite->store($validated);
+                            $result    = $microsite->create($validated);
 
                             if ($result)
                                 {
