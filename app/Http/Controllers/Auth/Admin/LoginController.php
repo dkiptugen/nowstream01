@@ -118,6 +118,7 @@
                             $user                      = $this->guard()->user();
                             $user->microsite_id          = null;
                             $user->save();
+                            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
                         }
                     catch (Exception $e)
                         {
