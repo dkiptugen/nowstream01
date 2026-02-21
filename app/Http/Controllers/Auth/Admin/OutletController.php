@@ -55,7 +55,7 @@
                             $microsite = SystemUserMicrosite::where('system_user_id', $user->id)
                                                             ->where('microsite_id', $request->microsite)
                                                             ->first();
-                            dd($microsite);
+                            $user->syncRoles([$microsite->role->name]);
 
                             return redirect()->route('backend.admin_dashboard');
                         }
