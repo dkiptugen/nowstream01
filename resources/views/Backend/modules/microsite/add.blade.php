@@ -94,13 +94,13 @@
 
                 if (!picker || !text) return;
 
-                // Picker → Text
+                // Picker → Text (instant)
                 picker.addEventListener('input', function () {
                     text.value = picker.value.toUpperCase();
                 });
 
-                // Text → Picker
-                text.addEventListener('input', function () {
+                // Text → Picker (ONLY when finished editing)
+                function applyColor() {
                     let value = text.value.trim();
 
                     if (!value.startsWith('#')) {
@@ -112,6 +112,14 @@
                     if (expanded && /^#([0-9A-F]{6})$/i.test(expanded)) {
                         picker.value = expanded;
                         text.value   = expanded.toUpperCase();
+                    }
+                }
+
+                text.addEventListener('blur', applyColor);
+
+                text.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        applyColor();
                     }
                 });
             }
