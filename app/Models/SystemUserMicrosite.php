@@ -13,7 +13,7 @@ class SystemUserMicrosite extends Pivot
         protected $fillable = ['created_by'];
         public function microsite()
             {
-                return $this->belongsTo(Microsite::class);
+                return $this->belongsTo(Microsite::class,'microsite_id','uuid');
             }
         public function system_user()
             {

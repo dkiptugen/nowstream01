@@ -3,6 +3,7 @@
     namespace App\Models;
 
     use App\Casts\JsonCast;
+    use App\Traits\HasUuid;
     use Cviebrock\EloquentSluggable\Sluggable;
     use Illuminate\Database\Eloquent\Model;
     use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,12 @@
         {
             use Sluggable;
             use SoftDeletes;
+            use HasUuid;
+
+
+            protected $keyType      = 'string';
+            public    $incrementing = false;
+            protected $primaryKey   = 'uuid';
 
             protected $fillable = ['name', 'slug', 'colorscheme', 'banner', 'cover', 'favicon', 'logo', 'description', 'image', 'status', 'keywords', 'social_links', 'views', 'followers', 'system_user_id'];
             protected $casts    = ['social_links' => JsonCast::class, 'colorscheme' => JsonCast::class, 'status' => 'bool', 'keywords' => JsonCast::class];
