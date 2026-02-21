@@ -74,11 +74,7 @@
 
     @endforeach
 </div>
-@foreach($microsites as $item)
-<div class="pcar-item">
-    {{ $item->name }}
-</div>
-@endforeach
+ 
 
 <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
