@@ -72,6 +72,7 @@
                         $path = $this->file('banner')->storeAs($tenantPath . '/banner', $filename, 'public');
                         $data['banner'] = $path;
                     }
+                    $data['system_user_id'] = $this->user()->id;
 
                     return $data;
                 }
