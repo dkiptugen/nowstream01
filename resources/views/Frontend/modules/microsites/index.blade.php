@@ -98,7 +98,7 @@
             <div class="pcar-track">
                 @foreach($topevents as $event)
                 <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.tenant-events')
+                    @include('Frontend.includes.components.cards.events')
                 </div>
                 @endforeach
             </div>
