@@ -105,80 +105,7 @@
         </div>
     </div>
 </section>
-
-<!-- top-rated-movie -->
-<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="row align-items-end mb-30">
-            <div class="col-lg-4">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">TOP Tvs in {{ $country_name ?? 'Other Countries' }}</span>
-                    <h2 class="title">Live Tvs</h2>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="ucm-nav-wrap">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($categories as $category)
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
-                                href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}"
-                                aria-selected="false">
-                                {{ ucfirst($category->name) }}
-                            </a>
-                        </li>
-                        @endforeach
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
-
-            <div class="pcar-track">
-                @foreach($toptvs as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    <div class="container mb-30 mt-5">
-        <div class="episode-top-wrap">
-            <div class="section-title"> <span class="sub-title">Trending Radios</span>
-                <h2 class="title">Trending Radios</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
-
-            <div class="pcar-track">
-                @foreach($topradios as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-<!-- top-rated-movie-end -->
+ 
 @if($videos->count() > 0)
 <!-- top-rated-movie -->
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
@@ -259,65 +186,7 @@
     </div>
 </section>
 <!-- top-rated-movie-end -->
-@endif
-<!-- top-rated-movie -->
-<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="episode-top-wrap">
-            <div class="section-title"> <span class="sub-title">Trending Podcasts</span>
-                <h2 class="title">Trending Podcasts</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
-
-            <div class="pcar-track">
-                @foreach($podcasts as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="row align-items-end mb-30 mt-5">
-            <div class="col-lg-6">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">New Podcasts</span>
-                    <h2 class="title">Latest Podcasts</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
-
-            <div class="pcar-track">
-                @foreach($topPodcasts as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    </div>
-</section>
-<!-- top-rated-movie-end -->
+@endif 
 @endsection
 @section('header')
 <style>
