@@ -14,7 +14,7 @@
     class Event extends Model
         {
             use HasFactory, Sluggable, HasUuid;
-            use Searchable;
+
 
             protected $keyType      = 'string';
             public    $incrementing = false;
@@ -41,14 +41,7 @@
                         ],
                     ];
                 }
-            public function shouldBeSearchable()
-                {
-                    return $this->status == 1 && is_null($this->deleted_at);
-                }
-            public function toSearchableArray(): array
-                {
-                    return $this->getAttributes();
-                }
+
 
         /**
          * Event has many streams (Content)
