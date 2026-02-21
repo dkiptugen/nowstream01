@@ -6,6 +6,8 @@
     use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
+    use Intervention\Image\ImageManager;
+    use Intervention\Image\Drivers\Gd\Driver;
 
     class StoreMicrosite extends FormRequest
         {
@@ -62,6 +64,29 @@
                             $path     =$this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
                             //Log::error(Storage::url($path));
                             $data['logo'] = $path; // store path only
+                            // ---- CREATE FAVICON ----
+                            $manager = new ImageManager(new Driver());
+
+                            $image = $manager->read($this->file('logo')->getRealPath());
+
+                            // Resize logo proportionally (max 400px)
+                            $image->scaleDown(width: 400, height: 400);
+
+                            // Create 512x512 transparent canvas
+                            $canvas = $manager->create(512, 512);
+
+                            // Place logo at center
+                            $canvas->place($image, 'center');
+
+                            $faviconName = 'favicon-' . Str::uuid() . '.png';
+                            $faviconPath = $tenantPath . '/favicon/' . $faviconName;
+
+                            Storage::disk('public')->put(
+                                $faviconPath,
+                                (string) $canvas->toPng()
+                            );
+
+                            $data['favicon'] = $faviconPath;
                         }
                     else
                         {
