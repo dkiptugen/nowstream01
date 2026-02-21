@@ -79,7 +79,7 @@
                 {
                     return $this->belongsToMany(
                         SystemUser::class,
-                        'microsite_system_user', // pivot table
+                        'system_user_microsite', // pivot table
                         'microsite_id',          // foreign key on pivot referencing this model
                         'system_user_id'         // foreign key on pivot referencing related model
                     )
