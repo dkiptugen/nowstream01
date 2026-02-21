@@ -103,7 +103,8 @@
                                     else
                                         {
                                             $result->users()->attach($user->id, [
-                                                'role_id' => 1
+                                                'role_id' => $user->getRole('Super Admin')->id,
+                                                'created_by'=>$user->id
                                             ]);
                                         }
 
