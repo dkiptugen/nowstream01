@@ -86,10 +86,30 @@
                         ->using(ContentCategory::class)
                         ->withTimestamps();
                 }
+
+        /**
+         * Find microsite by slug
+         *
+         * @param string $slug
+         * @param bool $fail
+         * @return self|null
+         */
+            public static function findBySlug(string $slug, bool $fail = true)
+            : ?self
+                {
+                    if ($fail)
+                        {
+                            return self::where('slug', $slug)->firstOrFail();
+                        }
+
+                    return self::where('slug', $slug)->first();
+                }
+
             public function shouldBeSearchable()
                 {
                     return $this->status == 1 && is_null($this->deleted_at);
                 }
+
             public function toSearchableArray()
             : array
                 {
@@ -116,7 +136,7 @@
                         'explicit'          => (bool)$this->is_explicit,
                         'language'          => $this->language,
                         'country'           => $this->country,
-                        'publishdate'       => strtotime($this->publishdate)??0,
+                        'publishdate'       => strtotime($this->publishdate) ?? 0,
                     ];
                 }
 
