@@ -102,8 +102,9 @@
                                         }
                                     else
                                         {
+                                            $roleId = Role::where('name', 'Super Admin')->value('id');
                                             $result->users()->attach($user->id, [
-                                                'role_id' => $user->getRole('Super Admin')->id,
+                                                'role_id' => $roleId,
                                                 'created_by'=>$user->id
                                             ]);
                                         }
