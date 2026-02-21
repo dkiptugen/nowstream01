@@ -1,6 +1,6 @@
 @extends('Backend.includes.layout')
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="card card-border-primary">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title m-0 h5 text-primary">Microsites</h3>
