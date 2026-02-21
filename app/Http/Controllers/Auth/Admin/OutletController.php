@@ -98,7 +98,7 @@
                                                 'role_id' => $role->id
                                             ]);
                                             $user->assignRole('ContentOwner');
-                                            dd($user);
+
                                         }
                                     else
                                         {

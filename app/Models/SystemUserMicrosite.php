@@ -10,7 +10,7 @@ class SystemUserMicrosite extends Pivot
     {
         use HasFactory;
         protected $table = 'system_user_microsite';
-        protected $fillable = ['created_by'];
+        protected $fillable = ['created_by','system_user_id','microsite_id','role_id'];
         public function microsite()
             {
                 return $this->belongsTo(Microsite::class,'microsite_id','uuid');
