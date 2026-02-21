@@ -25,10 +25,10 @@
                     $size       = number_format(($file->getSize() / 1024), 2) . 'Kb';
                     $path       = Storage::disk($disk)->putFileAs('nowstream/' . $type . '/' . date('Y/m'), $file, $filename, 'public');
                     $processor  = new ProcessImage(save_loc: 'nowstream/' . $type . '/' . date('Y/m') . '/' . $filename, type: 'portrait');
-                    $posterPath = $processor->execute($request->file($name)->getRealPath(), $disk);
+                    $posterPath = $processor->execute($request->file($name)->getRealPath(), $disk, true);
                     Log::error($posterPath);
                     return [
-                        'path' => $path,
+                        'path' => $posterPath,
                         'name' => $filename,
                         'mime' => $mime,
                         'size' => $size
