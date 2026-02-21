@@ -11,7 +11,7 @@ $endTime   = $event->end_time ? Carbon::parse($event->end_time) : null;
 $tickets = $event->tickets ?? collect();
 $ticket  = $tickets->sortBy('price')->first();
 
- $url = tenant_route('single_event', ['slug' => $event->slug]);
+$url = route('tenant.single_event', ['slug' => $event->slug]);
 
  
 $thumbnail = $event->event_image
