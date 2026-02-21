@@ -27,36 +27,38 @@ class StreamVideoController extends Controller
     /**
      * Videos homepage
      */
-    public function index()
-    {
-        // Top videos (cache 10 min)
-        $top_videos = Cache::remember('top_videos_home', now()->addMinutes(10), function () {
-            return Content::where('content_group', 'video')
-                ->orderByDesc('views')
-                ->take(4)
-                ->get();
-        });
+  public function index()
+{
+    $page = request()->get('page', 1);
 
-        // Paginated videos (cache per page)
-        $page = request()->get('page', 1);
-        $videos = Cache::remember("videos_page_{$page}", now()->addMinutes(10), function () {
-            return Content::where('content_group', 'video')
-                ->latest()
-                ->paginate(12);
-        });
+    $top_videos = Cache::remember('videos:top', 600, function () {
+        return Content::select('uuid','slug','title','thumbnail_url','views')
+            ->where('content_group', 'video') 
+            ->orderByDesc('views')
+            ->limit(4)
+            ->get();
+    });
 
-        // Channels (cache)
-        $channels = Cache::remember('channels_homepage', now()->addMinutes(10), function () {
-            return Channel::where('status', 1)->get();
-        });
+    $videos = Cache::remember("videos:page:{$page}", 600, function () {
+        return Content::select('uuid','slug','title','thumbnail_url','created_at')
+            ->where('content_group', 'video') 
+            ->latest()
+            ->paginate(12);
+    });
 
-        return view('Frontend.modules.videos.index', compact('top_videos', 'videos', 'channels'));
-    }
+    $channels = Cache::remember('channels:active', 1800, function () {
+        return Channel::select('uuid','name','cover_image', 'thumbnail')
+            ->where('status', 1)
+            ->get();
+    });
+
+    return view('Frontend.modules.videos.index', compact('top_videos','videos','channels'));
+}
 
     /**
      * Show single video by UUID
      */
-    public function show(string $uuid, string $slug = null)
+ public function show(string $uuid, string $slug = null)
     {
         try {
             // Video detail (cache per video)
@@ -119,7 +121,6 @@ class StreamVideoController extends Controller
             abort(500, 'Server error');
         }
     }
-
     /**
      * Secure video file streaming
      */

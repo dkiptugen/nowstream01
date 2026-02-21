@@ -74,6 +74,7 @@
 
     @endforeach
 </div>
+ 
 
 <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
@@ -206,13 +207,13 @@
             </div>
         </div>
         <div class="row tr-movie-active">
-<style>
-    .tr-movie-bg {
-    background-position: top center;
-    background-size: cover;
-    padding: 40px 0 60px;
-}
-</style>
+            <style>
+                .tr-movie-bg {
+                    background-position: top center;
+                    background-size: cover;
+                    padding: 40px 0 60px;
+                }
+            </style>
             @foreach($top_videos as $video)
             <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
                 <div class="movie-item mb-4">
@@ -231,7 +232,7 @@
                             </div>
                         </a>
                     </div>
-                    <div class="movie-content"> 
+                    <div class="movie-content">
                         <div class="bottom pt-2" style="position: relative;">
                             <!-- Display number of views -->
 
