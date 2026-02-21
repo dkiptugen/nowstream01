@@ -3,6 +3,7 @@
     namespace App\Http\Requests;
 
     use Illuminate\Foundation\Http\FormRequest;
+    use Illuminate\Support\Facades\Log;
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
 
@@ -40,9 +41,9 @@
                         'name'           => ['required', 'unique:microsites,name'],
                         'description'    => ['required', 'string'],
                         'colorscheme'    => ['nullable', 'array'],
-                        'logo'           => ['image', 'mimes:jpg,png,jpeg,webp','max:2048','dimensions:min_width=100,min_height=100'],
-                        'cover'          => ['image', 'mimes:jpg,png,jpeg,webp','max:2048','dimensions:min_width=100,min_height=100'],
-                        'banner'         => ['image', 'mimes:jpg,png,jpeg,webp','max:2048','dimensions:min_width=100,min_height=100'],
+                        'logo'           => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
+                        'cover'          => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
+                        'banner'         => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'social_links'   => ['nullable', 'array'],
                         'social_links.*' => ['nullable', 'url', 'starts_with:https://'],
                     ];
@@ -55,23 +56,31 @@
 
                     $tenantPath = 'tenant/' . Str::slug($data['name']);
 
-                    if ($this->hasFile('logo')) {
-                        $filename = Str::uuid() . '.' . $this->file('logo')->extension();
-                        $path = $this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
-                        $data['logo'] = $path; // store path only
-                    }
+                    if ($this->hasFile('logo'))
+                        {
+                            $filename = Str::uuid() . '.' . $this->file('logo')->extension();
+                            $path     = Storage::putFileAs($tenantPath . '/logo/' . $filename, $this->file('logo'));
+                            Log::error($path);
+                            $data['logo'] = $path; // store path only
+                        }
+                    else
+                        {
+                            Log::error("logo not found");
+                        }
 
-                    if ($this->hasFile('cover')) {
-                        $filename = Str::uuid() . '.' . $this->file('cover')->extension();
-                        $path = $this->file('cover')->storeAs($tenantPath . '/cover', $filename, 'public');
-                        $data['cover'] = $path;
-                    }
+                    if ($this->hasFile('cover'))
+                        {
+                            $filename      = Str::uuid() . '.' . $this->file('cover')->extension();
+                            $path          = $this->file('cover')->storeAs($tenantPath . '/cover', $filename, 'public');
+                            $data['cover'] = $path;
+                        }
 
-                    if ($this->hasFile('banner')) {
-                        $filename = Str::uuid() . '.' . $this->file('banner')->extension();
-                        $path = $this->file('banner')->storeAs($tenantPath . '/banner', $filename, 'public');
-                        $data['banner'] = $path;
-                    }
+                    if ($this->hasFile('banner'))
+                        {
+                            $filename       = Str::uuid() . '.' . $this->file('banner')->extension();
+                            $path           = $this->file('banner')->storeAs($tenantPath . '/banner', $filename, 'public');
+                            $data['banner'] = $path;
+                        }
                     $data['system_user_id'] = $this->user()->id;
 
                     return $data;
