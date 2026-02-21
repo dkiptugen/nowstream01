@@ -12,19 +12,19 @@
                         <div class="text-center">
                             <img src="{{ $logo }}" width="154" alt="">
                         </div>
-                        <form  method="POST" action="{{ route('backend.select_channel') }}">
+                        <form  method="POST" action="{{ route('backend.select_brand') }}">
                             @csrf
                             <div class="form-group">
-                                <label for="channel">{{ __('Select Channel') }}</label>
-                                <select class="form-control" name="channel"  id="channel"  autocomplete="channel"  >
+                                <label for="channel">{{ __('Select Brand') }}</label>
+                                <select class="form-control" name="microsite"  id="microsite"  autocomplete="microsite"  >
                                     @foreach($product as $value)
-                                        <option value="{{ $value->channel->uuid }}">{{ $value->channel->name }}</option>
+                                        <option value="{{ $value->microsite->uuid }}">{{ $value->microsite->name }}</option>
                                     @endforeach
 
                                 </select>
                             </div>
                             <div class="form-group">
-                                Don't have a channel yet? <a href="{{ route('backend.create_channel') }}">Create One</a>
+                                Don't have a brand yet? <a href="{{ route('backend.create_brand') }}">Create One</a>
                             </div>
                             <div class="text-center mt-3">
                                 <button type="submit" class="btn btn-block btn-info">Proceed</button>
