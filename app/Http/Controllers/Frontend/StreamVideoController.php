@@ -88,7 +88,7 @@ class StreamVideoController extends Controller
 
         // Related videos (index friendly)
         $relatedVideos = Cache::remember("video:related:{$uuid}", 1800, function () use ($uuid) {
-            return Content::select('uuid','slug','title','thumbnail')
+            return Content::select('uuid','slug','title','thumbnail_url')
                 ->where('content_group', 'video')
                 ->where('status', 1)
                 ->where('uuid', '!=', $uuid)
@@ -99,7 +99,7 @@ class StreamVideoController extends Controller
 
         // Channels preview
         $channels = Cache::remember('channels:preview', 1800, function () {
-            return Channel::select('id','name','slug','logo')
+            return Channel::select('uuid','name','thumbnail')
                 ->where('status', 1)
                 ->limit(8)
                 ->get();
