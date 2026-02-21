@@ -27,98 +27,114 @@ class StreamVideoController extends Controller
     /**
      * Videos homepage
      */
-    public function index()
-    {
-        // Top videos (cache 10 min)
-        $top_videos = Cache::remember('top_videos_home', now()->addMinutes(10), function () {
-            return Content::where('content_group', 'video')
-                ->orderByDesc('views')
-                ->take(4)
-                ->get();
-        });
+  public function index()
+{
+    $page = request()->get('page', 1);
 
-        // Paginated videos (cache per page)
-        $page = request()->get('page', 1);
-        $videos = Cache::remember("videos_page_{$page}", now()->addMinutes(10), function () {
-            return Content::where('content_group', 'video')
-                ->latest()
-                ->paginate(12);
-        });
+    $top_videos = Cache::remember('videos:top', 600, function () {
+        return Content::select('id','uuid','slug','title','thumbnail','views')
+            ->where('content_group', 'video')
+            ->where('status', 1)
+            ->orderByDesc('views')
+            ->limit(4)
+            ->get();
+    });
 
-        // Channels (cache)
-        $channels = Cache::remember('channels_homepage', now()->addMinutes(10), function () {
-            return Channel::where('status', 1)->get();
-        });
+    $videos = Cache::remember("videos:page:{$page}", 600, function () {
+        return Content::select('id','uuid','slug','title','thumbnail','created_at')
+            ->where('content_group', 'video')
+            ->where('status', 1)
+            ->latest()
+            ->paginate(12);
+    });
 
-        return view('Frontend.modules.videos.index', compact('top_videos', 'videos', 'channels'));
-    }
+    $channels = Cache::remember('channels:active', 1800, function () {
+        return Channel::select('id','name','slug','logo')
+            ->where('status', 1)
+            ->get();
+    });
+
+    return view('Frontend.modules.videos.index', compact('top_videos','videos','channels'));
+}
 
     /**
      * Show single video by UUID
      */
-    public function show(string $uuid, string $slug = null)
-    {
-        try {
-            // Video detail (cache per video)
-            $video = Cache::remember("video_{$uuid}", now()->addMinutes(30), function () use ($uuid) {
-                return Content::where('content_group', 'video')
-                    ->where('uuid', $uuid)
-                    ->with(['comments.user']) // eager load users
-                    ->firstOrFail();
-            });
+   public function show(string $uuid, string $slug = null)
+{
+    try {
 
-            // Increment views live
-            $video->increment('views');
+        $video = Cache::remember("video:{$uuid}", 1800, function () use ($uuid) {
+            return Content::select('*')
+                ->where('content_group', 'video')
+                ->where('uuid', $uuid)
+                ->where('status', 1)
+                ->firstOrFail();
+        });
 
-            // Record watch history per user
-            if (Auth::check() && $this->watchHistoryService) {
-                try {
-                    $this->watchHistoryService->record($video);
-                } catch (\Exception $e) {
-                    Log::warning('Watch history failed: ' . $e->getMessage());
-                }
-            }
+        // Increment views without invalidating cache
+        Content::where('uuid', $uuid)->increment('views');
 
-            // Channels (cache)
-            $channels = Cache::remember('channels_homepage_preview', now()->addMinutes(10), function () {
-                return Channel::where('status', 1)->take(8)->get();
-            });
-
-            // Related videos per video (cache 30 min)
-            $relatedVideos = Cache::remember("related_videos_{$uuid}", now()->addMinutes(30), function () use ($video) {
-                return Content::where('content_group', 'video')
-                    ->where('uuid', '!=', $video->uuid)
-                    ->latest()
-                    ->take(6)
-                    ->get();
-            });
-
-            $comments = $video->comments()
-                ->with('user')
-                ->orderBy('created_at', 'asc') // oldest first
-                ->get();
-
-
-            // Country name mapping (cache)
-            $iso = strtoupper($video->country ?? 'KE');
-            $countryName = Cache::remember("country_name_{$iso}", now()->addDay(), function () use ($iso) {
-                $path = resource_path('data/countries.json');
-                if (!File::exists($path)) {
-                    return [];
-                }
-                $countries = json_decode(file_get_contents($path), true);
-                return $countries[$iso] ?? $iso;
-            });
-
-            return view('Frontend.modules.videos.video', compact('video', 'channels', 'relatedVideos', 'comments', 'countryName'));
-
-        } catch (ModelNotFoundException $e) {
-            abort(404, 'Video not found');
-        } catch (\Exception $e) {
-            Log::error('Video show error: ' . $e->getMessage());
-            abort(500, 'Server error');
+        // Watch history
+        if (Auth::check()) {
+            $this->watchHistoryService?->record($video);
         }
+
+        // Comments (separate cache – better isolation)
+        $comments = Cache::remember("video:comments:{$uuid}", 600, function () use ($uuid) {
+            return Comment::with('user:id,name,avatar')
+                ->where('content_uuid', $uuid)
+                ->orderBy('created_at', 'asc')
+                ->get();
+        });
+
+        // Related videos (index friendly)
+        $relatedVideos = Cache::remember("video:related:{$uuid}", 1800, function () use ($uuid) {
+            return Content::select('uuid','slug','title','thumbnail')
+                ->where('content_group', 'video')
+                ->where('status', 1)
+                ->where('uuid', '!=', $uuid)
+                ->latest()
+                ->limit(6)
+                ->get();
+        });
+
+        // Channels preview
+        $channels = Cache::remember('channels:preview', 1800, function () {
+            return Channel::select('id','name','slug','logo')
+                ->where('status', 1)
+                ->limit(8)
+                ->get();
+        });
+
+        // Load countries file ONCE globally (not per ISO)
+        $countryName = Cache::remember('countries:all', 86400, function () {
+            $path = resource_path('data/countries.json');
+            if (!File::exists($path)) {
+                return [];
+            }
+            return json_decode(file_get_contents($path), true);
+        });
+
+        $iso = strtoupper($video->country ?? 'KE');
+        $countryName = $countryName[$iso] ?? $iso;
+
+        return view('Frontend.modules.videos.video', compact(
+            'video',
+            'channels',
+            'relatedVideos',
+            'comments',
+            'countryName'
+        ));
+
+    } catch (ModelNotFoundException $e) {
+        abort(404);
+    } catch (\Throwable $e) {
+        Log::error('Video show error: '.$e->getMessage());
+        abort(500);
     }
+}
+
 
     /**
      * Secure video file streaming
