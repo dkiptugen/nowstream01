@@ -80,7 +80,6 @@ public function index(Request $request)
                 ->limit(12)
                 ->get(),
                 
-            'microsites' => Microsite::all(),
 
 
             'top_videos' => $topVideos,
@@ -116,7 +115,7 @@ public function index(Request $request)
             'categories' => Category::limit(6)->get(),
         ];
     });
-
+$this->data['microsites'] = Microsite::all();
     return view('Frontend.index', $data);
 }
 
