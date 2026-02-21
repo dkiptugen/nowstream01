@@ -60,7 +60,7 @@
                         {
                             $filename = Str::uuid() . '.' . $this->file('logo')->extension();
                             $path     =$this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
-                            Log::error($path);
+                            //Log::error(Storage::url($path));
                             $data['logo'] = $path; // store path only
                         }
                     else
@@ -82,7 +82,7 @@
                             $data['banner'] = $path;
                         }
                     $data['system_user_id'] = $this->user()->id;
-
+                    Log::info('validated',$data);
                     return $data;
                 }
         }
