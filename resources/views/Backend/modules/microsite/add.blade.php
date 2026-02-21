@@ -1,7 +1,78 @@
 @extends('Backend.includes.layout')
 @section('content')
+    <div class="card card-border-primary">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title m-0 h5 text-primary">Add Microsite</h3>
+
+        </div>
+        <div class="card-body">
+            <form action="{{ route('backend.microsite.store') }}" method="post" class="form form-horizontal create-form"
+                  enctype="multipart/form-data">
+                @csrf
+                <div class="form-group">
+                    <label for="name" class="control-label">Name</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="Description" class="control-label">Description</label>
+                    <input type="text" name="Description" id="Description" class="form-control editor">
+                </div>
+                <div class="form-group form-row">
+                    <div class="col">
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                Primary Color</span>
+                            </div>
+                            <input type="color" name="colorscheme[primary]" id="colorscheme-primary"
+                                   class="form-control" value="#007bff">
+                        </div>
 
 
+                    </div>
+                    <div class="col">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    Accent Color
+                                </span>
+                            </div>
+                            <input type="color" name="colorscheme[accent]" id="colorscheme-accent" class="form-control" value="#EEEEEE">
+                        </div>
+                    </div>
+                    </div>
+                    <div class="form-row form-group align-items-center">
+                        <div class="col form-group-file">
+                            <label for="logo" class="control-label-file">Logo</label>
+                            <input type="file" name="logo" id="logo" class="form-control-file" accept="image/*">
+                            <small class="text text-muted">Image should be 512x512 pixels</small>
+                        </div>
+                        <div class="col form-group-file">
+                            <label for="cover" class="control-label-file">Cover Image</label>
+                            <input type="file" name="cover" id="cover" class="form-control-file" accept="image/*">
+                            <small class="text text-muted">Image should be 1024x672 pixels</small>
+                        </div>
+                        <div class="col form-group-file">
+                            <label for="banner" class="control-label-file">Banner Image</label>
+                            <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
+                            <small class="text text-muted">Image should be 728x90 pixels</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="socialmedia" class="control-label">Social Media Links</label>
+                        <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input">
+                    </div>
+                    <div class="form-group form-row">
+                        <button class="btn btn-primary btn-sm ml-auto" name="submit" value="publish"
+                                type="submit">SAVE
+                        </button>
+                    </div>
+
+
+            </form>
+        </div>
+    </div>
 
 @endsection
 @section('header')

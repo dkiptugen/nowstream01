@@ -15,6 +15,14 @@
                     </a>
 
                 </li>
+                @can('view_microsite')
+                    <li class="sidebar-item">
+                        <a href="{{ route('backend.microsite.index') }}" class="  sidebar-link">
+                           <i class="fas fa-lightbulb align-middle"></i>
+                            <span class="align-middle">Microsites</span>
+                        </a>
+                    </li>
+                @endcan
 
                 @canany(['view_event','view_specific_event'])
                     <li class="sidebar-item">

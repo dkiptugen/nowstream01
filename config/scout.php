@@ -181,28 +181,24 @@ return [
         ],
         // 'max_total_results' => env('TYPESENSE_MAX_TOTAL_RESULTS', 1000),
         'model-settings' => [
-            // User::class => [
-            //     'collection-schema' => [
-            //         'fields' => [
-            //             [
-            //                 'name' => 'id',
-            //                 'type' => 'string',
-            //             ],
-            //             [
-            //                 'name' => 'name',
-            //                 'type' => 'string',
-            //             ],
-            //             [
-            //                 'name' => 'created_at',
-            //                 'type' => 'int64',
-            //             ],
-            //         ],
-            //         'default_sorting_field' => 'created_at',
-            //     ],
-            //     'search-parameters' => [
-            //         'query_by' => 'name'
-            //     ],
-            // ],
+
+                App\Models\Content::class => [
+                    'collection-schema' => [
+                        'fields' => [
+                            ['name' => 'id', 'type' => 'string'],
+                            ['name' => 'title', 'type' => 'string'],
+                            ['name' => 'description', 'type' => 'string'],
+                            ['name' => 'content_group', 'type' => 'string', 'facet' => true],
+                            ['name' => 'type', 'type' => 'string', 'facet' => true],
+                            ['name' => 'status', 'type' => 'int32', 'facet' => true],
+                            ['name' => 'publishdate', 'type' => 'int64', 'facet' => true],
+                            ['name' => 'category_ids', 'type' => 'int32[]', 'facet' => true],
+                            ['name' => 'views', 'type' => 'int32'],
+                        ],
+                        'default_sorting_field' => 'publishdate',
+                    ],
+                ],
+
         ],
         'import_action' => env('TYPESENSE_IMPORT_ACTION', 'upsert'),
     ],
