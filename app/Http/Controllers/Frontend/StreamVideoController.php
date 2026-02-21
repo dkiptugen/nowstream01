@@ -32,7 +32,7 @@ class StreamVideoController extends Controller
     $page = request()->get('page', 1);
 
     $top_videos = Cache::remember('videos:top', 600, function () {
-        return Content::select('uuid','slug','title','thumbnail','views')
+        return Content::select('uuid','slug','title','thumbnail_url','views')
             ->where('content_group', 'video')
             ->where('status', 1)
             ->orderByDesc('views')
@@ -41,7 +41,7 @@ class StreamVideoController extends Controller
     });
 
     $videos = Cache::remember("videos:page:{$page}", 600, function () {
-        return Content::select('uuid','slug','title','thumbnail','created_at')
+        return Content::select('uuid','slug','title','thumbnail_url','created_at')
             ->where('content_group', 'video')
             ->where('status', 1)
             ->latest()
