@@ -84,6 +84,7 @@
                         'system_user_id'         // foreign key on pivot referencing related model
                     )
                                 ->using(SystemUserMicrosite::class)
+                                ->withPivot('role_id')
                                 ->withTimestamps();
                 }
         }
