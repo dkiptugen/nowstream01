@@ -19,11 +19,11 @@
                         $table->string('domain');
                         $table->string('slug');
                         $table->string('logo')->nullable();
-                        $table->text('colorscheme')->comment('JSON');
+                        $table->text('colorscheme')->nullable();
                         $table->string('banner')->nullable();
                         $table->string('cover')->nullable();
                         $table->string('favicon')->nullable();
-                        $table->string('description');
+                        $table->string('description')->nullable();
                         $table->string('keywords')->nullable();
                         $table->text('social_links')->nullable();
                         $table->bigInteger('views')->default(0)->comment('Views');
