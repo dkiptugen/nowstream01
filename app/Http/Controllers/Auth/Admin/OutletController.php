@@ -103,7 +103,7 @@
 
                                     $user->microsite_id = $microsite->uuid;
                                     $user->save();
-                                    dd($user);
+                                    //dd($user);
                                     //DB::commit();
                                     return redirect()->route('backend.admin_dashboard');
                                 }
