@@ -77,7 +77,7 @@
                     $validated = $request->validated();
                     $validated['verified'] = 0;
                     $validated['visible'] = 0;
-                    DB::transaction();
+                    DB::beginTransaction();
                     try
                         {
                             $microsite = new Microsite();
