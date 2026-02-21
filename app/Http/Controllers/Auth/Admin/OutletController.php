@@ -52,7 +52,9 @@
                             $user             = Auth::user();
                             $user->microsite_id = $request->microsite;
                             $user->save();
-                            $microsite = $user->microsites()->where('microsite_id',$request->microsite);
+                            $microsite = SystemUserMicrosite::where('system_user_id', $user->id)
+                                                            ->where('microsite_id', $request->microsite)
+                                                            ->first();
                             dd($microsite);
 
                             return redirect()->route('backend.admin_dashboard');
