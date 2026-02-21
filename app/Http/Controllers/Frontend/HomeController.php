@@ -8,6 +8,7 @@ use App\Models\Channel;
 use App\Models\Event;
 use App\Models\ContentRate;
 use App\Models\Content;
+use App\Models\Microsite;
 use App\Models\Video;
 use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
@@ -44,7 +45,6 @@ public function index(Request $request)
     $countryName = $countries[$iso] ?? 'Kenya';
 
     $cacheKey = "homepage_{$iso}";
-
     $data = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($iso, $countryName) {
 
         // Heavy sections cached individually
@@ -79,6 +79,9 @@ public function index(Request $request)
                 ->latest()
                 ->limit(12)
                 ->get(),
+                
+            'microsites' => Microsite::all(),
+
 
             'top_videos' => $topVideos,
 
