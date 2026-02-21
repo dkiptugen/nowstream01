@@ -52,6 +52,8 @@
                             $user             = Auth::user();
                             $user->microsite_id = $request->microsite;
                             $user->save();
+                            $microsite = $user->microsites()->where('microsite_id',$request->microsite);
+                            dd($microsite);
 
                             return redirect()->route('backend.admin_dashboard');
                         }
@@ -63,6 +65,7 @@
                     $user = Auth::guard('admin')->user();
                     $user->microsite_id = $microsite->uuid;
                     $sav              = $user->save();
+                    $user->syncRoles();
                     if ($sav)
                         {
                             return redirect()->route('backend.admin_dashboard');
