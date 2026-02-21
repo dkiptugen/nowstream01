@@ -8,7 +8,9 @@
     use App\Http\Controllers\Frontend\HomeController;
     use App\Http\Controllers\Frontend\EventController;
     use App\Http\Controllers\Auth\User\AuthsController;
-    use App\Http\Controllers\Frontend\PodcastController as FrontendPodcastController;
+use App\Http\Controllers\Backend\MicrositeController;
+use App\Http\Controllers\Frontend\MicrositeController as FrontendMicrositeController;
+use App\Http\Controllers\Frontend\PodcastController as FrontendPodcastController;
     use App\Http\Controllers\Frontend\SearchController;
     use App\Http\Controllers\Frontend\TVController;
     use App\Http\Controllers\Frontend\RadioController;
@@ -47,7 +49,7 @@
                  ->controller(TenantController::class)
                  ->group(function ()
                     {
-                        Route::get('/', 'index')->name('home');
+                        Route::get('/', [FrontendMicrositeController::class, 'index'])->name('home');
                         Route::get('/events', 'events')->name('events');
                         Route::get('/event/{event}', 'single_event')->name('single_event');
                         Route::get('/streams', 'streams')->name('streams');
