@@ -6,7 +6,8 @@
     use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
     use Illuminate\Validation\Rule;
-    use Intervention\Image\Laravel\Facades\Image;
+    use Intervention\Image\Drivers\Gd\Driver;
+    use Intervention\Image\ImageManager;
 
 
     class UpdateMicrosite extends FormRequest
@@ -65,12 +66,15 @@
 
                     $tenantPath = 'nowstream/tenant/' . Str::slug($data['name']);
 
+                    // Initialize ImageManager instance (GD or Imagick)
+                    $manager = new ImageManager(Driver::class);
+
                     // ----------- LOGO & FAVICON -----------
                     if ($this->hasFile('logo')) {
                         $file = $this->file('logo');
 
                         // --- 1. Logo WebP ---
-                        $logoImage = Image::make($file->getRealPath());
+                        $logoImage = $manager->make($file->getRealPath());
                         $logoImage->resize(512, 512, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
@@ -85,9 +89,8 @@
                         $data['logo'] = $logoPath;
 
                         // --- 2. Favicon 512x512 transparent ---
-                        $faviconCanvas = Image::canvas(512, 512);
-
-                        $faviconLogo = Image::make($file->getRealPath());
+                        $faviconCanvas = $manager->canvas(512, 512); // transparent canvas
+                        $faviconLogo = $manager->make($file->getRealPath());
                         $faviconLogo->resize(400, 400, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
@@ -107,7 +110,7 @@
                     // ----------- COVER -----------
                     if ($this->hasFile('cover')) {
                         $coverFile = $this->file('cover');
-                        $coverImage = Image::make($coverFile->getRealPath());
+                        $coverImage = $manager->make($coverFile->getRealPath());
                         $coverImage->resize(1200, 600, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
@@ -125,7 +128,7 @@
                     // ----------- BANNER -----------
                     if ($this->hasFile('banner')) {
                         $bannerFile = $this->file('banner');
-                        $bannerImage = Image::make($bannerFile->getRealPath());
+                        $bannerImage = $manager->make($bannerFile->getRealPath());
                         $bannerImage->resize(1200, 400, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
@@ -139,6 +142,7 @@
 
                         $data['banner'] = $bannerPath;
                     }
+
                     $data['system_user_id'] = $this->user()->id;
                     $data['status']         = $data['status'] ?? 0;
                     //Log::info('validated',$data);
