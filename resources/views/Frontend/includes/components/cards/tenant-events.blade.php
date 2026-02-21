@@ -11,9 +11,8 @@ $freeStream = !$hasPaidTickets;
 
 $ticket = $tickets->sortBy('price')->first();
 
-$url = $freeStream
-? route('tenant.single_event',  $event->slug)
-: route('tenant.single_event',  $event->slug);
+$url = route('tenant.single_event', $event->slug);
+
 
 $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
 @endphp

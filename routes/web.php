@@ -48,7 +48,7 @@
                  ->group(function ()
                     {
                         Route::get('/', 'index')->name('home');
-                        Route::get('/events', 'events')->name('events');
+                        Route::get('/events', 'events')->name('events'); 
                         Route::get('/event/{slug}', 'single_event')->name('single_event');
                         Route::get('/streams', 'streams')->name('streams');
                         Route::get('/stream/{stream}', 'single_stream')->name('single_stream');
