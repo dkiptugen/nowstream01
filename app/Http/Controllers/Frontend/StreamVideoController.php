@@ -81,7 +81,7 @@ class StreamVideoController extends Controller
         // Comments (separate cache – better isolation)
         $comments = Cache::remember("video:comments:{$uuid}", 600, function () use ($uuid) {
             return Comment::with('user:id,name,avatar')
-                ->where('content_uuid', $uuid)
+                ->where('uuid', $uuid)
                 ->orderBy('created_at', 'asc')
                 ->get();
         });
