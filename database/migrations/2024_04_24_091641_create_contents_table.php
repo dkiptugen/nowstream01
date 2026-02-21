@@ -21,7 +21,7 @@
                         $table->string('title');
                         $table->longText('description')->nullable();
                         $table->string('thumbnail_url')->nullable();
-                        $table->enum('content_group', ['livestream', 'video','podcast','podcast_episode','tv','radio'])->default('livestream');
+                        $table->enum('content_group', ['livestream', 'video','podcast','podcast_episode','tv','radio','music','movie'])->default('livestream');
                         $table->string('duration')->nullable();
                         $table->string('type')->nullable();
                         $table->string('stream_key')->nullable()->index();

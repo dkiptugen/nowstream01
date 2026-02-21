@@ -18,6 +18,7 @@
                         }
                     $tenant = Microsite::where('domain', $host)
                                        ->where('status', 1)
+                                       ->where('visible',1)
                                        ->first();
 
                     if (!$tenant)
@@ -26,7 +27,7 @@
                         }
 
                     // Make tenant globally available
-                    app()->instance('tenant', collect($tenant)->only(['name','logo','domain','banner','cover','colorscheme','favicon','description','keywords','views','followers']));
+                    app()->instance('tenant', collect($tenant)->only(['uuid','name','logo','domain','banner','cover','colorscheme','favicon','description','keywords','views','followers']));
 
                     return $next($request);
                 }

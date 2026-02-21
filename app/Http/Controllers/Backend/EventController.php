@@ -83,8 +83,9 @@
                             $event->end_time       = $endDate;
                             $event->venue          = $request->venue;
                             $event->system_user_id = $admin->id;
+                            $event->microsite_id   = $admin->microsite_id;
                             $event->status         = 1;
-
+                            $event->featured       = $request->featured;
                             // Event thumbnail
                             if ($request->hasFile('thumbnail'))
                                 {
@@ -104,20 +105,18 @@
 
                                     $streamKey = Str::ulid();
 
-                                    $stream                = new Content();
-                                    $stream->title         = $event->event_name;
-                                    $stream->description   = $request->event_description;
-                                    $stream->content_group = 'livestream';
-                                    $stream->type          = 'application/x-mpegURL';
-                                    $stream->stream_key    = $streamKey;
-                                    $stream->stream_url    = config('custom.STREAM.LIVESTREAM_SERVER');
-                                    $stream->stream_video_link
-                                                           = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamKey . '.m3u8';
-
+                                    $stream                    = new Content();
+                                    $stream->title             = $event->event_name;
+                                    $stream->description       = $request->event_description;
+                                    $stream->content_group     = 'livestream';
+                                    $stream->type              = 'application/x-mpegURL';
+                                    $stream->stream_key        = $streamKey;
+                                    $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
+                                    $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamKey . '.m3u8';
                                     $stream->start_time     = $startDate;
                                     $stream->event_id       = $event->id;
                                     $stream->system_user_id = $admin->id;
-                                    $stream->channel_id     = $admin->channel_id ?? null;
+                                    $event->microsite_id    = $admin->microsite_id;
                                     $stream->status         = 1;
 
                                     // Stream thumbnail
@@ -201,8 +200,9 @@
                             $event->end_time       = $endDate;
                             $event->venue          = $request->venue;
                             $event->system_user_id = $request->user('admin')->id;
-                            $event->channel_id     = $request->user()->channel_id;
+                            $event->microsite_id   = $request->user('admin')->microsite_id;
                             $event->status         = 1;
+                            $event->featured       = $request->featured;
 
                             // Event image
                             if ($request->hasFile('thumbnail'))

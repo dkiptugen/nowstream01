@@ -12,11 +12,11 @@ class LogWatchHistory
         $response = $next($request);
 
         // Check if the user is authenticated and if the request contains video data
-        if (Auth::check() && $request->video) {
+        if (Auth::check()) {
             // Log the watch history
             WatchHistory::create([
                 'user_id' => Auth::id(),
-                'video_id' => $request->video->id,
+                'content_id' => $request->content_uuid,
                 'watched_at' => now(),
                 'watch_duration' => $request->watch_duration // If you have the duration available
             ]);
