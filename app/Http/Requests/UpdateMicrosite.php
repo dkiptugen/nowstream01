@@ -7,8 +7,9 @@
     use Illuminate\Support\Str;
     use Illuminate\Validation\Rule;
     use Intervention\Image\Drivers\Gd\Driver;
-    use Intervention\Image\Image;
+    //use Intervention\Image\Image;
     use Intervention\Image\ImageManager;
+    use Intervention\Image\ImageManagerStatic as Image;
 
     class UpdateMicrosite extends FormRequest
         {
