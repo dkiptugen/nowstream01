@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('revenue_shares', function (Blueprint $table) {
 
                 $table->id();
-                $table->foreignId('organizer_id')->constrained()->cascadeOnDelete();
+                $table->uuid('microsite_id')->index();
                 $table->enum('type', ['percentage','fixed']);
                 $table->decimal('platform_share', 10, 2); // 5% or 100 KES
                 $table->timestamps();
