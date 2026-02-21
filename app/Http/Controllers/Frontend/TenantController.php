@@ -112,16 +112,22 @@ class TenantController extends Controller
         $this->data['microsites'] = Microsite::all();
         return view('Frontend.modules.microsites.index', $data);
     }
-   public function single_event($slug)
-{
-    try {
-        /*
+    function tenant_route($name, $parameters = [])
+    {
+        $parameters['subdomain'] = request()->route('subdomain');
+        return route('tenant.' . $name, $parameters);
+    }
+
+    public function single_event($slug)
+    {
+        try {
+            /*
         |--------------------------------------------------------------------------
         | 1. Cache Event Core (longer cache – rarely changes)
         |--------------------------------------------------------------------------
         */
-        $event = Cache::remember("event_core_{$slug}", now()->addHours(6), function () use ($slug) {
-            return Event::select(
+            $event = Cache::remember("event_core_{$slug}", now()->addHours(6), function () use ($slug) {
+                return Event::select(
                     'uuid',
                     'title',
                     'slug',
@@ -132,59 +138,57 @@ class TenantController extends Controller
                     'views',
                     'status'
                 )
-                ->where('slug', $slug)
-                ->where('status', 1)
-                ->firstOrFail();
-        });
+                    ->where('slug', $slug)
+                    ->where('status', 1)
+                    ->firstOrFail();
+            });
 
-        $eventId = $event->uuid;
+            $eventId = $event->uuid;
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | 2. Cache Heavy Page Data (shorter cache)
         |--------------------------------------------------------------------------
         */
-        $pageData = Cache::remember("event_page_data_{$eventId}", now()->addMinutes(10), function () use ($eventId) {
-            return [
-                'events' => $this->get_events($eventId),            // related listings
-                'videos' => $this->get_videos(),                    // global videos
-                'rates'  => $this->get_event_ticket_rates($eventId) // ticket pricing
-            ];
-        });
+            $pageData = Cache::remember("event_page_data_{$eventId}", now()->addMinutes(10), function () use ($eventId) {
+                return [
+                    'events' => $this->get_events($eventId),            // related listings
+                    'videos' => $this->get_videos(),                    // global videos
+                    'rates'  => $this->get_event_ticket_rates($eventId) // ticket pricing
+                ];
+            });
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | 3. Increment Views (not cached)
         |--------------------------------------------------------------------------
         */
-        Event::where('uuid', $eventId)->increment('views');
+            Event::where('uuid', $eventId)->increment('views');
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | 4. Related Events (long cache)
         |--------------------------------------------------------------------------
         */
-        $relatedEvents = Cache::remember("related_events_{$eventId}", now()->addHours(12), function () use ($eventId) {
-            return Content::select('uuid', 'title', 'slug', 'thumbnail_url')
-                ->where('content_group', 'event')
-                ->where('status', 1)
-                ->where('uuid', '!=', $eventId)
-                ->latest()
-                ->limit(4)
-                ->get();
-        });
+            $relatedEvents = Cache::remember("related_events_{$eventId}", now()->addHours(12), function () use ($eventId) {
+                return Content::select('uuid', 'title', 'slug', 'thumbnail_url')
+                    ->where('content_group', 'event')
+                    ->where('status', 1)
+                    ->where('uuid', '!=', $eventId)
+                    ->latest()
+                    ->limit(4)
+                    ->get();
+            });
 
-        return view('Frontend.modules.events.event', [
-            'event'         => $event,
-            'events'        => $pageData['events'],
-            'videos'        => $pageData['videos'],
-            'rates'         => $pageData['rates'],
-            'relatedEvents' => $relatedEvents,
-        ]);
-
-    } catch (\Exception $e) {
-        abort(404, 'Event not found.');
+            return view('Frontend.modules.events.event', [
+                'event'         => $event,
+                'events'        => $pageData['events'],
+                'videos'        => $pageData['videos'],
+                'rates'         => $pageData['rates'],
+                'relatedEvents' => $relatedEvents,
+            ]);
+        } catch (\Exception $e) {
+            abort(404, 'Event not found.');
+        }
     }
-}
-
 }
