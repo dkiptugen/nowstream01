@@ -100,7 +100,7 @@
                                             $user->assignRole('ContentOwner');
                                             dd($user);
                                         }
-
+                                    dd($microsite->uuid);
                                     $user->microsite_id = $microsite->uuid;
                                     $user->save();
                                     //dd($user);
