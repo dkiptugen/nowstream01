@@ -100,13 +100,10 @@
                                             $user->assignRole('ContentOwner');
                                             dd($user);
                                         }
-                                    else
-                                        {
-                                            dd($microsite);
-                                            $user->assignRole('Super Admin');
-                                        }
+
                                     $user->microsite_id = $microsite->uuid;
                                     $user->save();
+                                    dd($user);
                                     //DB::commit();
                                     return redirect()->route('backend.admin_dashboard');
                                 }
