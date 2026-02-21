@@ -3,11 +3,11 @@
     <div class="container-fluid">
         <div class="card card-border-primary">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title m-0 h5 text-primary">Microsites</h3>
+                <h3 class="card-title m-0 h5 text-primary">Brands</h3>
                 <div class="actbtn">
                     @can('create_microsite')
                         <a href="{{ route('backend.microsite.create') }}" class="btn btn-sm btn-outline-dark">
-                            <i class="fas fa-plus"></i> Add Microsite
+                            <i class="fas fa-plus"></i> Add Brand
                         </a>
                     @endcan
                 </div>

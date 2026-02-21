@@ -80,13 +80,13 @@
                     $button = null;
                     if ($request->user()->can('edit_microsite'))
                         {
-                            $button .= '<a class="text text-dark" href="' . route('backend.microsite.edit', ['microsite' => $row->id]) . '" data-toggle="tooltip" title="Edit Microsite">
+                            $button .= '<a class="text text-dark" href="' . route('backend.microsite.edit', ['microsite' => $row->uuid]) . '" data-toggle="tooltip" title="Edit Microsite">
                 <i class="fas fa-edit"></i> Edit
                 </a>';
                         }
                     if ($request->user()->can('destroy_event'))
                         {
-                            $button .= '<form id="delete-form-' . $row->id . '" action="' . route('backend.microsite.destroy', ['microsite' => $row->id]) . '" method="POST" class=" create-form my-0 py-0">
+                            $button .= '<form id="delete-form-' . $row->uuid . '" action="' . route('backend.microsite.destroy', ['microsite' => $row->uuid]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Microsite"><i class="fas fa-trash"></i> Delete</button>
