@@ -21,7 +21,7 @@
                     <div class="col">
                         <label for="primary-color" class="control-label">Primary Color</label>
                         <div class="input-group" id="primary-color">
-                            <input type="color" value="#007bff" id="primary-color-picker">
+                            <input type="color" value="#007bff" id="primary-color-picker" class="border-0">
                             <input type="text" name="colorscheme[primary]" id="primary-color-text"
                                    class="form-control" value="#007bff">
                         </div>
@@ -74,6 +74,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
+            function expandHex(hex) {
+                hex = hex.replace('#', '');
+
+                if (hex.length === 3) {
+                    return '#' + hex.split('').map(c => c + c).join('');
+                }
+
+                if (hex.length === 6) {
+                    return '#' + hex;
+                }
+
+                return null;
+            }
+
             function syncColorInputs(pickerId, textId) {
                 const picker = document.getElementById(pickerId);
                 const text   = document.getElementById(textId);
@@ -89,15 +103,15 @@
                 text.addEventListener('input', function () {
                     let value = text.value.trim();
 
-                    // Ensure starts with #
                     if (!value.startsWith('#')) {
                         value = '#' + value;
                     }
 
-                    // Validate hex color
-                    if (/^#([0-9A-F]{3}){1,2}$/i.test(value)) {
-                        picker.value = value;
-                        text.value = value.toUpperCase();
+                    const expanded = expandHex(value);
+
+                    if (expanded && /^#([0-9A-F]{6})$/i.test(expanded)) {
+                        picker.value = expanded;
+                        text.value   = expanded.toUpperCase();
                     }
                 });
             }
