@@ -111,6 +111,6 @@ class MicrositeController extends Controller
             ];
         });
         $this->data['microsites'] = Microsite::all();
-        return view('Frontend.microsites.index', $data);
+        return view('Frontend.modules.microsites.index', $data);
     }
 }
