@@ -44,7 +44,7 @@
                                                              ->ignore($this->microsite->id)],
                         'description'    => ['required', 'string'],
                         'colorscheme'    => ['nullable', 'array'],
-                        'logo'           => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=512,min_height=512'],
+                        'logo'           => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'cover'          => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'banner'         => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'social_links'   => ['nullable', 'array'],
