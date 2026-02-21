@@ -33,7 +33,7 @@
                             $baseDomain = config('app.base_domain');
                             if (empty($model->domain))
                                 {
-                                    $base   = Str::slug($model->name, '');
+                                    $base   = Str::substr(Str::slug(trim($model->name), ''),0,8);
                                     $domain = $base;
                                     $count  = 1;
                                     while (self::where('domain', $domain .'.'.$baseDomain)->exists())
