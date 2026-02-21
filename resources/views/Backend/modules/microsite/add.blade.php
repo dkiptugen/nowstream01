@@ -14,8 +14,8 @@
                     <input type="text" name="name" id="name" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="Description" class="control-label">Description</label>
-                    <input type="text" name="description" id="Description" class="form-control editor">
+                    <label for="description" class="control-label">Description</label>
+                    <textarea rows="4" name="description" id="description" class="form-control "></textarea>
                 </div>
                 <div class="form-group form-row">
                     <div class="col">
