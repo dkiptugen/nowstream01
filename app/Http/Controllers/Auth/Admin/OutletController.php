@@ -94,14 +94,20 @@
                                             $role = Role::firstOrCreate(
                                                 ['name' => 'ContentOwner', 'guard_name' => 'admin']
                                             );
-                                            $microsite->users()->attach($user->id, [
+                                            $result->users()->attach($user->id, [
                                                 'role_id' => $role->id
                                             ]);
                                             $user->assignRole('ContentOwner');
                                             dd($user);
                                         }
-                                    dd($result->uuid);
-                                    $user->microsite_id = $microsite->uuid;
+                                    else
+                                        {
+                                            $result->users()->attach($user->id, [
+                                                'role_id' => 1
+                                            ]);
+                                        }
+
+                                    $user->microsite_id = $result->uuid;
                                     $user->save();
                                     //dd($user);
                                     //DB::commit();
