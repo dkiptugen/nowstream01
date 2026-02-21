@@ -77,7 +77,7 @@
                     $validated = $request->validated();
                     $validated['verified'] = 0;
                     $validated['visible'] = 0;
-                    DB::beginTransaction();
+                    //DB::beginTransaction();
                     try
                         {
                             $microsite = new Microsite();
@@ -103,7 +103,7 @@
                                         }
                                     $user->microsite_id = $microsite->uuid;
                                     $user->save();
-                                    DB::commit();
+                                    //DB::commit();
                                     return redirect()->route('backend.admin_dashboard');
                                 }
 
