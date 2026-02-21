@@ -101,7 +101,7 @@
                                         {
                                             $user->assignRole('Super Admin');
                                         }
-                                    $user->microsite_id = $result->uuid;
+                                    $user->microsite_id = $microsite->uuid;
                                     $user->save();
                                     DB::commit();
                                     return redirect()->route('backend.admin_dashboard');
