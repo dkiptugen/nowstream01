@@ -48,6 +48,8 @@
                         'banner'         => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'social_links'   => ['nullable', 'array'],
                         'social_links.*' => ['nullable', 'url', 'starts_with:https://'],
+                        'status'         => 'nullable',
+                        'keywords'       => 'nullable'
                     ];
                 }
 
