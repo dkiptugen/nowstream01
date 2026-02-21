@@ -28,7 +28,7 @@
                                          ->filter()
                                          ->values()
                                          ->toArray(),
-                                     'keywords' => collect(explode(',', $this->input('keywords') ?? ''))
+                                     'keywords'     => collect(explode(',', $this->input('keywords') ?? ''))
                                          ->map(fn($keyword) => trim($keyword))
                                          ->filter()
                                          ->values()
@@ -61,13 +61,12 @@
 
             public function validated($key = null, $default = null)
                 {
-
                     $data = parent::validated();
 
                     $tenantPath = 'nowstream/tenant/' . Str::slug($data['name']);
 
-                    // Initialize Image Manager
-                    $manager = new ImageManager(new Driver()); // or 'imagick' if installed
+                    // Create an image manager instance
+                    $manager = new ImageManager(new Driver()); // or 'imagick' if you have it
 
                     // ----------- LOGO & FAVICON -----------
                     if ($this->hasFile('logo'))
@@ -151,7 +150,7 @@
                             $data['banner'] = $bannerPath;
                         }
                     $data['system_user_id'] = $this->user()->id;
-                    $data['status']         = $data['status']??0;
+                    $data['status']         = $data['status'] ?? 0;
                     //Log::info('validated',$data);
                     return $data;
                 }
