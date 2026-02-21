@@ -86,8 +86,7 @@
                             if ($result)
                                 {
                                     $user = Auth::guard('admin')->user();
-                                    $user->microsite_id = $result->uuid;
-                                    $user->save();
+
                                     if(!$user->hasRole('Super Admin'))
                                         {
                                             $role = Role::firstOrCreate(
@@ -102,6 +101,8 @@
                                         {
                                             $user->assignRole('Super Admin');
                                         }
+                                    $user->microsite_id = $result->uuid;
+                                    $user->save();
                                     DB::commit();
                                     return redirect()->route('backend.admin_dashboard');
                                 }
