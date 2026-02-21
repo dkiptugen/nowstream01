@@ -20,10 +20,8 @@
             protected ImageManager $manager;
             public float           $phi = 1.61803398875;
 
-            public function __construct(
-                public int     $baseDimension = 1200, // The "Desired" size
-                public ?string $logoPath = null
-            )
+
+            public function __construct(public int $baseDimension = 1200, public string $save_loc, public ?string $type = 'landscape', public ?string $logoPath = null)
                 {
                     $this->manager = new ImageManager(new Driver());
                 }
@@ -44,7 +42,7 @@
          *
          * @return string The path of the saved WebP image.
          */
-            public function execute($source, string $disk = 'linode')
+            public function execute($source, string $disk = 'linode', bool $deleteSource = false)
             : string
                 {
                     $img = $this->manager->read($source);
@@ -62,7 +60,7 @@
                     $currentRatio = $imgWidth / $imgHeight;
 
                     // 1. Detect if it's a square (within a 5% margin of error)
-                    if (abs($currentRatio - 1.0) < 0.05)
+                    if (abs($currentRatio - 1.0) < 0.05 || $this->type === 'square')
                         {
                             // OPTIMIZED SQUARE: Maintain 1:1 orientation
                             $canvas = $this->handleSquareOptimization($img);
@@ -71,10 +69,15 @@
                         {
                             // OTHER: Fallback to Golden Ratio orientation logic
                             $isPortrait = $imgHeight > $imgWidth;
-                            if ($isPortrait)
+                            if ($isPortrait || $this->type === 'portrait')
                                 {
                                     $targetHeight = $this->baseDimension;
                                     $targetWidth  = (int)round($targetHeight / $this->phi);
+                                }
+                            elseif ($this->type === 'landscape')
+                                {
+                                    $targetWidth  = $this->baseDimension;
+                                    $targetHeight = (int)round($targetWidth / $this->phi);
                                 }
                             else
                                 {
@@ -91,9 +94,12 @@
                         }
 
                     // 3. Save as WebP
-                    $filename = 'processed/' . Str::random(20) . '.webp';
+                    $filename = $this->save_loc . Str::random(20) . '.webp';
                     Storage::disk($disk)->put($filename, $canvas->toWebp(90)->toString());
-
+                    if ($deleteSource)
+                        {
+                            $this->cleanup($source);
+                        }
                     return $filename;
                 }
 
@@ -112,9 +118,10 @@
                 {
                     // If the square is larger than our base dimension, scale it down.
                     // If it's smaller, we keep it as is to preserve quality.
-                    if ($img->width() > $this->baseDimension) {
-                        return $img->resize($this->baseDimension, $this->baseDimension);
-                    }
+                    if ($img->width() > $this->baseDimension)
+                        {
+                            return $img->resize($this->baseDimension, $this->baseDimension);
+                        }
 
                     return $img;
                 }
@@ -220,6 +227,33 @@
                     catch (\Exception $e)
                         {
                             // If the logo file is unreadable, we just skip it so the image still saves
+                        }
+                }
+
+        /**
+         * Cleans up the given source by removing the file if it exists.
+         *
+         * If the source is a string representing a file path and the file exists, it deletes the file.
+         * If the source is an instance of \Illuminate\Http\UploadedFile, it attempts to delete the temporary
+         * file associated with the uploaded file.
+         *
+         * @param mixed $source The source to be cleaned up, may be a file path or an UploadedFile instance.
+         *
+         * @return void
+         */
+            protected function cleanup($source)
+            : void
+                {
+                    if (is_string($source) && file_exists($source))
+                        {
+                            unlink($source);
+                        }
+                    // If it's an UploadedFile instance from a Request
+                    elseif ($source instanceof \Illuminate\Http\UploadedFile)
+                        {
+                            // Laravel usually cleans up temp files automatically,
+                            // but we can force it if it's stored in a custom temp path.
+                            @unlink($source->getPathname());
                         }
                 }
         }
