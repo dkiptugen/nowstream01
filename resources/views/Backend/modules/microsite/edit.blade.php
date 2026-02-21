@@ -6,7 +6,7 @@
 
         </div>
         <div class="card-body">
-            <form action="{{ route('backend.microsite.update',['microsite'=> $microsite->uuid]) }}" method="post"
+            <form action="{{ route('backend.microsite.update',['microsite'=> $microsite->id]) }}" method="post"
                   class="form form-horizontal create-form" enctype="multipart/form-data">
                 @csrf
                 @method('put')
