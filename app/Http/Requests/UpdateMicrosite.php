@@ -3,8 +3,11 @@
     namespace App\Http\Requests;
 
     use Illuminate\Foundation\Http\FormRequest;
+    use Illuminate\Support\Facades\Storage;
     use Illuminate\Support\Str;
     use Illuminate\Validation\Rule;
+    use Intervention\Image\Drivers\Gd\Driver;
+    use Intervention\Image\ImageManager;
 
     class UpdateMicrosite extends FormRequest
         {
@@ -46,6 +49,7 @@
                         'banner'         => ['image', 'mimes:jpg,png,jpeg,webp', 'max:2048', 'dimensions:min_width=100,min_height=100'],
                         'social_links'   => ['nullable', 'array'],
                         'social_links.*' => ['nullable', 'url', 'starts_with:https://'],
+                        'status'         => 'nullable'
                     ];
                 }
 
@@ -58,25 +62,57 @@
 
                     if ($this->hasFile('logo'))
                         {
-                            $filename     = Str::uuid() . '.' . $this->file('logo')->extension();
-                            $path         = $this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
+                            $filename = Str::uuid() . '.' . $this->file('logo')->extension();
+                            $path     = $tenantPath . '/logo/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('logo')->getRealPath()));
                             $data['logo'] = $path; // store path only
+                            // ---- CREATE FAVICON ----
+                            $manager = new ImageManager(new Driver());
+
+                            $image = $manager->read($this->file('logo')->getRealPath());
+
+                            // Resize logo proportionally (max 400px)
+                            $image->scaleDown(width: 400, height: 400);
+
+                            // Create 512x512 transparent canvas
+                            $canvas = $manager->create(512, 512);
+
+                            // Place logo at center
+                            $canvas->place($image, 'center');
+
+                            $faviconName = 'favicon-' . Str::uuid() . '.png';
+                            $faviconPath = $tenantPath . '/favicon/' . $faviconName;
+
+                            Storage::disk(config('filesystems.default'))->put(
+                                $faviconPath,
+                                (string)$canvas->toPng()
+                            );
+
+                            $data['favicon'] = $faviconPath;
+                        }
+                    else
+                        {
+                            // Log::error("logo not found");
                         }
 
                     if ($this->hasFile('cover'))
                         {
                             $filename      = Str::uuid() . '.' . $this->file('cover')->extension();
-                            $path          = $this->file('cover')->storeAs($tenantPath . '/cover', $filename, 'public');
+                            $path     = $tenantPath . '/cover/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('cover')->getRealPath()));
                             $data['cover'] = $path;
                         }
 
                     if ($this->hasFile('banner'))
                         {
                             $filename       = Str::uuid() . '.' . $this->file('banner')->extension();
-                            $path           = $this->file('banner')->storeAs($tenantPath . '/banner', $filename, 'public');
+                            $path     = $tenantPath . '/banner/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('banner')->getRealPath()));
                             $data['banner'] = $path;
                         }
-
+                    $data['system_user_id'] = $this->user()->id;
+                    $data['status']         = $data['status']??0;
+                    //Log::info('validated',$data);
                     return $data;
                 }
         }

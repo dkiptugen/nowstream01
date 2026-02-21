@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label for="socialmedia" class="control-label">Social Media Links</label>
-                    <input type="text" name="social_links" id="socialmedia_links" class="form-control tags-input">
+                    <input type="text" name="social_links" id="socialmedia_links" class="form-control tags-input" placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
                 </div>
                 <div class="form-group form-row">
                     <button class="btn btn-primary btn-sm ml-auto" name="submit" value="publish"

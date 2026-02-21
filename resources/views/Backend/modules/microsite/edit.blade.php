@@ -55,7 +55,15 @@
                 </div>
                 <div class="form-group">
                     <label for="socialmedia" class="control-label">Social Media Links</label>
-                    <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input" value="{{ collect($microsite->social_links)->implode(',') }}">
+                    <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input" value="{{ collect($microsite->social_links)->implode(',') }}" placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
+                </div>
+                <div class="form-group">
+                    <label class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="status" @checked($microsite->status)  value="1">
+                        <span class="form-check-label">
+                                Active
+                            </span>
+                    </label>
                 </div>
                 <div class="form-group form-row">
                     <button class="btn btn-primary btn-sm ml-auto" type="submit">

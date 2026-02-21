@@ -14,7 +14,7 @@
             use SoftDeletes;
 
             protected $fillable = ['name', 'slug', 'colorscheme', 'banner', 'cover', 'favicon', 'logo', 'description', 'image', 'status', 'keywords', 'social_links', 'views', 'followers', 'system_user_id'];
-            protected $casts    = ['social_links' => JsonCast::class, 'colorscheme' => JsonCast::class];
+            protected $casts    = ['social_links' => JsonCast::class, 'colorscheme' => JsonCast::class,'status' => 'bool','keywords' => JsonCast::class];
 
             public function sluggable()
             : array

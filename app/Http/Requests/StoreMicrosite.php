@@ -61,8 +61,8 @@
                     if ($this->hasFile('logo'))
                         {
                             $filename = Str::uuid() . '.' . $this->file('logo')->extension();
-                            $path     =$this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
-                            //Log::error(Storage::url($path));
+                            $path     = $tenantPath . '/logo/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('logo')->getRealPath()));
                             $data['logo'] = $path; // store path only
                             // ---- CREATE FAVICON ----
                             $manager = new ImageManager(new Driver());
@@ -81,33 +81,36 @@
                             $faviconName = 'favicon-' . Str::uuid() . '.png';
                             $faviconPath = $tenantPath . '/favicon/' . $faviconName;
 
-                            Storage::disk('public')->put(
+                            Storage::disk(config('filesystems.default'))->put(
                                 $faviconPath,
-                                (string) $canvas->toPng()
+                                (string)$canvas->toPng()
                             );
 
                             $data['favicon'] = $faviconPath;
                         }
                     else
                         {
-                            Log::error("logo not found");
+                            // Log::error("logo not found");
                         }
 
                     if ($this->hasFile('cover'))
                         {
                             $filename      = Str::uuid() . '.' . $this->file('cover')->extension();
-                            $path          = $this->file('cover')->storeAs($tenantPath . '/cover', $filename, 'public');
+                            $path     = $tenantPath . '/cover/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('cover')->getRealPath()));
                             $data['cover'] = $path;
                         }
 
                     if ($this->hasFile('banner'))
                         {
                             $filename       = Str::uuid() . '.' . $this->file('banner')->extension();
-                            $path           = $this->file('banner')->storeAs($tenantPath . '/banner', $filename, 'public');
+                            $path     = $tenantPath . '/banner/' . $filename;
+                            Storage::disk(config('filesystems.default'))->put($path, file_get_contents($this->file('banner')->getRealPath()));
                             $data['banner'] = $path;
                         }
                     $data['system_user_id'] = $this->user()->id;
-                    Log::info('validated',$data);
+                    $data['status']         = 1;
+                    //Log::info('validated',$data);
                     return $data;
                 }
         }
