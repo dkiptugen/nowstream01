@@ -53,9 +53,16 @@
                         <input type="file" name="banner" id="banner" class="form-control-file" accept="image/*">
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="socialmedia" class="control-label">Social Media Links</label>
-                    <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input" value="{{ collect($microsite->social_links)->implode(',') }}" placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
+                <div class="form-group form-row">
+                    <div class="col-8">
+                        <label for="socialmedia" class="control-label">Social Media Links</label>
+                        <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input" value="{{ collect($microsite->social_links)->implode(',') }}" placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
+                    </div>
+                    <div class="col">
+                        <label for="keywords" class="control-label">Keywords</label>
+                        <input type="text" name="keywords" id="keywords" class="form-control tags-input" value="{{ collect($microsite->keywords)->implode(',') }}" placeholder="Enter keywords separated by comma eg tech, programming,">
+                    </div>
+
                 </div>
                 <div class="form-group">
                     <label class="form-check form-check-inline">

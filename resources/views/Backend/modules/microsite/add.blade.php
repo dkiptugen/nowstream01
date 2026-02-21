@@ -52,9 +52,15 @@
                         <small class="text text-muted">Image should be 728x90 pixels</small>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="socialmedia" class="control-label">Social Media Links</label>
-                    <input type="text" name="social_links" id="socialmedia_links" class="form-control tags-input" placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
+                <div class="form-group form-row">
+                    <div class="col-8">
+                        <label for="socialmedia" class="control-label">Social Media Links</label>
+                        <input type="text" name="socialmedia" id="socialmedia_links" class="form-control tags-input"  placeholder="Enter links separated by comma eg https://x.com/test, https://facebook.com/test">
+                    </div>
+                    <div class="col">
+                        <label for="keywords" class="control-label">Keywords</label>
+                        <input type="text" name="keywords" id="keywords" class="form-control tags-input"  placeholder="Enter keywords separated by comma eg tech, programming,">
+                    </div>
                 </div>
                 <div class="form-group form-row">
                     <button class="btn btn-primary btn-sm ml-auto" name="submit" value="publish"
