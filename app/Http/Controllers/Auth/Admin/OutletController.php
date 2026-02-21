@@ -90,7 +90,7 @@
 
                                     if(!$user->hasRole('Super Admin'))
                                         {
-                                            dd($microsite);
+
                                             $role = Role::firstOrCreate(
                                                 ['name' => 'ContentOwner', 'guard_name' => 'admin']
                                             );
@@ -102,6 +102,7 @@
                                         }
                                     else
                                         {
+                                            dd($microsite);
                                             $user->assignRole('Super Admin');
                                         }
                                     $user->microsite_id = $microsite->uuid;
