@@ -59,7 +59,7 @@
                     if ($this->hasFile('logo'))
                         {
                             $filename = Str::uuid() . '.' . $this->file('logo')->extension();
-                            $path     = Storage::putFileAs($tenantPath . '/logo/' . $filename, $this->file('logo'));
+                            $path     =$this->file('logo')->storeAs($tenantPath . '/logo', $filename, 'public');
                             Log::error($path);
                             $data['logo'] = $path; // store path only
                         }
