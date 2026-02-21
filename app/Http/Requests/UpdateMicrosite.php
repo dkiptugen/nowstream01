@@ -7,6 +7,7 @@
     use Illuminate\Support\Str;
     use Illuminate\Validation\Rule;
     use Intervention\Image\Drivers\Gd\Driver;
+    use Intervention\Image\Image;
     use Intervention\Image\ImageManager;
 
     class UpdateMicrosite extends FormRequest
@@ -65,90 +66,80 @@
 
                     $tenantPath = 'nowstream/tenant/' . Str::slug($data['name']);
 
-                    // Create an image manager instance
-                    $manager = new ImageManager(new Driver()); // or 'imagick' if you have it
-
                     // ----------- LOGO & FAVICON -----------
-                    if ($this->hasFile('logo'))
-                        {
-                            $file = $this->file('logo');
+                    if ($this->hasFile('logo')) {
+                        $file = $this->file('logo');
 
-                            // --- 1. Logo WebP ---
-                            $logoImage = $manager->make($file->getRealPath());
-                            $logoImage->resize(512, 512, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                        // --- 1. Logo WebP ---
+                        $logoImage = Image::make($file->getRealPath());
+                        $logoImage->resize(512, 512, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
 
-                            $logoFilename = Str::uuid() . '.webp';
-                            $logoPath     = $tenantPath . '/logo/' . $logoFilename;
+                        $logoFilename = Str::uuid() . '.webp';
+                        $logoPath = $tenantPath . '/logo/' . $logoFilename;
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($logoPath, (string)$logoImage->encode('webp', 90));
+                        Storage::disk(config('filesystems.default'))
+                               ->put($logoPath, (string) $logoImage->encode('webp', 90));
 
-                            $data['logo'] = $logoPath;
+                        $data['logo'] = $logoPath;
 
-                            // --- 2. Favicon 512x512 transparent ---
-                            $faviconCanvas = $manager->canvas(512, 512);
+                        // --- 2. Favicon 512x512 transparent ---
+                        $faviconCanvas = Image::canvas(512, 512);
 
-                            $faviconLogo = $manager->make($file->getRealPath());
-                            $faviconLogo->resize(400, 400, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                        $faviconLogo = Image::make($file->getRealPath());
+                        $faviconLogo->resize(400, 400, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
 
-                            $faviconCanvas->insert($faviconLogo, 'center');
+                        $faviconCanvas->insert($faviconLogo, 'center');
 
-                            $faviconFilename = 'favicon-' . Str::uuid() . '.png';
-                            $faviconPath     = $tenantPath . '/favicon/' . $faviconFilename;
+                        $faviconFilename = 'favicon-' . Str::uuid() . '.png';
+                        $faviconPath = $tenantPath . '/favicon/' . $faviconFilename;
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($faviconPath, (string)$faviconCanvas->encode('png'));
+                        Storage::disk(config('filesystems.default'))
+                               ->put($faviconPath, (string) $faviconCanvas->encode('png'));
 
-                            $data['favicon'] = $faviconPath;
-                        }
+                        $data['favicon'] = $faviconPath;
+                    }
 
                     // ----------- COVER -----------
-                    if ($this->hasFile('cover'))
-                        {
-                            $coverFile  = $this->file('cover');
-                            $coverImage = $manager->make($coverFile->getRealPath());
-                            $coverImage->resize(1200, 600, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                    if ($this->hasFile('cover')) {
+                        $coverFile = $this->file('cover');
+                        $coverImage = Image::make($coverFile->getRealPath());
+                        $coverImage->resize(1200, 600, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
 
-                            $coverFilename = Str::uuid() . '.webp';
-                            $coverPath     = $tenantPath . '/cover/' . $coverFilename;
+                        $coverFilename = Str::uuid() . '.webp';
+                        $coverPath = $tenantPath . '/cover/' . $coverFilename;
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($coverPath, (string)$coverImage->encode('webp', 90));
+                        Storage::disk(config('filesystems.default'))
+                               ->put($coverPath, (string) $coverImage->encode('webp', 90));
 
-                            $data['cover'] = $coverPath;
-                        }
+                        $data['cover'] = $coverPath;
+                    }
 
                     // ----------- BANNER -----------
-                    if ($this->hasFile('banner'))
-                        {
-                            $bannerFile  = $this->file('banner');
-                            $bannerImage = $manager->make($bannerFile->getRealPath());
-                            $bannerImage->resize(1200, 400, function ($constraint)
-                                {
-                                    $constraint->aspectRatio();
-                                    $constraint->upsize();
-                                });
+                    if ($this->hasFile('banner')) {
+                        $bannerFile = $this->file('banner');
+                        $bannerImage = Image::make($bannerFile->getRealPath());
+                        $bannerImage->resize(1200, 400, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
 
-                            $bannerFilename = Str::uuid() . '.webp';
-                            $bannerPath     = $tenantPath . '/banner/' . $bannerFilename;
+                        $bannerFilename = Str::uuid() . '.webp';
+                        $bannerPath = $tenantPath . '/banner/' . $bannerFilename;
 
-                            Storage::disk(config('filesystems.default'))
-                                   ->put($bannerPath, (string)$bannerImage->encode('webp', 90));
+                        Storage::disk(config('filesystems.default'))
+                               ->put($bannerPath, (string) $bannerImage->encode('webp', 90));
 
-                            $data['banner'] = $bannerPath;
-                        }
+                        $data['banner'] = $bannerPath;
+                    }
                     $data['system_user_id'] = $this->user()->id;
                     $data['status']         = $data['status'] ?? 0;
                     //Log::info('validated',$data);
