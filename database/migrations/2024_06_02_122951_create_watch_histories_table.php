@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('watch_duration')->nullable();
             $table->timestamps();
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('content_id')->references('uuid')->on('contentss')->onDelete('cascade');
+            $table->foreign('content_id')->references('uuid')->on('contents')->onDelete('cascade');
         });
 
     }

@@ -32,19 +32,21 @@ class IPTvStreamImport extends Command
                                ->json();
                 foreach ($streams as $stream)
                     {
+                        //dd($stream);
                         $content  = Content::where('old_id', $stream['channel'])
                                            ->orWhere('title', $stream['title'])
                                            ->orWhere('title', $stream['feed'])
                                            ->first();
-                        try
-                            {
-                                $response = Http::head($stream['url']);
-                                $type = $response->header('Content-Type');
-                            }
-                        catch (\Exception $e)
-                            {
-                                $type = 'undefined';
-                            }
+                        $ext = strtolower(pathinfo($stream['url'], PATHINFO_EXTENSION));
+                        $type =  match ($ext) {
+                            'mp3' => 'audio/mpeg',
+                            'm4a' => 'audio/mp4',
+                            'aac' => 'audio/aac',
+                            'wav' => 'audio/wav',
+                            'ogg' => 'audio/ogg',
+                            'm3u8' => 'application/vnd.apple.mpegurl',
+                            default => 'application/octet-stream',
+                            };
 
                         if (is_null($content))
                             {
@@ -59,8 +61,9 @@ class IPTvStreamImport extends Command
                                 $content->author         = 'streams';
                                 $content->stream_url     = $stream['url'];
                                 $content->content_group  = 'tv';
-                                $content->status         = ($type=='undefined')?0:1;
+                                $content->status         = 1;
                                 $content->system_user_id = 1;
+                                $content->quality        = $stream['quality'];
                                 $res                     = $content->save();
                                 if ($res)
                                     {

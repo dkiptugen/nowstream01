@@ -44,14 +44,20 @@ class IPTvImport extends Command
                         foreach ($channels as $channel)
 
                             {
+                                //dd($channel);
                                 if (!is_null($channel['id']))
                                     {
-                                        $region = Region::where('code', $channel['country'])->first();
+                                        $region = Region::where('code', $channel['country'])
+                                                        ->orWhere('name', $channel['country'])
+                                                        ->first();
+
                                         if(!is_null($region))
                                             {
                                                 $language         = Language::where('code', $region->language_code)
                                                                             ->orWhere('name', $region->language)
                                                                             ->first();
+
+
                                             }
                                        else
                                            {
@@ -74,12 +80,12 @@ class IPTvImport extends Command
                                                 $content->country        = $region->name??'undefined';;
                                                 $content->author         = substr(implode(',',$channel['owners'] ?? []),0,250);
                                                 $content->content_group  = 'tv';
-                                                $content->type           =  'application/x-mpegURL';
+                                                $content->type           = 'application/x-mpegURL';
                                                 $content->status         = 0;
                                                 $content->system_user_id = 1;
                                                 $content->language       = $language->code??'undefined';
                                                 $content->language_id    = $language->id??0;
-                                                $content->genre          = json_encode($channel['categories'] ?? []);
+                                                $content->genre          = $channel['categories'] ?? [];
                                                 $res                     = $content->save();
                                                 if ($res)
                                                     {

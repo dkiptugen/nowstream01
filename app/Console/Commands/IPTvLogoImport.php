@@ -33,6 +33,7 @@ class IPTvLogoImport extends Command
                 //$this->info(collect($channels)->toJson());
                 foreach ($channels as $channel)
                     {
+                        //dd($channel);
                         try
                             {
 
