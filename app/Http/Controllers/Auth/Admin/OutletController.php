@@ -8,6 +8,7 @@
     use App\Http\Services\UploadService;
     use App\Models\Channel;
     use App\Models\Microsite;
+    use App\Models\Role;
     use App\Models\SystemUserChannel;
     use App\Models\SystemUserMicrosite;
     use App\Models\UserProduct;
@@ -15,6 +16,7 @@
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Cache;
+    use Illuminate\Support\Facades\DB;
 
     class OutletController extends Controller
         {
@@ -75,7 +77,7 @@
                     $validated = $request->validated();
                     $validated['verified'] = 0;
                     $validated['visible'] = 0;
-
+                    DB::transaction();
                     try
                         {
                             $microsite = new Microsite();
@@ -83,11 +85,25 @@
 
                             if ($result)
                                 {
-                                    return self::success(
-                                        'Microsite',
-                                        'Store successful',
-                                        route('backend.microsite.index')
-                                    );
+                                    $user = Auth::guard('admin')->user();
+                                    $user->microsite_id = $result->uuid;
+                                    $user->save();
+                                    if(!$user->hasRole('Super Admin'))
+                                        {
+                                            $role = Role::firstOrCreate(
+                                                ['name' => 'ContentOwner', 'guard_name' => 'admin']
+                                            );
+                                            $microsite->users()->attach($user->id, [
+                                                'role_id' => $role->id
+                                            ]);
+                                            $user->assignRole('ContentOwner');
+                                        }
+                                    else
+                                        {
+                                            $user->assignRole('Super Admin');
+                                        }
+                                    DB::commit();
+                                    return redirect()->route('backend.admin_dashboard');
                                 }
 
                             return self::failed(

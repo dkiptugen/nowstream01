@@ -68,5 +68,22 @@
                         }
 
                     return self::where('slug', $slug)->first();
+
+                }
+            public function user()
+                {
+                    return $this->belongsTo(SystemUser::class, 'system_user_id');
+                }
+
+            public function users()
+                {
+                    return $this->belongsToMany(
+                        SystemUser::class,
+                        'microsite_system_user', // pivot table
+                        'microsite_id',          // foreign key on pivot referencing this model
+                        'system_user_id'         // foreign key on pivot referencing related model
+                    )
+                                ->using(SystemUserMicrosite::class)
+                                ->withTimestamps();
                 }
         }

@@ -200,9 +200,9 @@
                 }
 
 
-            public function channel()
+            public function microsite()
                 {
-                    return $this->belongsTo(Channel::class, 'channel_id');
+                    return $this->belongsTo(Microsite::class, 'microsite_id','uuid');
                 }
 
 
