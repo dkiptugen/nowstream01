@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('settlements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('organizer_id')->constrained()->cascadeOnDelete();
+            $table->uuid('microsite_id')->index();
             $table->decimal('gross_amount', 10, 2);
             $table->decimal('platform_fee', 10, 2);
             $table->decimal('organizer_amount', 10, 2);
             $table->enum('status', ['pending','paid']);
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
+            $table->unique(['order_id', 'microsite_id']);
         });
     }
 
