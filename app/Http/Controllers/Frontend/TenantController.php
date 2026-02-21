@@ -114,10 +114,9 @@ class TenantController extends Controller
     }
      public function single_event($slug)
     {
-        // Cache key per event page
-        $cacheKey = "event_page_{$slug}";
         
-        $ticket = Ticket::first();
+        $cacheKey = "event_page_{$slug}";
+         
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
@@ -134,11 +133,9 @@ class TenantController extends Controller
         if (!$data) {
             abort(404, 'Event not found.');
         }
-
-        // Increment views dynamically (not cached)
+ 
         Event::where('uuid', $data['event']->uuid)->increment('views');
-
-        // Related events (cached separately)
+ 
         $relatedEvents = Cache::remember("related_events_{$data['event']->uuid}", now()->addDay(), function () use ($data) {
             return Content::where('status', 1)
                 ->where('uuid', '<>', $data['event']->uuid)
@@ -153,9 +150,8 @@ class TenantController extends Controller
             'event'          => $data['event'],
             'events'         => $data['events'],
             'videos'         => $data['videos'],
-            'rates'          => $data['rates'],
-            'ticket'          => $ticket,
-            'relatedEvents'  => $relatedEvents, // pass related events to the view
+            'rates'          => $data['rates'], 
+            'relatedEvents'  => $relatedEvents,  
         ]);
     }
 }
