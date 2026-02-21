@@ -135,7 +135,9 @@
                             return $response;
                         }
 
-                    return redirect().route('admin.login.form');
+                    return $request->wantsJson()
+                        ? new JsonResponse([], 204)
+                        : redirect()->route('admin.login.form');
                 }
 
             protected function guard()
