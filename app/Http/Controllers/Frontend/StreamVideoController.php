@@ -49,7 +49,7 @@ class StreamVideoController extends Controller
     });
 
     $channels = Cache::remember('channels:active', 1800, function () {
-        return Channel::select('id','name','slug','logo')
+        return Channel::select('uuid','name','slug','cover_image', 'thumbnail')
             ->where('status', 1)
             ->get();
     });
