@@ -33,7 +33,7 @@
 
                         <!-- VIDEO -->
                     <div class="ratio ratio-16x9">
-                        <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}" banner="{{ $episode->thumbnail_url }}" controls">
+                        <video id="player" playsinline data-poster="{{ $episode->thumbnail_url }}" data-banner="{{ $episode->thumbnail_url }}" controls">
                             <source src="{{ $episode->stream_url }}" type="{{ $mime }}">
                         </video>
                     </div>
