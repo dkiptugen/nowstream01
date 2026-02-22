@@ -87,4 +87,8 @@
                                 ->withPivot('role_id')
                                 ->withTimestamps();
                 }
+            public function contents()
+                {
+                    return $this->hasMany(Content::class, 'microsite_id', 'uuid');
+                }
         }
