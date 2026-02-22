@@ -65,13 +65,7 @@
                     return $this->belongsTo(Channel::class);
                 }
 
-        /**
-         * Event has many rates
-         */
-            public function rates()
-                {
-                    return $this->hasMany(ContentRate::class, 'event_id', 'uuid');
-                }
+
 
         /**
          * Optional: Return system user ID automatically
@@ -116,11 +110,20 @@
                 {
                     return $this->getAttributes();
                 }
+            public function scopeTickets($query)
+                {
+                    return $query->where('type', 'ticket');
+                }
+
+            public function scopeActive($query)
+                {
+                    return $query->where('is_active', 1);
+                }
 
             public function eventRates()
                 {
-                    return $this->hasMany(Product::class, 'event_id', 'uuid')
-                                ->where('type', 'ticket')
-                                ->where('is_active', 1);
+                    return $this->hasMany(Product::class,  'payable')
+                        ->tickets()
+                        ->active();
                 }
         }
