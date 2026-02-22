@@ -96,7 +96,7 @@ class TvDatatable
                     }
                 if ($request->user()->can('view_tv') && $post->status==1)
                     {
-                        $button .= '<a class="btn btn-sm btn-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv"  target="_blank">
+                        $button .= '<a class="btn btn-sm btn-dark" href="' . route('backend.tv.show', ['tv' => $post->uuid]) . '" data-toggle="tooltip" title="show Tv">
                                     <i class="fas fa-eye"></i> View
                                     </a>';
                     }
