@@ -23,9 +23,11 @@ class EventController extends Controller
     public function index()
     {
         $events = Event::where('status', 1)->orderBy('created_at', 'desc')->get();
+        $events->load('eventRates');
         $topevents = Event::where('status', 1)
                           ->orderByDesc('views')
                           ->get();
+        $topevents->load('eventRates');
 
 
         return view('Frontend.modules.events.index', compact('events', 'topevents'));
