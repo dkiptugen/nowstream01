@@ -66,8 +66,7 @@ public function index(Request $request)
             // Events
             'events'        => $this->get_events(),
 
-            'topevents'     => Event::with(['eventRates'])
-                //->where('status', 1)
+            'topevents'     => Event::where('status', 1)
                 ->orderByDesc('views')
                 ->limit(12)
                 ->get(),
