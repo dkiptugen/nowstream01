@@ -115,7 +115,7 @@
                 {
                     return $this->morphMany(Product::class,  'payable')
                         ->tickets()
-                        ->active()
+                        ->where('is_active',1)
                         ->orderBy('price', 'asc');
                 }
         }
