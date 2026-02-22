@@ -45,7 +45,7 @@
 							<ul>
 								<li class="quality">
 									<span>@if($tv->is_explicit)R @else Pg 18 @endif</span>
-									<span>{{ $tv->quality }}</span>
+									<span>{{ $tv->quality??'720P' }}</span>
 								</li>
 								<li class="category">
 									@foreach($tv->categories as $category)
