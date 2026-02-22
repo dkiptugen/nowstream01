@@ -44,8 +44,8 @@
 						<div class="banner-meta">
 							<ul>
 								<li class="quality">
-									<span>Pg 18</span>
-									<span>hd</span>
+									<span>@if($tv->is_explicit)R @else Pg 18 @endif</span>
+									<span>{{ $tv->quality }}</span>
 								</li>
 								<li class="category">
 									@foreach($tv->categories as $category)
@@ -55,10 +55,7 @@
 									@endforeach
 								</li>
 
-								<li class="release-time">
-									<span><i class="far fa-calendar-alt"></i> 2021</span>
-									<span><i class="far fa-clock"></i> 128 min</span>
-								</li>
+
 							</ul>
 						</div>
 						<p>{{ $tv->description }}</p>
@@ -66,8 +63,8 @@
 							<ul>
 								<li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
 								<li class="streaming">
-									<h6>Prime tv</h6>
-									<span>Streaming Channels</span>
+									<h6>Streamer.co.ke</h6>
+									<span>Tv Streaming</span>
 								</li>
 							</ul>
 						</div>
@@ -85,10 +82,10 @@
 						<h2 class="mb-0">
 							{{$tv->title}}
 						</h2>
-						<p class="text-danger mb-0 mt-1">Entertainment</p>
-						<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
+						<p class="text-danger mb-0 mt-1">{{ $tv->genres }}</p>
+						{{--<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
 								class="lni lni-calendar"></i>
-							Started Streaming 12min ago </small>
+							Started Streaming 12min ago </small>--}}
 					</div>
 				</div>
 				<div class="card radius-5 single-tv-author box mb-3">
