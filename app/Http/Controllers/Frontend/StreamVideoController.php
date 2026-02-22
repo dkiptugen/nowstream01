@@ -48,7 +48,7 @@ class StreamVideoController extends Controller
     });
 
     $channels = Cache::remember('channels:active', 1800, function () {
-        return Microsite::select('uuid','name','cover', 'thumbnail')
+        return Microsite::select('uuid','name','cover', 'logo','banner')
             ->where('status', 1)
             ->get();
     });
