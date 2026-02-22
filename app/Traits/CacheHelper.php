@@ -113,7 +113,8 @@ trait CacheHelper
     public function get_event_ticket_rates($eventId)
     {
         return Cache::tags(['events', 'tickets'])->remember("event_{$eventId}_tickets", now()->addDay(), function () use ($eventId) {
-            return Product::where('event_id', $eventId)
+            return Product::where('payable_id', $eventId)
+                ->where('payable_type', Event::class)
                 ->where('type', 'ticket')
                 ->where('is_active', 1)
                 ->orderBy('price', 'asc')
