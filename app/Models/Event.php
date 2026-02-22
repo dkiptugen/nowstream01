@@ -110,15 +110,6 @@
                 {
                     return $this->getAttributes();
                 }
-            public function scopeTickets($query)
-                {
-                    return $query->where('type', 'ticket');
-                }
-
-            public function scopeActive($query)
-                {
-                    return $query->where('is_active', 1);
-                }
 
             public function eventRates()
                 {
