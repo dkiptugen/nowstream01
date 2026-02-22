@@ -27,6 +27,7 @@
                     'publish_date' => 'datetime',
                     'start_time'   => 'datetime',
                     'end_time'     => 'datetime',
+                    'is_featured'  => 'boolean'
                 ];
 
         /**
