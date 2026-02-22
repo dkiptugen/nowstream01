@@ -56,7 +56,7 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasTickets" class="form-check-input"  checked="false">
+                                    <input type="checkbox" id="hasTickets" class="form-check-input">
                                     <label for="hasTickets" class="form-check-label">Has Tickets</label>
                                 </div>
                                 <button type="button" id="addTicketBtn"
@@ -71,7 +71,7 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasStream" class="form-check-input"  checked="false">
+                                    <input type="checkbox" id="hasStream" class="form-check-input">
                                     <label for="hasStream" class="form-check-label">Has Stream</label>
                                 </div>
                                 <button type="button" id="addStreamBtn"
@@ -86,7 +86,7 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasMerch" class="form-check-input" checked="false">
+                                    <input type="checkbox" id="hasMerch" class="form-check-input">
                                     <label for="hasMerch" class="form-check-label">Has Merchandise</label>
                                 </div>
                                 <button type="button" id="addMerchBtn"
