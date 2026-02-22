@@ -26,7 +26,7 @@
                                         'wav' => 'audio/wav',
                                         'ogg' => 'audio/ogg',
                                         'm3u8' => 'application/vnd.apple.mpegurl',
-                                        default => 'application/octet-stream',
+                                        default => 'audio/mpeg',
                                     };
                     @endphp
 
