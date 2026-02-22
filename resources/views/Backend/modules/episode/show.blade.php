@@ -16,16 +16,18 @@
                 <div class="card-body">
 
                     @php
-                        $ext = strtolower(pathinfo($episode->stream_url, PATHINFO_EXTENSION));
-                        $mime =  match ($ext) {
-                                    'mp3' => 'audio/mpeg',
-                                    'm4a' => 'audio/mp4',
-                                    'aac' => 'audio/aac',
-                                    'wav' => 'audio/wav',
-                                    'ogg' => 'audio/ogg',
-                                    'm3u8' => 'application/vnd.apple.mpegurl',
-                                    default => 'application/octet-stream',
-                                };
+                        $path = parse_url($episode->stream_url, PHP_URL_PATH);
+
+                            $ext = strtolower(pathinfo($path->path??'', PATHINFO_EXTENSION));
+                            $mime =  match ($ext) {
+                                        'mp3' => 'audio/mpeg',
+                                        'm4a' => 'audio/mp4',
+                                        'aac' => 'audio/aac',
+                                        'wav' => 'audio/wav',
+                                        'ogg' => 'audio/ogg',
+                                        'm3u8' => 'application/vnd.apple.mpegurl',
+                                        default => 'application/octet-stream',
+                                    };
                     @endphp
 
 
