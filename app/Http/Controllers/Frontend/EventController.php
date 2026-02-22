@@ -25,9 +25,10 @@ class EventController extends Controller
         $events = Event::with(['eventRates' => function ($q) {
             $q->orderBy('price', 'asc');
         }])->where('status', 1)->orderBy('created_at', 'desc')->get();
-        $topevents = Event::with(['eventRates' => function ($q) {
-            $q->orderBy('price', 'asc');
-        }])->where('status', 1)->orderByDesc('views')->get();
+        $topevents = Event::where('status', 1)
+                          ->orderByDesc('views')
+                          ->get();
+
 
         return view('Frontend.modules.events.index', compact('events', 'topevents'));
     }
@@ -99,7 +100,7 @@ class EventController extends Controller
     {
         // Cache key per event page
         $cacheKey = "event_page_{$slug}";
-        
+
         $ticket = Ticket::first();
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
