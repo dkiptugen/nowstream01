@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Channel;
 use App\Models\Comment;
 use App\Models\Content;
+use App\Models\Microsite;
 use App\Services\WatchHistoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,7 @@ class StreamVideoController extends Controller
 
     $top_videos = Cache::remember('videos:top', 600, function () {
         return Content::select('uuid','slug','title','thumbnail_url','views')
-            ->where('content_group', 'video') 
+            ->where('content_group', 'video')
             ->orderByDesc('views')
             ->limit(4)
             ->get();
@@ -41,13 +42,13 @@ class StreamVideoController extends Controller
 
     $videos = Cache::remember("videos:page:{$page}", 600, function () {
         return Content::select('uuid','slug','title','thumbnail_url','created_at')
-            ->where('content_group', 'video') 
+            ->where('content_group', 'video')
             ->latest()
             ->paginate(12);
     });
 
     $channels = Cache::remember('channels:active', 1800, function () {
-        return Channel::select('uuid','name','cover_image', 'thumbnail')
+        return Microsite::select('uuid','name','cover', 'thumbnail')
             ->where('status', 1)
             ->get();
     });
