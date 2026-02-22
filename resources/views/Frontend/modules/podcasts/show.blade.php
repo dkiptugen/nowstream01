@@ -68,10 +68,7 @@ return [
                                         </li>
                                     </ul>
                                 </div>
-                                <p class="mb-3 clamp-4">
-                                    {!! $podcast->description !!}
-                                </p>
-                                <div class="movie-details-prime d-none">
+                                {{--<div class="movie-details-prime d-none">
                                     <ul>
                                         <li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
                                         <li class="streaming">
@@ -83,7 +80,7 @@ return [
                                                     class="fas fa-play"></i> Watch Now</a>
                                         </li>
                                     </ul>
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
                     </div>
