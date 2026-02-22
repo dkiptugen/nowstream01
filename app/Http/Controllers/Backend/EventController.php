@@ -85,7 +85,7 @@
                             $event->system_user_id = $admin->id;
                             $event->microsite_id   = $admin->microsite_id;
                             $event->status         = 1;
-                            $event->featured       = $request->featured;
+                            $event->is_featured    = $request->featured;
                             // Event thumbnail
                             if ($request->hasFile('thumbnail'))
                                 {
@@ -202,7 +202,7 @@
                             $event->system_user_id = $request->user('admin')->id;
                             $event->microsite_id   = $request->user('admin')->microsite_id;
                             $event->status         = 1;
-                            $event->featured       = $request->featured;
+                            $event->is_featured       = $request->featured;
 
                             // Event image
                             if ($request->hasFile('thumbnail'))
