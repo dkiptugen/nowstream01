@@ -2,7 +2,9 @@
 
 	namespace App\Http\Controllers\Frontend;
 
-	use Illuminate\Support\Facades\Auth;
+	use App\Models\Content;
+    use App\Models\Microsite;
+    use Illuminate\Support\Facades\Auth;
 	use App\Models\WatchHistory;
 	use App\Models\Video;
 	use Illuminate\Http\Request;
@@ -15,9 +17,9 @@
 		{
 			public function index()
 				{
-					$videos                   = Content::where('type', 'video')->skip(4)->take(14)->get();
+					$videos                   = Content::where('content_group', 'video')->skip(4)->take(14)->get();
 					$this->data['videos']     = $videos;
-					$top_videos               = Content::where('type', 'video')->take(4)->get();
+					$top_videos               = Content::where('content_group', 'video')->take(4)->get();
 					$this->data['top_videos'] = $top_videos;
 					return view('Frontend.modules.videos.index', $this->data);
 				}
@@ -39,11 +41,11 @@
 						{
 							try
 								{
-									$this->data['video'] =  Content::where('type', 'video')->where('id', $id)->first();
+									$this->data['video'] =  Content::where('content_group', 'video')->where('id', $id)->first();
 
 
-									$this->data['channels']      = Channel::where('status', 1)->take(8)->get();
-									$this->data['relatedVideos'] = Content::where('type', 'video')->where('id', '!=', $id)->take(4)->get();
+									$this->data['channels']      = Microsite::where('status', 1)->take(8)->get();
+									$this->data['relatedVideos'] = Content::where('content_group', 'video')->where('id', '!=', $id)->take(4)->get();
 									$this->data['comments']      = $this->data['video']->comments()->with('user')->get();
 
 									// Record watch history
@@ -64,7 +66,7 @@
 						WatchHistory::updateOrCreate(
 							[
 								'user_id' => $user->id,
-								'video_id' => $video->id,
+								'content_id' => $video->uuid,
 							],
 							[
 								'watched_at' => now(),
@@ -78,12 +80,12 @@
 
 					if ($user)
 						{
-							$video = Content::where('type', 'video')->findOrFail($request->input('video_id'));
+							$video = Content::where('content_group', 'video')->findOrFail($request->input('video_id'));
 
 							WatchHistory::updateOrCreate(
 								[
 									'user_id'  => $user->id,
-									'video_id' => $video->id,
+									'video_id' => $video->uuid,
 								],
 								[
 									'watched_at'     => now(),

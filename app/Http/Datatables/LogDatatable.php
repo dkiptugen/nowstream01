@@ -2,6 +2,7 @@
 
 namespace App\Http\Datatables;
 
+use App\Models\ActivityLog;
 use App\Models\Event;
 use App\Traits\Helper;
 use App\Models\Activity;
@@ -20,7 +21,7 @@ class LogDatatable
     {
         $columns = $this->columns;
 
-        $totalData      =   Activity::count();
+        $totalData      =   ActivityLog::count();
         $totalFiltered  =   $totalData;
         $limit          =   $request->input('length');
         $start          =   $request->input('start');
@@ -28,7 +29,7 @@ class LogDatatable
         $dir            =   $request->input('order.0.dir');
         if(empty($request->input('search.value')))
             {
-                $posts = Activity::offset($start)
+                $posts = ActivityLog::offset($start)
                                  ->limit($limit)
                                  ->orderBy($order,$dir)
                                  ->get();
@@ -37,7 +38,7 @@ class LogDatatable
             {
                 $search =   $request->input('search.value');
 
-                $posts  =   Activity::whereHas("user",function ($subquery) use($search){
+                $posts  =   ActivityLog::whereHas("user",function ($subquery) use($search){
                     $subquery->where('name','LIKE',"%{$search}%");
                 })
                                     ->orWhere('description','LIKE',"%{$search}%")
@@ -49,7 +50,7 @@ class LogDatatable
                                     ->orderBy($order,$dir)
                                     ->get();
 
-                $totalFiltered =    Activity::whereHas("user",function ($subquery) use($search){
+                $totalFiltered =    ActivityLog::whereHas("user",function ($subquery) use($search){
                     $subquery->where('name','LIKE',"%{$search}%");
                 })
                                             ->orWhere('description','LIKE',"%{$search}%")

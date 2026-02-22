@@ -8,7 +8,8 @@
 
 	use App\Http\Controllers\Controller;
 	use App\Models\Channel;
-	use App\Models\Video;
+    use App\Models\Microsite;
+    use App\Models\Video;
 	use App\Models\Content;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,7 @@
 
 			public function subscribe(Request $request, $channelId)
 				{
-					$channel = Cache::rememberOnce('channel_'.$channelId,now()->addDay(),Channel::findOrFail($channelId));
+					$channel = Cache::rememberOnce('channel_'.$channelId,now()->addDay(),Microsite::findOrFail($channelId));
 					$user    = Auth::user();
 
 					if ($request->ajax())
@@ -72,7 +73,7 @@
 
 			public function unsubscribe(Request $request, $channelId)
 				{
-					$channel = Cache::rememberOnce('channel_'.$channelId,now()->addDay(),Channel::findOrFail($channelId));
+					$channel = Cache::rememberOnce('channel_'.$channelId,now()->addDay(),Microsite::findOrFail($channelId));
 					$user    = Auth::user();
 
 					if ($request->ajax())
