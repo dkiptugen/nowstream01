@@ -122,7 +122,7 @@
 
             public function eventRates()
                 {
-                    return $this->hasMany(Product::class,  'payable')
+                    return $this->morphMany(Product::class,  'payable')
                         ->tickets()
                         ->active();
                 }
