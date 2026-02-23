@@ -8,16 +8,16 @@
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8"> 
 					<div id="videoWrap" class="radio-wrap">
-<video id="player"
-    src="{{ $radio->stream_url }}"
-    data-title="{{ $radio->title }}"
-       data-thumb="{{ $radio->thumbnail_url }}"
-       poster="{{ $radio->thumbnail_url }}"
-    data-type="audio"
-    playsinline
-	controls
-    preload="none">
-</video>
+					<video id="player"
+						src="{{ $radio->stream_url }}"
+						data-title="{{ $radio->title }}"
+						data-thumb="{{ $radio->thumbnail_url }}"
+						poster="{{ $radio->thumbnail_url }}"
+						data-type="audio"
+						playsinline
+						controls
+						preload="none">
+					</video>
 
     <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
 </div>
