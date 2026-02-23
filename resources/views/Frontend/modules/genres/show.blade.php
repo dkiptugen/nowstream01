@@ -22,13 +22,13 @@
                 <div class="text-center text-light-50 py-4">No content found for this genre.</div>
             @else
                 <div class="row">
-                    @foreach($contents as $content)
-                        @if($content->content_group == 'tv')
-                            @include('Frontend.includes.components.cards.tv-card', ['tv' => $content])
-                        @elseif($content->content_group == 'podcast')
-                            @include('Frontend.includes.components.cards.podcast-card', ['podcast' => $content])
-                        @elseif($content->content_group == 'radio')
-                            @include('Frontend.includes.components.cards.radio-card', ['radio' => $content])
+                    @foreach($contents as $item)
+                        @if($item->content_group == 'tv')
+                            @include('Frontend.includes.components.cards.tv-card', ['tv' => $item])
+                        @elseif($item->content_group == 'podcast')
+                            @include('Frontend.includes.components.cards.podcast-card', ['podcast' => $item])
+                        @elseif($item->content_group == 'radio')
+                            @include('Frontend.includes.components.cards.radio-card', ['radio' => $item])
                         @endif
                     @endforeach
                 </div>
