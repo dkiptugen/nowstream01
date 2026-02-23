@@ -66,23 +66,15 @@ class CategoryController extends Controller
 
         return view('Frontend.modules.genres.show', compact('genre', 'contents'));
     }
-  public function genreRadios($genre)
+public function genreRadios($genre)
 {
+    // Convert slug to proper case
+    $genre = urldecode($genre);
+    $genre = str_replace('-', ' ', $genre);
+    $genre = ucwords($genre);
+
     $contents = Content::where('content_group', 'radio')
-        ->where(function ($query) use ($genre) {
-
-            // JSON array
-            $query->whereJsonContains('genre', $genre)
-
-                // JSON string formats
-                ->orWhere('genre', 'like', '%"'.$genre.'"%')
-
-                // comma-separated exact boundaries
-                ->orWhere('genre', 'like', $genre.',%')
-                ->orWhere('genre', 'like', '%,'.$genre.',%')
-                ->orWhere('genre', 'like', '%,'.$genre)
-                ->orWhere('genre', $genre);
-        })
+        ->whereJsonContains('genre', $genre)
         ->orderBy('views', 'desc')
         ->paginate(12);
 
