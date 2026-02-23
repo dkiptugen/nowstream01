@@ -53,27 +53,43 @@ class RadioController extends Controller
             }
         );
 
-        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
-            return Content::where('content_group', 'radio')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatMap(
-                    fn($genre) => is_array($genre)
-                        ? $genre
-                        : (str_starts_with($genre, '[')
-                            ? json_decode($genre, true)
-                            : (str_contains($genre, ',')
-                                ? array_map('trim', explode(',', $genre))
-                                : [$genre]
-                            )
-                        )
-                )
-                ->filter()
-                ->map(fn($g) => trim($g))
-                ->unique()
-                ->sort()
-                ->values();
-        });
+    $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
+    return Content::where('content_group', 'radio')
+        ->whereNotNull('genre')
+        ->pluck('genre')
+        ->flatMap(function ($genre) {
+
+            // 1. Already an array (casted model)
+            if (is_array($genre)) {
+                return $genre;
+            }
+
+            // 2. Clean extra wrapping quotes (double-encoded JSON)
+            $genre = trim($genre);
+            $genre = trim($genre, '"');
+
+            // 3. Try JSON decode
+            if (str_starts_with($genre, '[')) {
+                $decoded = json_decode($genre, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    return $decoded;
+                }
+            }
+
+            // 4. Comma-separated fallback
+            if (str_contains($genre, ',')) {
+                return array_map('trim', explode(',', $genre));
+            }
+
+            // 5. Single value fallback
+            return [$genre];
+        })
+        ->filter(fn($g) => !empty($g))
+        ->map(fn($g) => trim($g))
+        ->unique()
+        ->sort()
+        ->values();
+});
         /**
          * Top Radios Pool
          */
