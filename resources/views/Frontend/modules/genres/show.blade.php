@@ -16,24 +16,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="ucm-nav-wrap">
-                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
-                    @foreach($genres->filter()->unique() as $genre)
-                    @php
-                    $slug = Str::slug($genre);
-                    $label = ucfirst(trim($genre));
-                    @endphp
-                    @if(!empty($slug))
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="{{ route('genre.radios', ['genre' => $slug]) }}">
-                            {{ $label }}
-                        </a>
-                    </li>
-                    @endif
-                    @endforeach
-                </ul>
-            </div>
+ 
         </div>
     </section> <!-- breadcrumb-area-end -->
     <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
@@ -44,25 +27,7 @@
                 </div>
             </div>
         </div>
-
-        <div class="pcar-wrapper">
-
-            <!-- Outside container overlays -->
-            <div class="pcar-overlay pcar-overlay-left"></div>
-            <div class="pcar-overlay pcar-overlay-right"></div>
-
-            <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
-                data-mobile="1">
-
-                <div class="pcar-track">
-                    @foreach($contents as $item)
-                    <div class="pcar-item">
-                        @include('Frontend.includes.components.cards.slider-card')
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
+ 
         <div class="container mt-md-5">
             <div class="episode-top-wrap">
                 <div class="section-title"> <span class="sub-title">Latest radios</span>
