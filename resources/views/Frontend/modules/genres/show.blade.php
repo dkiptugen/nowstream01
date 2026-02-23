@@ -15,32 +15,7 @@
             </div>
         </div>
     </section>
-
-    <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-        <div class="container">
-            @if($contents->isEmpty())
-                <div class="text-center text-light-50 py-4">No content found for this genre.</div>
-            @else
-                <div class="row">
-                    @foreach($contents as $item)
-                        @if($item->content_group == 'tv')
-                            @include('Frontend.includes.components.cards.tv-card', ['tv' => $item])
-                        @elseif($item->content_group == 'podcast')
-                            @include('Frontend.includes.components.cards.podcast-card', ['podcast' => $item])
-                        @elseif($item->content_group == 'radio')
-                        <div class="col-lg-6 col-md-4">
-                                                        @include('Frontend.includes.components.cards.radio-card', ['radio' => $item])
-                        </div>
-                        @endif
-                    @endforeach
-                </div>
-
-                <div class="mt-4">
-                    {{ $contents->links() }} {{-- pagination links --}}
-                </div>
-            @endif
-        </div>
-    </section>
+ 
        <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
         <div class="container">
             <div class="episode-top-wrap">
