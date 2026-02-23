@@ -70,40 +70,50 @@ class TVController extends Controller
             Category::where('type', 'like', '%tv%')->get()
         );
 
-       $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
 
-    $allGenres = Content::where('content_group', 'tv')
-        ->whereNotNull('genre')
-        ->pluck('genre')
-        ->flatMap(function ($genre) {
+            $genreViews = [];
 
-            if (is_array($genre)) {
-                return $genre;
-            }
+            Content::where('content_group', 'tv')
+                ->whereNotNull('genre')
+                ->select('genre', 'views')
+                ->chunk(500, function ($contents) use (&$genreViews) {
 
-            $genre = trim($genre, '"');
+                    foreach ($contents as $content) {
 
-            if (str_starts_with($genre, '[')) {
-                $decoded = json_decode($genre, true);
-                return is_array($decoded) ? $decoded : [];
-            }
+                        $genres = $content->genre;
 
-            if (str_contains($genre, ',')) {
-                return array_map('trim', explode(',', $genre));
-            }
+                        // Normalize genre formats
+                        if (is_array($genres)) {
+                            $list = $genres;
+                        } else {
+                            $genres = trim($genres, '"');
 
-            return [$genre];
-        })
-        ->filter()
-        ->map(fn ($g) => trim($g));
+                            if (str_starts_with($genres, '[')) {
+                                $decoded = json_decode($genres, true);
+                                $list = is_array($decoded) ? $decoded : [];
+                            } elseif (str_contains($genres, ',')) {
+                                $list = array_map('trim', explode(',', $genres));
+                            } else {
+                                $list = [$genres];
+                            }
+                        }
 
-    // Count occurrences
-    return $allGenres
-        ->countBy()            // <-- key part
-        ->sortDesc()           // highest count first
-        ->keys()               // return only genre names
-        ->values();
-});
+                        foreach ($list as $g) {
+                            $g = trim($g);
+                            if (!$g) continue;
+
+                            $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
+                        }
+                    }
+                });
+
+            // Sort by total views (desc)
+            arsort($genreViews);
+
+            // Return only genre names
+            return collect($genreViews)->keys()->values();
+        });
 
         $toptvs = Cache::remember(
             'top_tvs',
