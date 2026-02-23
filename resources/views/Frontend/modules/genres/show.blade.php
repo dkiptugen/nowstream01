@@ -36,7 +36,7 @@
             </div>
 
             <div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
-                @include('Frontend.includes.components.partials.radio-items', ['radios' => $contents])
+                @include('Frontend.includes.components.partials.radio-items', ['radios' => $radios])
             </div>
 
             <div class="text-center my-4" id="loading" style="display:none;">

@@ -66,46 +66,38 @@ class CategoryController extends Controller
 
         return view('Frontend.modules.genres.show', compact('genre', 'contents'));
     }
-  public function genreRadios(Request $request, $genre)
-{
-    $perPage = 30;
-    $page = $request->get('page', 1);
+    public function genreRadios(Request $request, $genre)
+    {
+        $perPage = 30;
+        $page = $request->get('page', 1);
 
-    // Normalize slug
-    $genre = urldecode($genre);
-    $genre = str_replace('-', ' ', $genre);
-    $genre = ucwords($genre);
+        $genre = urldecode($genre);
+        $genre = str_replace('-', ' ', $genre);
+        $genre = ucwords($genre);
 
-    $contents = Content::where('content_group', 'radio')
-        ->where(function ($q) use ($genre) {
+        $radios = Content::where('content_group', 'radio')
+            ->where(function ($q) use ($genre) {
+                // Matches: ["Balada","Pop"]
+                $q->where('genre', 'like', '%"' . $genre . '"%')
 
-            // JSON array: ["Balada","Pop"]
-            $q->where('genre', 'like', '%"' . $genre . '"%')
+                    // Matches: Balada, Pop
+                    ->orWhere('genre', 'like', '%' . $genre . '%');
+            })
+            ->orderBy('views', 'desc')
+                    ->paginate($perPage, ['*'], 'page', $page); 
+        // AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.radio-items',
+                    compact('radios')
+                )->render(),
+                'hasMore' => $radios->hasMorePages()
+            ]);
+        }
 
-                // Comma separated formats
-                ->orWhere('genre', 'like', $genre . ',%')
-                ->orWhere('genre', 'like', '%,' . $genre . ',%')
-                ->orWhere('genre', 'like', '%,' . $genre)
-
-                // Exact single value
-                ->orWhere('genre', $genre);
-        })
-        ->orderBy('views', 'desc')
-        ->paginate($perPage, ['*'], 'page', $page);
-
-    // AJAX request
-    if ($request->ajax()) {
-        return response()->json([
-            'html' => view(
-                'Frontend.includes.components.partials.radio-items',
-                compact('contents')
-            )->render(),
-            'hasMore' => $contents->hasMorePages()
-        ]);
+        return view('Frontend.modules.genres.show', compact('genre', 'radios'));
     }
-
-    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
-}
 
     /**
      * Category filtered by content group
