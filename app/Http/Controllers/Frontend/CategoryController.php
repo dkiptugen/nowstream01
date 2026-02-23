@@ -79,6 +79,7 @@ public function genreRadios($genre)
         })
         ->orderBy('views', 'desc')
         ->paginate(12);
+        dd($genre);
 
     return view('Frontend.modules.genres.show', compact('genre', 'contents'));
 }
