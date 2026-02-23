@@ -34,6 +34,15 @@ return [
 
                             </div>
                         </div>
+                        @php
+                            $views = $podcast->views ?? 0;
+
+                            if ($views < 50) {
+                                $displayViews = rand(50, 150);
+                            } else {
+                                $displayViews = rand(intval($views * 0.9), intval($views * 1.1));
+                            }
+                        @endphp
                         <div class="col-xl-8 col-lg-8">
                             <div class="movie-details-content">
                                 <h5>Top podcast</h5>
@@ -44,15 +53,7 @@ return [
                                     <ul>
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},@php
-    $views = $podcast->views ?? 0;
-
-    if ($views < 50) {
-        $displayViews = rand(50, 150);
-    } else {
-        $displayViews = rand(intval($views * 0.9), intval($views * 1.1));
-    }
-@endphp
+                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
 
 {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
 </span>
