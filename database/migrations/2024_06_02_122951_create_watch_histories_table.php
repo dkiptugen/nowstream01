@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('watch_histories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->morphs('watchable');
+            $table->uuid('content_id')->index();
             $table->string('stream_auth')->nullable();
             $table->timestamp('watched_at')->useCurrent();
-            $table->integer('watch_duration')->nullable();  
+            $table->integer('watch_duration')->nullable();
             $table->timestamps();
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('content_id')->references('uuid')->on('contents')->onDelete('cascade');
         });
-        
+
     }
     /**
      * Reverse the migrations.

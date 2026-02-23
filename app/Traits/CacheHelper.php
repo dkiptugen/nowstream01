@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Channel;
 use App\Models\Event;
 use App\Models\Content;
+use App\Models\Microsite;
 use App\Models\Product;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,14 +16,14 @@ trait CacheHelper
      */
     public function get_channels($id = null)
     {
-        return Cache::remember("channels_{$id}", now()->addDay(), function () use ($id) {
+        return Cache::tags(['microsites', 'contents'])->remember("microsites_{$id}", now()->addDay(), function () use ($id) {
             if (is_null($id)) {
-                return Channel::with(['streams', 'contents'])
+                return Microsite::with(['contents'])
                     ->where('status', 1)
                     ->orderBy('created_at', 'desc')
                     ->get();
             }
-            return Channel::with(['streams', 'contents'])->find($id);
+            return Microsite::with([ 'contents'])->find($id);
         });
     }
 
@@ -31,7 +32,7 @@ trait CacheHelper
      */
     public function get_event($id, $slug)
     {
-        return Cache::remember("event_{$id}_{$slug}", now()->addDay(), function () use ($id, $slug) {
+        return Cache::tags(['event'])->remember("event_{$id}_{$slug}", now()->addDay(), function () use ($id, $slug) {
             return Event::where('uuid', $id)
                 ->where('slug', $slug)
                 ->where('status', 1)
@@ -47,7 +48,7 @@ trait CacheHelper
     {
         $key = $excludeId ? "events_except_{$excludeId}" : "events_all";
 
-        return Cache::remember($key, now()->addDay(), function () use ($excludeId) {
+        return Cache::tags([ 'events'])->remember($key, now()->addDay(), function () use ($excludeId) {
             $query = Event::where('status', 1)->orderBy('created_at', 'desc');
             if ($excludeId) {
                 $query->where('uuid', '!=', $excludeId);
@@ -61,7 +62,7 @@ trait CacheHelper
      */
     public function get_videos($limit = 6)
     {
-        return Cache::remember("latest_videos_{$limit}", now()->addDay(), function () use ($limit) {
+        return Cache::tags(['videos', 'contents'])->remember("latest_videos_{$limit}", now()->addDay(), function () use ($limit) {
             return Content::where('content_group', 'video')
                 ->latest()
                 ->take($limit)
@@ -74,7 +75,7 @@ trait CacheHelper
      */
     public function get_podcasts($limit = 6)
     {
-        return Cache::remember("latest_podcasts_{$limit}", now()->addDay(), function () use ($limit) {
+        return Cache::tags(['podcasts', 'contents'])->remember("latest_podcasts_{$limit}", now()->addDay(), function () use ($limit) {
             return Content::where('content_group', 'podcast')
                 ->latest()
                 ->take($limit)
@@ -86,7 +87,7 @@ trait CacheHelper
      */
     public function get_tvs($limit = 6)
     {
-        return Cache::remember("latest_tvs_{$limit}", now()->addDay(), function () use ($limit) {
+        return Cache::tags(['tvs', 'contents'])->remember("latest_tvs_{$limit}", now()->addDay(), function () use ($limit) {
             return Content::where('content_group', 'tv')
                 ->latest()
                 ->take($limit)
@@ -98,7 +99,7 @@ trait CacheHelper
      */
     public function get_radios($limit = 6)
     {
-        return Cache::remember("latest_radios_{$limit}", now()->addDay(), function () use ($limit) {
+        return Cache::tags(['radios', 'contents'])->remember("latest_radios_{$limit}", now()->addDay(), function () use ($limit) {
             return Content::where('content_group', 'radio')
                 ->latest()
                 ->take($limit)
@@ -111,8 +112,9 @@ trait CacheHelper
      */
     public function get_event_ticket_rates($eventId)
     {
-        return Cache::remember("event_{$eventId}_tickets", now()->addDay(), function () use ($eventId) {
-            return Product::where('event_id', $eventId)
+        return Cache::tags(['events', 'tickets'])->remember("event_{$eventId}_tickets", now()->addDay(), function () use ($eventId) {
+            return Product::where('payable_id', $eventId)
+                ->where('payable_type', Event::class)
                 ->where('type', 'ticket')
                 ->where('is_active', 1)
                 ->orderBy('price', 'asc')
@@ -120,9 +122,9 @@ trait CacheHelper
         });
     }
 
-  	public function get_streams ($id = null, $not = 0)
+  	public function get_streams ($uuid = null, $not = 0)
 				{
-					if (is_null ($id))
+					if (is_null ($uuid))
 						{
 							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
@@ -132,8 +134,8 @@ trait CacheHelper
 						}
 					else
 						{
-							$stream = Content::find ($id);
+							$stream = Content::where('uuid', $uuid)->with('channel')->first();
 						}
 					return $stream;
 				}
-		} 
+		}

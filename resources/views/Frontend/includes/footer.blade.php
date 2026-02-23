@@ -106,10 +106,12 @@
                     <div class="col-md-7">
                         <div class="quick-link-list">
                             <ul>
-                                <li><a href="#">FAQ</a></li>
-                                <li><a href="#">Help Center</a></li>
-                                <li><a href="#">Terms of Use</a></li>
-                                <li><a href="#">Privacy</a></li>
+                                <li><a href="{{ route('faq') }}">FAQ</a></li>
+                                <li><a href="{{ route('help.center') }}">Help Center</a></li>
+                                <li><a href="{{ route('terms') }}">Terms of Use</a></li>
+                                <li><a href="{{ route('privacy') }}">Privacy</a></li>
+                                <li><a href="{{ route('user.data.deletion') }}">User Data Deletion</a></li>
+
                             </ul>
                         </div>
                     </div>

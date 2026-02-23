@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Http\Middleware;
+    namespace App\Http\Middleware;
 
-use Illuminate\Http\Middleware\TrustHosts as Middleware;
+    use Illuminate\Http\Middleware\TrustHosts as Middleware;
 
-class TrustHosts extends Middleware
-{
-    /**
-     * Get the host patterns that should be trusted.
-     *
-     * @return array<int, string|null>
-     */
-    public function hosts(): array
-    {
-        return [
-            'streamer.co.ke',
-            'www.streamer.co.ke',
-        ];
-    }
-}
+    class TrustHosts extends Middleware
+        {
+        /**
+         * Get the host patterns that should be trusted.
+         *
+         * @return array<int, string|null>
+         */
+            public function hosts()
+            : array
+                {
+
+                    $baseDomain = preg_quote(config('app.base_domain'));
+                    return [
+                        'localhost',
+                        '^(.+\.)?' . $baseDomain . '$',
+                    ];
+                }
+        }

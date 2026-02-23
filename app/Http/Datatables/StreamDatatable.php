@@ -22,8 +22,8 @@ class StreamDatatable
                 $columns       = $this->columns;
                 $query         = Content::query();
                 $query
-                    ->where('channel_id', $request->user()->channel_id)
-                    ->where('content_group', 'stream');
+                    ->where('microsite_id', $request->user()->microsite_id)
+                    ->where('content_group', 'livestream');
 
                 $limit         = $request->input('length');
                 $start         = $request->input('start');

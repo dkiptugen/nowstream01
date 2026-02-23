@@ -273,7 +273,7 @@
 
 
 	@if($channels->isNotEmpty())
-	<section>
+	<section class="d-none">
 		<h5 class="mb-3">Popular Channels</h5>
 		<div class="d-flex scrolling">
 			@foreach ($channels as $channel)

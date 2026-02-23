@@ -22,7 +22,7 @@
                         $table->timestamp('password_changed_at')->nullable();
                         $table->tinyInteger('status')->default(0);
                         $table->enum('type',['owner','stream_partner'])->default('stream_partner');
-						$table->uuid('channel_id')->index()->nullable();
+						$table->uuid('microsite_id')->index()->nullable();
                         $table->rememberToken();
                         $table->softDeletes();
                         $table->timestamps();

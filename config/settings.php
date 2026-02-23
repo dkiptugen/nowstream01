@@ -102,5 +102,13 @@
                 "destroy_category",
                 "view_category",
             ],
+            "microsite"    => [
+                "create_microsite",
+                "edit_microsite",
+                "destroy_microsite",
+                "view_microsite",
+                'view_specific_microsite'
+
+            ],
         ]
     ];

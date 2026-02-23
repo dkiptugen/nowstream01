@@ -1,71 +1,104 @@
-<div class="card radius-5 h-100">
-    <div class="image">
-        @php
-            use App\Models\ContentRate;
-            $checkRate = ContentRate::where('content_id', $stream->id)->count();
-            $freeStream = $checkRate == 0;
-        @endphp
+@php
+use Carbon\Carbon;
 
-        @if($freeStream)
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}" loading="lazy">
-            </a>
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <div class="play fs-40">
-                    <i class="fadeIn animated bx bx-play-circle"></i>
-                </div>
-            </a>
-        @else
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <img src="{{$stream->thumbnail_url}}" class="w-100 d-block w-100 aspect16" alt="{{ $stream->title }}">
-            </a>
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <div class="play fs-40">
-                    <i class="fadeIn animated bx bx-play-circle"></i>
-                </div>
-            </a>
-        @endif
-        @php
-            $event = \App\Models\Event::find($stream->event_id);
-            use Carbon\Carbon;
-            $current_time = Carbon::now();
-        @endphp
+// Event & Stream data
+$event = $stream->event;
+$channel = $stream->channel;
 
-        @if($event->end_time <= $current_time)
-            <div class="time align-items-center d-flex">Watch <i class="lni lni-play"></i></div>
-        @elseif($event->start_time <= $current_time && $event->end_time > $current_time)
+// Stream thumbnail fallback
+$thumbnail = $stream->thumbnail_url
+    ? Storage::disk(config('filesystems.default'))->url($stream->thumbnail_url)
+    : asset('frontend-assets/images/default.png');
+
+// Event start/end
+$startDate = $event ? Carbon::parse($event->start_time) : null;
+$endTime = $event ? Carbon::parse($event->end_time) : null;
+$now = Carbon::now();
+
+// Tickets
+$tickets = $event->tickets ?? collect();
+$ticket = $tickets->sortBy('price')->first();
+$hasPaidTickets = $tickets->count() > 0;
+$freeStream = !$hasPaidTickets;
+
+// Stream URL
+$url = $freeStream
+    ? route('free.show', ['slug' => $stream->slug])
+    : route('stream.show', ['slug' => $stream->slug]);
+
+// Event status & time text
+$status = 'Upcoming';
+$timeText = '';
+if ($event) {
+    if ($event->end_time <= $now) {
+        $status = 'Watch';
+        $timeText = 'Ended';
+    } elseif ($event->start_time <= $now && $event->end_time > $now) {
+        $status = 'Live';
+        $timeText = 'Started ' . $event->start_time->diffForHumans();
+    } else {
+        $status = 'Upcoming';
+        $timeText = 'Starts in ' . $event->start_time->diffForHumans();
+    }
+}
+@endphp
+
+<div class="movie-item mb-60">
+    <div class="movie-poster">
+        <a href="{{ $url }}">
+            <img src="{{ $thumbnail }}" class="img-fluid" alt="{{ $stream->title }}" loading="lazy" style="aspect-ratio: 1.5 / 2;">
+        </a>
+
+        {{-- Status Badge --}}
+        <!-- @if($status === 'Watch')
+            <div class="time d-flex align-items-center">
+                Watch <i class="lni lni-play"></i>
+            </div>
+        @elseif($status === 'Live')
             <div class="time">Live</div>
         @else
             <div class="time">Upcoming</div>
-        @endif
+        @endif -->
     </div>
-    <div class="card-body pb-0">
-        @if($freeStream)
-            <a href="{{ url("/stream/free/{$stream->id}/{$stream->slug}") }}">
-                <h6 class="mb-0">{{$stream->title}}</h6>
-            </a>
-        @else
-            <a href="{{ url("/stream/{$stream->id}/{$stream->slug}") }}">
-                <h6 class="mb-0">{{$stream->title}}</h6>
-            </a>
-        @endif
-        @php
-            $channel = \App\Models\Channel::find($stream->channel_id);
-        @endphp
 
-        <small class="text-muted mb-0 mt-1">
-            {{ $channel ? $channel->name : 'Unknown' }}
-        </small>
-        <br><small class="text-muted">
-            <i class="lni lni-calendar"></i>
-
-            @if($event->start_time > $current_time)
-                <small class="text-muted">Starts in {{ $event->start_time->diffForHumans() }}</small>
-            @elseif($event->end_time > $current_time)
-                <small class="text-muted">Started {{ $event->start_time->diffForHumans() }}</small>
-            @else
-                <small class="text-muted">Ended</small>
+    <div class="movie-content mt-3">
+        <div class="top d-flex justify-content-between align-items-center mb-2">
+            @if($startDate)
+                <small>{{ strtoupper($startDate->format('d M, Y')) }}</small>
+                <span class="date">
+                    <small class="card-text">
+                        <i class="fas fa-clock"></i>
+                        {{ $startDate->format('h:i A') }} - {{ $endTime->format('h:i A') }}
+                    </small>
+                </span>
             @endif
-        </small>
+        </div>
+
+        <div class="bottom">
+            <ul class="list-unstyled mb-1">
+                <li>
+                    <h6 class="quality">
+                        <i class="bx bx-money"></i>
+                        {{ $ticket ? "From KES {$ticket->price}" : 'Free' }}
+                    </h6>
+                </li>
+                <li>
+                    <span class="duration">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Venue: {{ $stream->venue ?? 'Unknown' }}
+                    </span>
+                </li>
+            </ul>
+
+            <!-- <small class="text-muted mt-1 d-block">
+                {{ $channel->name ?? 'Unknown' }}
+            </small> -->
+
+            @if($stream)
+                <small class="text-muted d-block">
+                    <i class="lni lni-calendar"></i> {{ $timeText }}
+                </small>
+            @endif
+        </div>
     </div>
 </div>

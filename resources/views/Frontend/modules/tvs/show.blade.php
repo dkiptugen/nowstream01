@@ -8,25 +8,22 @@
 		<div class="container custom-container">
 			<div class="row align-items-center position-relative g-0">
 				<div class="col-xl-9 col-lg-8">
-					<div id="videoWrap" class="tv-wrap">  
-    <video id="player"
-       src="{{ $tv->stream_url }}"
-       data-title="{{ $tv->title }}"
-       data-thumb="{{ $tv->thumbnail_url }}"
-        data-stream="{{ $tv->stream_url }}"
-       poster="{{ $tv->thumbnail_url }}">
-</video>
-    <div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
-</div>
-
- 
- 
+					<div id="videoWrap" class="tv-wrap">
+						<video
+							id="player"
+							data-stream="{{ $tv->stream_url }}"
+							playsinline
+							controls
+							poster="{{ $tv->thumbnail_url }}">
+						</video>
+						<div class="live-badge" style="background: transparent"><img src="{{ asset('assets/img/logo/logo.png') }}" height="20"></div>
+					</div>
 				</div>
 				@include('Frontend.includes.components.partials.video-comments', [
-    'comments' => $comments,
-    'commentableType' => 'tv',
-    'commentableId' => $tv->uuid
-])
+				'comments' => $comments,
+				'commentableType' => 'tv',
+				'commentableId' => $tv->uuid
+				])
 
 				<div class="col-xl-7 col-lg-8 mt-4">
 					<div class="movie-details-content">
@@ -47,21 +44,18 @@
 						<div class="banner-meta">
 							<ul>
 								<li class="quality">
-									<span>Pg 18</span>
-									<span>hd</span>
+									<span>@if($tv->is_explicit)R @else Pg 18 @endif</span>
+									<span>{{ $tv->quality??'HD' }}</span>
 								</li>
-								<li class="category"> 
-    @foreach($tv->categories as $category)
-        <a href="{{ route('genre.show', $category->slug) }}">
-            {{ $category->name }}@if(!$loop->last),@endif
-        </a>
-    @endforeach
-</li>
+								<li class="category">
+									@foreach($tv->categories as $category)
+									<a href="{{ route('genre.show', $category->slug) }}">
+										{{ $category->name }}@if(!$loop->last),@endif
+									</a>
+									@endforeach
+								</li>
 
-								<li class="release-time">
-									<span><i class="far fa-calendar-alt"></i> 2021</span>
-									<span><i class="far fa-clock"></i> 128 min</span>
-								</li>
+
 							</ul>
 						</div>
 						<p>{{ $tv->description }}</p>
@@ -69,13 +63,13 @@
 							<ul>
 								<li class="share"><a href="#"><i class="fas fa-share-alt"></i> Share</a></li>
 								<li class="streaming">
-									<h6>Prime tv</h6>
-									<span>Streaming Channels</span>
-								</li> 
+									<h6>Streamer.co.ke</h6>
+									<span>Tv Streaming</span>
+								</li>
 							</ul>
 						</div>
 					</div>
-				</div> 
+				</div>
 			</div>
 		</div>
 	</section>
@@ -83,15 +77,15 @@
 		<div class="row">
 			<div class="col-12 col-lg-8">
 				<div class="card radius-5 row mx-md-0">
- 
+
 					<div class="card-body">
 						<h2 class="mb-0">
 							{{$tv->title}}
 						</h2>
-						<p class="text-danger mb-0 mt-1">Entertainment</p>
-						<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
+						<p class="text-danger mb-0 mt-1">{{ $tv->genres }}</p>
+						{{--<small class="text-muted"><i class="lni lni-eye"></i> 1.9M Views <i
 								class="lni lni-calendar"></i>
-							Started Streaming 12min ago </small>
+							Started Streaming 12min ago </small>--}}
 					</div>
 				</div>
 				<div class="card radius-5 single-tv-author box mb-3">
@@ -166,36 +160,36 @@
 
 			</div>
 	</section>
-@if($related->isNotEmpty())
-		<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
-		    <div class="container">
-                <div class="episode-top-wrap">
-                    <div class="section-title"> <span class="sub-title">Related Radios</span>
-                        <h2 class="title">Trending Radios</h2>
-                    </div>
-                </div>
-            </div>
+	@if($related->isNotEmpty())
+	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
+		<div class="container">
+			<div class="episode-top-wrap">
+				<div class="section-title"> <span class="sub-title">Related Tvs</span>
+					<h2 class="title">Trending Tvs</h2>
+				</div>
+			</div>
+		</div>
 
-            <div class="pcar-wrapper">
+		<div class="pcar-wrapper">
 
-                <!-- Outside container overlays -->
-                <div class="pcar-overlay pcar-overlay-left"></div>
-                <div class="pcar-overlay pcar-overlay-right"></div>
+			<!-- Outside container overlays -->
+			<div class="pcar-overlay pcar-overlay-left"></div>
+			<div class="pcar-overlay pcar-overlay-right"></div>
 
-                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
-                    data-mobile="1">
+			<div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
+				data-mobile="1">
 
-                    <div class="pcar-track">
-                        @foreach($related as $item)
-                            <div class="pcar-item">
-                                @include('Frontend.includes.components.cards.slider-card')
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
+				<div class="pcar-track">
+					@foreach($related as $item)
+					<div class="pcar-item">
+						@include('Frontend.includes.components.cards.slider-card')
+					</div>
+					@endforeach
+				</div>
+			</div>
+		</div>
 	</section>
-		@endif
+	@endif
 
 	@endsection
 	@section('header')
@@ -380,170 +374,173 @@
 		.sticky {
 			z-index: 99;
 		}
-		.live-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: red;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
-    z-index: 10;
-}
 
+		.live-badge {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			background: red;
+			color: #fff;
+			font-size: 12px;
+			font-weight: 600;
+			padding: 4px 8px;
+			border-radius: 4px;
+			z-index: 10;
+		}
 	</style>
 	@endsection
 	@section('footer')
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
+	<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
 
-    const video = document.getElementById('player');
-    if (!video) return;
+			const video = document.getElementById('player');
+			if (!video) return;
 
-    const streamUrl = video.dataset.stream;
-    if (!streamUrl) return;
+			const streamUrl = video.dataset.stream;
+			if (!streamUrl) return;
 
-    const player = new Plyr(video, {});
+			const player = new Plyr(video, {});
 
-    let hls = null;
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 10;
-    const reconnectDelay = 3000;
+			let hls = null;
+			let reconnectAttempts = 0;
+			const maxReconnectAttempts = 10;
+			const reconnectDelay = 3000;
 
-    function getMediaType(url) {
-        const ext = url.split('.').pop().toLowerCase();
-        if (ext === 'm3u8') return 'hls';
-        if (ext === 'mp4') return 'video/mp4';
-        return '';
-    }
+			function getMediaType(url) {
+				const ext = url.split('.').pop().toLowerCase();
+				if (ext === 'm3u8') return 'hls';
+				if (ext === 'mp4') return 'video/mp4';
+				return '';
+			}
 
-    function autoplayWithSound() {
-        video.muted = false;
-        video.volume = 1;
+			function autoplayWithSound() {
+				video.muted = false;
+				video.volume = 1;
 
-        video.play().catch(() => {
-            // Browser blocked autoplay with sound
-            video.muted = true;
-            video.play().catch(() => {});
-        });
-    }
+				video.play().catch(() => {
+					// Browser blocked autoplay with sound
+					video.muted = true;
+					video.play().catch(() => {});
+				});
+			}
 
-    function destroyHls() {
-        if (hls) {
-            hls.destroy();
-            hls = null;
-        }
-    }
+			function destroyHls() {
+				if (hls) {
+					hls.destroy();
+					hls = null;
+				}
+			}
 
-    function reconnectStream() {
-        if (reconnectAttempts >= maxReconnectAttempts) {
-            console.error('Max reconnect attempts reached');
-            return;
-        }
+			function reconnectStream() {
+				if (reconnectAttempts >= maxReconnectAttempts) {
+					console.error('Max reconnect attempts reached');
+					return;
+				}
 
-        reconnectAttempts++;
-        console.log('Reconnecting stream...', reconnectAttempts);
+				reconnectAttempts++;
+				console.log('Reconnecting stream...', reconnectAttempts);
 
-        setTimeout(() => {
-            loadStream(streamUrl);
-        }, reconnectDelay);
-    }
+				setTimeout(() => {
+					loadStream(streamUrl);
+				}, reconnectDelay);
+			}
 
-    function loadStream(url) {
-        const type = getMediaType(url);
+			function loadStream(url) {
+				const type = getMediaType(url);
 
-        // Reset video
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
+				// Reset video
+				video.pause();
+				video.removeAttribute('src');
+				video.load();
 
-        destroyHls();
+				destroyHls();
 
-        if (type === 'hls') {
+				if (type === 'hls') {
 
-            if (Hls.isSupported()) {
+					if (Hls.isSupported()) {
 
-                hls = new Hls({
-                    maxBufferLength: 30,
-                    maxMaxBufferLength: 60,
-                    enableWorker: true,
-                    lowLatencyMode: true
-                });
+						hls = new Hls({
+							maxBufferLength: 30,
+							maxMaxBufferLength: 60,
+							enableWorker: true,
+							lowLatencyMode: true
+						});
 
-                hls.loadSource(url);
-                hls.attachMedia(video);
+						hls.loadSource(url);
+						hls.attachMedia(video);
 
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    reconnectAttempts = 0;
-                    autoplayWithSound();
-                });
+						hls.on(Hls.Events.MANIFEST_PARSED, function() {
+							reconnectAttempts = 0;
+							autoplayWithSound();
+						});
 
-                hls.on(Hls.Events.ERROR, function (event, data) {
+						hls.on(Hls.Events.ERROR, function(event, data) {
 
-                    if (data.fatal) {
-                        console.error('HLS fatal error:', data.type);
+							if (data.fatal) {
+								console.error('HLS fatal error:', data.type);
 
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                reconnectStream();
-                                break;
+								switch (data.type) {
+									case Hls.ErrorTypes.NETWORK_ERROR:
+										reconnectStream();
+										break;
 
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError();
-                                break;
+									case Hls.ErrorTypes.MEDIA_ERROR:
+										hls.recoverMediaError();
+										break;
 
-                            default:
-                                reconnectStream();
-                                break;
-                        }
-                    }
-                });
+									default:
+										reconnectStream();
+										break;
+								}
+							}
+						});
 
-            }
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
-            }
+					} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+						video.src = url;
+						video.addEventListener('loadedmetadata', autoplayWithSound, {
+							once: true
+						});
+					}
 
-        } else {
-            video.src = url;
-            video.addEventListener('loadedmetadata', autoplayWithSound, { once: true });
-        }
-    }
+				} else {
+					video.src = url;
+					video.addEventListener('loadedmetadata', autoplayWithSound, {
+						once: true
+					});
+				}
+			}
 
-    /* ===============================
-       Network Recovery
-    =============================== */
-    window.addEventListener('offline', function () {
-        console.warn('Network lost');
-    });
+			/* ===============================
+			   Network Recovery
+			=============================== */
+			window.addEventListener('offline', function() {
+				console.warn('Network lost');
+			});
 
-    window.addEventListener('online', function () {
-        console.log('Network restored — reconnecting');
-        reconnectAttempts = 0;
-        loadStream(streamUrl);
-    });
+			window.addEventListener('online', function() {
+				console.log('Network restored — reconnecting');
+				reconnectAttempts = 0;
+				loadStream(streamUrl);
+			});
 
-    /* ===============================
-       Visibility Optimization
-    =============================== */
-    document.addEventListener('visibilitychange', function () {
-        if (!document.hidden && video.paused) {
-            video.play().catch(() => {});
-        }
-    });
+			/* ===============================
+			   Visibility Optimization
+			=============================== */
+			document.addEventListener('visibilitychange', function() {
+				if (!document.hidden && video.paused) {
+					video.play().catch(() => {});
+				}
+			});
 
-    /* ===============================
-       Start
-    =============================== */
-    loadStream(streamUrl);
+			/* ===============================
+			   Start
+			=============================== */
+			loadStream(streamUrl);
 
-});
-</script>
+		});
+	</script>
 
 
 	<script>
@@ -676,25 +673,25 @@ document.addEventListener('DOMContentLoaded', function () {
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const mainVideo = document.getElementById('player');
-    if (!mainVideo) return;
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const mainVideo = document.getElementById('player');
+			if (!mainVideo) return;
 
-    const stream = mainVideo.dataset.stream;
+			const stream = mainVideo.dataset.stream;
 
-    if (stream && stream.includes('.m3u8')) {
-        if (window.Hls && Hls.isSupported()) {
-            const hls = new Hls();
-            hls.loadSource(stream);
-            hls.attachMedia(mainVideo);
-        } 
-        // Safari (native HLS)
-        else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
-            mainVideo.src = stream;
-        }
-    }
-});
-</script>
+			if (stream && stream.includes('.m3u8')) {
+				if (window.Hls && Hls.isSupported()) {
+					const hls = new Hls();
+					hls.loadSource(stream);
+					hls.attachMedia(mainVideo);
+				}
+				// Safari (native HLS)
+				else if (mainVideo.canPlayType('application/vnd.apple.mpegurl')) {
+					mainVideo.src = stream;
+				}
+			}
+		});
+	</script>
 
 	@endsection

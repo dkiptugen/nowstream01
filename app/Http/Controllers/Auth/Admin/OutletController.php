@@ -4,14 +4,19 @@
 
     use App\Http\Controllers\Controller;
     use App\Http\Requests\CreateChannel;
+    use App\Http\Requests\StoreMicrosite;
     use App\Http\Services\UploadService;
     use App\Models\Channel;
+    use App\Models\Microsite;
+    use App\Models\Role;
     use App\Models\SystemUserChannel;
+    use App\Models\SystemUserMicrosite;
     use App\Models\UserProduct;
     use App\Traits\Meta;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Cache;
+    use Illuminate\Support\Facades\DB;
 
     class OutletController extends Controller
         {
@@ -24,10 +29,10 @@
                     $this->data = self::product_def();
                 }
 
-            public function choose_channel(Request $request)
+            public function choose_brand(Request $request)
                 {
-                    $this->data['product'] = SystemUserChannel::with([
-                                                                         'channel'
+                    $this->data['product'] = SystemUserMicrosite::with([
+                                                                         'microsite'
                                                                      ])->where('system_user_id', $request->user()->id)->get();
 
                     //dd( $this->data['product']);
@@ -35,74 +40,112 @@
                     return view('Backend.auth.choose_channel', $this->data);
                 }
 
-            public function select_channel(Request $request)
+            public function select_brand(Request $request)
                 {
 
                     $validated = $request->validate([
-                                                        'channel' => ['string', 'required']
+                                                        'microsite' => ['string', 'required']
                                                     ]);
 
                     if ($validated)
                         {
                             $user             = Auth::user();
-                            $user->channel_id = $request->channel;
+                            $user->microsite_id = $request->microsite;
                             $user->save();
+                            $microsite = SystemUserMicrosite::where('system_user_id', $user->id)
+                                                            ->where('microsite_id', $request->microsite)
+                                                            ->first();
+                            $user->syncRoles([$microsite->role->name]);
+
                             return redirect()->route('backend.admin_dashboard');
                         }
 
                 }
 
-            public function channel_change(Channel $channel)
+            public function brand_change(Microsite $microsite)
                 {
                     $user = Auth::guard('admin')->user();
-                    $user->channel_id = $channel->uuid;
+                    $user->microsite_id = $microsite->uuid;
                     $sav              = $user->save();
+                    $user->syncRoles();
                     if ($sav)
                         {
+                            $microsite = SystemUserMicrosite::where('system_user_id', $user->id)
+                                                            ->where('microsite_id', $microsite->uuid)
+                                                            ->first();
+                            $user->syncRoles([$microsite->role->name]);
                             return redirect()->route('backend.admin_dashboard');
                         }
                 }
-            public function create_channel_view()
+            public function create_brand_view()
                 {
                     return view('Backend.auth.create_channel',$this->data);
                 }
-            public function store_channel(CreateChannel $request)
+            public function store_brand(StoreMicrosite $request)
                 {
-                    $validateddata = $request->validated();
-                    if($validateddata)
+
+                    $validated = $request->validated();
+                    $validated['verified'] = 0;
+                    $validated['visible'] = 0;
+                    //DB::beginTransaction();
+                    try
                         {
-                            $channel             = new Channel();
-                            $channel->name       = $validateddata['channel_name'];
-                            if ($request->hasFile('thumbnail'))
-                                {
-                                    $image              = new UploadService();
-                                    $upload             = $image->file_upload($request, 'thumbnail', 'channel_thumbnail');
-                                    $channel->thumbnail = $upload['path'];
+                            $microsite = new Microsite();
+                            $result    = $microsite->create($validated);
 
-                                }
-                            if ($request->hasFile('cover_image'))
+                            if ($result)
                                 {
-                                    $image                = new UploadService();
-                                    $upload               = $image->file_upload($request, 'cover_image', 'channel_cover');
-                                    $channel->cover_image = $upload['path'];
 
-                                }
-                            $channel->description       = $validateddata['channel_description'];
-                            $channel->status            = 1;
-                            $res                        = $channel->save();
-                            if ($res)
-                                {
-                                    $user = $request->user();
-                                    $user->channel_id = $channel->id;
+                                    $user = Auth::guard('admin')->user();
+
+                                    if(!$user->hasRole('Super Admin'))
+                                        {
+
+                                            $role = Role::firstOrCreate(
+                                                ['name' => 'ContentOwner', 'guard_name' => 'admin']
+                                            );
+                                            $result->users()->attach($user->id, [
+                                                'role_id' => $role->id
+                                            ]);
+                                            $user->assignRole('ContentOwner');
+
+                                        }
+                                    else
+                                        {
+                                            $roleId = Role::where('name', 'Super Admin')->value('id');
+                                            $result->users()->attach($user->id, [
+                                                'role_id' => $roleId,
+                                                'created_by'=>$user->id
+                                            ]);
+                                        }
+
+                                    $user->microsite_id = $result->uuid;
                                     $user->save();
-                                    return self::success('channel', 'Saved successfully', route('backend.admin_dashboard'));
+                                    //dd($user);
+                                    //DB::commit();
+                                    return self::success(
+                                        'Microsite',
+                                        'Store successful',
+                                        route('backend.admin_dashboard')
+                                    );
                                 }
-                            return self::failed('channel', 'error encountered when saving, try again later', route('backend.admin_dashboard'));
+
+                            return self::failed(
+                                'Microsite',
+                                'Store failed',
+                                route('backend.microsite.index')
+                            );
 
                         }
-                    else
+                    catch (\Throwable $e)
                         {
-                            return self::failed('channel', $validateddata, route('backend.admin_dashboard'));
+                            \Log::error('Microsite store error: ' . $e->getMessage());
+
+                            return self::failed(
+                                'Microsite',
+                                'Something went wrong',
+                                route('backend.microsite.index')
+                            );
                         }
                 }
         }

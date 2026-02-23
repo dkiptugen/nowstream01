@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="row tr-movie-active" id="radio-container">
+                <div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
                     @include('Frontend.includes.components.partials.radio-items', ['radios' => $radios])
                 </div>
 
@@ -85,48 +85,49 @@
 @endsection
 @section('footer')
 
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    let page = {{ $radios->currentPage() }};
-    let lastPage = {{ $radios->lastPage() }};
+    let page = 1;
     let loading = false;
+    let hasMore = true;
 
-    function loadMore() {
-        if (loading) return;
-        if (page >= lastPage) return;
+    const container = document.getElementById('radio-container');
+    const loader = document.getElementById('loading');
 
-        loading = true;
-        page++;
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
 
-        document.getElementById('loading').style.display = 'block';
-
-        fetch(`?page=${page}`, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('radio-container')
-                .insertAdjacentHTML('beforeend', html);
-
-            loading = false;
-            document.getElementById('loading').style.display = 'none';
-        })
-        .catch(() => {
-            loading = false;
-            document.getElementById('loading').style.display = 'none';
-        });
-    }
-
-    // Scroll trigger
-    window.addEventListener('scroll', function () {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 300) {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
             loadMore();
         }
     });
 
-});
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
 </script>
+
 @endsection

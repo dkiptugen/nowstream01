@@ -107,7 +107,7 @@ class PodcastEpisodeDatatable
                     }
                 if ($request->user()->can('view_podcast_episode'))
                     {
-                        $button .= '<a class="btn btn-dark btn-sm" style="white-space: nowrap;" href="' . route('backend.podcast.episode.show', ['podcast' => $post->parent_id, 'episode' => $post->uuid]) . '" data-toggle="tooltip" title="Listen podcast Episode" target="_blank">
+                        $button .= '<a class="btn btn-dark btn-sm" style="white-space: nowrap;" href="' . route('backend.podcast.episode.show', ['podcast' => $post->parent_id, 'episode' => $post->uuid]) . '" data-toggle="tooltip" title="Listen podcast Episode">
                 <i class="fas fa-play-circle"></i> Listen
                 </a>';
                     }

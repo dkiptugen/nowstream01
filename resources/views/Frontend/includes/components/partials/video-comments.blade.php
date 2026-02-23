@@ -19,16 +19,26 @@
                 @else
                     @foreach($comments as $comment)
                         <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
-                            @if($comment->user->image)
-                                <img src="{{ asset($comment->user->image) }}"
-                                     class="mr-3 rounded-circle"
-                                     style="width:42px;height:42px;object-fit:cover;">
-                            @else
-                                <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
-                                     style="width:42px;height:42px;font-weight:bold;">
-                                    {{ strtoupper(substr($comment->user->name,0,1)) }}
-                                </div>
-                            @endif
+                           @php
+    $user = $comment->user;
+    $initials = collect(explode(' ', $user->name))
+                    ->map(fn($n) => strtoupper(substr($n,0,1)))
+                    ->join('');
+@endphp
+
+@if($user->image)
+    <img src="{{ asset($user->image) }}"
+         class="mr-3 rounded-circle"
+         style="width:42px;height:42px;object-fit:cover;"
+         onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
+@endif
+
+<div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+     style="width:42px;height:42px;font-weight:bold; {{ $user->image ? 'display:none;' : 'display:flex;' }}">
+    {{ $initials }}
+</div>
+
+                            
                             <div class="media-body">
                                 <strong class="text-white">{{ $comment->user->name }}</strong>
                                 <small class="text-light-50 ml-2">{{ $comment->created_at->diffForHumans() }}</small>
@@ -59,7 +69,7 @@
                     method="POST">
                     @csrf
                     <div class="input-group">
-                        <input type="text" name="comment" id="comment-input" class="form-control" placeholder="Add a comment..." required>
+                        <input type="text" name="comment" id="comment-input" class="form-control bg-dark text-light border-dark" placeholder="Add a comment..." required>
                         <div class="input-group-append">
                             <button class="btn btn-sm btn-send" id="comment-submit-btn">
                                 <i class="fa fa-paper-plane"></i>
@@ -110,21 +120,32 @@ document.addEventListener('DOMContentLoaded', function () {
         const safeText = document.createElement('div'); safeText.innerText = text;
 
         // Add comment instantly
-        const html = `
-            <div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
-                <img src="${userImage}" class="mr-3 rounded-circle"
-                     style="width:42px;height:42px;object-fit:cover;">
-                <div class="media-body">
-                    <strong class="text-white">${userName}</strong>
-                    <small class="text-light-50 ml-2">just now</small>
-                    <div class="text-light mt-1">${safeText.innerHTML}</div>
-                    <div class="mt-2 yt-actions">
-                        <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
-                        <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
-                    </div>
-                </div>
-            </div>`;
-        list.insertAdjacentHTML('beforeend', html);
+       const userInitials = userName.split(' ')
+    .map(n => n.charAt(0).toUpperCase())
+    .join('');
+
+const html = `
+<div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
+    <img src="${userImage}" class="mr-3 rounded-circle"
+         style="width:42px;height:42px;object-fit:cover;"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+    <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+         style="width:42px;height:42px;font-weight:bold; display: none;">
+        ${userInitials}
+    </div>
+    <div class="media-body">
+        <strong class="text-white">${userName}</strong>
+        <small class="text-light-50 ml-2">just now</small>
+        <div class="text-light mt-1">${safeText.innerHTML}</div>
+        <div class="mt-2 yt-actions">
+            <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
+            <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
+        </div>
+    </div>
+</div>`;
+
+list.insertAdjacentHTML('beforeend', html);
+
 
         countEl.textContent = parseInt(countEl.textContent) + 1;
         input.value = '';

@@ -4,12 +4,13 @@
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\CheckAppKey;
 use App\Http\Middleware\CheckEventPayment;
-    use App\Http\Middleware\ChooseChannel;
+    use App\Http\Middleware\ChooseBrand;
     use App\Http\Middleware\Cors;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\GetRegion;
-use App\Http\Middleware\PasswordExpired;
+    use App\Http\Middleware\IdentifyTenant;
+    use App\Http\Middleware\PasswordExpired;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
@@ -68,6 +69,8 @@ return Application::configure(basePath: dirname(__DIR__))
                           $middleware->append(TrimStrings::class);
                           $middleware->append(ConvertEmptyStringsToNull::class);
                           $middleware->append(Cors::class);
+                          $middleware->append(SetCacheHeaders::class);
+                          //$middleware->append(IdentifyTenant::class);
 
 
                           // Middleware groups
@@ -94,22 +97,23 @@ return Application::configure(basePath: dirname(__DIR__))
 
                           // Aliases
                           $middleware->alias([
-                              'detectCountry'       => GetRegion::class,
-                              'passkey'             => CheckAppKey::class,
-                              'cors'                => Cors::class,
-                              'force_json'          => ForceJsonResponse::class,
-                              'cache.headers'       => SetCacheHeaders::class,
-                              'can'                 => Authorize::class,
-                              'guest'               => RedirectIfAuthenticated::class,
-                              'password.confirm'    => RequirePassword::class,
-                              'precognitive'        => HandlePrecognitiveRequests::class,
-                              'signed'              => ValidateSignature::class,
-                              'throttle'            => ThrottleRequests::class,
-                              'verified'            => EnsureEmailIsVerified::class,
-                              'password.expired'    => PasswordExpired::class,
-                              'check.event.payment' => CheckEventPayment::class,
-                              'auth'                => Authenticate::class,
-                              'choose.channel'      => ChooseChannel::class,
+                                                 'detectCountry'       => GetRegion::class,
+                                                 'passkey'             => CheckAppKey::class,
+                                                 'cors'                => Cors::class,
+                                                 'force_json'          => ForceJsonResponse::class,
+                                                 'cache.headers'       => SetCacheHeaders::class,
+                                                 'can'                 => Authorize::class,
+                                                 'guest'               => RedirectIfAuthenticated::class,
+                                                 'password.confirm'    => RequirePassword::class,
+                                                 'precognitive'        => HandlePrecognitiveRequests::class,
+                                                 'signed'              => ValidateSignature::class,
+                                                 'throttle'            => ThrottleRequests::class,
+                                                 'verified'            => EnsureEmailIsVerified::class,
+                                                 'password.expired'    => PasswordExpired::class,
+                                                 'check.event.payment' => CheckEventPayment::class,
+                                                 'auth'                => Authenticate::class,
+                                                 'choose.channel'      => ChooseBrand::class,
+                                                 'tenant'              => IdentifyTenant::class,
 
 
                           ]);

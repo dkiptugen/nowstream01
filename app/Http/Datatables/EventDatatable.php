@@ -3,7 +3,6 @@
 namespace App\Http\Datatables;
 
 use App\Enums\ActivityStatus;
-use App\Models\Channel;
 use App\Models\Event;
 use App\Traits\Helper;
 use Illuminate\Support\Carbon;

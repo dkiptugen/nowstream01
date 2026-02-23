@@ -21,7 +21,7 @@
                         $table->string('title');
                         $table->longText('description')->nullable();
                         $table->string('thumbnail_url')->nullable();
-                        $table->enum('content_group', ['livestream', 'video','podcast','podcast_episode','tv','radio'])->default('livestream');
+                        $table->enum('content_group', ['livestream', 'video','podcast','podcast_episode','tv','radio','music','movie'])->default('livestream');
                         $table->string('duration')->nullable();
                         $table->string('type')->nullable();
                         $table->string('stream_key')->nullable()->index();
@@ -39,7 +39,7 @@
                         $table->string('language')->nullable();
                         $table->string('author')->nullable();
                         $table->uuid('category_id')->index()->nullable();
-                        $table->uuid('channel_id')->index()->nullable();
+                        $table->uuid('microsite_id')->index()->nullable();
 						$table->tinyInteger ('status')->default(0);
                         $table->text('genre')->nullable();
                         $table->foreign('system_user_id')->references('id')->on('system_users')->cascadeOnDelete()->cascadeOnUpdate();

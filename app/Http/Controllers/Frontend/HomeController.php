@@ -8,6 +8,7 @@ use App\Models\Channel;
 use App\Models\Event;
 use App\Models\ContentRate;
 use App\Models\Content;
+use App\Models\Microsite;
 use App\Models\Video;
 use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
@@ -26,65 +27,95 @@ class HomeController extends Controller
      * Display the homepage with cached channels, streams, events, and videos.
      */
 
-    public function index(Request $request)
-    {
-        $iso = strtoupper($request->country ?? 'KE'); // default country
+public function index(Request $request)
+{
+    $iso = strtoupper($request->country ?? 'KE');
 
-        // Build a country lookup map (cached forever)
-        $countryName = Cache::rememberForever('countries_by_iso', function () {
-            $path = public_path('assets/json/Regions.json'); // your JSON path
-            if (!File::exists($path))
-                return [];
+    // Country map (cached forever)
+    $countries = Cache::rememberForever('countries_by_iso', function () {
+        $path = public_path('assets/json/Regions.json');
+        if (!File::exists($path)) return [];
 
-            $countries = json_decode(File::get($path), true);
-            $map = [];
-            foreach ($countries as $c) {
-                $map[strtoupper($c['code'])] = $c['name'];
-            }
-            return $map;
-        })[$iso] ?? 'Unknown Country';
+        $data = json_decode(File::get($path), true);
+        return collect($data)->pluck('name', 'code')
+            ->mapWithKeys(fn ($name, $code) => [strtoupper($code) => $name])
+            ->toArray();
+    });
 
-        $this->data['country'] = $iso;
-        $this->data['country_name'] = $countryName;
+    $countryName = $countries[$iso] ?? 'Kenya';
 
-        // Homepage cache key per country
-        $cacheKey = "homepage_data_{$countryName}";
+    $cacheKey = "homepage_{$iso}";
+    $data = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($iso, $countryName) {
 
-        // Cache everything for 10 minutes (or adjust TTL)
-        $cachedData = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($countryName, $iso) {
-            return [
-                'country' => $iso,
-                'country_name' => $countryName,
-                'channels' => $this->get_channels(),
-                'streams' => $this->get_streams(null, 6),
-                'events' => $this->get_events(),
-                'videos' => Content::where('content_group', 'video')->latest()->paginate(12),
-                'top_videos' => Content::where('content_group', 'video')->orderByDesc('views')->paginate(12),
-                'current_event' => Content::latest()->limit(1)->get(),
-                'toptvs' => Content::where('content_group', 'tv')
-                    ->whereNotNull('stream_url')
-                    ->where('country', $countryName)
-                    ->orderByDesc('views')->limit(16)->get(),
-                'topradios' => Content::where('content_group', 'radio')
-                    ->whereNotNull('stream_url')
-                    ->where('country', $countryName)
-                    ->where('status', 1)
-                    ->orderByDesc('views')->limit(16)->get(),
-                'podcasts' => $this->get_podcasts(16)->where('parent_id', null),
-                'topPodcasts' => Content::where('content_group', 'podcast')
-                    ->whereNull('parent_id')
-                    ->orderByDesc('views')
-                    ->limit(16)
-                    ->get(),
-                'categories' => Category::limit(6)->get(),
-            ];
+        // Heavy sections cached individually
+        $topVideos = Cache::remember('home_top_videos', 1800, function () {
+            return Content::where('content_group', 'video')
+                ->orderByDesc('views')
+                ->limit(4)
+                ->get();
         });
 
+        return [
+            'country'       => $iso,
+            'country_name'  => $countryName,
 
-        $this->data = $cachedData;
+            // Streams & Channels
+            'channels'      => $this->get_channels(),
+            'streams'       => $this->get_streams(null, 6),
 
-        return view('Frontend.index', $this->data);
-    }
+            // Events
+            'events'        => $this->get_events(),
+
+            'topevents'     => Event::with('eventRates')
+                ->where('status', 1)
+                ->orderByDesc('views')
+                ->limit(12)
+                ->get(),
+
+            // Latest videos (no paginate inside cache)
+            'videos' => Content::where('content_group', 'video')
+                ->latest()
+                ->limit(12)
+                ->get(),
+
+
+
+            'top_videos' => $topVideos,
+
+            // Current event
+            'current_event' => Content::latest()->first(),
+
+            // Country specific content
+            'toptvs' => Content::where('content_group', 'tv')
+                ->whereNotNull('stream_url')
+                ->where('country', $countryName)
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
+
+            'topradios' => Content::where('content_group', 'radio')
+                ->whereNotNull('stream_url')
+                ->where('country', $countryName)
+                ->where('status', 1)
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
+
+            // Podcasts
+            'podcasts' => $this->get_podcasts(16)->where('parent_id', null),
+
+            'topPodcasts' => Content::where('content_group', 'podcast')
+                ->whereNull('parent_id')
+                ->orderByDesc('views')
+                ->limit(16)
+                ->get(),
+
+            'categories' => Category::limit(6)->get(),
+        ];
+    });
+$this->data['microsites'] = Microsite::all();
+    return view('Frontend.index', $data);
+}
 
 
     /**

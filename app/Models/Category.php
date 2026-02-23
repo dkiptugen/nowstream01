@@ -47,4 +47,19 @@ class Category extends Model
                     'tag_id'
                 )->withTimestamps();
             }
+    /**
+     * Find microsite by slug
+     *
+     * @param string $slug
+     * @param bool $fail
+     * @return self|null
+     */
+        public static function findBySlug(string $slug, bool $fail = true): ?self
+            {
+                if ($fail) {
+                    return self::where('slug', $slug)->firstOrFail();
+                }
+
+                return self::where('slug', $slug)->first();
+            }
     }
