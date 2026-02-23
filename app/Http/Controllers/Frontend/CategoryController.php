@@ -58,33 +58,33 @@ class CategoryController extends Controller
         ));
     }
     public function genreTvs($genre)
-    { 
+    {
         $contents = Content::whereJsonContains('genre', $genre)
             ->orderBy('views', 'desc')
             ->where('content_group', 'tv')
-            ->paginate(12); 
+            ->paginate(12);
 
         return view('Frontend.modules.genres.show', compact('genre', 'contents'));
     }
-public function genreRadios(Request $request, $genre)
-{
+    public function genreRadios(Request $request, $genre)
+    {
         $perPage = 30;
         $page = $request->get('page', 1);
 
-    $genre = urldecode($genre);
-    $genre = str_replace('-', ' ', $genre);
-    $genre = ucwords($genre);
+        $genre = urldecode($genre);
+        $genre = str_replace('-', ' ', $genre);
+        $genre = ucwords($genre);
 
-    $contents = Content::where('content_group', 'radio')
-        ->where(function ($q) use ($genre) {
-            // Matches: ["Balada","Pop"]
-            $q->where('genre', 'like', '%"'.$genre.'"%')
+        $contents = Content::where('content_group', 'radio')
+            ->where(function ($q) use ($genre) {
+                // Matches: ["Balada","Pop"]
+                $q->where('genre', 'like', '%"' . $genre . '"%')
 
-              // Matches: Balada, Pop
-              ->orWhere('genre', 'like', '%'.$genre.'%');
-        })
-        ->orderBy('views', 'desc')
-        ->paginate(12);
+                    // Matches: Balada, Pop
+                    ->orWhere('genre', 'like', '%' . $genre . '%');
+            })
+            ->orderBy('views', 'desc')
+            ->paginate(12);
         // AJAX request
         if ($request->ajax()) {
             return response()->json([
@@ -96,8 +96,8 @@ public function genreRadios(Request $request, $genre)
             ]);
         }
 
-    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
-}
+        return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+    }
 
     /**
      * Category filtered by content group

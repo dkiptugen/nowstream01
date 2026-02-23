@@ -84,3 +84,52 @@
     </section>
 </main>
 @endsection
+
+@section('footer')
+
+
+<script>
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
+
+    const container = document.getElementById('radio-container');
+    const loader = document.getElementById('loading');
+
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
+
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
+        }
+    });
+
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
+</script>
+
+@endsection
