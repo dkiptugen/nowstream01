@@ -20,14 +20,7 @@
         </div>
     </section> <!-- breadcrumb-area-end -->
     <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-        <div class="container">
-            <div class="episode-top-wrap">
-                <div class="section-title"> <span class="sub-title">Trending Radios</span>
-                    <h2 class="title">Trending Radios</h2>
-                </div>
-            </div>
-        </div>
- 
+        
         <div class="container mt-md-5">
             <div class="episode-top-wrap">
                 <div class="section-title"> <span class="sub-title">Latest radios</span>
