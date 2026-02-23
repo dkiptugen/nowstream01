@@ -91,7 +91,8 @@ class RadioController extends Controller
         );
 
         $topradios = $topRadiosPool->shuffle()->take(16);
- 
+
+dd( $topradios );
         // AJAX request
         if ($request->ajax()) {
             return response()->json([
