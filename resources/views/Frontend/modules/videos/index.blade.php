@@ -4,12 +4,12 @@
 <main>
     <!-- breadcrumb-area -->
     @php
-        $breadcrumbTitle = $breadcrumbTitle ?? 'Videos';
-        $breadcrumbSubtitle = $breadcrumbSubtitle ?? 'Our';
-        $breadcrumbItems = $breadcrumbItems ?? [
-            ['title' => 'Home', 'url' => url('/')],
-            ['title' => $breadcrumbTitle, 'url' => null],
-        ];
+    $breadcrumbTitle = $breadcrumbTitle ?? 'Videos';
+    $breadcrumbSubtitle = $breadcrumbSubtitle ?? 'Our';
+    $breadcrumbItems = $breadcrumbItems ?? [
+    ['title' => 'Home', 'url' => url('/')],
+    ['title' => $breadcrumbTitle, 'url' => null],
+    ];
     @endphp
 
     <section class="breadcrumb-area breadcrumb-bg" data-background="{{ asset('assets/img/bg/breadcrumb_bg.jpg') }}">
@@ -21,11 +21,11 @@
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 @foreach ($breadcrumbItems as $item)
-                                    @if ($loop->last || !$item['url'])
-                                        <li class="breadcrumb-item active" aria-current="page">{{ $item['title'] }}</li>
-                                    @else
-                                        <li class="breadcrumb-item"><a href="{{ $item['url'] }}">{{ $item['title'] }}</a></li>
-                                    @endif
+                                @if ($loop->last || !$item['url'])
+                                <li class="breadcrumb-item active" aria-current="page">{{ $item['title'] }}</li>
+                                @else
+                                <li class="breadcrumb-item"><a href="{{ $item['url'] }}">{{ $item['title'] }}</a></li>
+                                @endif
                                 @endforeach
                             </ol>
                         </nav>
@@ -35,8 +35,8 @@
         </div>
     </section>
     <!-- breadcrumb-area-end -->
-                @php use App\Models\Channel; @endphp
-		@if($top_videos->isNotEmpty())
+    @php use App\Models\Channel; @endphp
+    @if($top_videos->isNotEmpty())
     <!-- Top Videos -->
     <section class="movie-area movie-bg" data-background="{{ asset('assets/img/bg/movie_bg.jpg') }}">
         <div class="container">
@@ -51,17 +51,18 @@
 
             <div class="row tr-movie-active">
                 @foreach($top_videos as $video)
-                 @php
-                        $channel = Channel::find($video->channel_id);
-                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
-                    @endphp
-                   @include('Frontend.includes.components.cards.video-card')
+                @php
+                $channel = Channel::find($video->channel_id);
+                $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
+                @endphp
+                @include('Frontend.includes.components.cards.video-card')
                 @endforeach
             </div>
         </div>
     </section>
     <!-- Top Videos End -->
-@endif
+    @endif
+    @if($top_videos->isNotEmpty())
     <!-- Latest Videos -->
     <section class="movie-area movie-bg" data-background="{{ asset('assets/img/bg/movie_bg.jpg') }}">
         <div class="container">
@@ -76,11 +77,11 @@
 
             <div class="row tr-movie-active">
                 @foreach ($videos as $video)
-                 @php
-                        $channel = Channel::find($video->channel_id);
-                        $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
-                    @endphp
-                   @include('Frontend.includes.components.cards.video-card')
+                @php
+                $channel = Channel::find($video->channel_id);
+                $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
+                @endphp
+                @include('Frontend.includes.components.cards.video-card')
                 @endforeach
             </div>
 
@@ -94,6 +95,7 @@
         </div>
     </section>
     <!-- Latest Videos End -->
+    @endif
 </main>
 @endsection
 
