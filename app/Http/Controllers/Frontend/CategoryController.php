@@ -57,14 +57,38 @@ class CategoryController extends Controller
             'podcasts'
         ));
     }
-    public function genreTvs($genre)
+   
+    public function genretvs(Request $request, $genre)
     {
-        $contents = Content::whereJsonContains('genre', $genre)
-            ->orderBy('views', 'desc')
-            ->where('content_group', 'tv')
-            ->paginate(12);
+        $perPage = 30;
+        $page = $request->get('page', 1);
 
-        return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+        $genre = urldecode($genre);
+        $genre = str_replace('-', ' ', $genre);
+        $genre = ucwords($genre);
+
+        $tvs = Content::where('content_group', 'tv')
+            ->where(function ($q) use ($genre) {
+                // Matches: ["Balada","Pop"]
+                $q->where('genre', 'like', '%"' . $genre . '"%')
+
+                    // Matches: Balada, Pop
+                    ->orWhere('genre', 'like', '%' . $genre . '%');
+            })
+            ->orderBy('views', 'desc')
+                    ->paginate($perPage, ['*'], 'page', $page); 
+        // AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.radio-items',
+                    compact('tvs')
+                )->render(),
+                'hasMore' => $tvs->hasMorePages()
+            ]);
+        }
+
+        return view('Frontend.modules.genres.show', compact('genre', 'tvs'));
     }
     public function genreRadios(Request $request, $genre)
     {
