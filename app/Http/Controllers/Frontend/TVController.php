@@ -112,7 +112,7 @@ class TVController extends Controller
             arsort($genreViews);
 
             // Return only genre names
-            return collect($genreViews)->keys()->values();
+            return collect($genreViews)->keys()->take(12)->values();
         });
 
         $toptvs = Cache::remember(

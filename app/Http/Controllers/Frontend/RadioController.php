@@ -36,7 +36,6 @@ class RadioController extends Controller
             }
         );
 
-        // Preserve query parameters (important for links)
         $radios->appends($request->all());
 
 
@@ -52,44 +51,44 @@ class RadioController extends Controller
                     ->get();
             }
         );
-$genres = Cache::remember('radio_genres', now()->addHours(6), function () {
+        $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
 
-    $genreViews = [];
+            $genreViews = [];
 
-    Content::where('content_group', 'radio')
-        ->whereNotNull('genre')
-        ->select('genre', 'views')
-        ->chunk(500, function ($contents) use (&$genreViews) {
+            Content::where('content_group', 'radio')
+                ->whereNotNull('genre')
+                ->select('genre', 'views')
+                ->chunk(500, function ($contents) use (&$genreViews) {
 
-            foreach ($contents as $content) {
-                $genres = $content->genre;
+                    foreach ($contents as $content) {
+                        $genres = $content->genre;
 
-                if (is_array($genres)) {
-                    $list = $genres;
-                } else {
-                    $genres = trim($genres, '"');
-                    if (str_starts_with($genres, '[')) {
-                        $decoded = json_decode($genres, true);
-                        $list = is_array($decoded) ? $decoded : [];
-                    } elseif (str_contains($genres, ',')) {
-                        $list = array_map('trim', explode(',', $genres));
-                    } else {
-                        $list = [$genres];
+                        if (is_array($genres)) {
+                            $list = $genres;
+                        } else {
+                            $genres = trim($genres, '"');
+                            if (str_starts_with($genres, '[')) {
+                                $decoded = json_decode($genres, true);
+                                $list = is_array($decoded) ? $decoded : [];
+                            } elseif (str_contains($genres, ',')) {
+                                $list = array_map('trim', explode(',', $genres));
+                            } else {
+                                $list = [$genres];
+                            }
+                        }
+
+                        foreach ($list as $g) {
+                            $g = trim($g);
+                            if (!$g) continue;
+                            $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
+                        }
                     }
-                }
+                });
 
-                foreach ($list as $g) {
-                    $g = trim($g);
-                    if (!$g) continue;
-                    $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
-                }
-            }
+            arsort($genreViews);
+
+            return collect($genreViews)->keys()->take(12)->values();
         });
-
-    arsort($genreViews);
-
-    return collect($genreViews)->keys()->values();
-});
         /**
          * Top Radios Pool
          */
