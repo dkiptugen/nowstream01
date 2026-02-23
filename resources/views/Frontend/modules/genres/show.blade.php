@@ -1,22 +1,42 @@
 @extends('Frontend.includes.layout')
-
-@section('content')
-<main>
+@section('content') <!-- main-area -->
+<main> <!-- breadcrumb-area -->
     <section class="breadcrumb-area breadcrumb-bg" data-background="{{ asset('assets/img/bg/breadcrumb_bg.jpg') }}">
         <div class="container">
-            <div class="breadcrumb-content">
-                <h2 class="title">Genre: {{ ucfirst($genre) }}</h2>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ ucfirst($genre) }}</li>
-                    </ol>
-                </nav>
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-content">
+                        <h2 class="title">Live <span>radios</span></h2>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{'/'}}">Home</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">radios</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
+                    @foreach($genres->filter()->unique() as $genre)
+                    @php
+                    $slug = Str::slug($genre);
+                    $label = ucfirst(trim($genre));
+                    @endphp
+                    @if(!empty($slug))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ route('genre.radios', ['genre' => $slug]) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
+                </ul>
             </div>
         </div>
-    </section>
- 
-       <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+    </section> <!-- breadcrumb-area-end -->
+    <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
         <div class="container">
             <div class="episode-top-wrap">
                 <div class="section-title"> <span class="sub-title">Trending Radios</span>
@@ -35,7 +55,11 @@
                 data-mobile="1">
 
                 <div class="pcar-track">
-                   
+                    @foreach($contents as $item)
+                    <div class="pcar-item">
+                        @include('Frontend.includes.components.cards.slider-card')
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -57,9 +81,9 @@
         </div>
         </div>
     </section>
+
 </main>
 @endsection
-
 @section('header')
 <style>
     .col-xl-2.col-lg-3.col-sm-6.grid-item{
