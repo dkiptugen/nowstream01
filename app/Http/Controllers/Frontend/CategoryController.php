@@ -66,8 +66,11 @@ class CategoryController extends Controller
 
         return view('Frontend.modules.genres.show', compact('genre', 'contents'));
     }
-public function genreRadios($genre)
+public function genreRadios(Request $request, $genre)
 {
+        $perPage = 30;
+        $page = $request->get('page', 1);
+
     $genre = urldecode($genre);
     $genre = str_replace('-', ' ', $genre);
     $genre = ucwords($genre);
@@ -82,6 +85,16 @@ public function genreRadios($genre)
         })
         ->orderBy('views', 'desc')
         ->paginate(12);
+        // AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.radio-items',
+                    compact('contents')
+                )->render(),
+                'hasMore' => $contents->hasMorePages()
+            ]);
+        }
 
     return view('Frontend.modules.genres.show', compact('genre', 'contents'));
 }
