@@ -72,20 +72,16 @@ public function genreRadios($genre)
     $genre = str_replace('-', ' ', $genre);
     $genre = ucwords($genre);
 
-    $contents = Content::where('content_group','radio')
-    ->chunk(200, function ($items) {
-        foreach ($items as $item) {
-            $g = $item->getRawOriginal('genre');
+    $contents = Content::where('content_group', 'radio')
+        ->where(function ($q) use ($genre) {
+            // Matches: ["Balada","Pop"]
+            $q->where('genre', 'like', '%"'.$genre.'"%')
 
-            if (is_string($g) && str_starts_with($g, '"[')) {
-                $decoded = json_decode(trim($g, '"'), true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $item->genre = $decoded;
-                    $item->save();
-                }
-            }
-        }
-    });
+              // Matches: Balada, Pop
+              ->orWhere('genre', 'like', '%'.$genre.'%');
+        })
+        ->orderBy('views', 'desc')
+        ->paginate(12);
 
     return view('Frontend.modules.genres.show', compact('genre', 'contents'));
 }
