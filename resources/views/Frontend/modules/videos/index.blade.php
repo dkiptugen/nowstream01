@@ -35,7 +35,7 @@
         </div>
     </section>
     <!-- breadcrumb-area-end -->
-@if($top_videos->count > 0)
+@if($top_videos->isNotEmpty())
     <!-- Top Videos -->
     <section class="movie-area movie-bg" data-background="{{ asset('assets/img/bg/movie_bg.jpg') }}">
         <div class="container">
