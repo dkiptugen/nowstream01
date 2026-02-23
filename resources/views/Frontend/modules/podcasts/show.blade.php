@@ -44,7 +44,7 @@ return [
                                     <ul>
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}, {{ rand(20, 200) }}</span>
+                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }}, {{ rand(20,200) }}, {{ rand(20,200) }}, {{ rand(20,200) }}</span>
                                             <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"
                                                 onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
