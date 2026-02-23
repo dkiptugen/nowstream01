@@ -53,7 +53,26 @@ class RadioController extends Controller
             }
         );
 
-
+    $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+        return Content::where('content_group', 'radio')
+            ->whereNotNull('genre')
+            ->pluck('genre')
+            ->flatMap(fn($genre) => is_array($genre)
+                ? $genre
+                : (str_starts_with($genre, '[')
+                    ? json_decode($genre, true)
+                    : (str_contains($genre, ',')
+                        ? array_map('trim', explode(',', $genre))
+                        : [$genre]
+                    )
+                )
+            )
+            ->filter()
+            ->map(fn($g) => trim($g))
+            ->unique()
+            ->sort()
+            ->values();
+    });
         /**
          * Top Radios Pool
          */
@@ -87,7 +106,8 @@ class RadioController extends Controller
         return view('Frontend.modules.radios.index', compact(
             'radios',
             'categories',
-            'topradios'
+            'topradios',
+            'genres'
         ));
     }
 
