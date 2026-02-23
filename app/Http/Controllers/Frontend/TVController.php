@@ -70,27 +70,40 @@ class TVController extends Controller
             Category::where('type', 'like', '%tv%')->get()
         );
 
-        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
-            return Content::where('content_group', 'tv')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatMap(
-                    fn($genre) => is_array($genre)
-                        ? $genre
-                        : (str_starts_with($genre, '[')
-                            ? json_decode($genre, true)
-                            : (str_contains($genre, ',')
-                                ? array_map('trim', explode(',', $genre))
-                                : [$genre]
-                            )
-                        )
-                )
-                ->filter()
-                ->map(fn($g) => trim($g))
-                ->unique()
-                ->sort()
-                ->values();
-        });
+       $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
+
+    $allGenres = Content::where('content_group', 'tv')
+        ->whereNotNull('genre')
+        ->pluck('genre')
+        ->flatMap(function ($genre) {
+
+            if (is_array($genre)) {
+                return $genre;
+            }
+
+            $genre = trim($genre, '"');
+
+            if (str_starts_with($genre, '[')) {
+                $decoded = json_decode($genre, true);
+                return is_array($decoded) ? $decoded : [];
+            }
+
+            if (str_contains($genre, ',')) {
+                return array_map('trim', explode(',', $genre));
+            }
+
+            return [$genre];
+        })
+        ->filter()
+        ->map(fn ($g) => trim($g));
+
+    // Count occurrences
+    return $allGenres
+        ->countBy()            // <-- key part
+        ->sortDesc()           // highest count first
+        ->keys()               // return only genre names
+        ->values();
+});
 
         $toptvs = Cache::remember(
             'top_tvs',
