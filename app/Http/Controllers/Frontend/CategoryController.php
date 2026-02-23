@@ -69,7 +69,20 @@ class CategoryController extends Controller
   public function genreRadios($genre)
 {
     $contents = Content::where('content_group', 'radio')
-        ->whereJsonContains('genre', $genre)
+        ->where(function ($query) use ($genre) {
+
+            // JSON array
+            $query->whereJsonContains('genre', $genre)
+
+                // JSON string formats
+                ->orWhere('genre', 'like', '%"'.$genre.'"%')
+
+                // comma-separated exact boundaries
+                ->orWhere('genre', 'like', $genre.',%')
+                ->orWhere('genre', 'like', '%,'.$genre.',%')
+                ->orWhere('genre', 'like', '%,'.$genre)
+                ->orWhere('genre', $genre);
+        })
         ->orderBy('views', 'desc')
         ->paginate(12);
 
