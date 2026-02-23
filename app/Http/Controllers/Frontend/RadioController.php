@@ -52,44 +52,44 @@ class RadioController extends Controller
                     ->get();
             }
         );
+$genres = Cache::remember('radio_genres', now()->addHours(6), function () {
 
-        $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
-            return Content::where('content_group', 'radio')
-                ->whereNotNull('genre')
-                ->pluck('genre')
-                ->flatMap(function ($genre) {
+    $genreViews = [];
 
-                    // 1. Already an array (casted model)
-                    if (is_array($genre)) {
-                        return $genre;
+    Content::where('content_group', 'radio')
+        ->whereNotNull('genre')
+        ->select('genre', 'views')
+        ->chunk(500, function ($contents) use (&$genreViews) {
+
+            foreach ($contents as $content) {
+                $genres = $content->genre;
+
+                if (is_array($genres)) {
+                    $list = $genres;
+                } else {
+                    $genres = trim($genres, '"');
+                    if (str_starts_with($genres, '[')) {
+                        $decoded = json_decode($genres, true);
+                        $list = is_array($decoded) ? $decoded : [];
+                    } elseif (str_contains($genres, ',')) {
+                        $list = array_map('trim', explode(',', $genres));
+                    } else {
+                        $list = [$genres];
                     }
+                }
 
-                    // 2. Clean extra wrapping quotes (double-encoded JSON)
-                    $genre = trim($genre);
-                    $genre = trim($genre, '"');
-
-                    // 3. Try JSON decode
-                    if (str_starts_with($genre, '[')) {
-                        $decoded = json_decode($genre, true);
-                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                            return $decoded;
-                        }
-                    }
-
-                    // 4. Comma-separated fallback
-                    if (str_contains($genre, ',')) {
-                        return array_map('trim', explode(',', $genre));
-                    }
-
-                    // 5. Single value fallback
-                    return [$genre];
-                })
-                ->filter(fn($g) => !empty($g))
-                ->map(fn($g) => trim($g))
-                ->unique()
-                ->sort()
-                ->values();
+                foreach ($list as $g) {
+                    $g = trim($g);
+                    if (!$g) continue;
+                    $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
+                }
+            }
         });
+
+    arsort($genreViews);
+
+    return collect($genreViews)->keys()->values();
+});
         /**
          * Top Radios Pool
          */
