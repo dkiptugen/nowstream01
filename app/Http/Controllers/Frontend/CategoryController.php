@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::limit(16)->get(); 
+        $categories = Category::limit(16)->get();
         $tvs = Content::where('content_group', 'tv')
             ->whereNotNull('stream_url')
             ->where('category_id', 1)
@@ -28,41 +28,53 @@ class CategoryController extends Controller
     /**
      * Single category (all content)
      */
-public function show($slug)
-{
-    // Get the category by slug
-    $category = Category::where('slug', $slug)->firstOrFail();
+    public function show($slug)
+    {
+        // Get the category by slug
+        $category = Category::where('slug', $slug)->firstOrFail();
 
-    // Fetch TVs where content_group is 'tv' and genre JSON contains the category name
-    $tvs = Content::where('content_group', 'tv')
-        ->whereJsonContains('genre', strtolower($category->name)) // store genres in lowercase
-        ->orderBy('views', 'desc')
-        ->get();
+        // Fetch TVs where content_group is 'tv' and genre JSON contains the category name
+        $tvs = Content::where('content_group', 'tv')
+            ->whereJsonContains('genre', strtolower($category->name)) // store genres in lowercase
+            ->orderBy('views', 'desc')
+            ->get();
 
-    // Similarly, fetch radios and podcasts
-    $radios = Content::where('content_group', 'radio')
-        ->whereJsonContains('genre', strtolower($category->name))
-        ->orderBy('views', 'desc')
-        ->get();
+        // Similarly, fetch radios and podcasts
+        $radios = Content::where('content_group', 'radio')
+            ->whereJsonContains('genre', strtolower($category->name))
+            ->orderBy('views', 'desc')
+            ->get();
 
-    $podcasts = Content::where('content_group', 'podcast')
-        ->whereJsonContains('genre', strtolower($category->name))
-        ->orderBy('views', 'desc')
-        ->get();
+        $podcasts = Content::where('content_group', 'podcast')
+            ->whereJsonContains('genre', strtolower($category->name))
+            ->orderBy('views', 'desc')
+            ->get();
 
-    return view('Frontend.modules.categories.show', compact(
-        'category', 'tvs', 'radios', 'podcasts'
-    ));
-}
-public function genreContents($genre)
-{
-    // Fetch content where the JSON genre array contains the requested genre
-    $contents = Content::whereJsonContains('genre', $genre)
-        ->orderBy('views', 'desc')
-        ->paginate(12); // or get() if no pagination
+        return view('Frontend.modules.categories.show', compact(
+            'category',
+            'tvs',
+            'radios',
+            'podcasts'
+        ));
+    }
+    public function genreTvs($genre)
+    { 
+        $contents = Content::whereJsonContains('genre', $genre)
+            ->orderBy('views', 'desc')
+            ->where('content_group', 'tv')
+            ->paginate(12); 
 
-    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
-}
+        return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+    }
+    public function genreRadios($genre)
+    { 
+        $contents = Content::whereJsonContains('genre', $genre)
+            ->orderBy('views', 'desc')
+            ->where('content_group', 'radio')
+            ->paginate(12); 
+            
+        return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+    }
 
 
     /**

@@ -28,7 +28,7 @@
                     @endphp
                     @if(!empty($slug))
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="{{ route('genre.show', ['genre' => $slug]) }}">
+                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
                             {{ $label }}
                         </a>
                     </li>
