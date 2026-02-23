@@ -66,15 +66,15 @@ class CategoryController extends Controller
 
         return view('Frontend.modules.genres.show', compact('genre', 'contents'));
     }
-    public function genreRadios($genre)
-    { 
-        $contents = Content::whereJsonContains('genre', $genre)
-            ->orderBy('views', 'desc')
-            ->where('content_group', 'radio')
-            ->paginate(12); 
-            
-        return view('Frontend.modules.genres.show', compact('genre', 'contents'));
-    }
+  public function genreRadios($genre)
+{
+    $contents = Content::where('content_group', 'radio')
+        ->whereJsonContains('genre', $genre)
+        ->orderBy('views', 'desc')
+        ->paginate(12);
+
+    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
+}
 
 
     /**
