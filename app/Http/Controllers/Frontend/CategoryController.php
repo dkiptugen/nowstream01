@@ -57,7 +57,7 @@ class CategoryController extends Controller
             'podcasts'
         ));
     }
-   
+
     public function genretvs(Request $request, $genre)
     {
         $perPage = 30;
@@ -76,7 +76,7 @@ class CategoryController extends Controller
                     ->orWhere('genre', 'like', '%' . $genre . '%');
             })
             ->orderBy('views', 'desc')
-                    ->paginate($perPage, ['*'], 'page', $page); 
+            ->paginate($perPage, ['*'], 'page', $page);
         // AJAX request
         if ($request->ajax()) {
             return response()->json([
@@ -108,7 +108,7 @@ class CategoryController extends Controller
                     ->orWhere('genre', 'like', '%' . $genre . '%');
             })
             ->orderBy('views', 'desc')
-                    ->paginate($perPage, ['*'], 'page', $page); 
+            ->paginate($perPage, ['*'], 'page', $page);
         // AJAX request
         if ($request->ajax()) {
             return response()->json([

@@ -44,7 +44,7 @@ class TVController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'html' => view(
-                    'Frontend.includes.components.partials.tvs-list',
+                    'Frontend.includes.components.partials.tv-items',
                     compact('tvs')
                 )->render(),
                 'hasMore' => $tvs->hasMorePages()
