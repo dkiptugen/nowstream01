@@ -44,7 +44,18 @@ return [
                                     <ul>
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ str_pad(rand(max(0, $podcast->views * 0.9), $podcast->views * 1.1), 3, '0', STR_PAD_LEFT) }}</span>
+                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},@php
+    $views = $podcast->views ?? 0;
+
+    if ($views < 50) {
+        $displayViews = rand(50, 150);
+    } else {
+        $displayViews = rand(intval($views * 0.9), intval($views * 1.1));
+    }
+@endphp
+
+{{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
+</span>
                                             <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"
                                                 onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
