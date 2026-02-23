@@ -17,20 +17,23 @@
                     </div>
                 </div>
 
-                <div class="ucm-nav-wrap">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($genres as $genre)
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="{{ $genre->slug }}-tab" data-toggle="tab"
-                                    href="#{{ $genre->slug }}" role="tab" aria-controls="{{ $genre->slug }}"
-                                    aria-selected="false">
-                                    {{ ucfirst($genre->name) }}
-                                </a>
-                            </li>
-                        @endforeach
-
-                    </ul>
-                </div>
+                 <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
+                    @foreach($genres->filter()->unique() as $genre)
+                    @php
+                    $slug = Str::slug($genre);
+                    $label = ucfirst(trim($genre));
+                    @endphp
+                    @if(!empty($slug))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ route('genre.show', ['genre' => $slug]) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
+                </ul>
+            </div>
             </div>
         </section> <!-- breadcrumb-area-end -->
         <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
