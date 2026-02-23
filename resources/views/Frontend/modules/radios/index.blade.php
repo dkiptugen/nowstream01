@@ -19,12 +19,12 @@
 
                 <div class="ucm-nav-wrap">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($genres as $category)
+                        @foreach($genres as $genre)
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
-                                    href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}"
+                                <a class="nav-link" id="{{ $genre->slug }}-tab" data-toggle="tab"
+                                    href="#{{ $genre->slug }}" role="tab" aria-controls="{{ $genre->slug }}"
                                     aria-selected="false">
-                                    {{ ucfirst($category->name) }}
+                                    {{ ucfirst($genre->name) }}
                                 </a>
                             </li>
                         @endforeach
