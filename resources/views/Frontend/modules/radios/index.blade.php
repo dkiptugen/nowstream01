@@ -41,7 +41,15 @@
                     </div>
                 </div>
             </div>
-
+  @foreach($categories as $category)
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
+                                    href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}"
+                                    aria-selected="false">
+                                    {{ ucfirst($category->name) }}
+                                </a>
+                            </li>
+                        @endforeach
             <div class="pcar-wrapper">
 
                 <!-- Outside container overlays -->
