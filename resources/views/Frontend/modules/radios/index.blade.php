@@ -41,6 +41,7 @@
                     </div>
                 </div>
             </div>
+            {{dd($categories)}}
   @foreach($categories as $category)
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
