@@ -84,7 +84,7 @@ class CategoryController extends Controller
                     ->orWhere('genre', 'like', '%' . $genre . '%');
             })
             ->orderBy('views', 'desc')
-            ->paginate(12);
+                    ->paginate($perPage, ['*'], 'page', $page); 
         // AJAX request
         if ($request->ajax()) {
             return response()->json([
