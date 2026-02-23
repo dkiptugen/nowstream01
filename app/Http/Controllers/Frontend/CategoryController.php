@@ -73,10 +73,9 @@ public function genreRadios($genre)
     $genre = str_replace('-', ' ', $genre);
     $genre = ucwords($genre);
 
-    $contents = Content::where('content_group', 'radio')
-        ->whereJsonContains('genre', $genre)
-        ->orderBy('views', 'desc')
-        ->paginate(12);
+    $contents = Content::where('content_group','radio')
+->where('genre','like','%Austrian%')
+->count();
 
     return view('Frontend.modules.genres.show', compact('genre', 'contents'));
 }
