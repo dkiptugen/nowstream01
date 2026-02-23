@@ -35,6 +35,7 @@
         </div>
     </section>
     <!-- breadcrumb-area-end -->
+                @php use App\Models\Channel; @endphp
 		@if($top_videos->isNotEmpty())
     <!-- Top Videos -->
     <section class="movie-area movie-bg" data-background="{{ asset('assets/img/bg/movie_bg.jpg') }}">
@@ -49,7 +50,6 @@
             </div>
 
             <div class="row tr-movie-active">
-                @php use App\Models\Channel; @endphp
                 @foreach($top_videos as $video)
                  @php
                         $channel = Channel::find($video->channel_id);
