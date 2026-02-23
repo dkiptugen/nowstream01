@@ -81,7 +81,7 @@ class CategoryController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'html' => view(
-                    'Frontend.includes.components.partials.radio-items',
+                    'Frontend.includes.components.partials.tv-items',
                     compact('tvs')
                 )->render(),
                 'hasMore' => $tvs->hasMorePages()
@@ -120,7 +120,7 @@ class CategoryController extends Controller
             ]);
         }
 
-        return view('Frontend.modules.genres.show', compact('genre', 'radios'));
+        return view('Frontend.modules.genres.radio', compact('genre', 'radios'));
     }
 
     /**
