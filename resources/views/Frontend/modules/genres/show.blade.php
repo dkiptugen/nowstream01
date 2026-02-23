@@ -28,7 +28,9 @@
                         @elseif($item->content_group == 'podcast')
                             @include('Frontend.includes.components.cards.podcast-card', ['podcast' => $item])
                         @elseif($item->content_group == 'radio')
-                            @include('Frontend.includes.components.cards.radio-card', ['radio' => $item])
+                        <div class="col-lg-6 col-md-4 col-6">
+                                                        @include('Frontend.includes.components.cards.radio-card', ['radio' => $item])
+                        </div>
                         @endif
                     @endforeach
                 </div>
