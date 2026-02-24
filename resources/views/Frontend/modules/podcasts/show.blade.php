@@ -17,7 +17,7 @@ return [
 <!-- main-area -->
 <main>
 {{dd(
-$ep->uuid)}}
+$podcast->uuid)}}
     <!-- movie-details-area -->
     <section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
         <div class="container">
