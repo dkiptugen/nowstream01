@@ -41,6 +41,7 @@ class WatchHistoryController extends Controller
         $watchHistory = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
+            ->where('content_group', 'video')
             ->latest()
             ->paginate(10);
         $watchPodcasts = Content::whereHas('watch', function ($query) use ($user) {
