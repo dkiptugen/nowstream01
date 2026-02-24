@@ -9,8 +9,8 @@
         <p>You haven't watched any videos yet.</p>
         @else
         <div class="row">
-            @foreach ($watchHistory as $history)
-           <h1>{{ $history->content->title }}</h1> 
+            @foreach ($watchHistory->content as $item)
+                        @include('Frontend.includes.components.cards.slider-card')
             @endforeach
         </div>
         <div class="d-flex justify-content-center">
