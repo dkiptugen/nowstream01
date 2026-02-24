@@ -15,30 +15,26 @@ class WatchHistoryService
      * @param int|null $watchDuration
      * @return WatchHistory|null
      */
-    public function record(Content $content, ?int $watchDuration = null): ?WatchHistory
-    {
-        $user = Auth::user();
-        if (!$user || !$content) {
-            return null;
-        }
-
-        $data = [
-            'watched_at' => now(),
-        ];
-
-        if ($watchDuration !== null) {
-            $data['watch_duration'] = $watchDuration;
-        }
-
-        // Use content_id instead of watchable_id/watchable_type
-        return WatchHistory::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'content_id' => $content->id,
-            ],
-            $data
-        );
+  public function record(\App\Models\Content $episode, ?int $watchDuration = null): ?WatchHistory
+{
+    $user = Auth::user();
+    if (!$user || !$episode) {
+        return null;
     }
+
+    $data = [
+        'watched_at' => now(),
+        'watch_duration' => $watchDuration ?? 0,
+    ];
+
+    return WatchHistory::updateOrCreate(
+        [
+            'user_id' => $user->id,
+            'content_id' => $episode->id,
+        ],
+        $data
+    );
+}
 
     /**
      * Get paginated watch history for a user filtered by content group
