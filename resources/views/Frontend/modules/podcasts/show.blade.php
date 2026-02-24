@@ -137,8 +137,7 @@ return [
                                             <ul>
 
                                                 @foreach($podcast->episodes as $index => $episode)
-                                                {{dd($episode)}}
-                                                <li>
+                                                 <li>
                                                     <a href="javascript:void(0)"
                                                         onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
