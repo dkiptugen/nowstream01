@@ -38,7 +38,7 @@ public function store($uuid, WatchHistoryService $service)
             ->with('error', 'You must be logged in to view watched videos.');
     }
 
-    $items = Content::whereHas('watchHistory', function ($query) use ($user) {
+    $items = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
         ->latest()
