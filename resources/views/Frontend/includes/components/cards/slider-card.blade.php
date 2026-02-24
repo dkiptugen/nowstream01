@@ -20,7 +20,7 @@
         <div class="movie-content">
             <div class="top">
                 <small class=" mt-0">
-                    {{ucfirst($item->title)}}
+                    {{ucfirst($item->title)}} {{ $item->views }}
                 </small>
             </div> 
         </div>
