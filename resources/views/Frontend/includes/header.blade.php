@@ -167,6 +167,13 @@
             font-size: 30px;
             display: none;
         }
+       .movie-poster.radio-poster img {
+    max-width: 100%;
+    border-radius: 5px;
+    /* aspect-ratio: auto !important; */
+    background: #2b2f38;
+    object-fit: contain !important;
+}
     </style>
 
 <!-- Google tag (gtag.js) -->

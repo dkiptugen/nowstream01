@@ -2,7 +2,7 @@
                <div class="movie-card">
 
     <!-- Poster -->
-    <div class="movie-poster">
+    <div class="movie-poster radio-poster">
         <a href="{{ route('tv.show',  $tv->slug) }}">
             <img src="{{ $tv->thumbnail_url ?? asset('assets/img/default.png') }}"
                 class="movie-img" alt="{{ $tv->title  }}" loading="lazy">
