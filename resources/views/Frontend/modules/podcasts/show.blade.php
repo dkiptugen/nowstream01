@@ -358,23 +358,3 @@ $watchService = app(\App\Services\WatchHistoryService::class);
     }
 </style>
 @endsection
-@section('footer')
-
-<script>
-    const watchService = @json($podcast->episodes->map(function($ep) use ($watchService) {
-        // Pre-record the episode if you want to initialize the DB row
-        try {
-            $watchService->record($ep);
-        } catch (\Throwable $e) {
-            \Log::error("WatchHistory init failed for UUID {$ep->uuid}: ".$e->getMessage());
-        }
-        return [
-            'uuid' => $ep->uuid,
-            'title' => $ep->title,
-            'src' => $ep->stream_url,
-            'podcast' => '{{ $podcast->title }}',
-            'thumbnail' => '{{ $podcast->thumbnail_url }}',
-        ];
-    }));
-</script>
-@endsection
