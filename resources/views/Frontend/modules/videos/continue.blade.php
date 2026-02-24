@@ -5,16 +5,16 @@
 <div class="page-wrapper">
     <div class="page-content">
         <h4 class="section-title">Watched Videos</h4>
-        @if($watchHistory->isEmpty())
+        @if($items->isEmpty())
         <p>You haven't watched any videos yet.</p>
         @else
         <div class="row">
-            @foreach ($watchHistory as $item)
+            @foreach ($items as $item)
                         @include('Frontend.includes.components.cards.slider-card')
             @endforeach
         </div>
         <div class="d-flex justify-content-center">
-            {{ $watchHistory->links() }}
+            {{ $items->links() }}
         </div>
         @endif
 
@@ -23,7 +23,7 @@
 @endsection
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        @foreach($watchHistory as $history)
+        @foreach($items as $history)
         @if($history->watchable)
         const video = document.createElement('video');
         video.src = '{{ $history->watchable->video_path }}';
