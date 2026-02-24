@@ -9,7 +9,7 @@
         <p>You haven't watched any videos yet.</p>
         @else
         <div class="row">
-            @foreach ($watchHistory->content as $item)
+            @foreach ($watchHistory as $item)
                         @include('Frontend.includes.components.cards.slider-card')
             @endforeach
         </div>
