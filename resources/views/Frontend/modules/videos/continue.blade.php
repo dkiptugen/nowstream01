@@ -39,8 +39,7 @@
                             </small>
                         </div>
                     </div>
-                </div>
-            @endif
+                </div> 
         @endforeach
     </div>
     <div class="d-flex justify-content-center">
