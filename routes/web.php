@@ -86,8 +86,8 @@ Route::middleware(['detectCountry'])->group(function () {
         [CommentController::class, 'fetchComments']
     )->name('comment.fetch');
     Route::post('/record-watch-history/{video}', [StreamVideoController::class, 'recordWatchHistory']);
-Route::post('/watch-history/{uuid}', [WatchHistoryController::class, 'store'])
-    ->middleware('auth'); // Only logged-in users
+    Route::post('/watch-history/{uuid}', [WatchHistoryController::class, 'store'])
+        ->middleware('auth'); // Only logged-in users
     Route::name('user.')->prefix('user')->controller(AuthsController::class)->group(function () {
         Route::get('/partner/register', 'partner');
         Route::get('social/{social}', 'redirectToProvider')->name('auth.social');
@@ -155,7 +155,7 @@ Route::post('/watch-history/{uuid}', [WatchHistoryController::class, 'store'])
         Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
         Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
-        Route::get('/continue', [StreamVideoController::class, 'watchedVideos']);
+        Route::get('/continue', [WatchHistoryController::class, 'watchedContent']);
     });
     Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
@@ -187,8 +187,8 @@ Route::post('/watch-history/{uuid}', [WatchHistoryController::class, 'store'])
     // show radio
     Route::get('/radio/{slug}', [RadioController::class, 'show'])->name('radio.show');
     Route::get('/radios', [RadioController::class, 'index'])->name('radios');
-Route::post('/content/{uuid}/increment-views', [RadioController::class, 'incrementViews'])
-    ->name('content.incrementViews');
+    Route::post('/content/{uuid}/increment-views', [RadioController::class, 'incrementViews'])
+        ->name('content.incrementViews');
 
     // Social Auth Routes (Global)
 

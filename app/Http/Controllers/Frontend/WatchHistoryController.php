@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 
 use App\Models\Content;
+use App\Models\WatchHistory;
+use Illuminate\Support\Facades\Auth;
 use App\Services\WatchHistoryService; 
 
 class WatchHistoryController extends Controller
@@ -26,4 +28,20 @@ public function store($uuid, WatchHistoryService $service)
         'watch_history' => $history
     ]);
 }
+
+	public function watchedContent()
+	{
+		$user = Auth::user();
+
+		if ($user) {
+			$watchHistory = WatchHistory::where('user_id', $user->id)
+				->with('content')
+				->latest('watched_at')
+				->paginate(10); // Adjust pagination as needed
+dd($watchHistory);
+			return view('Frontend.modules.videos.continue', compact('watchHistory'));
+		}
+
+		return redirect()->route('user.login')->with('error', 'You must be logged in to view watched videos.');
+	}
 }

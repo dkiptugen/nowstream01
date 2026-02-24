@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Traits\CacheHelper;
 use App\Models\WatchHistory;
-    use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Services\WatchHistoryService;
 
 class PodcastController extends Controller
@@ -124,7 +124,7 @@ class PodcastController extends Controller
             Content::where('uuid', $podcast->uuid)->increment('views');
 
 
-									$this->recordWatchHistory($podcast);
+            $this->recordWatchHistory($podcast);
             /**
              * 2. Episodes (cache)
              */
@@ -201,44 +201,43 @@ class PodcastController extends Controller
             abort(404, 'Podcast not found');
         }
     }
-				protected function recordWatchHistory($podcast)
-				{
-					$user = Auth::user();
-					if ($user && $podcast) {
-						WatchHistory::updateOrCreate(
-							[
-								'user_id' => $user->id,
-								'content_id' => $podcast->uuid,
-							],
-							[
-								'watched_at' => now(),
-							]
-						);
-					}
-				}
-				public function recordWatchHistoryAjax(Request $request)
-				{
-					$user = Auth::user();
+    protected function recordWatchHistory($podcast)
+    {
+        $user = Auth::user();
+        if ($user && $podcast) {
+            WatchHistory::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'content_id' => $podcast->uuid,
+                ],
+                [
+                    'watched_at' => now(),
+                ]
+            );
+        }
+    }
+    public function recordWatchHistoryAjax(Request $request)
+    {
+        $user = Auth::user();
 
-					if ($user)
-						{
-							$podcast = Content::where('content_group', 'podcast')->findOrFail($request->input('podcast_id'));
+        if ($user) {
+            $podcast = Content::where('content_group', 'podcast')->findOrFail($request->input('podcast_id'));
 
-							WatchHistory::updateOrCreate(
-								[
-									'user_id'  => $user->id,
-									'content_id' => $podcast->uuid,
-								],
-								[
-									'watched_at'     => now(),
-									'watch_duration' => $request->input('watch_duration', 0),
-								]
-							);
+            WatchHistory::updateOrCreate(
+                [
+                    'user_id'  => $user->id,
+                    'content_id' => $podcast->uuid,
+                ],
+                [
+                    'watched_at'     => now(),
+                    'watch_duration' => $request->input('watch_duration', 0),
+                ]
+            );
 
-							return response()->json(['success' => true]);
-						}
+            return response()->json(['success' => true]);
+        }
 
-					return response()->json(['success' => false], 401);
-				}
+        return response()->json(['success' => false], 401);
+    }
     public function loadmore(Request $request) {}
 }
