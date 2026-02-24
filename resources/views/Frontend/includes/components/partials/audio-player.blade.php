@@ -231,10 +231,10 @@
          window.playGlobalAudio = function(list, index = 0) {
              if (!Array.isArray(list) || !list.length) return;
              playlist = list;
-             
+
              // Increment views
              if (track?.uuid) {
-                 fetch(`/content/${uuid}/increment-views`, {
+                 fetch(`/content/${track.uuid}/increment-views`, {
                          method: 'POST',
                          headers: {
                              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
