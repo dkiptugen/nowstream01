@@ -11,12 +11,8 @@ return [
 'type' => 'audio',
 'uuid' => $ep->uuid
 ];
-});
-@endphp
-{{dd($ep->uuid)}}
- @php
-$watchService = app(\App\Services\WatchHistoryService::class);
-@endphp
+});dd($ep->uuid)
+@endphp  
 
 <!-- main-area -->
 <main>
