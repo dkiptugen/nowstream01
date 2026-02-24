@@ -8,7 +8,8 @@ return [
 'title' => $ep->title,
 'podcast' => $podcast->title,
 'thumbnail' => $podcast->thumbnail_url,
-'type' => 'audio', // explicitly set type
+'type' => 'audio', 
+ 'uuid'      => $ep->uuid,
 ];
 });
 @endphp
@@ -35,15 +36,15 @@ return [
                             </div>
                         </div>
                         @php
-                            $views = $podcast->views ?? 0;
+                        $views = $podcast->views ?? 0;
 
-                            if ($views < 50) {
-                                $displayViews = rand(50, 150);
+                        if ($views < 50) {
+                            $displayViews=rand(50, 150);
                             } else {
-                                $displayViews = rand(intval($views * 0.9), intval($views * 1.1));
+                            $displayViews=rand(intval($views * 0.9), intval($views * 1.1));
                             }
-                        @endphp
-                        <div class="col-xl-8 col-lg-8">
+                            @endphp
+                            <div class="col-xl-8 col-lg-8">
                             <div class="movie-details-content">
                                 <h5>Top podcast</h5>
                                 <h2>
@@ -55,8 +56,8 @@ return [
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
                                             <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
 
-{{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
-</span>
+                                                {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
+                                            </span>
                                             <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"
                                                 onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
@@ -94,19 +95,19 @@ return [
                                     </ul>
                                 </div>--}}
                             </div>
-                        </div>
                     </div>
                 </div>
-                <!-- <div class="movie-details-btn">
+            </div>
+            <!-- <div class="movie-details-btn">
 					<a href="{{ asset('assets/img/poster/movie_details_img.jpg') }}" class="download-btn"
 						download="">Create podcast <img src="fonts/download.svg" alt=""></a>
 				</div> -->
-                @include('Frontend.includes.components.partials.video-comments', [
-                'comments' => $comments,
-                'commentableType' => 'podcast',
-                'commentableId' => $podcast->uuid
-                ])
-            </div>
+            @include('Frontend.includes.components.partials.video-comments', [
+            'comments' => $comments,
+            'commentableType' => 'podcast',
+            'commentableId' => $podcast->uuid
+            ])
+        </div>
         </div>
     </section>
     <section class="episode-area episode-bg" data-background="{{ asset('assets/img/bg/episode_bg.jpg') }}">
@@ -139,10 +140,14 @@ return [
                                                 @foreach($podcast->episodes as $index => $episode)
                                                 <li>
                                                     <a href="javascript:void(0)"
-                                                        onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
+                                                        onclick='playGlobalAudio(@json($playlistWithUuid), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
-                                                    </a><span class="duration"> <i class="far fa-clock"></i> {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }} </span>
+                                                    </a>
+                                                    <span class="duration">
+                                                        <i class="far fa-clock"></i>
+                                                        {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }}
+                                                    </span>
                                                 </li>
                                                 @endforeach
 
