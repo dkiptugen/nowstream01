@@ -196,8 +196,7 @@
     if (!uuid) return;
     fetch(`/watch-history/${uuid}`, {
         method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        headers: { 
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
