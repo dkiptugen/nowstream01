@@ -13,7 +13,7 @@ return [
 ];
 });
 @endphp
-
+{{dd($ep->uuid)}}
  @php
 $watchService = app(\App\Services\WatchHistoryService::class);
 @endphp
