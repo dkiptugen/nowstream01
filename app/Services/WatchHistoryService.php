@@ -51,8 +51,7 @@ class WatchHistoryService
             return null;
         }
 
-        return WatchHistory::where('user_id', $user->id)
-            ->where('watchable_type', $watchableType)
+        return WatchHistory::where('user_id', $user->id) 
             ->with('watchable')
             ->latest('watched_at')
             ->paginate($perPage);
