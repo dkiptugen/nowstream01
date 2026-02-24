@@ -208,19 +208,31 @@
              }
          });
 
-         audio.addEventListener('timeupdate', () => {
-             currentTimeEl.innerText = formatTime(audio.currentTime);
-             if (!isNaN(audio.duration) && audio.duration > 0) {
-                 progress.value = (audio.currentTime / audio.duration) * 100;
-             }
+        audio.addEventListener('timeupdate', () => {
+    currentTimeEl.innerText = formatTime(audio.currentTime);
+    if (!isNaN(audio.duration) && audio.duration > 0) {
+        progress.value = (audio.currentTime / audio.duration) * 100;
+    }
 
-             // Update current track's saved time
-             if (playlist[currentIndex]) {
-                 playlist[currentIndex].currentTime = audio.currentTime;
-             }
+    // Save per-track progress locally
+    if (playlist[currentIndex]) {
+        playlist[currentIndex].currentTime = audio.currentTime;
 
-             saveState();
-         });
+        // Call WatchHistoryService via inline Blade/PHP
+        @if(auth()->check())
+            @php
+            $episode = $podcast->episodes[$index] ?? null;
+            @endphp
+            try {
+                app(\App\Services\WatchHistoryService::class)->record($episode, (int) playlist[currentIndex].currentTime);
+            } catch (\Throwable $e) {
+                \Log::error("WatchHistory save failed: ".$e->getMessage());
+            }
+        @endif
+    }
+
+    saveState();
+});
 
          audio.addEventListener('ended', () => {
              if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
