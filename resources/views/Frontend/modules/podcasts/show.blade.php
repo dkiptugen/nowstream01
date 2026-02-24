@@ -146,8 +146,7 @@ return [
                                                     <span class="duration">
                                                         <i class="far fa-clock"></i>
                                                         {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }}
-                                                    </span>
-                                                    <span id="progress-{{ $episode->uuid }}" class="progress-bar" style="height: 5px;"></span>
+                                                    </span> 
                                                 </li>
                                                 @endforeach
 
