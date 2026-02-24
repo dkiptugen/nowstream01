@@ -13,6 +13,7 @@ use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\TVController;
 use App\Http\Controllers\Frontend\RadioController;
 use App\Http\Controllers\Frontend\TicketController;
+use App\Http\Controllers\Frontend\WatchHistoryController;
 use App\Http\Controllers\Frontend\TenantController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Frontend\StreamController;
