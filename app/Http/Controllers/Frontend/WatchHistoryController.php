@@ -37,8 +37,7 @@ public function store($uuid, WatchHistoryService $service)
 			$watchHistory = WatchHistory::where('user_id', $user->id)
 				->with('content')
 				->latest('watched_at')
-				->paginate(10); // Adjust pagination as needed
-dd($watchHistory);
+				->paginate(10);   
 			return view('Frontend.modules.videos.continue', compact('watchHistory'));
 		}
 
