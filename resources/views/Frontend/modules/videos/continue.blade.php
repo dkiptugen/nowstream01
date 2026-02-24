@@ -51,12 +51,12 @@
         @endif
     </div>
 </section>
+        @if($watchHistory->isNotEmpty())
 <!--start page wrapper -->
 <div class="page-wrapper">
     <div class="page-content">
-        <h4 class="section-title">Watched Videos</h4>
-        @if($watchHistory->isNotEmpty())
        
+        <h4 class="section-title">Watched Videos</h4>
         <div class="row">
             @foreach ($watchHistory as $history)
             <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
@@ -94,10 +94,10 @@
         <div class="d-flex justify-content-center">
             {{ $watchHistory->links() }}
         </div>
-        @endif
 
     </div>
 </div>
+        @endif
 @endsection
 <script>
     document.addEventListener('DOMContentLoaded', function() {
