@@ -18,35 +18,31 @@ class WatchHistoryService
     public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
     {
         $user = Auth::user();
-        if (!$user || !$watchable) {
-            return null;
-        }
+        if (!$user || !$watchable) return null;
 
-        $data = ['watched_at' => now()];
+        $data = [
+            'watched_at' => now(),
+            'watch_duration' => $watchDuration ?? 0,
+        ];
 
-        if ($watchDuration !== null) {
-            $data['watch_duration'] = $watchDuration;
-        }
-
-        return $watchable->watch()->updateOrCreate(
-            ['user_id' => $user->id],
+        // Use content_group as watchable_type
+        return WatchHistory::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'watchable_id' => $watchable->id,
+                'watchable_type' => $watchable->content_group, 
+            ],
             $data
         );
     }
 
     /**
      * Get paginated watch history for a user filtered by model type
-     *
-     * @param string $watchableType
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|null
      */
     public function getUserHistory(string $watchableType, int $perPage = 10)
     {
         $user = Auth::user();
-        if (!$user) {
-            return null;
-        }
+        if (!$user) return null;
 
         return WatchHistory::where('user_id', $user->id)
             ->where('watchable_type', $watchableType)

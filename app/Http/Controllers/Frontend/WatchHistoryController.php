@@ -11,21 +11,23 @@ use App\Services\WatchHistoryService;
 
 class WatchHistoryController extends Controller
 {
-   public function store(Request $request, WatchHistoryService $service)
+public function store(Request $request, WatchHistoryService $service)
 {
     $request->validate([
         'uuid' => 'required|exists:contents,uuid',
         'watch_duration' => 'nullable|numeric|min:0',
     ]);
 
+    // Get single content by UUID
     $content = Content::where('uuid', $request->uuid)->firstOrFail();
 
+    // Save watch progress
     $history = $service->record($content, intval($request->watch_duration));
 
     // Increment episode views
     $content->increment('views');
 
-    // Increment podcast views if episode
+    // If it's a podcast episode, increment parent podcast views too
     if ($content->content_group === 'podcast' && $content->parent_id) {
         Content::find($content->parent_id)?->increment('views');
     }
