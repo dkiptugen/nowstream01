@@ -276,14 +276,12 @@
                      .then(res => res.json())
                      .then(data => {
                          console.log('Views incremented', data.views);
-
-                         // Only try to update a views element if it exists
+ 
                          const viewsEl = document.querySelector(`#views-${uuid}`);
                          if (viewsEl) {
                              viewsEl.innerText = data.views;
                          }
-
-                         // Optional: if podcast, you could update the parent total
+ 
                          if (data.content_group === 'podcast') {
                              const podcastViewsEl = document.querySelector(`#podcast-views-${uuid}`);
                              if (podcastViewsEl) {
