@@ -203,7 +203,6 @@ class PodcastController extends Controller
     }
 				protected function recordWatchHistory($podcast)
 				{
-                    dd($podcast);
 					$user = Auth::user();
 					if ($user && $podcast) {
 						WatchHistory::updateOrCreate(
