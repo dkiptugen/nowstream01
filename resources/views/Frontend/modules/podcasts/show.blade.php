@@ -54,8 +54,8 @@ return [
                                     <ul>
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i>  
-<small id="views-{{ $podcast->uuid }}">{{ $podcast->views }}</small>
+                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
+
                                                 {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
                                             </span>
                                             <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
