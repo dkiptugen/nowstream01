@@ -20,8 +20,8 @@
     </div>
 </section> <!-- breadcrumb-area-end -->
 <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        @if($watchRadios->isNotEmpty())
+    <div class="container"> 
+        @if($watchPodcasts->isNotEmpty())
         <div class="episode-top-wrap">
             <div class="section-title"> <span class="sub-title">Watched Podcasts</span>
                 <h2 class="title">Watched Podcasts</h2>
@@ -55,9 +55,8 @@
 <div class="page-wrapper">
     <div class="page-content">
         <h4 class="section-title">Watched Videos</h4>
-        @if($watchHistory->isEmpty())
-        <p>You haven't watched any videos yet.</p>
-        @else
+        @if($watchHistory->isNotEmpty())
+       
         <div class="row">
             @foreach ($watchHistory as $history)
             <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
