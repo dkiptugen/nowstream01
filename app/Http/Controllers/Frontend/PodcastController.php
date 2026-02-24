@@ -124,7 +124,7 @@ class PodcastController extends Controller
             Content::where('uuid', $podcast->uuid)->increment('views');
 
 
-									$this->recordWatchHistory($this->data['video']);
+									$this->recordWatchHistory($podcast);
             /**
              * 2. Episodes (cache)
              */
@@ -203,7 +203,6 @@ class PodcastController extends Controller
     }
 				protected function recordWatchHistory($podcast)
 				{
-                    dd($podcast);
 					$user = Auth::user();
 					if ($user && $podcast) {
 						WatchHistory::updateOrCreate(
