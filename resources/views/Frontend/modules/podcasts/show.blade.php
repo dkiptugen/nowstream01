@@ -15,9 +15,7 @@ return [
 @endphp  
 
 <!-- main-area -->
-<main>
-{{dd(
-$podcast->uuid)}}
+<main> 
     <!-- movie-details-area -->
     <section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
         <div class="container">
@@ -139,6 +137,7 @@ $podcast->uuid)}}
                                             <ul>
 
                                                 @foreach($podcast->episodes as $index => $episode)
+                                                {{dd($episode)}}
                                                 <li>
                                                     <a href="javascript:void(0)"
                                                         onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
