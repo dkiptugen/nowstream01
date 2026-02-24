@@ -18,13 +18,13 @@ class WatchHistoryController extends Controller
         }
 
         $request->validate([
-            'watchable_id' => 'required|integer|exists:contents,uuid',
+            'uuid' => 'required|exists:contents,uuid',
             'watch_duration' => 'nullable|numeric|min:0',
         ]);
 
-        $content = Content::findOrFail($request->watchable_id);
+        $content = Content::where('uuid', $request->uuid)->firstOrFail();
 
-        // Save or update watch history
+        // Save or update watch history using UUID
         $history = WatchHistory::updateOrCreate(
             [
                 'user_id' => $user->id,
