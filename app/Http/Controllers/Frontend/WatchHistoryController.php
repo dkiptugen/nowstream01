@@ -12,7 +12,12 @@ use Illuminate\Support\Facades\Auth;
 class WatchHistoryController extends Controller
 {
     protected $watchHistoryService;
- 
+
+    public function __construct(WatchHistoryService $watchHistoryService)
+    {
+        $this->watchHistoryService = $watchHistoryService; 
+    }
+
     public function store(Request $request)
     {
         $request->validate([
