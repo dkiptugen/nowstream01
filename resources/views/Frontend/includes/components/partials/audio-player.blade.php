@@ -39,290 +39,252 @@
 
      <audio id="global-audio"></audio>
  </div>
- <script>
-     (function() {
+<script>
+(function() {
+    /* ===============================
+       Global Element Bindings
+    =============================== */
+    const audio = document.getElementById('global-audio');
+    const player = document.getElementById('global-audio-player');
+    if (!audio || !player) return;
 
-         /* ===============================
-            Element Bindings (Safe)
-         =============================== */
-         const audio = document.getElementById('global-audio');
-         const player = document.getElementById('global-audio-player');
+    const playBtn = document.getElementById('player-play');
+    const prevBtn = document.getElementById('player-prev');
+    const nextBtn = document.getElementById('player-next');
+    const muteBtn = document.getElementById('player-mute');
+    const progress = document.getElementById('player-progress');
+    const volume = document.getElementById('player-volume');
+    const titleEl = document.getElementById('player-title');
+    const podcastEl = document.getElementById('player-podcast');
+    const thumbEl = document.getElementById('player-thumbnail');
+    const currentTimeEl = document.getElementById('sp-current');
+    const durationEl = document.getElementById('sp-duration');
 
-         if (!audio || !player) return; // Exit if player not present
+    const STORAGE_KEY = 'audio_state';
+    let playlist = [];
+    let currentIndex = 0;
+    let watchProgressInterval = null;
 
-         const playBtn = document.getElementById('player-play');
-         const prevBtn = document.getElementById('player-prev');
-         const nextBtn = document.getElementById('player-next');
-         const muteBtn = document.getElementById('player-mute');
-
-         const progress = document.getElementById('player-progress');
-         const volume = document.getElementById('player-volume');
-
-         const titleEl = document.getElementById('player-title');
-         const podcastEl = document.getElementById('player-podcast');
-         const thumbEl = document.getElementById('player-thumbnail');
-         const currentTimeEl = document.getElementById('sp-current');
-         const durationEl = document.getElementById('sp-duration');
-
-         const STORAGE_KEY = 'audio_state';
-         let playlist = [];
-         let currentIndex = 0;
-
-         /* ===============================
-            Helpers
-         =============================== */
-         function formatTime(sec) {
-             if (!sec) return '0:00';
-             const m = Math.floor(sec / 60);
-             const s = Math.floor(sec % 60).toString().padStart(2, '0');
-             return `${m}:${s}`;
-         }
-
-         function updatePlayIcon() {
-             playBtn.innerHTML = audio.paused ?
-                 '<i class="fas fa-play"></i>' :
-                 '<i class="fas fa-pause"></i>';
-         }
-
-         function updateMuteIcon() {
-             muteBtn.innerHTML = audio.muted ?
-                 '<i class="fas fa-volume-mute"></i>' :
-                 '<i class="fas fa-volume-up"></i>';
-         }
-
-         function updateUI(track) {
-             titleEl.innerText = track.title || 'Unknown';
-             podcastEl.innerText = track.podcast || '';
-             thumbEl.src = track.thumbnail || '';
-             currentTimeEl.innerText = '0:00';
-             durationEl.innerText = '0:00';
-             player.classList.remove('d-none');
-
-             // Wait for metadata to load
-             audio.addEventListener('loadedmetadata', () => {
-                 durationEl.innerText = formatTime(audio.duration);
-             });
-         }
-
-         function saveState() {
-             try {
-                 const state = {
-                     playlist,
-                     currentIndex,
-                     tracks: playlist.map(track => ({
-                         uuid: track.uuid || track.src,
-                         time: track.currentTime || 0
-                     })),
-                     volume: audio.volume,
-                     muted: audio.muted,
-                     playing: !audio.paused
-                 };
-                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-             } catch (e) {}
-         }
-
-         function restoreState() {
-             const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-             if (!state?.playlist?.length) return;
-
-             playlist = state.playlist;
-             currentIndex = state.currentIndex || 0;
-
-             const track = playlist[currentIndex];
-             audio.src = track.src;
-             updateUI(track);
-
-             // Restore volume & mute
-             audio.volume = state.volume ?? 1;
-             audio.muted = state.muted ?? false;
-             volume.value = audio.volume;
-             updateMuteIcon();
-
-             // Restore per-track progress
-             const trackProgress = state.tracks.find(t => t.uuid === (track.uuid || track.src));
-             const seekTime = trackProgress?.time ?? 0;
-
-             const seekToTime = () => {
-                 audio.currentTime = seekTime;
-                 if (state.playing) audio.play().catch(() => {});
-                 updatePlayIcon();
-                 audio.removeEventListener('loadedmetadata', seekToTime);
-             };
-
-             if (audio.readyState >= 1) {
-                 seekToTime();
-             } else {
-                 audio.addEventListener('loadedmetadata', seekToTime);
-             }
-         }
-         /* ===============================
-            Core Playback
-         =============================== */
-         function loadTrack(index) {
-             if (!playlist[index]) return;
-
-             const track = playlist[index];
-             currentIndex = index;
-             audio.src = track.src;
-             audio.currentTime = 0;
-             updateUI(track);
-             audio.play().catch(() => {});
-             updatePlayIcon();
-             saveState();
-         }
-
-         /* ===============================
-            Controls
-         =============================== */
-         playBtn?.addEventListener('click', () => {
-             if (audio.paused) audio.play();
-             else audio.pause();
-             updatePlayIcon();
-             saveState();
-         });
-
-         prevBtn?.addEventListener('click', () => {
-             if (currentIndex > 0) loadTrack(currentIndex - 1);
-         });
-
-         nextBtn?.addEventListener('click', () => {
-             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
-         });
-
-         muteBtn?.addEventListener('click', () => {
-             audio.muted = !audio.muted;
-             updateMuteIcon();
-             saveState();
-         });
-
-         volume?.addEventListener('input', () => {
-             audio.volume = volume.value;
-             audio.muted = false;
-             updateMuteIcon();
-             saveState();
-         });
-
-         progress?.addEventListener('input', () => {
-             if (!isNaN(audio.duration)) {
-                 audio.currentTime = (progress.value / 100) * audio.duration;
-             }
-         });
-
-        audio.addEventListener('timeupdate', () => {
-    currentTimeEl.innerText = formatTime(audio.currentTime);
-    if (!isNaN(audio.duration) && audio.duration > 0) {
-        progress.value = (audio.currentTime / audio.duration) * 100;
+    /* ===============================
+       Helpers
+    =============================== */
+    function formatTime(sec) {
+        if (!sec) return '0:00';
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
     }
 
-    // Save per-track progress locally
-    if (playlist[currentIndex]) {
-        playlist[currentIndex].currentTime = audio.currentTime;
+    function updatePlayIcon() {
+        playBtn.innerHTML = audio.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+    }
 
-        // Call WatchHistoryService via inline Blade/PHP
-        @if(auth()->check())
-            @php
-            $episode = $podcast->episodes[$index] ?? null;
-            @endphp
-            try {
-                app(\App\Services\WatchHistoryService::class)->record($episode, (int) playlist[currentIndex].currentTime);
-            } catch (\Throwable $e) {
-                \Log::error("WatchHistory save failed: ".$e->getMessage());
+    function updateMuteIcon() {
+        muteBtn.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    }
+
+    function updateUI(track) {
+        titleEl.innerText = track.title || 'Unknown';
+        podcastEl.innerText = track.podcast || '';
+        thumbEl.src = track.thumbnail || '';
+        currentTimeEl.innerText = '0:00';
+        durationEl.innerText = '0:00';
+        player.classList.remove('d-none');
+
+        audio.addEventListener('loadedmetadata', () => {
+            durationEl.innerText = formatTime(audio.duration);
+        });
+    }
+
+    function saveState() {
+        try {
+            const state = {
+                playlist,
+                currentIndex,
+                tracks: playlist.map(track => ({
+                    uuid: track.uuid || track.src,
+                    time: track.currentTime || 0
+                })),
+                volume: audio.volume,
+                muted: audio.muted,
+                playing: !audio.paused
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) { console.error('Error saving audio state', e); }
+    }
+
+    function restoreState() {
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!state?.playlist?.length) return;
+
+        playlist = state.playlist;
+        currentIndex = state.currentIndex || 0;
+
+        const track = playlist[currentIndex];
+        audio.src = track.src;
+        updateUI(track);
+
+        audio.volume = state.volume ?? 1;
+        audio.muted = state.muted ?? false;
+        volume.value = audio.volume;
+        updateMuteIcon();
+
+        const trackProgress = state.tracks.find(t => t.uuid === (track.uuid || track.src));
+        const seekTime = trackProgress?.time ?? 0;
+
+        const seekToTime = () => {
+            audio.currentTime = seekTime;
+            if (state.playing) audio.play().catch(() => {});
+            updatePlayIcon();
+            audio.removeEventListener('loadedmetadata', seekToTime);
+        };
+
+        if (audio.readyState >= 1) {
+            seekToTime();
+        } else {
+            audio.addEventListener('loadedmetadata', seekToTime);
+        }
+    }
+
+    /* ===============================
+       Core Playback
+    =============================== */
+    function loadTrack(index) {
+        if (!playlist[index]) return;
+
+        const track = playlist[index];
+        currentIndex = index;
+        audio.src = track.src;
+        audio.currentTime = 0;
+        updateUI(track);
+        audio.play().catch(() => {});
+        updatePlayIcon();
+        saveState();
+
+        // Increment views when track starts
+        incrementViews(track);
+
+        // Start watch progress saver
+        if (watchProgressInterval) clearInterval(watchProgressInterval);
+        watchProgressInterval = setInterval(() => saveWatchProgress(track), 5000); // every 5 sec
+    }
+
+    /* ===============================
+       Watch History & Views
+    =============================== */
+    function incrementViews(track) {
+        if (!track?.uuid) return;
+        fetch(`/content/${track.uuid}/increment-views`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
-        @endif
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Views updated', data);
+            const episodeEl = document.querySelector(`#views-${track.uuid}`);
+            if (episodeEl) episodeEl.innerText = data.episode_views;
+
+            const podcastElEl = document.querySelector(`#podcast-views-${track.podcast_id}`);
+            if (podcastElEl && data.podcast_views !== null) {
+                podcastElEl.innerText = data.podcast_views;
+            }
+        })
+        .catch(err => console.error('Error incrementing views', err));
     }
 
-    saveState();
-});
+    function saveWatchProgress(track) {
+        if (!track?.uuid) return;
+        fetch('/watch-history', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                uuid: track.uuid,
+                currentTime: Math.floor(audio.currentTime)
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log('Watch progress saved', data))
+        .catch(err => console.error('Error saving watch progress', err));
+    }
 
-         audio.addEventListener('ended', () => {
-             if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
-         });
+    /* ===============================
+       Controls
+    =============================== */
+    playBtn?.addEventListener('click', () => {
+        if (audio.paused) audio.play();
+        else audio.pause();
+        updatePlayIcon();
+        saveState();
+    });
 
-         /* ===============================
-            Global API
-         =============================== */
-         window.playGlobalAudio = function(list, index = 0) {
-             if (!Array.isArray(list) || !list.length) return;
+    prevBtn?.addEventListener('click', () => {
+        if (currentIndex > 0) loadTrack(currentIndex - 1);
+    });
 
-             playlist = list;
-             const track = playlist[index];
+    nextBtn?.addEventListener('click', () => {
+        if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+    });
 
-             if (track?.uuid) {
-                 fetch(`/content/${track.uuid}/increment-views`, {
-                         method: 'POST',
-                         headers: {
-                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                             'Accept': 'application/json',
-                             'Content-Type': 'application/json'
-                         },
-                     })
-                     .then(res => res.json())
-                     .then(data => {
-                         console.log('Episode & podcast views incremented', data);
-                         // Update episode views on page
-                         const episodeEl = document.querySelector(`#views-${track.uuid}`);
-                         if (episodeEl) episodeEl.innerText = data.episode_views;
+    muteBtn?.addEventListener('click', () => {
+        audio.muted = !audio.muted;
+        updateMuteIcon();
+        saveState();
+    });
 
-                         // Update podcast total views
-                         const podcastEl = document.querySelector(`#podcast-views-${track.podcast_id}`);
-                         if (podcastEl && data.podcast_views !== null) {
-                             podcastEl.innerText = data.podcast_views;
-                         }
-                     })
-                     .catch(err => console.error('Error incrementing views', err));
-             }
+    volume?.addEventListener('input', () => {
+        audio.volume = volume.value;
+        audio.muted = false;
+        updateMuteIcon();
+        saveState();
+    });
 
-             loadTrack(index);
-         };
-         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
-             console.log('Increment view for UUID:', uuid);
+    progress?.addEventListener('input', () => {
+        if (!isNaN(audio.duration)) {
+            audio.currentTime = (progress.value / 100) * audio.duration;
+        }
+    });
 
-             if (uuid) {
-                 fetch(`/content/${uuid}/increment-views`, {
-                         method: 'POST',
-                         headers: {
-                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                             'Accept': 'application/json',
-                             'Content-Type': 'application/json'
-                         },
-                     })
-                     .then(res => res.json())
-                     .then(data => {
-                         console.log('Views incremented', data.views);
+    audio.addEventListener('timeupdate', () => {
+        currentTimeEl.innerText = formatTime(audio.currentTime);
+        if (!isNaN(audio.duration) && audio.duration > 0) {
+            progress.value = (audio.currentTime / audio.duration) * 100;
+        }
+        if (playlist[currentIndex]) playlist[currentIndex].currentTime = audio.currentTime;
+        saveState();
+    });
 
-                         const viewsEl = document.querySelector(`#views-${uuid}`);
-                         if (viewsEl) {
-                             viewsEl.innerText = data.views;
-                         }
+    audio.addEventListener('ended', () => {
+        if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+    });
 
-                         if (data.content_group === 'podcast') {
-                             const podcastViewsEl = document.querySelector(`#podcast-views-${uuid}`);
-                             if (podcastViewsEl) {
-                                 podcastViewsEl.innerText = data.views;
-                             }
-                         }
-                     })
-                     .catch(err => console.error('Error incrementing views', err));
-             }
+    /* ===============================
+       Global API
+    =============================== */
+    window.playGlobalAudio = function(list, index = 0) {
+        if (!Array.isArray(list) || !list.length) return;
+        playlist = list;
+        loadTrack(index);
+    };
 
-             playlist = [{
-                 src,
-                 title,
-                 podcast,
-                 thumbnail,
-                 uuid
-             }];
-             loadTrack(0);
-         };
+    window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '', podcast_id = null) {
+        playlist = [{ src, title, podcast, thumbnail, uuid, podcast_id }];
+        loadTrack(0);
+    };
 
-         /* ===============================
-            Init
-         =============================== */
-         document.addEventListener('DOMContentLoaded', restoreState);
-
-     })();
- </script>
-
+    /* ===============================
+       Init
+    =============================== */
+    document.addEventListener('DOMContentLoaded', restoreState);
+})();
+</script>
  <style>
      .spotify-player {
          position: fixed;
