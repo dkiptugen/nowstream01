@@ -140,7 +140,7 @@ return [
                                                 @foreach($podcast->episodes as $index => $episode)
                                                 <li>
                                                     <a href="javascript:void(0)"
-                                                        onclick='playGlobalAudio(@json($playlistWithUuid), {{ $index }})'>
+                                                        onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
                                                     </a>
