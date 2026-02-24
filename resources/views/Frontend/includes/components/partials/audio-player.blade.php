@@ -228,30 +228,39 @@
          /* ===============================
             Global API
          =============================== */
-        window.playGlobalAudio = function(list, index = 0) {
-    if (!Array.isArray(list) || !list.length) return;
+         window.playGlobalAudio = function(list, index = 0) {
+             if (!Array.isArray(list) || !list.length) return;
 
-    playlist = list;
-    const track = playlist[index]; // <-- define track here
+             playlist = list;
+             const track = playlist[index];
 
-    // Increment views
-    if (track?.uuid) {
-        fetch(`/content/${track.uuid}/increment-views`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(res => res.json())
-        .then(data => console.log('Episode views incremented', data.views))
-        .catch(err => console.error('Error incrementing views', err));
-    }
+             if (track?.uuid) {
+                 fetch(`/content/${track.uuid}/increment-views`, {
+                         method: 'POST',
+                         headers: {
+                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                             'Accept': 'application/json',
+                             'Content-Type': 'application/json'
+                         },
+                     })
+                     .then(res => res.json())
+                     .then(data => {
+                         console.log('Episode & podcast views incremented', data);
+                         // Update episode views on page
+                         const episodeEl = document.querySelector(`#views-${track.uuid}`);
+                         if (episodeEl) episodeEl.innerText = data.episode_views;
 
-    // Play the track
-    loadTrack(index);
-};
+                         // Update podcast total views
+                         const podcastEl = document.querySelector(`#podcast-views-${track.podcast_id}`);
+                         if (podcastEl && data.podcast_views !== null) {
+                             podcastEl.innerText = data.podcast_views;
+                         }
+                     })
+                     .catch(err => console.error('Error incrementing views', err));
+             }
+
+             loadTrack(index);
+         };
 
          window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
              console.log('Increment view for UUID:', uuid);
@@ -272,7 +281,7 @@
                          const viewsEl = document.querySelector(`#views-${uuid}`);
                          if (viewsEl) viewsEl.innerText = data.views;
                      })
-                 .catch(err => console.error('Error incrementing views', err));
+                     .catch(err => console.error('Error incrementing views', err));
              }
 
              playlist = [{
