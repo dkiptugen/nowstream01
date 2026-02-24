@@ -85,7 +85,8 @@ Route::middleware(['detectCountry'])->group(function () {
         [CommentController::class, 'fetchComments']
     )->name('comment.fetch');
     Route::post('/record-watch-history/{video}', [StreamVideoController::class, 'recordWatchHistory']);
-
+Route::post('/watch-history', [WatchHistoryController::class, 'store'])
+    ->middleware('auth'); // Only logged-in users
     Route::name('user.')->prefix('user')->controller(AuthsController::class)->group(function () {
         Route::get('/partner/register', 'partner');
         Route::get('social/{social}', 'redirectToProvider')->name('auth.social');
