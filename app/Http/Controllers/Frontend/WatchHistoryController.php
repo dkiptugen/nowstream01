@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Content;
 use App\Services\WatchHistoryService;
-use App\Models\WatchHistory;
-use Illuminate\Support\Facades\Auth;
 
 class WatchHistoryController extends Controller
 {
-    protected $watchHistoryService;
+    protected $watchService;
 
-    public function __construct(WatchHistoryService $watchHistoryService)
+    public function __construct(WatchHistoryService $watchService)
     {
-        $this->watchHistoryService = $watchHistoryService; 
+        $this->watchService = $watchService;
     }
 
     public function store(Request $request)
@@ -25,13 +22,19 @@ class WatchHistoryController extends Controller
             'watch_duration' => 'nullable|integer',
         ]);
 
-        $content = Content::where('uuid', $request->uuid)->firstOrFail();
+        $content = Content::where('uuid', $request->uuid)->first();
 
-        $history = $this->watchHistoryService->record($content, $request->watch_duration);
+        if (!$content) {
+            return response()->json(['error' => 'Content not found'], 404);
+        }
+
+        $history = $this->watchService->record($content, $request->watch_duration);
 
         return response()->json([
             'success' => true,
-            'history' => $history,
+            'content_id' => $content->id,
+            'watched_at' => $history->watched_at,
+            'watch_duration' => $history->watch_duration,
         ]);
     }
 }
