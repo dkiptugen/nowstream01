@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\WatchHistoryService;
 use App\Models\Content;
+use App\Services\WatchHistoryService;
+use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
 
 class WatchHistoryController extends Controller
