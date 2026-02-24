@@ -38,12 +38,12 @@ public function store($uuid, WatchHistoryService $service)
             ->with('error', 'You must be logged in to view watched videos.');
     }
 
-    $items = Content::whereHas('watch', function ($query) use ($user) {
+    $watchHistory = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
         ->latest()
         ->paginate(10);
 
-    return view('Frontend.modules.videos.continue', compact('items'));
+    return view('Frontend.modules.videos.continue', compact('watchHistory'));
 }
 }
