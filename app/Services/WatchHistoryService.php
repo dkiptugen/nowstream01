@@ -15,27 +15,38 @@ class WatchHistoryService
      * @param int|null $watchDuration
      * @return WatchHistory|null
      */
-    public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
-    {
-        $user = Auth::user();
-        if (!$user || !$watchable) {
-            return null;
-        }
+  public function record(Model $watchable, ?int $watchDuration = null)
+{
+    $user = auth()->user();
+    if (!$user || !$watchable) return null;
 
-        $data = ['watched_at' => now()];
+    $data = [
+        'watched_at' => now(),
+        'watch_duration' => $watchDuration,
+    ];
 
-        if ($watchDuration !== null) {
-            $data['watch_duration'] = $watchDuration;
-        }
+    Log::info('[WatchHistory] Attempting to save', [
+        'user_id' => $user->id,
+        'content_id' => $watchable->uuid,
+        'data' => $data
+    ]);
 
-        return WatchHistory::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'content_id' => $watchable->uuid,  // Use UUID
-            ],
-            $data
-        );
-    }
+    $history = \App\Models\WatchHistory::updateOrCreate(
+        [
+            'user_id' => $user->id,
+            'content_id' => $watchable->uuid
+        ],
+        $data
+    );
+
+    Log::info('[WatchHistory] Saved successfully', [
+        'id' => $history->id,
+        'user_id' => $history->user_id,
+        'content_id' => $history->content_id
+    ]);
+
+    return $history;
+}
 
     /**
      * Get paginated watch history for a user filtered by content type
