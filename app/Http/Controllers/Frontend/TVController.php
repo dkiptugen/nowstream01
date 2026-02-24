@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Content;
 use App\Models\Category;
+use App\Models\WatchHistory;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -166,7 +168,8 @@ class TVController extends Controller
 
             if (!$tv) abort(404, 'TV not found');
 
-            $tv->increment('views'); // not cached
+            $tv->increment('views'); 
+            $this->recordWatchHistory($tv);
             $uuid = $tv->uuid;
             $genres = $tv->genre ?? [];
 
@@ -193,5 +196,43 @@ class TVController extends Controller
         } catch (\Exception $e) {
             abort(404, 'TV not found');
         }
+    }
+    protected function recordWatchHistory($tv)
+    {
+        $user = Auth::user();
+        if ($user && $tv) {
+            WatchHistory::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'content_id' => $tv->uuid,
+                ],
+                [
+                    'watched_at' => now(),
+                ]
+            );
+        }
+    }
+    public function recordWatchHistoryAjax(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            $tv = Content::where('content_group', 'tv')->findOrFail($request->input('tv_id'));
+
+            WatchHistory::updateOrCreate(
+                [
+                    'user_id'  => $user->id,
+                    'content_id' => $tv->uuid,
+                ],
+                [
+                    'watched_at'     => now(),
+                    'watch_duration' => $request->input('watch_duration', 0),
+                ]
+            );
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false], 401);
     }
 }
