@@ -143,7 +143,12 @@ return [
                                                         onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
-                                                    </a><span class="duration"> <i class="far fa-clock"></i> {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }} </span>
+                                                    </a>
+                                                    <span class="duration">
+                                                        <i class="far fa-clock"></i>
+                                                        {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }}
+                                                    </span>
+                                                    <span id="progress-{{ $episode->uuid }}" class="progress-bar"></span>
                                                 </li>
                                                 @endforeach
 

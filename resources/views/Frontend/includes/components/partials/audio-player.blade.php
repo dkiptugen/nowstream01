@@ -103,63 +103,57 @@
                  durationEl.innerText = formatTime(audio.duration);
              });
          }
+function saveState() {
+    try {
+        const state = {
+            playlist,
+            currentIndex,
+            tracks: playlist.map(track => ({
+                uuid: track.uuid || track.src,
+                time: track.currentTime || 0
+            })),
+            volume: audio.volume,
+            muted: audio.muted,
+            playing: !audio.paused
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+}
 
-         function saveState() {
-             try {
-                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                     playlist,
-                     currentIndex,
-                     time: audio.currentTime || 0,
-                     volume: audio.volume,
-                     muted: audio.muted,
-                     playing: !audio.paused
-                 }));
-             } catch (e) {}
-         }
+function restoreState() {
+    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!state?.playlist?.length) return;
 
-         function restoreState() {
-             const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-             if (!state?.playlist?.length) return;
+    playlist = state.playlist;
+    currentIndex = state.currentIndex || 0;
 
-             playlist = state.playlist;
-             currentIndex = state.currentIndex || 0;
+    const track = playlist[currentIndex];
+    audio.src = track.src;
+    updateUI(track);
 
-             const track = playlist[currentIndex];
+    // Restore volume & mute
+    audio.volume = state.volume ?? 1;
+    audio.muted = state.muted ?? false;
+    volume.value = audio.volume;
+    updateMuteIcon();
 
-             // Set src only if different (prevents restart flicker)
-             if (!audio.src || !audio.src.includes(track.src)) {
-                 audio.src = track.src;
-             }
+    // Restore per-track progress
+    const trackProgress = state.tracks.find(t => t.uuid === (track.uuid || track.src));
+    const seekTime = trackProgress?.time ?? 0;
 
-             updateUI(track);
+    const seekToTime = () => {
+        audio.currentTime = seekTime;
+        if (state.playing) audio.play().catch(() => {});
+        updatePlayIcon();
+        audio.removeEventListener('loadedmetadata', seekToTime);
+    };
 
-             // Restore volume & mute
-             audio.volume = state.volume ?? 1;
-             audio.muted = state.muted ?? false;
-             volume.value = audio.volume;
-             updateMuteIcon();
-
-             // Wait for metadata before seeking
-             const seekToTime = () => {
-                 audio.currentTime = state.time || 0;
-
-                 if (state.playing) {
-                     audio.play().catch(() => {});
-                 }
-
-                 updatePlayIcon();
-                 audio.removeEventListener('loadedmetadata', seekToTime);
-             };
-
-             if (audio.readyState >= 1) {
-                 seekToTime();
-             } else {
-                 audio.addEventListener('loadedmetadata', seekToTime);
-             }
-         }
-
-
-
+    if (audio.readyState >= 1) {
+        seekToTime();
+    } else {
+        audio.addEventListener('loadedmetadata', seekToTime);
+    }
+}
          /* ===============================
             Core Playback
          =============================== */
@@ -213,13 +207,19 @@
              }
          });
 
-         audio.addEventListener('timeupdate', () => {
-             currentTimeEl.innerText = formatTime(audio.currentTime);
-             if (!isNaN(audio.duration) && audio.duration > 0) {
-                 progress.value = (audio.currentTime / audio.duration) * 100;
-             }
-             saveState();
-         });
+        audio.addEventListener('timeupdate', () => {
+    currentTimeEl.innerText = formatTime(audio.currentTime);
+    if (!isNaN(audio.duration) && audio.duration > 0) {
+        progress.value = (audio.currentTime / audio.duration) * 100;
+    }
+
+    // Update current track's saved time
+    if (playlist[currentIndex]) {
+        playlist[currentIndex].currentTime = audio.currentTime;
+    }
+
+    saveState();
+});
 
          audio.addEventListener('ended', () => {
              if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
