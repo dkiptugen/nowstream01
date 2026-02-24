@@ -251,7 +251,8 @@
                  src,
                  title,
                  podcast,
-                 thumbnail
+                 thumbnail,
+                 uuid
              }];
              loadTrack(0);
          };
@@ -264,7 +265,13 @@
      })();
  </script>
 
-
+<script>
+    .then(data => {
+    console.log('Views incremented', data.views);
+    const viewsEl = document.querySelector(`#views-${uuid}`);
+    if (viewsEl) viewsEl.innerText = data.views;
+});
+</script>
  <style>
      .spotify-player {
          position: fixed;
