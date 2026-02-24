@@ -228,11 +228,30 @@
          /* ===============================
             Global API
          =============================== */
-         window.playGlobalAudio = function(list, index = 0) {
-             if (!Array.isArray(list) || !list.length) return;
-             playlist = list;
-             loadTrack(index);
-         };
+        window.playGlobalAudio = function(list, index = 0) {
+    if (!Array.isArray(list) || !list.length) return;
+
+    playlist = list;
+    const track = playlist[index]; // <-- define track here
+
+    // Increment views
+    if (track?.uuid) {
+        fetch(`/content/${track.uuid}/increment-views`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(res => res.json())
+        .then(data => console.log('Episode views incremented', data.views))
+        .catch(err => console.error('Error incrementing views', err));
+    }
+
+    // Play the track
+    loadTrack(index);
+};
 
          window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
              console.log('Increment view for UUID:', uuid);
