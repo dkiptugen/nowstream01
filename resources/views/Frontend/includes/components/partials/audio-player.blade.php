@@ -192,23 +192,21 @@
         .catch(err => console.error('Error incrementing views', err));
     }
 
-    function saveWatchProgress(uuid, currentTime) {
-        if (!uuid) return;
-        fetch(`/watch-history/${uuid}`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                watch_duration: Math.floor(currentTime)
-            })
-        })
-        .then(res => res.json())
-        .then(data => console.log('Watch progress saved', data))
-        .catch(err => console.error('Error saving watch history', err));
-    }
+  function saveWatchProgress(uuid, currentTime) {
+    if (!uuid) return;
+    fetch(`/watch-history/${uuid}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ watch_duration: Math.floor(currentTime) })
+    })
+    .then(res => res.json())
+    .then(data => console.log('Watch progress saved', data))
+    .catch(err => console.error('Error saving watch history', err));
+}
 
     /* ===============================
        Controls
