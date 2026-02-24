@@ -30,17 +30,20 @@ public function store($uuid, WatchHistoryService $service)
 }
 
 	public function watchedContent()
-	{
-		$user = Auth::user();
+{
+    $user = Auth::user();
 
-		if ($user) {
-			$watchHistory = WatchHistory::where('user_id', $user->id)
-				->with('content')
-				->latest('watched_at')
-				->paginate(10);   
-			return view('Frontend.modules.videos.continue', compact('watchHistory'));
-		}
+    if (!$user) {
+        return redirect()->route('user.login')
+            ->with('error', 'You must be logged in to view watched videos.');
+    }
 
-		return redirect()->route('user.login')->with('error', 'You must be logged in to view watched videos.');
-	}
+    $items = Content::whereHas('watchHistories', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->latest()
+        ->paginate(10);
+
+    return view('Frontend.modules.videos.continue', compact('items'));
+}
 }
