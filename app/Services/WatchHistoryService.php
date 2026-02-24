@@ -34,7 +34,7 @@ class WatchHistoryService
         return WatchHistory::updateOrCreate(
             [
                 'user_id' => $user->id,
-                'content_id' => $content->uuid,
+                'content_id' => $content->id,
             ],
             $data
         );
