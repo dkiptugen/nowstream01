@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Content;
 use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
-use App\Services\WatchHistoryService; 
+use App\Services\WatchHistoryService;
 
 class WatchHistoryController extends Controller
 {
@@ -18,51 +18,51 @@ class WatchHistoryController extends Controller
         $this->watchService = $watchService;
     }
 
-public function store($uuid, WatchHistoryService $service)
-{
-    $content = Content::where('uuid', $uuid)->firstOrFail();
-    $history = $service->record($content, request('watch_duration'));
+    public function store($uuid, WatchHistoryService $service)
+    {
+        $content = Content::where('uuid', $uuid)->firstOrFail();
+        $history = $service->record($content, request('watch_duration'));
 
-    return response()->json([
-        'success' => true,
-        'watch_history' => $history
-    ]);
-}
-
-	public function watchedContent()
-{
-    $user = Auth::user();
-
-    if (!$user) {
-        return redirect()->route('user.login')
-            ->with('error', 'You must be logged in to view watched videos.');
+        return response()->json([
+            'success' => true,
+            'watch_history' => $history
+        ]);
     }
 
-    $watchHistory = Content::whereHas('watch', function ($query) use ($user) {
+    public function watchedContent()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('user.login')
+                ->with('error', 'You must be logged in to view watched videos.');
+        }
+
+        $watchHistory = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->latest()
-        ->paginate(10);
+            ->latest()
+            ->paginate(10);
         $watchPodcasts = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->where('content_group', 'podcast')
-        ->latest()
-        ->paginate(10);
+            ->where('content_group', 'podcast')
+            ->latest()
+            ->paginate(10);
         $watchRadios = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->where('content_group', 'podcast')
-        ->latest()
-        ->paginate(10);
+            ->where('content_group', 'radio')
+            ->latest()
+            ->paginate(10);
 
         $watchTvs = Content::whereHas('watch', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->where('content_group', 'podcast')
-        ->latest()
-        ->paginate(10);
+            ->where('content_group', 'tv')
+            ->latest()
+            ->paginate(10);
 
-    return view('Frontend.modules.videos.continue', compact('watchHistory','watchTvs','watchPodcasts','watchRadios'));
-}
+        return view('Frontend.modules.videos.continue', compact('watchHistory', 'watchTvs', 'watchPodcasts', 'watchRadios'));
+    }
 }
