@@ -27,7 +27,7 @@ class WatchHistoryController extends Controller
         // Save or update watch history
         $history = WatchHistory::updateOrCreate(
             [
-                'user_id' => $user->uuid,
+                'user_id' => $user->id,
                 'watchable_id' => $content->uuid,
                 'watchable_type' => Content::class,
             ],
