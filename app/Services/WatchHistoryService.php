@@ -16,8 +16,7 @@ class WatchHistoryService
      * @return WatchHistory|null
      */
     public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
-    {
-        dd($watchable);
+    { 
         $user = Auth::user();
         if (!$user || !$watchable) {
             return null;
