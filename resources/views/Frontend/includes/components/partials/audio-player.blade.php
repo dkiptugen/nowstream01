@@ -261,7 +261,6 @@
 
              loadTrack(index);
          };
-
          window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
              console.log('Increment view for UUID:', uuid);
 
@@ -275,11 +274,22 @@
                          },
                      })
                      .then(res => res.json())
-                     .then(data => console.log('Views incremented', data.views))
                      .then(data => {
                          console.log('Views incremented', data.views);
+
+                         // Only try to update a views element if it exists
                          const viewsEl = document.querySelector(`#views-${uuid}`);
-                         if (viewsEl) viewsEl.innerText = data.views;
+                         if (viewsEl) {
+                             viewsEl.innerText = data.views;
+                         }
+
+                         // Optional: if podcast, you could update the parent total
+                         if (data.content_group === 'podcast') {
+                             const podcastViewsEl = document.querySelector(`#podcast-views-${uuid}`);
+                             if (podcastViewsEl) {
+                                 podcastViewsEl.innerText = data.views;
+                             }
+                         }
                      })
                      .catch(err => console.error('Error incrementing views', err));
              }
