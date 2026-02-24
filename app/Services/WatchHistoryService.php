@@ -31,8 +31,7 @@ class WatchHistoryService
         return $watchable->watch()->updateOrCreate(
              [
                 'user_id' => $user->id,
-                'watchable_id' => $watchable->uuid,
-                'watchable_type' => $watchable->content_group, 
+                'content_id' => $watchable->uuid, 
             ],
             $data
         );
