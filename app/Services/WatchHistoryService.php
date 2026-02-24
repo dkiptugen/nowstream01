@@ -25,7 +25,7 @@ class WatchHistoryService
         return WatchHistory::updateOrCreate(
             [
                 'user_id' => $user->id,
-                'watchable_id' => $watchable->id,
+                'watchable_id' => $watchable->uuid,
                 'watchable_type' => $watchable->content_group
             ],
             [
@@ -36,7 +36,7 @@ class WatchHistoryService
     } catch (\Throwable $e) {
         \Log::error('WatchHistoryService failed', [
             'user_id' => $user->id,
-            'watchable_id' => $watchable->id,
+            'watchable_id' => $watchable->uuid,
             'error' => $e->getMessage()
         ]);
         return null;
