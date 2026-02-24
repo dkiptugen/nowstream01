@@ -59,7 +59,7 @@
 
         <div class="row tr-movie-active">
 
-            @foreach($watchTvs as $item)
+            @foreach($watchTvs as $tv)
             @include('Frontend.includes.components.cards.tv-card')
             @endforeach
         </div>
