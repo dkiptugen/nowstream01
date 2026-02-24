@@ -52,8 +52,8 @@
         @if($watchTvs->isNotEmpty())
 
         <div class="episode-top-wrap">
-            <div class="section-title"> <span class="sub-title">Watched Radios</span>
-                <h2 class="title">Watched Radios</h2>
+            <div class="section-title"> <span class="sub-title">Watched Tvs</span>
+                <h2 class="title">Watched Tvs</h2>
             </div>
         </div>
 
