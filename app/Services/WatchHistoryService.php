@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class WatchHistoryService
 {
@@ -15,61 +16,55 @@ class WatchHistoryService
      * @param int|null $watchDuration
      * @return WatchHistory|null
      */
-  public function record(Model $watchable, ?int $watchDuration = null)
-{
-    $user = auth()->user();
-    if (!$user || !$watchable) return null;
+    public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
+    {
+        $user = Auth::user();
+        if (!$user || !$watchable) {
+            Log::warning('[WatchHistory] No user or invalid content', [
+                'user' => $user?->id,
+                'content' => $watchable?->uuid ?? null,
+            ]);
+            return null;
+        }
 
-    $data = [
-        'watched_at' => now(),
-        'watch_duration' => $watchDuration,
-    ];
+        $data = ['watched_at' => now()];
 
-    Log::info('[WatchHistory] Attempting to save', [
-        'user_id' => $user->id,
-        'content_id' => $watchable->uuid,
-        'data' => $data
-    ]);
+        if ($watchDuration !== null) {
+            $data['watch_duration'] = $watchDuration;
+        }
 
-    $history = \App\Models\WatchHistory::updateOrCreate(
-        [
+        Log::info('[WatchHistory] Saving watch history', [
             'user_id' => $user->id,
-            'content_id' => $watchable->uuid
-        ],
-        $data
-    );
+            'content_id' => $watchable->uuid,
+            'watch_duration' => $watchDuration,
+        ]);
 
-    Log::info('[WatchHistory] Saved successfully', [
-        'id' => $history->id,
-        'user_id' => $history->user_id,
-        'content_id' => $history->content_id
-    ]);
-
-    return $history;
-}
+        return WatchHistory::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'content_id' => $watchable->uuid,
+            ],
+            $data
+        );
+    }
 
     /**
-     * Get paginated watch history for a user filtered by content type
+     * Get paginated watch history for a user filtered by model type
      *
-     * @param string|null $contentGroup
+     * @param string $watchableType
      * @param int $perPage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|null
      */
-    public function getUserHistory(?string $contentGroup = null, int $perPage = 10)
+    public function getUserHistory(string $watchableType, int $perPage = 10)
     {
         $user = Auth::user();
         if (!$user) {
             return null;
         }
 
-        $query = WatchHistory::where('user_id', $user->id)->with('content');
-
-        if ($contentGroup) {
-            $query->whereHas('content', function($q) use ($contentGroup) {
-                $q->where('content_group', $contentGroup);
-            });
-        }
-
-        return $query->latest('watched_at')->paginate($perPage);
+        return WatchHistory::where('user_id', $user->id)
+            ->with('watchable')
+            ->latest('watched_at')
+            ->paginate($perPage);
     }
 }

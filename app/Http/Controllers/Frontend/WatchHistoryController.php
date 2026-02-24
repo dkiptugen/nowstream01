@@ -18,32 +18,14 @@ class WatchHistoryController extends Controller
         $this->watchService = $watchService;
     }
 
-    public function store(Request $request, $uuid)
-    {
-        $request->validate([
-            'watch_duration' => 'nullable|integer|min:0'
-        ]);
+public function store($uuid, WatchHistoryService $service)
+{
+    $content = \App\Models\Content::where('uuid', $uuid)->firstOrFail();
+    $history = $service->record($content, request('watch_duration'));
 
-        $content = Content::where('uuid', $uuid)->first();
-
-        if (!$content) {
-            Log::warning("[WatchHistory] Content not found", ['uuid' => $uuid]);
-            return response()->json(['message' => 'Content not found'], 404);
-        }
-
-        $history = $this->watchService->record($content, $request->watch_duration);
-
-        if (!$history) {
-            Log::error("[WatchHistory] Failed to save watch history", [
-                'uuid' => $uuid,
-                'user_id' => auth()->id()
-            ]);
-            return response()->json(['message' => 'Failed to save watch history'], 500);
-        }
-
-        return response()->json([
-            'message' => 'Watch history saved',
-            'history' => $history
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'watch_history' => $history
+    ]);
+}
 }
