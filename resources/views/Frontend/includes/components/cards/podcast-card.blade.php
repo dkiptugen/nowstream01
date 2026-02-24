@@ -2,7 +2,7 @@
                <div class="movie-card">
 
     <!-- Poster -->
-    <div class="movie-poster">
+    <div class="movie-poster radio-poster">
         <a href="{{ route('podcast.show',  $podcast->slug) }}">
             <img src="{{ $podcast->thumbnail_url ?? asset('assets/img/default.png') }}"
                 class="movie-img" alt="{{ $podcast->title  }}" loading="lazy">

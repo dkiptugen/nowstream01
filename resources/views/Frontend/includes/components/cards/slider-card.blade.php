@@ -29,7 +29,7 @@
 @elseif ($item->content_group === 'tv')
 <div class="movie-item">
 
-    <div class="movie-poster">
+    <div class="movie-poster radio-poster">
         <a href="{{ route($item->content_group . '.show', $item->slug) }}">
             <img src="{{$item->thumbnail_url ?? asset('assets/img/default.png')}}"
                 class="w-100 d-block w-100" alt="{{ $item->title  }}" style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">
@@ -52,7 +52,7 @@
 <div class="movie-card">
 
     <!-- Poster -->
-    <div class="movie-poster">
+    <div class="movie-poster radio-poster">
         <a href="{{ route($item->content_group . '.show',  $item->slug) }}">
             <img src="{{ $item->thumbnail_url ?? asset('assets/img/default.png') }}"
                 class="movie-img" alt="{{ $item->title  }}" loading="lazy">
