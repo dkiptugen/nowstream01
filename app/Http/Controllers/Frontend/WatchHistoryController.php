@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Content;
-use App\Services\WatchHistoryService;
+use App\Services\WatchHistoryService; 
 
 class WatchHistoryController extends Controller
 {
@@ -16,26 +16,22 @@ class WatchHistoryController extends Controller
         $this->watchService = $watchService;
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $uuid)
     {
-        $request->validate([
-            'uuid' => 'required|uuid',
-            'watch_duration' => 'nullable|integer',
-        ]);
+        // Find the episode by UUID
+        $episode = Content::where('uuid', $uuid)->firstOrFail();
 
-        $content = Content::where('uuid', $request->uuid)->first();
-dd($request);
-        if (!$content) {
-            return response()->json(['error' => 'Content not found'], 404);
-        }
+        // Watch duration from request (optional)
+        $watchDuration = $request->input('watch_duration', null);
 
-        $history = $this->watchService->record($content, $request->watch_duration);
+        // Record in DB
+        $history = $this->watchService->record($episode, $watchDuration);
 
         return response()->json([
-            'success' => true,
-            'content_id' => $content->id,
-            'watched_at' => $history->watched_at,
-            'watch_duration' => $history->watch_duration,
+            'success' => (bool) $history,
+            'watch_duration' => $watchDuration,
+            'episode_id' => $episode->id,
+            'user_id' => auth()->id(),
         ]);
     }
 }
