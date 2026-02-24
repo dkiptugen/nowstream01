@@ -4,7 +4,8 @@
         '{{ $item->stream_url }}',
         '{{ addslashes($item->title) }}',
         'Live item',
-        '{{ $item->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}'
+        '{{ $item->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}',
+        '{{ $item->uuid }}' 
      )"
     style="cursor:pointer;">
     <div class="movie-item mb-3">

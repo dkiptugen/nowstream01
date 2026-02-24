@@ -117,46 +117,46 @@
              } catch (e) {}
          }
 
-        function restoreState() {
-    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state?.playlist?.length) return;
+         function restoreState() {
+             const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+             if (!state?.playlist?.length) return;
 
-    playlist = state.playlist;
-    currentIndex = state.currentIndex || 0;
+             playlist = state.playlist;
+             currentIndex = state.currentIndex || 0;
 
-    const track = playlist[currentIndex];
+             const track = playlist[currentIndex];
 
-    // Set src only if different (prevents restart flicker)
-    if (!audio.src || !audio.src.includes(track.src)) {
-        audio.src = track.src;
-    }
+             // Set src only if different (prevents restart flicker)
+             if (!audio.src || !audio.src.includes(track.src)) {
+                 audio.src = track.src;
+             }
 
-    updateUI(track);
+             updateUI(track);
 
-    // Restore volume & mute
-    audio.volume = state.volume ?? 1;
-    audio.muted = state.muted ?? false;
-    volume.value = audio.volume;
-    updateMuteIcon();
+             // Restore volume & mute
+             audio.volume = state.volume ?? 1;
+             audio.muted = state.muted ?? false;
+             volume.value = audio.volume;
+             updateMuteIcon();
 
-    // Wait for metadata before seeking
-    const seekToTime = () => {
-        audio.currentTime = state.time || 0;
+             // Wait for metadata before seeking
+             const seekToTime = () => {
+                 audio.currentTime = state.time || 0;
 
-        if (state.playing) {
-            audio.play().catch(() => {});
-        }
+                 if (state.playing) {
+                     audio.play().catch(() => {});
+                 }
 
-        updatePlayIcon();
-        audio.removeEventListener('loadedmetadata', seekToTime);
-    };
+                 updatePlayIcon();
+                 audio.removeEventListener('loadedmetadata', seekToTime);
+             };
 
-    if (audio.readyState >= 1) {
-        seekToTime();
-    } else {
-        audio.addEventListener('loadedmetadata', seekToTime);
-    }
-}
+             if (audio.readyState >= 1) {
+                 seekToTime();
+             } else {
+                 audio.addEventListener('loadedmetadata', seekToTime);
+             }
+         }
 
 
 
@@ -234,7 +234,19 @@
              loadTrack(index);
          };
 
-         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '') {
+         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
+
+             fetch(`/content/${uuid}/increment-views`, {
+                     method: 'POST',
+                     headers: {
+                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                         'Accept': 'application/json',
+                         'Content-Type': 'application/json'
+                     },
+                 }).then(res => res.json())
+                 .then(data => {
+                     console.log('Views incremented', data.views);
+                 });
              playlist = [{
                  src,
                  title,

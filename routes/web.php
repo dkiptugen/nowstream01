@@ -168,7 +168,6 @@ Route::middleware(['detectCountry'])->group(function () {
     // Categories list
     Route::get('/categories', [CategoryController::class, 'index'])
         ->name('categories.index');
-
     // show podcast
     Route::get('/podcast/{slug}', [FrontendPodcastController::class, 'show'])->name('podcast.show');
     Route::get('/podcasts', [FrontendPodcastController::class, 'index'])->name('podcasts');
@@ -186,6 +185,8 @@ Route::middleware(['detectCountry'])->group(function () {
     // show radio
     Route::get('/radio/{slug}', [RadioController::class, 'show'])->name('radio.show');
     Route::get('/radios', [RadioController::class, 'index'])->name('radios');
+Route::post('/content/{uuid}/increment-views', [RadioController::class, 'incrementViews'])
+    ->name('content.incrementViews');
 
     // Social Auth Routes (Global)
 
