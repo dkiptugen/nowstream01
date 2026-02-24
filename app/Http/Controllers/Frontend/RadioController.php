@@ -230,12 +230,15 @@ $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
 
     // increment views safely
     $content->increment('views');
+  if ($content->content_group === 'podcast') {
+    
     if ($content->parent_id ?? false) {
         $podcast = Content::find($content->parent_id);
         if ($podcast) {
             $podcast->increment('views');
         }
     }
+}
 
     return response()->json([
         'success' => true,
