@@ -234,26 +234,37 @@
              loadTrack(index);
          };
 
-        window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
-    console.log('Increment view for UUID:', uuid);
+         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
+             console.log('Increment view for UUID:', uuid);
 
-    if (uuid) {
-        fetch(`/content/${uuid}/increment-views`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(res => res.json())
-        .then(data => console.log('Views incremented', data.views))
-        .catch(err => console.error('Error incrementing views', err));
-    }
+             if (uuid) {
+                 fetch(`/content/${uuid}/increment-views`, {
+                         method: 'POST',
+                         headers: {
+                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                             'Accept': 'application/json',
+                             'Content-Type': 'application/json'
+                         },
+                     })
+                     .then(res => res.json())
+                     .then(data => console.log('Views incremented', data.views))
+                     .then(data => {
+                         console.log('Views incremented', data.views);
+                         const viewsEl = document.querySelector(`#views-${uuid}`);
+                         if (viewsEl) viewsEl.innerText = data.views;
+                     })
+                 .catch(err => console.error('Error incrementing views', err));
+             }
 
-    playlist = [{ src, title, podcast, thumbnail, uuid }];
-    loadTrack(0);
-};
+             playlist = [{
+                 src,
+                 title,
+                 podcast,
+                 thumbnail,
+                 uuid
+             }];
+             loadTrack(0);
+         };
 
          /* ===============================
             Init
@@ -263,13 +274,6 @@
      })();
  </script>
 
-<script>
-    .then(data => {
-    console.log('Views incremented', data.views);
-    const viewsEl = document.querySelector(`#views-${uuid}`);
-    if (viewsEl) viewsEl.innerText = data.views;
-});
-</script>
  <style>
      .spotify-player {
          position: fixed;

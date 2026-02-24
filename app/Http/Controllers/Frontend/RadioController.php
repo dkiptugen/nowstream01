@@ -224,12 +224,20 @@ $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
             abort(404, 'Radio not found');
         }
     } 
-   public function incrementViews($uuid)
+public function incrementViews($uuid)
 {
     $content = Content::findOrFail($uuid);
-
-    // increment views safely
+ 
     $content->increment('views');
+ 
+    $slug = $content->slug;
+ 
+    Cache::forget("radio_detail_{$slug}");
+ 
+    Cache::forget("radio_genres_{$uuid}");
+ 
+    Cache::forget('top_radios_pool');
+ 
 
     return response()->json([
         'success' => true,
