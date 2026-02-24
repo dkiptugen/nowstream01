@@ -24,7 +24,7 @@ class WatchHistoryController extends Controller
         ]);
 
         $content = Content::where('uuid', $request->uuid)->first();
-
+dd($request);
         if (!$content) {
             return response()->json(['error' => 'Content not found'], 404);
         }

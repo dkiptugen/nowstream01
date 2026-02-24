@@ -16,8 +16,7 @@ class WatchHistoryService
      * @return WatchHistory|null
      */
     public function record(Content $content, ?int $watchDuration = null): ?WatchHistory
-    {
-        dd($content);
+    { 
         $user = Auth::user();
         if (!$user || !$content) {
             return null;
