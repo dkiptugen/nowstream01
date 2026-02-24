@@ -155,7 +155,7 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
         Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
         Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
-        Route::get('/continue', [WatchHistoryController::class, 'watchedContent']);
+        Route::get('/continue', [WatchHistoryController::class, 'watchedContent'])->name('watch.content');
     });
     Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
