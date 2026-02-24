@@ -8,8 +8,8 @@ return [
 'title' => $ep->title,
 'podcast' => $podcast->title,
 'thumbnail' => $podcast->thumbnail_url,
-'type' => 'audio', 
- 'uuid'      => $ep->uuid,
+'type' => 'audio',
+'uuid' => $ep->uuid
 ];
 });
 @endphp
@@ -143,11 +143,7 @@ return [
                                                         onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
-                                                    </a>
-                                                    <span class="duration">
-                                                        <i class="far fa-clock"></i>
-                                                        {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }}
-                                                    </span>
+                                                    </a><span class="duration"> <i class="far fa-clock"></i> {{ $episode->duration ? gmdate("i:s", $episode->duration) : 'Duration not available' }} </span>
                                                 </li>
                                                 @endforeach
 

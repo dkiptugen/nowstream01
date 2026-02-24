@@ -230,10 +230,8 @@
          =============================== */
          window.playGlobalAudio = function(list, index = 0) {
              if (!Array.isArray(list) || !list.length) return;
-
              playlist = list;
-             const track = playlist[index];
-
+             
              // Increment views
              if (track?.uuid) {
                  fetch(`/content/${uuid}/increment-views`, {
@@ -248,8 +246,6 @@
                      .then(data => console.log('Episode views incremented', data.views))
                      .catch(err => console.error('Error incrementing views', err));
              }
-
-             // Play the track
              loadTrack(index);
          };
 
@@ -272,7 +268,7 @@
                          const viewsEl = document.querySelector(`#views-${uuid}`);
                          if (viewsEl) viewsEl.innerText = data.views;
                      })
-                     .catch(err => console.error('Error incrementing views', err));
+                 .catch(err => console.error('Error incrementing views', err));
              }
 
              playlist = [{
