@@ -256,6 +256,36 @@
     =============================== */
     document.addEventListener('DOMContentLoaded', restoreState);
 })();
+function saveWatchProgress(track, duration) {
+    if (!track?.uuid) return;
+
+    fetch('/watch-history', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            uuid: track.uuid,
+            watch_duration: Math.floor(duration)
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) console.warn('Watch progress not saved', data);
+        else console.log('Watch progress saved', data);
+    })
+    .catch(err => console.error('Watch progress error', err));
+}
+
+// Call periodically during playback
+audio.addEventListener('timeupdate', () => {
+    if (playlist[currentIndex]) {
+        playlist[currentIndex].currentTime = audio.currentTime;
+        saveWatchProgress(playlist[currentIndex], audio.currentTime);
+    }
+});
 </script>
  <style>
      .spotify-player {

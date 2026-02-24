@@ -16,54 +16,32 @@ class WatchHistoryService
      * @param int|null $watchDuration
      * @return WatchHistory|null
      */
-    public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
-    {
-        $user = Auth::user();
+  public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
+{
+    $user = auth()->user();
+    if (!$user || !$watchable) return null;
 
-        if (!$user) {
-            Log::warning('WatchHistoryService: no authenticated user.');
-            return null;
-        }
-
-        if (!$watchable) {
-            Log::warning('WatchHistoryService: watchable model is null.');
-            return null;
-        }
-
-        try {
-            $data = [
-                'watched_at' => now(),
-                'watch_duration' => $watchDuration ?? 0,
-            ];
-
-            $history = WatchHistory::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'watchable_id' => $watchable->id,
-                    'watchable_type' => $watchable->content_group,
-                ],
-                $data
-            );
-
-            Log::info('WatchHistoryService: watch history saved.', [
+    try {
+        return WatchHistory::updateOrCreate(
+            [
                 'user_id' => $user->id,
                 'watchable_id' => $watchable->id,
-                'watchable_type' => $watchable->content_group,
-                'watch_duration' => $watchDuration,
-            ]);
-
-            return $history;
-
-        } catch (\Throwable $e) {
-            Log::error('WatchHistoryService: failed to save watch history.', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => $user->id ?? null,
-                'watchable_id' => $watchable->id ?? null,
-            ]);
-            return null;
-        }
+                'watchable_type' => $watchable->content_group
+            ],
+            [
+                'watched_at' => now(),
+                'watch_duration' => $watchDuration ?? 0
+            ]
+        );
+    } catch (\Throwable $e) {
+        \Log::error('WatchHistoryService failed', [
+            'user_id' => $user->id,
+            'watchable_id' => $watchable->id,
+            'error' => $e->getMessage()
+        ]);
+        return null;
     }
+}
 
     /**
      * Get paginated watch history for a user filtered by model type
