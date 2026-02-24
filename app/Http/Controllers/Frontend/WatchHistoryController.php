@@ -43,7 +43,26 @@ public function store($uuid, WatchHistoryService $service)
         })
         ->latest()
         ->paginate(10);
+        $watchPodcasts = Content::whereHas('watch', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('content_group', 'podcast')
+        ->latest()
+        ->paginate(10);
+        $watchRadios = Content::whereHas('watch', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('content_group', 'podcast')
+        ->latest()
+        ->paginate(10);
 
-    return view('Frontend.modules.videos.continue', compact('watchHistory'));
+        $watchTvs = Content::whereHas('watch', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('content_group', 'podcast')
+        ->latest()
+        ->paginate(10);
+
+    return view('Frontend.modules.videos.continue', compact('watchHistory','watchTvs','watchPodcasts','watchRadios'));
 }
 }
