@@ -3,7 +3,7 @@
      <div class="sp-left">
          <img id="player-thumbnail" class="sp-artwork" src="" alt="">
          <div class="sp-meta">
-             <div id="player-title" class="sp-title">No audio</div>
+             <div id="player-title" class="sp-title">No audio</div> 
              <div id="player-podcast" class="sp-artist"></div>
          </div>
      </div>
@@ -91,7 +91,7 @@
     }
 
     function updateUI(track) {
-        titleEl.innerText = track.title || 'Unknown';
+        titleEl.innerText = track.uuid || 'Unknown';
         podcastEl.innerText = track.podcast || '';
         thumbEl.src = track.thumbnail || '';
         currentTimeEl.innerText = '0:00';
@@ -196,7 +196,8 @@
     if (!uuid) return;
     fetch(`/watch-history/${uuid}`, {
         method: 'POST',
-        headers: { 
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
