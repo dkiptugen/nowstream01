@@ -8,6 +8,7 @@
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Cache;
     use App\Traits\CacheHelper;
+use App\Models\WatchHistory;
 
     class PodcastController extends Controller
         {
@@ -22,7 +23,8 @@
                 {
                     $perPage = 30;
                     $page    = $request->get('page', 1);
-
+$watch = WatchHistory::all();
+dd($watch);
                     /**
                      * Stable random seed (changes every 10 minutes)
                      * Prevents reshuffling during scroll
