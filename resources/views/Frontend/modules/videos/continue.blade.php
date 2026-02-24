@@ -40,7 +40,7 @@
  
             <div class="row tr-movie-active">
 
-                @foreach($watchradios as $item)
+                @foreach($watchRadios as $item)
                 @include('Frontend.includes.components.cards.slider-card')
                 @endforeach
             </div>
