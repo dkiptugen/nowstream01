@@ -9,12 +9,11 @@
     <p>You haven't watched any videos yet.</p>
 @else
     <div class="row">
-        @foreach ($watchHistory as $history)
-            @if ($history->content)
+        @foreach ($watchHistory as $history) 
                 <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
                     <div class="card radius-5 h-100">
                         <div class="image">
-                            <img src="{{ $history->content->thumbnail  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
+                            <img src="{{ $history->content->thumbnail_url  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
                                 alt="{{ $history->content->title }}">
                             <a href="{{ url("/video/{$history->content->uuid}/{$history->content->slug}") }}">
                                 <div class="play fs-40">
@@ -40,8 +39,7 @@
                             </small>
                         </div>
                     </div>
-                </div>
-            @endif
+                </div> 
         @endforeach
     </div>
     <div class="d-flex justify-content-center">
