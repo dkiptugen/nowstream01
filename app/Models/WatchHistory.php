@@ -31,4 +31,8 @@ class WatchHistory extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function content()
+    {
+        return $this->belongsTo(Content::class);
+    }
 }

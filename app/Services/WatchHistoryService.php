@@ -4,56 +4,62 @@ namespace App\Services;
 
 use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Content;
 
 class WatchHistoryService
 {
     /**
      * Record or update watch history for a user
      *
-     * @param Model $watchable
+     * @param Content $content
      * @param int|null $watchDuration
      * @return WatchHistory|null
      */
-    public function record(Model $watchable, ?int $watchDuration = null): ?WatchHistory
-    { 
+    public function record(Content $content, ?int $watchDuration = null): ?WatchHistory
+    {
         $user = Auth::user();
-        if (!$user || !$watchable) {
+        if (!$user || !$content) {
             return null;
         }
 
-        $data = ['watched_at' => now()];
+        $data = [
+            'watched_at' => now(),
+        ];
 
         if ($watchDuration !== null) {
             $data['watch_duration'] = $watchDuration;
         }
 
-        return $watchable->watch()->updateOrCreate(
-             [
+        // Use content_id instead of watchable_id/watchable_type
+        return WatchHistory::updateOrCreate(
+            [
                 'user_id' => $user->id,
-                'content_id' => $watchable->uuid, 
+                'content_id' => $content->uuid,
             ],
             $data
         );
     }
 
     /**
-     * Get paginated watch history for a user filtered by model type
+     * Get paginated watch history for a user filtered by content group
      *
-     * @param string $watchableType
+     * @param string|null $contentGroup
      * @param int $perPage
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|null
      */
-    public function getUserHistory(string $watchableType, int $perPage = 10)
+    public function getUserHistory(?string $contentGroup = null, int $perPage = 10)
     {
         $user = Auth::user();
         if (!$user) {
             return null;
         }
 
-        return WatchHistory::where('user_id', $user->id) 
-            ->with('watchable')
-            ->latest('watched_at')
-            ->paginate($perPage);
+        $query = WatchHistory::where('user_id', $user->id)->with('content');
+
+        if ($contentGroup) {
+            $query->whereHas('content', fn($q) => $q->where('content_group', $contentGroup));
+        }
+
+        return $query->latest('watched_at')->paginate($perPage);
     }
 }
