@@ -20,27 +20,4 @@
 
     </div>
 </div>
-@endsection
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        @foreach($items as $history)
-        @if($history->watchable)
-        const video = document.createElement('video');
-        video.src = '{{ $history->watchable->video_path }}';
-        video.addEventListener('loadedmetadata', function() {
-            const duration = video.duration;
-            const durationElement = document.getElementById('duration-{{ $history->watchable->id }}');
-            if (durationElement) {
-                durationElement.textContent = formatDuration(duration);
-            }
-        });
-        @endif
-        @endforeach
-
-        function formatDuration(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = Math.floor(seconds % 60);
-            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-        }
-    });
-</script>
+@endsection 
