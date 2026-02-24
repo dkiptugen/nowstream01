@@ -10,9 +10,7 @@
         @else
         <div class="row">
             @foreach ($watchHistory as $history)
-            @if ($history->watchable)
-            {{ $history->title }}
-            @endif
+           <h1>{{ $history->title }}</h1> 
             @endforeach
         </div>
         <div class="d-flex justify-content-center">
