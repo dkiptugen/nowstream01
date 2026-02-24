@@ -23,7 +23,8 @@ use App\Models\WatchHistory;
                 {
                     $perPage = 30;
                     $page    = $request->get('page', 1);
-
+$watch = WatchHistory::all();
+dd($watch);
                     /**
                      * Stable random seed (changes every 10 minutes)
                      * Prevents reshuffling during scroll
