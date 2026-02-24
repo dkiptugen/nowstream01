@@ -9,31 +9,29 @@
     <p>You haven't watched any videos yet.</p>
 @else
     <div class="row">
-        @foreach ($watchHistory as $history)
-           <h6 class="mb-0">{{ dd($history) }}</h6>
-            @if($history->content)
+        @foreach ($watchHistory as $history) 
                 <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
                     <div class="card radius-5 h-100">
                         <div class="image">
-                            <img src="{{ $history->content->thumbnail_url  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
-                                alt="{{ $history->content->title }}">
-                            <a href="{{ url("/video/{$history->content->uuid}/{$history->content->slug}") }}">
+                            <img src="{{ $history->thumbnail_url  ?? asset('frontend-assets/images/default.png')}}" class="w-100 d-block aspect16"
+                                alt="{{ $history->title }}">
+                            <a href="{{ url("/video/{$history->uuid}/{$history->slug}") }}">
                                 <div class="play fs-40">
                                     <i class="fadeIn animated bx bx-play-circle"></i>
                                 </div>
                             </a>
-                            <div class="time" id="duration-{{ $history->content->uuid }}"></div>
+                            <div class="time" id="duration-{{ $history->uuid }}"></div>
                         </div>
                         @php
-                            $watchPercentage = $history->content->duration > 0 ? ($history->watch_duration / $history->content->duration) * 100 : 0;
+                            $watchPercentage = $history->duration > 0 ? ($history->watch_duration / $history->duration) * 100 : 0;
                         @endphp
                         <div class="progress mb-0 rounded-0" style="height:4px;">
                             <div class="progress-bar" role="progressbar" style="width: {{ $watchPercentage }}%"
                                 aria-valuenow="{{ $watchPercentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                         <div class="card-body pb-0">
-                            <a href="{{ url("/video/{$history->content->uuid}/{$history->content->slug}") }}">
-                                <h6 class="mb-0">{{ $history->content->title }}</h6>
+                            <a href="{{ url("/video/{$history->uuid}/{$history->slug}") }}">
+                                <h6 class="mb-0">{{ $history->title }}</h6>
                             </a>
                             <small class="text-muted">
                                 <i class="lni lni-calendar"></i>
@@ -56,12 +54,12 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         @foreach ($watchHistory as $history)
-            @if ($history->content)
+            @if ($history)
                 const video = document.createElement('video');
-                video.src = '{{ $history->content->video_path }}';
+                video.src = '{{ $history->video_path }}';
                 video.addEventListener('loadedmetadata', function() {
                     const duration = video.duration;
-                    const durationElement = document.getElementById('duration-{{ $history->content->uuid }}');
+                    const durationElement = document.getElementById('duration-{{ $history->uuid }}');
                     if (durationElement) {
                         durationElement.textContent = formatDuration(duration);
                     }
