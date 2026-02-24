@@ -232,7 +232,7 @@ public function incrementViews($uuid)
  
     $slug = $content->slug;
  
-    Cache::forget("radio_detail_{$slug}");
+    Cache::forget("radios_page_1");
  
     Cache::forget("radio_genres_{$uuid}");
  
