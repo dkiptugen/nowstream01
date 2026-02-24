@@ -224,14 +224,12 @@ $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
             abort(404, 'Radio not found');
         }
     } 
- public function incrementViews($uuid)
+public function incrementViews($uuid)
 {
     $content = Content::findOrFail($uuid);
-
-    // Increment views for this content
+ 
     $content->increment('views');
-
-    // If this is a podcast episode, also increment parent podcast views
+ 
     if ($content->content_group === 'podcast' && ($content->parent_id ?? false)) {
         $podcast = Content::find($content->parent_id);
         if ($podcast) {
@@ -241,7 +239,8 @@ $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
 
     return response()->json([
         'success' => true,
-        'views' => $content->views
+        'views' => $content->views,                  
+        'content_group' => $content->content_group  
     ]);
 }
 } 
