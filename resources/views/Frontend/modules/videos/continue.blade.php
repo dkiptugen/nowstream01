@@ -10,7 +10,7 @@
 @else
     <div class="row">
         @foreach ($watchHistory as $history)
-           <h6 class="mb-0">{{ $history->content->title }}</h6>
+           <h6 class="mb-0">{{ dd($history) }}</h6>
             @if($history->content)
                 <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-2 mb-4">
                     <div class="card radius-5 h-100">
