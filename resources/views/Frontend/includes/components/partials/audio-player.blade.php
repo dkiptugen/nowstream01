@@ -91,7 +91,7 @@
     }
 
     function updateUI(track) {
-        titleEl.innerText = track.uuid || 'Unknown';
+        titleEl.innerText = track.title || 'Unknown';
         podcastEl.innerText = track.podcast || '';
         thumbEl.src = track.thumbnail || '';
         currentTimeEl.innerText = '0:00';
