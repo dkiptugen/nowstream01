@@ -234,28 +234,26 @@
              loadTrack(index);
          };
 
-         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
+        window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '') {
+    console.log('Increment view for UUID:', uuid);
 
-             fetch(`/content/${uuid}/increment-views`, {
-                     method: 'POST',
-                     headers: {
-                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                         'Accept': 'application/json',
-                         'Content-Type': 'application/json'
-                     },
-                 }).then(res => res.json())
-                 .then(data => {
-                     console.log('Views incremented', data.views);
-                 });
-             playlist = [{
-                 src,
-                 title,
-                 podcast,
-                 thumbnail,
-                 uuid
-             }];
-             loadTrack(0);
-         };
+    if (uuid) {
+        fetch(`/content/${uuid}/increment-views`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(res => res.json())
+        .then(data => console.log('Views incremented', data.views))
+        .catch(err => console.error('Error incrementing views', err));
+    }
+
+    playlist = [{ src, title, podcast, thumbnail, uuid }];
+    loadTrack(0);
+};
 
          /* ===============================
             Init
