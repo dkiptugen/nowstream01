@@ -72,6 +72,8 @@
     position: fixed;
     z-index: -9;
     top: 0;
+    right: 0; 
+    height: 100%;
 ">
                 </div>
             </div>
