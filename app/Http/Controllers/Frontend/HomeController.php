@@ -97,7 +97,7 @@ class HomeController extends Controller
             arsort($genreViews);
 
             // Return only genre names
-            return collect($genreViews)->keys()->take(20)->values();
+            return collect($genreViews)->keys()->take(30)->values();
         });
             return [
                 'country'       => $iso,
