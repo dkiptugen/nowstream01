@@ -79,7 +79,7 @@
                                             Didn't Receive SMS? 
                                             <!-- <button type="button" class="btn btn-link p-0"
                                                 onClick="window.location.href=window.location.href">Resend OTP</button> -->
-                                                <a href="{{ route('phoneresend') }}" class="btn btn-link p-0" >Resend OTP</a>
+                                                <a href="{{ route('user.phoneresend') }}" class="btn btn-link p-0" >Resend OTP</a>
                                         </div>
                                     </div>
                                 </form>
