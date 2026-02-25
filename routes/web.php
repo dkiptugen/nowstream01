@@ -16,8 +16,7 @@ use App\Http\Controllers\Frontend\TicketController;
 use App\Http\Controllers\Frontend\WatchHistoryController;
 use App\Http\Controllers\Frontend\TenantController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Frontend\StreamController;
-use App\Http\Controllers\Frontend\ChannelController;
+use App\Http\Controllers\Frontend\StreamController; 
 use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\StreamVideoController;
 use App\Http\Controllers\Frontend\SubscriptionController;
@@ -68,12 +67,7 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::get('/somalinite', [HomeController::class, 'landing']);
 
 
-    Route::get('/search', [SearchController::class, 'search'])->name('search');
-
-    Route::get('/channels', [ChannelController::class, 'index']);
-    Route::get('/channel', [ChannelController::class, 'show']);
-
-    Route::get('/channel/{id}/{name}', [ChannelController::class, 'show'])->name('channel.show');
+    Route::get('/search', [SearchController::class, 'search'])->name('search'); 
     // Route::post('/{commentableType}/{commentableId}/comment', [StreamVideoController::class, 'postComment'])->name('comment.post');
     Route::post(
         '/comment/post/{commentableType}/{commentableId}',
@@ -98,7 +92,7 @@ Route::middleware(['detectCountry'])->group(function () {
 
         Route::get('register', 'showRegisterForm')->name('register.form');
         Route::post('register', 'register')->name('register');
-        Route::get('phone-login', 'showPhoneLoginForm')->name('phonelogin.form');
+        Route::get('phone-login', 'showPhoneLoginForm')->name('phoneform');
         Route::post('phone-login', 'phoneLogin')->name('phonelogin');
         Route::get('phone-resend', 'phoneResend')->name('phoneresend');
         Route::post('otp_verification', 'otp_verify')->name('otp_verification');
@@ -141,8 +135,6 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::post('/video/{video}/favorite', [VideoFavoriteController::class, 'favorite'])->name('video.favorite');
         Route::post('/video/{video}/unfavorite', [VideoFavoriteController::class, 'unfavorite'])->name('video.unfavorite');
         Route::get('/favorites', [VideoFavoriteController::class, 'myfavorite'])->name('video.myfavorite');
-        Route::post('/channels/{channel}/subscribe', [ChannelController::class, 'subscribe'])->name('channels.subscribe');
-        Route::post('/channels/{channel}/unsubscribe', [ChannelController::class, 'unsubscribe'])->name('channels.unsubscribe');
         Route::get('/video/{uuid}/{slug?}', [StreamVideoController::class, 'show'])
             ->name('video.show');
 
