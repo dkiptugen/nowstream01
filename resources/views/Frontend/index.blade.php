@@ -1,6 +1,10 @@
 @extends('Frontend.includes.layout')
 
-
+<style>
+    body{
+        background-color: #11181f;
+    }
+</style>
 @section('content')
 
 <div class="hero-area">
