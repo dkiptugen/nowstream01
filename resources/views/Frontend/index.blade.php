@@ -4,13 +4,9 @@
 @section('content')
 
 <div class="hero-area">
-    @foreach($events->take(1) as $event) 
+    @foreach($events->take(1) as $event)
     <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}" style="
-    position: fixed;
-    z-index: -9;
-    top: 0;
-">
+    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}">
         <div class="container custom-container">
             <div class="row">
                 <div class="col-xl-6 col-lg-8">
@@ -71,9 +67,13 @@
                         </div>
                     </div>
                 </div>
-                 <div class="col-xl-6 col-lg-8">
-                    <img src="{{ $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png') }}">
-                 </div>
+                <div class="col-xl-6 col-lg-8">
+                    <img src="{{ $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png') }}" style="
+    position: fixed;
+    z-index: -9;
+    top: 0;
+">
+                </div>
             </div>
         </div>
     </section>
@@ -81,7 +81,7 @@
 
     @endforeach
 </div>
- 
+
 
 <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
