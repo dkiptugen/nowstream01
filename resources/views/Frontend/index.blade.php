@@ -5,6 +5,9 @@
 
 <div class="hero-area">
     @foreach($events->take(1) as $event)
+    $php
+$thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
+@endphp
     <!-- banner-area -->
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}">
         <div class="container custom-container">
@@ -68,7 +71,7 @@
                     </div>
                 </div>
                  <div class="col-xl-6 col-lg-8">
-                    <img src="{{ $event->thumbnail_url }}">
+                    <img src="{{ $thumbnail }}">
                  </div>
             </div>
         </div>
