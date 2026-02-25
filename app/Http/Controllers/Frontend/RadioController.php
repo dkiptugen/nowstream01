@@ -50,48 +50,48 @@ class RadioController extends Controller
                     ->limit(6)
                     ->get();
             }
-        ); 
+        );
 
-$genres = Cache::remember('radio_genres', now()->addHours(6), function () {
+        $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
 
-    $genreViews = [];
+            $genreViews = [];
 
-    Content::where('content_group', 'radio')
-        ->whereNotNull('genre')
-        ->select('genre', 'views')
-        ->chunk(500, function ($contents) use (&$genreViews) {
+            Content::where('content_group', 'radio')
+                ->whereNotNull('genre')
+                ->select('genre', 'views')
+                ->chunk(500, function ($contents) use (&$genreViews) {
 
-            foreach ($contents as $content) {
-                $genres = $content->genre;
+                    foreach ($contents as $content) {
+                        $genres = $content->genre;
 
-                if (is_array($genres)) {
-                    $list = $genres;
-                } else {
-                    $genres = trim($genres, '"');
-                    if (str_starts_with($genres, '[')) {
-                        $decoded = json_decode($genres, true);
-                        $list = is_array($decoded) ? $decoded : [];
-                    } elseif (str_contains($genres, ',')) {
-                        $list = array_map('trim', explode(',', $genres));
-                    } else {
-                        $list = [$genres];
+                        if (is_array($genres)) {
+                            $list = $genres;
+                        } else {
+                            $genres = trim($genres, '"');
+                            if (str_starts_with($genres, '[')) {
+                                $decoded = json_decode($genres, true);
+                                $list = is_array($decoded) ? $decoded : [];
+                            } elseif (str_contains($genres, ',')) {
+                                $list = array_map('trim', explode(',', $genres));
+                            } else {
+                                $list = [$genres];
+                            }
+                        }
+
+                        foreach ($list as $g) {
+                            $g = trim($g);
+                            if (!$g) continue;
+                            $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
+                        }
                     }
-                }
+                });
 
-                foreach ($list as $g) {
-                    $g = trim($g);
-                    if (!$g) continue;
-                    $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
-                }
-            }
+            // Sort by total views descending
+            arsort($genreViews);
+
+            // Return only the top 20 genres
+            return collect($genreViews)->keys()->take(20)->values();
         });
-
-    // Sort by total views descending
-    arsort($genreViews);
-
-    // Return only the top 20 genres
-    return collect($genreViews)->keys()->take(20)->values();
-});
         /**
          * Top Radios Pool
          */
@@ -223,24 +223,24 @@ $genres = Cache::remember('radio_genres', now()->addHours(6), function () {
         } catch (\Exception $e) {
             abort(404, 'Radio not found');
         }
-    } 
-public function incrementViews($uuid)
-{
-    $content = Content::findOrFail($uuid);
- 
-    $content->increment('views');
- 
-    if ($content->content_group === 'podcast' && ($content->parent_id ?? false)) {
-        $podcast = Content::find($content->parent_id);
-        if ($podcast) {
-            $podcast->increment('views');
-        }
     }
+    public function incrementViews($uuid)
+    {
+        $content = Content::findOrFail($uuid);
 
-    return response()->json([
-        'success' => true,
-        'views' => $content->views,                  
-        'content_group' => $content->content_group  
-    ]);
+        $content->increment('views');
+
+        if ($content->content_group === 'podcast' && ($content->parent_id ?? false)) {
+            $podcast = Content::find($content->parent_id);
+            if ($podcast) {
+                $podcast->increment('views');
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'views' => $content->views,
+            'content_group' => $content->content_group
+        ]);
+    }
 }
-} 

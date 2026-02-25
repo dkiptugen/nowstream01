@@ -1,7 +1,7 @@
 @extends('Frontend.includes.layout')
 
 <style>
-    body{
+    body {
         background-color: #11181f !important;
     }
 </style>
@@ -52,7 +52,7 @@
                             @endif
                             <h3 class="text-light mb-3">
                             </h3>
-                            <form action="{{ route('stream.find') }}" method="POST" class="newsletter-form">
+                            <form action="#" method="POST" class="newsletter-form">
                                 @csrf
                                 <div class="input-group mw-500">
                                     <input type="text" class="" name="stream_token"
@@ -80,6 +80,24 @@
     height: 100%
 ">
                 </div>
+            </div>
+            <!-- TV Genres -->
+            <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
+                    @foreach($genres->filter()->unique() as $genre)
+                    @php
+                    $slug = Str::slug($genre);
+                    $label = ucfirst(trim($genre));
+                    @endphp
+                    @if(!empty($slug))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
+                </ul>
             </div>
         </div>
     </section>
