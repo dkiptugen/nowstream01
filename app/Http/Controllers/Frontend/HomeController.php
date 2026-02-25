@@ -54,21 +54,26 @@ class HomeController extends Controller
                     ->limit(4)
                     ->get();
             });
-        $genres = Cache::remember('all_genres', now()->addHours(6), function () {
+      
+        $genres = Cache::remember('tv_genres', now()->addHours(6), function () {
 
             $genreViews = [];
 
-            Content::whereNotNull('genre')
+            Content::where('content_group', 'tv')
+                ->whereNotNull('genre')
                 ->select('genre', 'views')
                 ->chunk(500, function ($contents) use (&$genreViews) {
 
                     foreach ($contents as $content) {
+
                         $genres = $content->genre;
 
+                        // Normalize genre formats
                         if (is_array($genres)) {
                             $list = $genres;
                         } else {
                             $genres = trim($genres, '"');
+
                             if (str_starts_with($genres, '[')) {
                                 $decoded = json_decode($genres, true);
                                 $list = is_array($decoded) ? $decoded : [];
@@ -82,18 +87,18 @@ class HomeController extends Controller
                         foreach ($list as $g) {
                             $g = trim($g);
                             if (!$g) continue;
+
                             $genreViews[$g] = ($genreViews[$g] ?? 0) + (int) $content->views;
                         }
                     }
                 });
 
-            // Sort by total views descending
+            // Sort by total views (desc)
             arsort($genreViews);
 
-            // Return only the top 20 genres
-            return collect($genreViews)->keys()->take(20)->values();
+            // Return only genre names
+            return collect($genreViews)->keys()->take(12)->values();
         });
-
             return [
                 'country'       => $iso,
                 'country_name'  => $countryName,
