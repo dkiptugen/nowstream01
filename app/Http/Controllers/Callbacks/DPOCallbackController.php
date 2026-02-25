@@ -88,7 +88,7 @@
 																						'baze',
 																						$phoneNew,
 																						'Welcome to Somali Nite Live Event. Your Streaming Key is: '.$subscription->stream_token.' Click
-https://live.baze.co.ke/somalinite to watch the Event.'
+https://streamer.co.ke/somalinite to watch the Event.'
 																					);
 																				}
 																			return redirect ()->route ('success', $subscription->event_id);
@@ -110,7 +110,7 @@ https://live.baze.co.ke/somalinite to watch the Event.'
 																		'baze',
 																		$phoneNew,								
 																		'Welcome to Somali Nite Live Event. Your Streaming Key is: '.$subscription->stream_token.' Click
-https://live.baze.co.ke/somalinite to watch the Event.'
+https://streamer.co.ke/somalinite to watch the Event.'
 																	);
 																}
 															return redirect ()->route ('success', $subscription->event_id);
@@ -131,7 +131,7 @@ https://live.baze.co.ke/somalinite to watch the Event.'
 																		'baze',
 																		$phoneNew,
 																										'Welcome to Somali Nite Live Event. Your Streaming Key is: '.$subscription->stream_token.' Click
-https://live.baze.co.ke/somalinite to watch the Event.'
+https://streamer.co.ke/somalinite to watch the Event.'
 																	);
 																}
 														

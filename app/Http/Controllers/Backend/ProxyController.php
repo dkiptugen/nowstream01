@@ -10,7 +10,7 @@
 		{
 			public function check (Request $request)
 				{
-					$url = 'https://live.baze.co.ke/dpo/check';
+					$url = 'https://streamer.co.ke/dpo/check';
 
 					$query = $request->query ();
 

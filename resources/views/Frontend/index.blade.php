@@ -54,7 +54,7 @@
                                     <input type="text" class="" name="stream_token"
                                         placeholder="Enter Token or Phone Number" aria-label="Stream token"
                                         aria-describedby="button-addon2">
-                                    <input type="hidden" name="event_id" value="{{$event->id}}">
+                                    <input type="hidden" name="event_id" value="{{$event->uuid}}">
                                     <button class="btn" type="submit" id="button-addon2"><i class="fas fa-play"></i>
                                         Watch Now</button>
                                 </div>

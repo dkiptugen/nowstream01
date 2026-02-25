@@ -89,7 +89,7 @@
 <ul>
     <li>4.1 All information you provide to us must be truthful, accurate, and complete. This includes information given during registration and any updates provided later.</li>
     <li>4.2 You must inform us if your information changes, if the details we have are incorrect, or if they are incomplete. If you don't update us, we will continue to use and rely on the most recent details you provided.</li>
-    <li>4.3 Customers can edit their details by logging into their Streamer Account through the Streamer Service or by contacting customer support at help@live.baze.co.ke. We will send a confirmation via email or SMS for any updates or changes made to the Customer's details. Additional information may be required to identify you as the Customer.</li>
+    <li>4.3 Customers can edit their details by logging into their Streamer Account through the Streamer Service or by contacting customer support at help@streamer.co.ke. We will send a confirmation via email or SMS for any updates or changes made to the Customer's details. Additional information may be required to identify you as the Customer.</li>
     <li>4.4 Please refer to our Privacy Policy for more information on how we use your information and your rights and responsibilities.</li>
 </ul>
 
@@ -99,7 +99,7 @@
     <li>5.2 You are responsible for the use of your Streamer Account, password, and other user credentials (such as social media login details used to access the Streamer Service, if applicable).</li>
     <li>5.3 Any use of the Streamer Service or other actions performed with your password, Streamer Account, or user credentials will be treated as if done by you and with your approval.</li>
     <li>5.4 It is your responsibility to ensure you take all reasonable measures to keep your password, user credentials, payment details, and payment information (such as bank account or credit card details) secure and confidential.</li>
-    <li>5.5 If you suspect unauthorized access to your Streamer Account, password, user credentials, payment information, or payment details, you must notify us immediately at help@live.baze.co.ke. You should also notify us of any unauthorized use of these credentials. You are responsible for changing your privacy settings, password, user credentials, and payment details as soon as possible.</li>
+    <li>5.5 If you suspect unauthorized access to your Streamer Account, password, user credentials, payment information, or payment details, you must notify us immediately at help@streamer.co.ke. You should also notify us of any unauthorized use of these credentials. You are responsible for changing your privacy settings, password, user credentials, and payment details as soon as possible.</li>
 </ul>
                     </div>
                 </div>
