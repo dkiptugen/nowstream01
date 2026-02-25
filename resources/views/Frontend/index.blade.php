@@ -6,7 +6,11 @@
 <div class="hero-area">
     @foreach($events->take(1) as $event) 
     <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}">
+    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}" style="
+    position: fixed;
+    z-index: -9;
+    top: 0;
+">
         <div class="container custom-container">
             <div class="row">
                 <div class="col-xl-6 col-lg-8">
