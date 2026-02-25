@@ -67,6 +67,9 @@
                         </div>
                     </div>
                 </div>
+                 <div class="col-xl-6 col-lg-8">
+                    <img src="{{ $event->thumbnail_url }}">
+                 </div>
             </div>
         </div>
     </section>
