@@ -153,7 +153,7 @@ class HomeController extends Controller
                     ->orderByDesc('views')
                     ->limit(16)
                     ->get(),
-    'genres'         => $genres,
+        'genres' => $genres ?? [],
                 'categories' => Category::limit(6)->get(),
             ];
         });
