@@ -72,7 +72,7 @@
                     </div>
                 </div>
                 <div class="col-xl-7 col-lg-8">
-                    <img src="{https://img.freepik.com/premium-photo/group-friends-sitting-dimly-lit-movie-theater-laughing-enjoying-film_1351262-11436.jpg?ga=GA1.1.724749049.1771917239&semt=ais_user_personalization&w=740&q=80}" style="
+                    <img src="https://img.freepik.com/premium-photo/group-friends-sitting-dimly-lit-movie-theater-laughing-enjoying-film_1351262-11436.jpg?ga=GA1.1.724749049.1771917239&semt=ais_user_personalization&w=740&q=80" style="
     position: fixed;
     z-index: -9;
     top: 0;
