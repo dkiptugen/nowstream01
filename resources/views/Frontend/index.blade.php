@@ -2,7 +2,7 @@
 
 <style>
     body{
-        background-color: #11181f;
+        background-color: #11181f !important;
     }
 </style>
 @section('content')
