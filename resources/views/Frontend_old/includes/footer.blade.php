@@ -305,42 +305,7 @@
             });
         }
     });
-</script>
-<script>
-    function toggleSubscription(channelId, isSubscribe) {
-        const url = isSubscribe ?
-            '{{ route("channels.subscribe", ":id") }}'.replace(':id', channelId) :
-            '{{ route("channels.unsubscribe", ":id") }}'.replace(':id', channelId);
-
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-            },
-            success: function(response) {
-                const subscribeBtn = $('#subscribe-btn-' + channelId);
-                if (isSubscribe) {
-                    subscribeBtn.html(`
-						<button class="btn btn-danger btn-sm" onclick="toggleSubscription(${channelId}, false)">
-							Unsubscribe
-						</button>
-					`);
-                } else {
-                    subscribeBtn.html(`
-						<button class="btn btn-outline-primary btn-sm" onclick="toggleSubscription(${channelId}, true)">
-							Subscribe
-						</button>
-					`);
-                }
-                $('#subscriber-count-' + channelId).text(response.subscriber_count);
-            },
-            error: function(xhr) {
-                console.error('Error:', xhr.responseText);
-            }
-        });
-    }
-</script>
+</script> 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const videoElement = document.querySelector('video'); // Adjust the selector as necessary
