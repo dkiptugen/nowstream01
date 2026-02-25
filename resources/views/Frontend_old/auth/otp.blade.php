@@ -50,7 +50,7 @@
                                 <img src="{{ asset('nowstream-light.png') }}" width="90" alt="" />
                             </div>
                             <div class="form-body">
-                                <form class="row g-3" method="post" action="{{ route('otp_verification') }}"
+                                <form class="row g-3" method="post" action="{{ route('user.otp_verification') }}"
                                     id="otp-form">
                                     @csrf
                                     <div class="col-12 text-center">
