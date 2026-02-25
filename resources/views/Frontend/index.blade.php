@@ -7,8 +7,10 @@
     @foreach($events->take(1) as $event)
     <!-- banner-area -->
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}">
-        <div class="container custom-container" style="
+        <div class="w-100"  style="
     background-color: #171d22;">
+
+        <div class="container custom-container">
             <div class="row">
                 <div class="col-xl-5 col-lg-8">
                     <div class="banner-content">
@@ -77,6 +79,7 @@
     height: 100%;
 ">
                 </div>
+        </div>
             </div>
         </div>
     </section>
