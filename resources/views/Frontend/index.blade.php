@@ -9,7 +9,7 @@
     <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/herobg.png')}}">
         <div class="container custom-container">
             <div class="row">
-                <div class="col-xl-6 col-lg-8">
+                <div class="col-xl-5 col-lg-8">
                     <div class="banner-content">
                         <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
                         @php
@@ -67,7 +67,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-lg-8">
+                <div class="col-xl-7 col-lg-8">
                     <img src="{{ $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png') }}" style="
     position: fixed;
     z-index: -9;
