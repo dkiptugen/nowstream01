@@ -50,7 +50,7 @@
                                 <img src="{{ asset('assets/img/logo/logo2.png') }}" width="150" alt="" />
                             </div>
                             <div class="form-body">
-                                <form class="row g-3" method="post" action="{{ route('phonelogin') }}">
+                                <form class="row g-3" method="post" action="{{ route('user.phonelogin') }}">
                                     @csrf
                                     <div class="col-12">
                                         <label for="inputPhoneNumber" class="form-label">
