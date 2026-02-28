@@ -169,10 +169,10 @@
                             $update = $content->update(['status'=>2,'disable_reason'=>$validate['reason']]);
                             if($update)
                                 {
-                                    return Response::api($content,'updated successfully',200);
+                                    return response()->api($content,'updated successfully',200);
                                 }
                         }
-                    return Response::api($content,'failed update',400);
+                    return response()->api($content,'failed update',400);
                 }
 
 		}
