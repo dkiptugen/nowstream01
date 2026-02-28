@@ -11,7 +11,7 @@
 					<div id="videoWrap" class="stream-wrap">
 						<video
 							id="player"
-							data-stream="https://tv.a21network.ru/stream/37909/index.m3u8"
+							data-stream="{{ $streamProxyUrl ?? '' }}"
 							playsinline
 							controls
 							poster="{{ $stream->thumbnail_url }}">
@@ -413,6 +413,7 @@
 			const reconnectDelay = 3000;
 
 			function getMediaType(url) {
+				if (url.includes('/stream/') && url.includes('/view')) return 'hls';
 				const ext = url.split('.').pop().toLowerCase();
 				if (ext === 'm3u8') return 'hls';
 				if (ext === 'mp4') return 'video/mp4';

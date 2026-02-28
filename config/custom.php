@@ -33,6 +33,7 @@
         "STREAM"            => [
             "LIVESTREAM_SERVER" => env('LIVESTREAM_SERVER', "rtmp://stream.livestreamz.xyz/live"),
             "LIVESTREAM_LINK"   => env('LIVESTREAM_LINK', "https://stream.livestreamz.xyz/hls"),
+            "PROXY_TTL_MINUTES" => env('STREAM_PROXY_TTL_MINUTES', 30),
         ], "DATA"           => [
             "DATA_USERNAME"        => env("DATA_USERNAME"),
             "DATA_PASSWORD"        => env("DATA_PASSWORD"),

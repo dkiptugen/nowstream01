@@ -126,7 +126,12 @@
                         })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
                 });
             Route::post('/stream/find', [StreamController::class, 'findStream'])->name('stream.find');
-            Route::get('stream/{streamId}/view', [StreamController::class, 'proxy_stream'])->name('stream.view');
+            Route::get('stream/{streamId}/view', [StreamController::class, 'proxy_stream'])
+                 ->middleware(['auth:web', 'signed'])
+                 ->name('stream.view');
+            Route::get('stream/{streamId}/asset', [StreamController::class, 'proxyAsset'])
+                 ->middleware(['auth:web', 'signed'])
+                 ->name('stream.proxy.asset');
             Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('category.show');
             Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
             Route::middleware(['auth:web'])->group(function ()

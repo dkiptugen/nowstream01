@@ -42,6 +42,7 @@
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <script>
+
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.getElementById('player');
             const player = new Plyr(video, {});
@@ -54,6 +55,23 @@
                 if (ext === 'mov') return 'video/quicktime';
                 return '';
             }
+            function reportStreamFailure(reason, url) {
+
+                fetch('/api/content/{{ $tv->uuid }}/failure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        stream_url: url,
+                        reason: reason,
+                        user_agent: navigator.userAgent
+                    })
+                });
+
+                console.log('Stream reported:', reason);
+            }
 
             // Load media dynamically
             function loadMedia(url) {
@@ -61,17 +79,47 @@
 
                 if (type === 'hls') {
                     if (Hls.isSupported()) {
-                        const hls = new Hls();
+
+                        const hls = new Hls({
+                            maxBufferLength: 30,
+                            fragLoadingTimeOut: 15000,
+                            manifestLoadingTimeOut: 15000
+                        });
+
                         hls.loadSource(url);
                         hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                            video.play();
+                        });
+
+                        // 🔥 ERROR TRACKING
+                        hls.on(Hls.Events.ERROR, function(event, data) {
+
+                            console.log('HLS ERROR', data);
+
+                            if (data.fatal) {
+
+                                let reason = data.type + ':' + data.details;
+
+                                reportStreamFailure(reason, url);
+
+                                switch(data.type) {
+
+                                    case Hls.ErrorTypes.NETWORK_ERROR:
+                                        hls.startLoad();
+                                        break;
+
+                                    case Hls.ErrorTypes.MEDIA_ERROR:
+                                        hls.recoverMediaError();
+                                        break;
+
+                                    default:
+                                        hls.destroy();
+                                }
+                            }
+                        });
                     }
-                    else if (video.canPlayType('application/vnd.apple.mpegurl'))
-                    {
-                        video.src = url;
-                        video.addEventListener('loadedmetadata', () => video.play());
-                    }
-                    else console.error('HLS not supported');
                 }
                 else if (video.canPlayType(type))
                 {
@@ -83,7 +131,31 @@
 
             // Example video/live URL
             const mediaUrl = '{{ $tv->stream_url }}'; // Replace with dynamic URL
+            video.addEventListener('error', () => {
 
+                const error = video.error;
+
+                let reason = 'UNKNOWN';
+
+                if (error) {
+                    switch (error.code) {
+                        case error.MEDIA_ERR_ABORTED:
+                            reason = 'MEDIA_ABORTED';
+                            break;
+                        case error.MEDIA_ERR_NETWORK:
+                            reason = 'NETWORK_ERROR';
+                            break;
+                        case error.MEDIA_ERR_DECODE:
+                            reason = 'DECODE_ERROR';
+                            break;
+                        case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                            reason = 'NOT_SUPPORTED';
+                            break;
+                    }
+                }
+
+                reportStreamFailure(reason, video.src);
+            });
             loadMedia(mediaUrl);
 
 

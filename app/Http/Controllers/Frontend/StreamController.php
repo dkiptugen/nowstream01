@@ -30,12 +30,19 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 
 class StreamController extends Controller
 {
     use Meta;
+
+    public function proxy_stream(int $streamId)
+    {
+        return $this->proxyStream($streamId);
+    }
+
 	public function index()
 	{
 		$streams = Content::where('content_group', 'livestream')->with(['event', 'channel', 'rates'])
@@ -53,49 +60,197 @@ class StreamController extends Controller
 
 	public function proxyStream(int $streamId)
 	{
-		$stream = Content::find($streamId);
-		if (!$stream) {
-			abort(404);
-
-		}
-
-		$url = $stream->stream_video_link;
+		$stream = Content::findOrFail($streamId);
+		$masterUrl = $this->normalizeUpstreamUrl($stream->stream_video_link);
 
 		try {
-			$response = Http::withHeaders([
-				'Accept' => 'application/vnd.apple.mpegurl, application/x-mpegURL, application/octet-stream',
-				'Range' => request()->header('Range') // Forward range requests
-			])->get($url);
+			$response = Http::withOptions(['stream' => true, 'timeout' => 30])
+				->withHeaders([
+					'Accept' => 'application/vnd.apple.mpegurl, application/x-mpegURL, application/octet-stream',
+					'Range' => request()->header('Range', ''),
+				])
+				->get($masterUrl);
 
-			if ($response->successful()) {
-				$contentType = $response->header('Content-Type');
-
-				// Handle common HLS MIME types
-				if (str_contains($url, '.m3u8')) {
-					$contentType = 'application/vnd.apple.mpegurl';
-				} elseif (str_contains($url, '.ts')) {
-					$contentType = 'video/mp2t';
-				}
-
-				$headers = [
-					'Content-Type' => $contentType,
-					'Cache-Control' => 'no-cache, no-store, must-revalidate',
-					'Accept-Ranges' => 'bytes',
-					'Connection' => 'keep-alive',
-				];
-
-				// Handle Content-Range header if present
-				if ($response->header('Content-Range')) {
-					$headers['Content-Range'] = $response->header('Content-Range');
-				}
-
-				return response($response->body(), $response->status())->withHeaders($headers);
-			} else {
-				return response('Error fetching HLS stream', 500);
+			if (!$response->successful() && $response->status() !== 206) {
+				return response('Error fetching stream playlist', 502);
 			}
+
+			$contentType = strtolower((string) $response->header('Content-Type'));
+			$isPlaylist = str_contains($masterUrl, '.m3u8') || str_contains($contentType, 'mpegurl');
+
+			if ($isPlaylist) {
+				$rewritten = $this->rewritePlaylistUrls((string) $response->body(), $masterUrl, $streamId);
+
+				return response($rewritten, 200)->withHeaders([
+					'Content-Type' => 'application/vnd.apple.mpegurl',
+					'Cache-Control' => 'no-cache, no-store, must-revalidate',
+				]);
+			}
+
+			return $this->streamUpstreamResponse($response, $masterUrl);
 		} catch (Exception $e) {
-			return response('Error fetching HLS stream', 500);
+			Log::error('Stream proxy failed: ' . $e->getMessage());
+			return response('Error fetching stream', 502);
 		}
+	}
+
+	public function proxyAsset(Request $request, int $streamId)
+	{
+		$encoded = (string) $request->query('src', '');
+		if ($encoded === '') {
+			abort(400, 'Missing src parameter');
+		}
+
+		$assetUrl = base64_decode($encoded, true);
+		if ($assetUrl === false || !filter_var($assetUrl, FILTER_VALIDATE_URL)) {
+			abort(400, 'Invalid src parameter');
+		}
+
+		$stream = Content::findOrFail($streamId);
+		$originHost = parse_url((string) $stream->stream_video_link, PHP_URL_HOST);
+		$assetHost = parse_url($assetUrl, PHP_URL_HOST);
+
+		if (!$originHost || !$assetHost || !hash_equals((string) $originHost, (string) $assetHost)) {
+			abort(403, 'Asset host not allowed');
+		}
+
+		$assetUrl = $this->normalizeUpstreamUrl($assetUrl);
+
+		try {
+			$response = Http::withOptions(['stream' => true, 'timeout' => 30])
+				->withHeaders([
+					'Range' => $request->header('Range', ''),
+					'Accept' => 'application/vnd.apple.mpegurl, application/x-mpegURL, video/mp2t, application/octet-stream',
+				])
+				->get($assetUrl);
+
+			if (!$response->successful() && $response->status() !== 206) {
+				return response('Error fetching stream asset', 502);
+			}
+
+			$contentType = strtolower((string) $response->header('Content-Type'));
+			$isPlaylist = str_contains($assetUrl, '.m3u8') || str_contains($contentType, 'mpegurl');
+
+			if ($isPlaylist) {
+				$rewritten = $this->rewritePlaylistUrls((string) $response->body(), $assetUrl, $streamId);
+				return response($rewritten, 200)->withHeaders([
+					'Content-Type' => 'application/vnd.apple.mpegurl',
+					'Cache-Control' => 'no-cache, no-store, must-revalidate',
+				]);
+			}
+
+			return $this->streamUpstreamResponse($response, $assetUrl);
+		} catch (Exception $e) {
+			Log::error('Stream asset proxy failed: ' . $e->getMessage());
+			return response('Error fetching stream asset', 502);
+		}
+	}
+
+	private function rewritePlaylistUrls(string $playlist, string $baseUrl, int $streamId): string
+	{
+		$lines = preg_split('/\r\n|\r|\n/', $playlist) ?: [];
+		$rewritten = [];
+
+		foreach ($lines as $line) {
+			$trimmed = trim($line);
+
+			if ($trimmed === '') {
+				$rewritten[] = $line;
+				continue;
+			}
+
+			if (str_starts_with($trimmed, '#')) {
+				if (preg_match('/URI="([^"]+)"/', $line, $matches) === 1) {
+					$absolute = $this->makeAbsoluteUrl($baseUrl, $matches[1]);
+					if ($absolute) {
+						$absolute = $this->normalizeUpstreamUrl($absolute);
+						$proxyUrl = URL::temporarySignedRoute('stream.proxy.asset', now()->addMinutes($this->streamProxyTtlMinutes()), [
+							'streamId' => $streamId,
+							'src' => base64_encode($absolute),
+						]);
+						$line = str_replace($matches[1], $proxyUrl, $line);
+					}
+				}
+				$rewritten[] = $line;
+				continue;
+			}
+
+			$absolute = $this->makeAbsoluteUrl($baseUrl, $trimmed);
+			if (!$absolute) {
+				$rewritten[] = $line;
+				continue;
+			}
+
+			$absolute = $this->normalizeUpstreamUrl($absolute);
+			$rewritten[] = URL::temporarySignedRoute('stream.proxy.asset', now()->addMinutes($this->streamProxyTtlMinutes()), [
+				'streamId' => $streamId,
+				'src' => base64_encode($absolute),
+			]);
+		}
+
+		return implode("\n", $rewritten);
+	}
+
+	private function makeAbsoluteUrl(string $baseUrl, string $resource): ?string
+	{
+		if (preg_match('/^https?:\/\//i', $resource)) {
+			return $resource;
+		}
+
+		$base = parse_url($baseUrl);
+		if (!$base || empty($base['host'])) {
+			return null;
+		}
+
+		$scheme = $base['scheme'] ?? 'https';
+		$host = $base['host'];
+		$port = isset($base['port']) ? ':' . $base['port'] : '';
+
+		if (str_starts_with($resource, '/')) {
+			return $scheme . '://' . $host . $port . $resource;
+		}
+
+		$path = $base['path'] ?? '/';
+		$dir = rtrim(str_replace('\\', '/', dirname($path)), '/');
+		$dir = $dir === '' ? '' : $dir;
+
+		return $scheme . '://' . $host . $port . $dir . '/' . ltrim($resource, '/');
+	}
+
+	private function normalizeUpstreamUrl(string $url): string
+	{
+		$parts = parse_url($url);
+		if (!$parts || empty($parts['scheme']) || strtolower($parts['scheme']) !== 'http') {
+			return $url;
+		}
+
+		$httpsUrl = preg_replace('/^http:/i', 'https:', $url, 1);
+		return $httpsUrl ?? $url;
+	}
+
+	private function streamUpstreamResponse($response, string $url)
+	{
+		$contentType = $response->header('Content-Type');
+		if (str_contains($url, '.ts')) {
+			$contentType = 'video/mp2t';
+		} elseif (str_contains($url, '.m4s') || str_contains($url, '.mp4')) {
+			$contentType = 'video/mp4';
+		}
+
+		return response()->stream(function () use ($response) {
+			$body = $response->toPsrResponse()->getBody();
+			while (!$body->eof()) {
+				echo $body->read(8192);
+				flush();
+			}
+		}, $response->status(), array_filter([
+			'Content-Type' => $contentType ?: 'application/octet-stream',
+			'Content-Length' => $response->header('Content-Length'),
+			'Content-Range' => $response->header('Content-Range'),
+			'Accept-Ranges' => 'bytes',
+			'Cache-Control' => 'no-cache, no-store, must-revalidate',
+			'Connection' => 'keep-alive',
+		]));
 	}
 
 
@@ -417,9 +572,12 @@ public function freeShow($slug = "")
 
         // Comments are dynamic per stream — do NOT cache
         $comments = $stream->comments()->with('user')->latest()->get();
+        $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes($this->streamProxyTtlMinutes()), [
+            'streamId' => $stream->id,
+        ]);
 
         return view('Frontend.modules.channels.streams.stream', compact(
-            'stream', 'streams', 'channels', 'videos', 'comments'
+            'stream', 'streams', 'channels', 'videos', 'comments', 'streamProxyUrl'
         ));
 
     } catch (\Exception $e) {
@@ -490,15 +648,24 @@ public function show($uuid, $slug = "")
 
         // Comments are dynamic per stream — do NOT cache
         $comments = $stream->comments()->with('user')->latest()->get();
+        $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes($this->streamProxyTtlMinutes()), [
+            'streamId' => $stream->id,
+        ]);
 
         return view('Frontend.modules.channels.streams.stream', compact(
-            'stream', 'streams', 'channels', 'videos', 'comments'
+            'stream', 'streams', 'channels', 'videos', 'comments', 'streamProxyUrl'
         ));
 
     } catch (\Exception $e) {
         Log::error('Stream not found: ' . $e->getMessage());
         abort(404, 'Content not found');
     }
+}
+
+private function streamProxyTtlMinutes(): int
+{
+    $ttl = (int) config('custom.STREAM.PROXY_TTL_MINUTES', 30);
+    return max(1, $ttl);
 }
 
 }
