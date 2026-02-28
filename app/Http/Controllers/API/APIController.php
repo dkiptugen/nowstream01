@@ -11,7 +11,8 @@
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Hash;
 	use Illuminate\Support\Facades\Log;
-	use Illuminate\Support\Facades\Validator;
+    use Illuminate\Support\Facades\Response;
+    use Illuminate\Support\Facades\Validator;
 
 	class APIController
 		{
@@ -168,10 +169,10 @@
                             $update = $content->update(['status'=>2,'disable_reason'=>$validate['reason']]);
                             if($update)
                                 {
-                                    return response()->api($content,'updated successfully',200);
+                                    return Response::api($content,'updated successfully',200);
                                 }
                         }
-                    return response()->api($content,'failed update',400);
+                    return Response::api($content,'failed update',400);
                 }
 
 		}
