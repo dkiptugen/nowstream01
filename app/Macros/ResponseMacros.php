@@ -1,19 +1,27 @@
 <?php
-	
-	namespace App\Macros;
-	
-	use Illuminate\Http\Response;
-	
-	class ResponseMacros
-		{
-			public static function register()
-				{
-					Response::macro('api', function ($data, $message=null, $status = 200) {
-						return response()->json([
-							                        "data"    => $data,
-							                        "status"  => $status,
-							                        "message" => $message
-						                        ]);
-					});
-				}
-		}
+
+    namespace App\Macros;
+
+    use Illuminate\Routing\ResponseFactory;
+
+    class ResponseMacros
+        {
+            public static function register()
+                {
+                    ResponseFactory::macro('api', function (
+                        $data = null,
+                        $message = null,
+                        $status = 200,
+                        $meta = []
+                    ) {
+
+                            return response()->json([
+                                                        'success' => $status < 400,
+                                                        'status'  => $status,
+                                                        'message' => $message,
+                                                        'data'    => $data,
+                                                        'meta'    => $meta,
+                                                    ], $status);
+                        });
+                }
+        }
