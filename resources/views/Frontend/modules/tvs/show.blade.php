@@ -49,7 +49,7 @@
 								</li>
 								<li class="category">
 									@foreach($tv->categories as $category)
-									<a href="{{ route('genre.show', $category->slug) }}">
+									<a href="{{ route('genre.tvs', $category->slug) }}">
 										{{ $category->name }}@if(!$loop->last),@endif
 									</a>
 									@endforeach

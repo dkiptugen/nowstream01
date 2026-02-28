@@ -10,14 +10,14 @@
             </a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link" href="{{ url('streams') }}">
                 <div class="parent-icon mr-1">
                     <i class="bx bx-play-circle"></i>
                 </div>
                 <div class="menu-title">Streams</div>
             </a>
-        </li>
+        </li> -->
 
         <li class="nav-item">
             <a class="nav-link" href="{{ url('all-videos') }}">

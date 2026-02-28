@@ -167,9 +167,24 @@
             font-size: 30px;
             display: none;
         }
+       .movie-poster.radio-poster img {
+    max-width: 100%;
+    border-radius: 5px;
+    /* aspect-ratio: auto !important; */
+    background: #2b2f38;
+    object-fit: contain !important;
+}
     </style>
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT13EMDEPD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
+  gtag('config', 'G-FT13EMDEPD');
+</script>
 
 </head>
 
@@ -203,6 +218,7 @@
                                         <li class="header-search"><a href="#" data-toggle="modal"
                                                 data-target="#search-modal"><i class="fas fa-search"></i></a></li>
                                         <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
+                                        <li class="header-search"><a href="{{ route('watch.content') }}"><i class="fas fa-history"></i></a></li>
 
                                         <li class="menu-item-has-children header-lang d-none">
                                             <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"

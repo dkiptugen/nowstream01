@@ -7,7 +7,7 @@
      )"
      style="cursor:pointer;"> 
                 <div class="movie-item mb-60">
-                    <div class="movie-poster">
+                    <div class="movie-poster radio-poster">
                         
                             <img src="{{$item->thumbnail_url ?? asset('frontend-assets/images/default.png')}}"
                                 class="w-100 d-block w-100" alt="..." style=" object-fit: cover; aspect-ratio: 1/1;" loading="lazy">

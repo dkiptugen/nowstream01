@@ -28,7 +28,7 @@
                     @endphp
                     @if(!empty($slug))
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="{{ route('genre.show', ['genre' => $slug]) }}">
+                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
                             {{ $label }}
                         </a>
                     </li>
@@ -84,84 +84,80 @@
         </div>
     </section>
 
-    <!-- Latest TVs with Infinite Scroll -->
-    <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img/bg/tr_movies_bg.jpg') }}">
-        <div class="container">
+    <section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+        
+        <div class="container mt-md-5">
             <div class="episode-top-wrap">
-                <div class="section-title">
-                    <span class="sub-title">Latest TVs</span>
-                    <h2 class="title">Latest TVs</h2>
+                <div class="section-title"> <span class="sub-title">Latest tvs</span>
+                    <h2 class="title">Latest tvs</h2>
                 </div>
             </div>
 
-            <div class="row tr-movie-active h-100" id="tv-container" style="position: relative; height:auto !important;">
-                @include('Frontend.includes.components.partials.tvs-list', ['tvs' => $tvs])
+            <div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
+                 @include('Frontend.includes.components.partials.tv-items', ['tvs' => $tvs])
             </div>
 
             <div class="text-center my-4" id="loading" style="display:none;">
                 <span class="text-light">Loading more tvs...</span>
             </div>
+
+        </div>
         </div>
     </section>
 </main>
 @endsection
-
+@section('header')
+<style>
+    .col-xl-2.col-lg-3.col-sm-6.grid-item{
+        position: relative !important;
+    }
+</style>
+@endsection
 @section('footer')
+
+
 <script>
-    (function() {
+    let page = 1;
+    let loading = false;
+    let hasMore = true;
 
-        let page = 1;
-        let loading = false;
-        let hasMore = true;
+    const container = document.getElementById('radio-container');
+    const loader = document.getElementById('loading');
 
-        const container = document.getElementById('tv-container');
-        const loader = document.getElementById('loading');
+    window.addEventListener('scroll', () => {
+        if (loading || !hasMore) return;
 
-        if (!container) return;
-
-        window.addEventListener('scroll', function() {
-            if (loading || !hasMore) return;
-
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
-                loadMore();
-            }
-        });
-
-        function loadMore() {
-            loading = true;
-            if (loader) loader.style.display = 'block';
-
-            page++;
-
-            const params = new URLSearchParams(window.location.search);
-            params.set('page', page);
-
-            fetch('?' + params.toString(), {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.html) {
-                        container.insertAdjacentHTML('beforeend', data.html);
-                    }
-
-                    hasMore = data.hasMore;
-                    loading = false;
-
-                    if (loader) {
-                        loader.style.display = hasMore ? 'block' : 'none';
-                    }
-                })
-                .catch(function() {
-                    loading = false;
-                    hasMore = false;
-                    if (loader) loader.style.display = 'none';
-                });
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loadMore();
         }
+    });
 
-    })();
+    function loadMore() {
+        loading = true;
+        loader.style.display = 'block';
+        page++;
+
+        fetch(`?page=${page}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.html) {
+                    container.insertAdjacentHTML('beforeend', data.html);
+                }
+
+                hasMore = data.hasMore;
+                loading = false;
+                loader.style.display = hasMore ? 'block' : 'none';
+            })
+            .catch(() => {
+                loading = false;
+                hasMore = false;
+                loader.style.display = 'none';
+            });
+    }
 </script>
 
 @endsection

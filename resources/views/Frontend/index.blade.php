@@ -1,15 +1,19 @@
 @extends('Frontend.includes.layout')
 
-
+<style>
+    body {
+        background-color: #11181f !important;
+    }
+</style>
 @section('content')
 
 <div class="hero-area">
     @foreach($events->take(1) as $event)
     <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
+    <section class="banner-area banner-bg" data-background="https://img.freepik.com/premium-photo/group-friends-sitting-dimly-lit-movie-theater-laughing-enjoying-film_1351262-11436.jpg?ga=GA1.1.724749049.1771917239&semt=ais_user_personalization&w=740&q=80">
         <div class="container custom-container">
             <div class="row">
-                <div class="col-xl-6 col-lg-8">
+                <div class="col-xl-5 col-lg-8">
                     <div class="banner-content">
                         <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
                         @php
@@ -48,13 +52,13 @@
                             @endif
                             <h3 class="text-light mb-3">
                             </h3>
-                            <form action="{{ route('stream.find') }}" method="POST" class="newsletter-form">
+                            <form action="#" method="POST" class="newsletter-form">
                                 @csrf
                                 <div class="input-group mw-500">
                                     <input type="text" class="" name="stream_token"
                                         placeholder="Enter Token or Phone Number" aria-label="Stream token"
                                         aria-describedby="button-addon2">
-                                    <input type="hidden" name="event_id" value="{{$event->id}}">
+                                    <input type="hidden" name="event_id" value="{{$event->uuid}}">
                                     <button class="btn" type="submit" id="button-addon2"><i class="fas fa-play"></i>
                                         Watch Now</button>
                                 </div>
@@ -66,7 +70,25 @@
 
                         </div>
                     </div>
-                </div>
+                </div> 
+            </div>
+            <!-- TV Genres -->
+            <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
+                    @foreach($genres->filter()->unique() as $genre)
+                    @php
+                    $slug = Str::slug($genre);
+                    $label = ucfirst(trim($genre));
+                    @endphp
+                    @if(!empty($slug))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
+                </ul>
             </div>
         </div>
     </section>
@@ -74,7 +96,7 @@
 
     @endforeach
 </div>
- 
+
 
 <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">

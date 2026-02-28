@@ -164,38 +164,7 @@
 									{{ $isSubscribed ? 'Unsubscribe' : 'Subscribe' }}
 								</button>
 							</div>
-
-							<script>
-								function toggleSubscription(channelId, subscribe) {
-									const url = subscribe ?
-										'{{ route("channels.subscribe", ":id") }}'.replace(':id', channelId) :
-										'{{ route("channels.unsubscribe", ":id") }}'.replace(':id', channelId);
-
-									$.ajax({
-										url: url,
-										type: 'POST',
-										data: {
-											_token: '{{ csrf_token() }}'
-										},
-										success: function(response) {
-											// Toggle the button dynamically
-											const btn = $(`#subscription-controls-${channelId} button`);
-											if (subscribe) {
-												btn.removeClass('btn-outline-primary').addClass('btn-danger');
-												btn.text('Unsubscribe');
-												btn.attr('onclick', `toggleSubscription(${channelId}, false)`);
-											} else {
-												btn.removeClass('btn-danger').addClass('btn-outline-primary');
-												btn.text('Subscribe');
-												btn.attr('onclick', `toggleSubscription(${channelId}, true)`);
-											}
-										},
-										error: function(xhr) {
-											console.error('Subscription error:', xhr.responseText);
-										}
-									});
-								}
-							</script>
+ 
 							@endif
 
 						</div>

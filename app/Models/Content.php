@@ -177,7 +177,8 @@
 
             public function watch()
                 {
-                    return $this->morphMany(WatchHistory::class, 'watchable');
+                    // Watch history is stored on watch_histories.content_id referencing contents.uuid
+                    return $this->hasMany(WatchHistory::class, 'content_id', 'uuid');
                 }
 
             public function favoritedBy()

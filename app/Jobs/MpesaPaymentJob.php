@@ -141,7 +141,7 @@
 												'baze',
 												$phoneNew,
 												'Welcome to Somali Nite Live Event. Your Streaming Key is: '.$check->stream_token.' Click
-https://live.baze.co.ke/somalinite to watch the Event.'
+https://streamer.co.ke/somalinite to watch the Event.'
 											);
 										}
 									event (new PaymentMade($check));

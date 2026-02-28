@@ -345,7 +345,7 @@ class StreamController extends Controller
 			// User does not exist, create a new account
 			$lastFourDigits = substr($phone, -4);
 			$username = Str::random(6) . $lastFourDigits;
-			$email = $username . '@live.baze.co.ke';
+			$email = $username . '@streamer.co.ke';
 
 			$user = User::create([
 				'name' => $username,
@@ -357,7 +357,7 @@ class StreamController extends Controller
 			$at->send_sms(
 				'baze',
 				$this->removeSpaces('0' . substr($phone, -9)),
-				'Welcome to Live.baze.co.ke . Kindly update your profile to enjoy a better experience.'
+				'Welcome to streamer.co.ke . Kindly update your profile to enjoy a better experience.'
 			);
 		}
 		Auth::loginUsingId($user->id);

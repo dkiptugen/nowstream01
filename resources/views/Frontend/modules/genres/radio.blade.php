@@ -6,11 +6,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadcrumb-content">
-                        <h2 class="title">Live <span>tvs</span></h2>
+                        <h2 class="title">Live <span>radios</span></h2>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{'/'}}">Home</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">tvs</li>
+                                <li class="breadcrumb-item active" aria-current="page">radios</li>
                             </ol>
                         </nav>
                     </div>
@@ -23,17 +23,17 @@
         
         <div class="container mt-md-5">
             <div class="episode-top-wrap">
-                <div class="section-title"> <span class="sub-title">Latest tvs</span>
-                    <h2 class="title">Latest tvs</h2>
+                <div class="section-title"> <span class="sub-title">Latest radios</span>
+                    <h2 class="title">Latest radios</h2>
                 </div>
             </div>
 
             <div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
-                 @include('Frontend.includes.components.partials.tv-items', ['tvs' => $tvs])
+                 @include('Frontend.includes.components.partials.radio-items', ['radios' => $radios])
             </div>
 
             <div class="text-center my-4" id="loading" style="display:none;">
-                <span class="text-light">Loading more tvs...</span>
+                <span class="text-light">Loading more radios...</span>
             </div>
 
         </div>

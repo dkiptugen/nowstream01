@@ -2,7 +2,7 @@
     return [
         "APP"               => [
             "API_KEY"         => env("API_KEY", "2xKy+zv7qVM6}S/4=sH_"),
-            'SITE_URL'        => env('SITE_URL', "https://live.baze.co.ke"),
+            'SITE_URL'        => env('SITE_URL', "https://streamer.co.ke"),
             'ENCRYPTION_KEY'  => env('ENCRYPTION_KEY', 'LJHb1fc6f$2j5FnO7W3@NphwHFmOcMlsg'),
             'ENCRYPTION_SALT' => env('ENCRYPTION_SALT', 'zMjDBmWoUd'),
             'APP_BASE_DOMAIN' => env('APP_BASE_DOMAIN', 'streamer.co.ke'),
