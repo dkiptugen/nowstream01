@@ -90,7 +90,7 @@ return Application::configure(basePath: dirname(__DIR__))
                           $middleware->appendToGroup('api', [
                               ForceJsonResponse::class,
                               EnsureFrontendRequestsAreStateful::class,
-                              ThrottleRequests::class . ':api',
+                              ThrottleRequests::class,
                               SubstituteBindings::class,
 
                           ]);
