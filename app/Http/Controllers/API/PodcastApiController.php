@@ -42,33 +42,38 @@ class PodcastApiController extends Controller
     /**
      * Single Podcast
      */
-    public function show($slug)
-    {
-        $podcast = Content::where('slug', $slug)
-            ->where('content_group', 'podcast')
-            ->firstOrFail();
+  public function show($slug)
+{
+    // Fetch the parent podcast
+    $podcast = Content::where('slug', $slug)
+        ->where('content_group', 'podcast')
+        ->firstOrFail();
 
-        // Increment views
-        Content::where('uuid', $podcast->uuid)->increment('views');
+    // Increment views
+    Content::where('uuid', $podcast->uuid)->increment('views');
 
-        $episodes = Content::where('parent_id', $podcast->uuid)
-            ->where('content_group', 'podcast_episode')
-            ->orderByDesc('created_at')
-            ->get();
+    // Fetch episodes for this podcast (parent_id = podcast uuid)
+    $episodes = Content::where('parent_id', $podcast->uuid)
+        ->where('content_group', 'podcast_episode')
+        ->orderByDesc('created_at')
+        ->get();
 
-        $related = Content::where('content_group', 'podcast')
-            ->where('uuid', '!=', $podcast->uuid)
-            ->inRandomOrder()
-            ->limit(6)
-            ->get();
+    // Related podcasts: top-level podcasts excluding current
+    $related = Content::where('content_group', 'podcast')
+        ->whereNull('parent_id')
+        ->where('uuid', '!=', $podcast->uuid)
+        ->inRandomOrder()
+        ->limit(6)
+        ->get();
 
-        return response()->json([
-            'success' => true,
-            'podcast' => $podcast,
-            'episodes' => $episodes,
-            'related' => $related
-        ]);
-    }
+    // Return combined response
+    return response()->json([
+        'success' => true,
+        'podcast' => $podcast,
+        'episodes' => $episodes,
+        'related' => $related,
+    ]);
+}
 
 
     /**
