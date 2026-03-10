@@ -25,11 +25,18 @@ class PodcastApiController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $podcasts
-        ]);
+       return response()->json([
+    'success' => true,
+    'data' => $podcasts->items(),
+    'pagination' => [
+        'current_page' => $podcasts->currentPage(),
+        'last_page' => $podcasts->lastPage(),
+        'per_page' => $podcasts->perPage(),
+        'total' => $podcasts->total(),
+    ]
+]);
     }
+
 
 
     /**
@@ -70,7 +77,7 @@ class PodcastApiController extends Controller
     public function episodes($slug)
     {
         $podcast = Content::where('slug', $slug)
-            ->where('content_group', 'podcast')
+            ->where('content_group', 'podcast_episode')
             ->firstOrFail();
 
         $episodes = Content::where('parent_id', $podcast->uuid)
