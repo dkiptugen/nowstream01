@@ -3,134 +3,155 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Content;
-use App\Models\WatchHistory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Collection;
 
 class PodcastApiController extends Controller
 {
+    private string $apiUrl;
 
-    /**
-     * List Podcasts
-     */
-  public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 20);
-
-    // Get only parent podcasts (parent_id = null)
-    $podcasts = Content::where('content_group', 'podcast')
-        ->whereNull('parent_id')
-        ->where('status', 1)
-        ->latest()
-        ->paginate($perPage);
-
-    // Optionally, you can load episodes for each podcast
-    $podcasts->getCollection()->transform(function ($podcast) {
-        $podcast->episodes = Content::where('parent_id', $podcast->uuid)
-            ->where('content_group', 'podcast_episode')
-            ->orderByDesc('created_at')
-            ->get();
-        return $podcast;
-    });
-
-    return response()->json([
-        'success' => true,
-        'data' => $podcasts->items(),
-        'pagination' => [
-            'current_page' => $podcasts->currentPage(),
-            'last_page' => $podcasts->lastPage(),
-            'per_page' => $podcasts->perPage(),
-            'total' => $podcasts->total(),
-        ]
-    ]);
-}
-
-    /**
-     * Single Podcast
-     */
-  public function show($slug)
-{
-    // Fetch the parent podcast
-    $podcast = Content::where('slug', $slug)
-        ->where('content_group', 'podcast')
-        ->firstOrFail();
-
-    // Increment views
-    Content::where('uuid', $podcast->uuid)->increment('views');
-
-    // Fetch episodes for this podcast (parent_id = podcast uuid)
-    $episodes = Content::where('parent_id', $podcast->uuid)
-        ->where('content_group', 'podcast_episode')
-        ->orderByDesc('created_at')
-        ->get();
-
-    // Related podcasts: top-level podcasts excluding current
-    $related = Content::where('content_group', 'podcast')
-        ->whereNull('parent_id')
-        ->where('uuid', '!=', $podcast->uuid)
-        ->inRandomOrder()
-        ->limit(6)
-        ->get();
-
-    // Return combined response
-    return response()->json([
-        'success' => true,
-        'podcast' => $podcast,
-        'episodes' => $episodes,
-        'related' => $related,
-    ]);
-}
-
-
-    /**
-     * Podcast Episodes
-     */
-    public function episodes($slug)
+    public function __construct()
     {
-        $podcast = Content::where('slug', $slug)
-            ->where('content_group', 'podcast_episode')
-            ->firstOrFail();
-
-        $episodes = Content::where('parent_id', $podcast->uuid)
-            ->where('content_group', 'podcast_episode')
-            ->orderByDesc('created_at')
-            ->paginate(20);
-
-        return response()->json([
-            'success' => true,
-            'data' => $episodes
-        ]);
+        // Base API URL for fetching podcasts
+        $this->apiUrl = config('services.nowstream.api');
     }
 
+    /**
+     * Fetch all podcasts from external API
+     */
+    private function fetchPodcasts(): Collection
+    {
+        try {
+            $response = Http::get("{$this->apiUrl}/podcasts");
+
+            if (!$response->successful()) {
+                return collect();
+            }
+
+            return collect($response->json()['data'] ?? []);
+        } catch (\Exception $e) {
+            return collect();
+        }
+    }
 
     /**
-     * Record Watch History
+     * Map API data into uniform objects
      */
-    public function recordWatchHistory(Request $request)
+    private function mapPodcastData(Collection $podcasts): Collection
     {
-        $user = Auth::user();
+        return $podcasts->map(function ($p) {
+            return (object)[
+                'uuid'        => $p['uuid'] ?? null,
+                'slug'        => $p['slug'] ?? null,
+                'title'       => $p['title'] ?? null,
+                'description' => $p['description'] ?? null,
+                'thumbnail'   => $p['thumbnail_url'] ?? null,
+                'stream_url'  => $p['stream_url'] ?? null,
+                'source'      => $p['source'] ?? null,
+                'author'      => $p['author'] ?? null,
+                'duration'    => $p['duration'] ?? null,
+                'views'       => $p['views'] ?? 0,
+                'parent_id'   => $p['parent_id'] ?? null,
+                'created_at'  => $p['created_at'] ?? null,
+                'updated_at'  => $p['updated_at'] ?? null,
+            ];
+        });
+    }
 
-        if (!$user) {
-            return response()->json(['success' => false], 401);
-        }
+    /**
+     * List all top-level podcasts with pagination
+     */
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 20);
 
-        $podcast = Content::findOrFail($request->podcast_id);
+        $allPodcasts = $this->mapPodcastData($this->fetchPodcasts());
 
-        WatchHistory::updateOrCreate(
+        // Only parent podcasts (parent_id = null)
+        $podcasts = $allPodcasts->whereNull('parent_id')->values();
+
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $paged = new \Illuminate\Pagination\LengthAwarePaginator(
+            $podcasts->slice(($page - 1) * $perPage, $perPage)->values(),
+            $podcasts->count(),
+            $perPage,
+            $page,
             [
-                'user_id' => $user->id,
-                'content_id' => $podcast->uuid,
-            ],
-            [
-                'watched_at' => now(),
-                'watch_duration' => $request->watch_duration ?? 0
+                'path'  => request()->url(),
+                'query' => request()->query(),
             ]
         );
 
         return response()->json([
-            'success' => true
+            'success'    => true,
+            'data'       => $paged->items(),
+            'pagination' => [
+                'current_page' => $paged->currentPage(),
+                'last_page'    => $paged->lastPage(),
+                'per_page'     => $paged->perPage(),
+                'total'        => $paged->total(),
+            ],
+        ]);
+    }
+
+    /**
+     * Show single podcast and its episodes
+     */
+    public function show($slug)
+    {
+        $allPodcasts = $this->mapPodcastData($this->fetchPodcasts());
+
+        // Find parent podcast
+        $podcast = $allPodcasts->firstWhere('slug', $slug);
+
+        if (!$podcast) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Podcast not found'
+            ], 404);
+        }
+
+        // Episodes: podcasts where parent_id equals current podcast uuid
+        $episodes = $allPodcasts->filter(fn($p) => $p->parent_id === $podcast->uuid)->values();
+
+        // Related podcasts: top-level podcasts excluding current
+        $related = $allPodcasts
+            ->whereNull('parent_id')
+            ->where('slug', '!=', $slug)
+            ->take(6)
+            ->values();
+
+        return response()->json([
+            'success'  => true,
+            'podcast'  => $podcast,
+            'episodes' => $episodes,
+            'related'  => $related,
+        ]);
+    }
+
+    /**
+     * Fetch episodes of a podcast separately
+     */
+    public function episodes($slug)
+    {
+        $allPodcasts = $this->mapPodcastData($this->fetchPodcasts());
+
+        $podcast = $allPodcasts->firstWhere('slug', $slug);
+
+        if (!$podcast) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Podcast not found'
+            ], 404);
+        }
+
+        $episodes = $allPodcasts->filter(fn($p) => $p->parent_id === $podcast->uuid)->values();
+
+        return response()->json([
+            'success'  => true,
+            'podcast'  => $podcast,
+            'episodes' => $episodes,
         ]);
     }
 }
