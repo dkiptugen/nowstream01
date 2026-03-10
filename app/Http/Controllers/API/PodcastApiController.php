@@ -15,29 +15,37 @@ class PodcastApiController extends Controller
     /**
      * List Podcasts
      */
-    public function index(Request $request)
-    {
-        $perPage = $request->get('per_page', 20);
+  public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 20);
 
-        $podcasts = Content::where('content_group', 'podcast')
-            ->whereNull('parent_id')
-            ->where('status', 1)
-            ->latest()
-            ->paginate($perPage);
+    // Get only parent podcasts (parent_id = null)
+    $podcasts = Content::where('content_group', 'podcast')
+        ->whereNull('parent_id')
+        ->where('status', 1)
+        ->latest()
+        ->paginate($perPage);
 
-       return response()->json([
-    'success' => true,
-    'data' => $podcasts->items(),
-    'pagination' => [
-        'current_page' => $podcasts->currentPage(),
-        'last_page' => $podcasts->lastPage(),
-        'per_page' => $podcasts->perPage(),
-        'total' => $podcasts->total(),
-    ]
-]);
-    }
+    // Optionally, you can load episodes for each podcast
+    $podcasts->getCollection()->transform(function ($podcast) {
+        $podcast->episodes = Content::where('parent_id', $podcast->uuid)
+            ->where('content_group', 'podcast_episode')
+            ->orderByDesc('created_at')
+            ->get();
+        return $podcast;
+    });
 
-
+    return response()->json([
+        'success' => true,
+        'data' => $podcasts->items(),
+        'pagination' => [
+            'current_page' => $podcasts->currentPage(),
+            'last_page' => $podcasts->lastPage(),
+            'per_page' => $podcasts->perPage(),
+            'total' => $podcasts->total(),
+        ]
+    ]);
+}
 
     /**
      * Single Podcast
