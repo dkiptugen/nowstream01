@@ -3,23 +3,23 @@
 	use App\Http\Controllers\API\APIController;
 	use App\Http\Controllers\Callbacks\DPOCallbackController;
 	use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\PodcastApiController;
+	use App\Http\Controllers\Api\PodcastApiController;
 
-Route::prefix('podcasts')->group(function () {
+	Route::prefix('podcasts')->group(function () {
 
-    // List podcasts
-    Route::get('/', [PodcastApiController::class, 'index']);
+		// List podcasts
+		Route::get('/', [PodcastApiController::class, 'index']);
 
-    // Single podcast
-    Route::get('/{slug}', [PodcastApiController::class, 'show']);
+		// Single podcast
+		Route::get('/{slug}', [PodcastApiController::class, 'show']);
 
-    // Podcast episodes
-    Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
+		// Podcast episodes
+		Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
 
-    // Record watch history
-    Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
+		// Record watch history
+		Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
 
-});
+	});
 	/*
 	|--------------------------------------------------------------------------
 	| API Routes
