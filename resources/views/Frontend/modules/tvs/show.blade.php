@@ -392,138 +392,185 @@
 	@section('footer')
 	<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-	 
-    <script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const video = document.getElementById('player');
-            const player = new Plyr(video, {});
-            // Determine media type
-            function getMediaType(url) {
-                const ext = url.split('.').pop().toLowerCase();
-                if (ext === 'm3u8') return 'hls';
-                if (ext === 'mp4') return 'video/mp4';
-                if (ext === 'mp3') return 'audio/mp3';
-                if (ext === 'mov') return 'video/quicktime';
-                return '';
-            }
-            function reportStreamFailure(reason, url) {
+			const video = document.getElementById('player');
+			const player = new Plyr(video, {});
+			let hls = null;
 
-                fetch('/api/content/{{ $tv->uuid }}/failure', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        stream_url: url,
-                        reason: reason,
-                        user_agent: navigator.userAgent
-                    })
-                });
+			function getMediaType(url) {
 
-                console.log('Stream reported:', reason);
-            }
+				const ext = url.split('.').pop().toLowerCase();
 
+				if (ext === 'm3u8') return 'hls';
+				if (ext === 'mp4') return 'video/mp4';
+				if (ext === 'mp3') return 'audio/mpeg';
+				if (ext === 'mov') return 'video/quicktime';
 
-            // Load media dynamically
-            function loadMedia(url) {
-                const type = getMediaType(url);
+				return '';
+			}
 
-                if (type === 'hls') {
-                    if (Hls.isSupported()) {
+			function reportStreamFailure(reason, url) {
 
-                        const hls = new Hls({
-                            maxBufferLength: 30,
-                            fragLoadingTimeOut: 15000,
-                            manifestLoadingTimeOut: 15000
-                        });
+				fetch('/api/content/{{ $tv->uuid }}/failure', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': '{{ csrf_token() }}'
+					},
+					body: JSON.stringify({
+						stream_url: url,
+						reason: reason,
+						user_agent: navigator.userAgent
+					})
+				});
 
-                        hls.loadSource(url);
-                        hls.attachMedia(video);
-
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                            video.play();
-                        });
-
-                        // 🔥 ERROR TRACKING
-                        hls.on(Hls.Events.ERROR, function(event, data) {
-
-                            console.log('HLS ERROR', data);
-
-                            if (data.fatal) {
-
-                                let reason = data.type + ':' + data.details;
-
-                                reportStreamFailure(reason, url);
-
-                                switch(data.type) {
-
-                                    case Hls.ErrorTypes.NETWORK_ERROR:
-                                        hls.startLoad();
-                                        break;
-
-                                    case Hls.ErrorTypes.MEDIA_ERROR:
-                                        hls.recoverMediaError();
-                                        break;
-
-                                    default:
-                                        hls.destroy();
-                                }
-                            }
-                        });
-                    }
-                }
-                else if (video.canPlayType(type))
-                {
-                    video.src = url;
-                    video.addEventListener('loadedmetadata', () => video.play());
-                }
-                else console.error('Unsupported media type');
-            }
+				console.log('Stream reported:', reason);
+			}
 
 			function autoplayWithSound() {
+
 				video.muted = false;
 				video.volume = 1;
 
 				video.play().catch(() => {
-					// Browser blocked autoplay with sound
+
 					video.muted = true;
+
 					video.play().catch(() => {});
 				});
 			}
-            // Example video/live URL
-            const mediaUrl = '{{ $tv->stream_url }}';
-            video.addEventListener('error', () => {
 
-                const error = video.error;
+			function loadMedia(url) {
 
-                let reason = 'UNKNOWN';
+				const type = getMediaType(url);
 
-                if (error) {
-                    switch (error.code) {
-                        case error.MEDIA_ERR_ABORTED:
-                            reason = 'MEDIA_ABORTED';
-                            break;
-                        case error.MEDIA_ERR_NETWORK:
-                            reason = 'NETWORK_ERROR';
-                            break;
-                        case error.MEDIA_ERR_DECODE:
-                            reason = 'DECODE_ERROR';
-                            break;
-                        case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                            reason = 'NOT_SUPPORTED';
-                            break;
-                    }
-                }
+				if (type === 'hls') {
 
-                reportStreamFailure(reason, video.src);
-            });
-            loadMedia(mediaUrl);
+					if (hls) {
+						hls.destroy();
+					}
 
+					if (Hls.isSupported()) {
 
-        });
-    </script>
+						hls = new Hls({
+							maxBufferLength: 30,
+							fragLoadingTimeOut: 15000,
+							manifestLoadingTimeOut: 15000
+						});
+
+						hls.loadSource(url);
+						hls.attachMedia(video);
+
+						hls.on(Hls.Events.MANIFEST_PARSED, () => {
+							autoplayWithSound();
+						});
+
+						hls.on(Hls.Events.ERROR, function(event, data) {
+
+							console.log('HLS ERROR', data);
+
+							if (data.fatal) {
+
+								let reason = data.type + ':' + data.details;
+
+								reportStreamFailure(reason, url);
+
+								switch (data.type) {
+
+									case Hls.ErrorTypes.NETWORK_ERROR:
+
+										console.log("HLS trying network recovery");
+										hls.startLoad();
+										break;
+
+									case Hls.ErrorTypes.MEDIA_ERROR:
+
+										console.log("HLS trying media recovery");
+										hls.recoverMediaError();
+										break;
+
+									default:
+
+										console.log("HLS fatal error, destroying");
+										hls.destroy();
+										break;
+								}
+							}
+						});
+
+					}
+
+					// Safari native HLS
+					else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+
+						video.src = url;
+
+						video.addEventListener('loadedmetadata', () => {
+							autoplayWithSound();
+						});
+
+					} else {
+
+						console.error('HLS not supported');
+
+						reportStreamFailure('HLS_NOT_SUPPORTED', url);
+					}
+				} else if (video.canPlayType(type)) {
+
+					video.src = url;
+
+					video.addEventListener('loadedmetadata', () => {
+						autoplayWithSound();
+					});
+
+				} else {
+
+					console.error('Unsupported media type');
+
+					reportStreamFailure('MEDIA_TYPE_NOT_SUPPORTED', url);
+				}
+			}
+
+			const mediaUrl = '{{ $tv->stream_url }}';
+
+			video.addEventListener('error', () => {
+
+				const error = video.error;
+
+				let reason = 'UNKNOWN';
+
+				if (error) {
+
+					switch (error.code) {
+
+						case error.MEDIA_ERR_ABORTED:
+							reason = 'MEDIA_ABORTED';
+							break;
+
+						case error.MEDIA_ERR_NETWORK:
+							reason = 'NETWORK_ERROR';
+							break;
+
+						case error.MEDIA_ERR_DECODE:
+							reason = 'DECODE_ERROR';
+							break;
+
+						case error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+							reason = 'NOT_SUPPORTED';
+							break;
+					}
+				}
+
+				reportStreamFailure(reason, video.src);
+
+			});
+
+			loadMedia(mediaUrl);
+
+		});
+	</script>
 	<script>
 		$(document).ready(function() {
 
@@ -654,5 +701,5 @@
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script>
- 
+
 	@endsection
