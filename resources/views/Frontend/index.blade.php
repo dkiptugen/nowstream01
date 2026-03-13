@@ -44,7 +44,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="form-group w-100">
+                        <div class="form-group w-100 d-none">
                             @if (session('error'))
                             <div class="alert alert-danger mt-4">
                                 {{ session('error') }}
