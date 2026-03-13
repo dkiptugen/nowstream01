@@ -477,5 +477,8 @@
          .sp-center {
              width: 47%;
          }
+         .sp-title { 
+    max-width: 140px;
+}
      }
  </style>
