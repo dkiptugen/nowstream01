@@ -153,7 +153,7 @@
 <div class="overlay toggle-icon"></div>
 <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 
-<footer class="page-footer">
+<footer class="page-footer d-none">
 
     <ul class="d-flex justify-content-between px-0 d-md-none">
         <li class="nav-item">
@@ -438,7 +438,7 @@
 </script> 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const videoElement = document.querySelector('video'); // Adjust the selector as necessary
+        const videoElement = document.querySelector('video');  
         let watchDuration = 0;
         let watchStartTime = null;
 
