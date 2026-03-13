@@ -1,4 +1,4 @@
- <div id="global-audio-player" class="spotify-player d-block pb-3 pb-md-2 py-md-2">
+ <div id="global-audio-player" class="spotify-player d-block pb-3 pt-2 pb-md-2 py-md-2">
 
      <div class="w-100 d-flex align-items-center justify-content-between">
          <div class="sp-left">
