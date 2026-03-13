@@ -482,5 +482,8 @@
     bottom: 0;
     left: 0;
 }
+.sp-artwork {
+    width: 50px;
+    height: 50px;}
      }
  </style>
