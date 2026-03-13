@@ -1,11 +1,11 @@
- <div id="global-audio-player" class="spotify-player d-none">
+ <div id="global-audio-player" class="spotify-player d-block">
 
          <div class="sp-progress-wrap d-md-none w-100 mt-2">
              <span id="sp-current">0:00</span>
              <input type="range" id="player-progress" value="0">
              <span id="sp-duration">0:00</span>
          </div>
-    <div class="w-100">
+    <div class="w-100 d-flex align-items-center justify-content-between">
          <div class="sp-left">
          <img id="player-thumbnail" class="sp-artwork" src="" alt="">
          <div class="sp-meta">
