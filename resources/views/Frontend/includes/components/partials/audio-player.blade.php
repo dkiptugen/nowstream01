@@ -470,7 +470,7 @@
          }
 
          .sp-center {
-             width: 47%;
+             width: 27%;
          }
          .sp-title { 
     max-width: 140px;
