@@ -1,4 +1,4 @@
- <div id="global-audio-player" class="spotify-player d-block">
+ <div id="global-audio-player" class="spotify-player d-block pt-2">
 
      <div class="w-100 d-flex align-items-center justify-content-between">
          <div class="sp-left">
@@ -38,7 +38,7 @@
              <input type="range" id="player-volume" min="0" max="1" step="0.01">
          </div>
      </div>
-     <div class="sp-progress-wrap d-md-none w-100 mt-2">
+     <div class="sp-progress-wrap d-md-none w-100 mt-1 mb-2">
          <span id="sp-current">0:00</span>
          <input type="range" id="player-progress" value="0">
          <span id="sp-duration">0:00</span>
