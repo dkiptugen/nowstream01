@@ -52,7 +52,7 @@
             <div class="pcar-overlay pcar-overlay-right"></div>
 
             <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3"
-                data-mobile="2">
+                data-mobile="2.3">
 
                 <div class="pcar-track">
                     @foreach($topradios as $item)
