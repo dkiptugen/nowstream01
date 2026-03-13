@@ -1,4 +1,4 @@
-<div class="col-xl-2 col-lg-2 col-sm-6 grid-item grid-sizer">
+<div class="col-xl-2 col-lg-2 col-6 grid-item grid-sizer">
                <div class="movie-card">
 
     <!-- Poster -->
