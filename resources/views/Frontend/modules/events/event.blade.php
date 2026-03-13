@@ -134,7 +134,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 			<div class="pcar-overlay pcar-overlay-right"></div>
 
 			<div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-				data-mobile="1">
+				data-mobile="2">
 
 				<div class="pcar-track">
 					@foreach($events as $event)

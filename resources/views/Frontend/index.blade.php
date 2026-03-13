@@ -115,7 +115,7 @@
         <div class="pcar-overlay pcar-overlay-right"></div>
 
         <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-            data-mobile="1">
+            data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topevents as $event)
@@ -163,7 +163,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($toptvs as $item)
@@ -188,7 +188,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topradios as $item)
@@ -298,7 +298,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($podcasts as $item)
@@ -325,7 +325,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topPodcasts as $item)
