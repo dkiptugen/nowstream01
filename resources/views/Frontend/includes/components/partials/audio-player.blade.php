@@ -465,12 +465,12 @@
 
      @media (max-width: 420px) {
          .sp-left {
-             width: 53%;
+             width: 65%;
              min-width: 180px;
          }
 
          .sp-center {
-             width: 27%;
+             width: 30%;
          }
          .sp-title { 
     max-width: 140px;
