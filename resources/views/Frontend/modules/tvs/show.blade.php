@@ -445,6 +445,17 @@
                             video.play();
                         });
 
+			function autoplayWithSound() {
+				video.muted = false;
+				video.volume = 1;
+
+				video.play().catch(() => {
+					// Browser blocked autoplay with sound
+					video.muted = true;
+					video.play().catch(() => {});
+				});
+			}
+
                         // 🔥 ERROR TRACKING
                         hls.on(Hls.Events.ERROR, function(event, data) {
 
@@ -482,7 +493,7 @@
             }
 
             // Example video/live URL
-            const mediaUrl = '{{ $tv->stream_url }}'; // Replace with dynamic URL
+            const mediaUrl = '{{ $tv->stream_url }}';
             video.addEventListener('error', () => {
 
                 const error = video.error;
