@@ -451,4 +451,13 @@
              display: none;
          }
      }
+     @media (max-width: 420px) {
+         .sp-left {
+             width: 53%;
+    min-width: 180px;
+         }
+    .sp-center {
+        width: 47%;
+    }
+}
  </style>
