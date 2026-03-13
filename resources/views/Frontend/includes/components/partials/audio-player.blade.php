@@ -5,7 +5,8 @@
              <input type="range" id="player-progress" value="0">
              <span id="sp-duration">0:00</span>
          </div>
-     <div class="sp-left">
+    <div class="w-100">
+         <div class="sp-left">
          <img id="player-thumbnail" class="sp-artwork" src="" alt="">
          <div class="sp-meta">
              <div id="player-title" class="sp-title">No audio</div> 
@@ -41,6 +42,7 @@
          </button>
          <input type="range" id="player-volume" min="0" max="1" step="0.01">
      </div>
+    </div>
 
      <audio id="global-audio"></audio>
  </div>
