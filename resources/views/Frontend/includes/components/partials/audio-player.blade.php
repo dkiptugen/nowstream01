@@ -37,7 +37,7 @@
          <input type="range" id="player-volume" min="0" max="1" step="0.01">
      </div>
 
-         <div class="sp-progress-wrap d-md-none">
+         <div class="sp-progress-wrap d-md-none w-100 mt-2">
              <span id="sp-current">0:00</span>
              <input type="range" id="player-progress" value="0">
              <span id="sp-duration">0:00</span>
