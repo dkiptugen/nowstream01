@@ -1,4 +1,4 @@
- <div id="global-audio-player" class="spotify-player d-block py-2">
+ <div id="global-audio-player" class="spotify-player d-block pb-3 pb-md-2 py-md-2">
 
      <div class="w-100 d-flex align-items-center justify-content-between">
          <div class="sp-left">
@@ -474,6 +474,13 @@
          }
          .sp-title { 
     max-width: 140px;
+}
+
+.sp-progress-wrap { 
+    gap: 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
      }
  </style>
