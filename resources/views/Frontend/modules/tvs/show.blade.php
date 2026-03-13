@@ -425,6 +425,7 @@
                 console.log('Stream reported:', reason);
             }
 
+
             // Load media dynamically
             function loadMedia(url) {
                 const type = getMediaType(url);
@@ -444,17 +445,6 @@
                         hls.on(Hls.Events.MANIFEST_PARSED, () => {
                             video.play();
                         });
-
-			function autoplayWithSound() {
-				video.muted = false;
-				video.volume = 1;
-
-				video.play().catch(() => {
-					// Browser blocked autoplay with sound
-					video.muted = true;
-					video.play().catch(() => {});
-				});
-			}
 
                         // 🔥 ERROR TRACKING
                         hls.on(Hls.Events.ERROR, function(event, data) {
@@ -492,6 +482,16 @@
                 else console.error('Unsupported media type');
             }
 
+			function autoplayWithSound() {
+				video.muted = false;
+				video.volume = 1;
+
+				video.play().catch(() => {
+					// Browser blocked autoplay with sound
+					video.muted = true;
+					video.play().catch(() => {});
+				});
+			}
             // Example video/live URL
             const mediaUrl = '{{ $tv->stream_url }}';
             video.addEventListener('error', () => {
