@@ -31,7 +31,7 @@ use App\Http\Controllers\Backend\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::name('admin.')->middleware(['web'])->group(function ()
+Route::name('admin.')->prefix('admin')->middleware(['web'])->group(function ()
     {
         Route::controller(LoginController::class)->group(function ()
             {
