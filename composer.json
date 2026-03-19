@@ -25,6 +25,7 @@
         "laravel/ui": "^4.6",
         "league/flysystem-aws-s3-v3": "^3.31",
         "mgcodeur/laravel-currency-converter": "^1.0",
+        "ovac/idoc": "^2.1",
         "predis/predis": "^3.3",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-permission": "^6.24",

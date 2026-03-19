@@ -25,7 +25,7 @@ use App\Http\Controllers\Backend\EventRateController;
 use App\Http\Controllers\Backend\LogsController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\UserController;
-use App\Http\Controllers\Backend\RolesController; 
+use App\Http\Controllers\Backend\RolesController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\EventController;
 use App\Http\Controllers\Backend\ConfigurationController;
@@ -96,7 +96,7 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
         Route::post('podcast/{podcast}/datatable',  'datatable')->name('podcast.episode.datatable');
     });
 
- 
+
 
     Route::controller(EventController::class)->group( function (){
         Route::resource('event', EventController::class);
@@ -122,30 +122,12 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
             Route::resource('stream', EventStreamController::class);
             Route::post('{event}/stream/datatable', 'datatable')->name('stream.datatable');
         });
- 
+
         Route::controller(EventVideoController::class)->group( function (){
             Route::resource('video', EventVideoController::class);
             Route::post('{event}/video/datatable',  'datatable')->name('video.datatable');
         });
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     Route::get('/configuration', [ConfigurationController::class, 'index'])->name('configuration.index');
