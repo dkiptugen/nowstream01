@@ -16,6 +16,7 @@ use App\Http\Controllers\Backend\MicrositeController;
 use App\Http\Controllers\Backend\PodcastController;
 use App\Http\Controllers\Backend\PodcastEpisodeController;
 use App\Http\Controllers\Backend\RadioController;
+use App\Http\Controllers\Backend\RateController;
 use App\Http\Controllers\Backend\StreamController;
 use App\Http\Controllers\Backend\TransactionController;
 use App\Http\Controllers\Backend\TvController;
@@ -148,15 +149,19 @@ Route::middleware(['auth:admin', 'choose.channel'])->prefix('backend')->name('ba
             {
                 Route::controller(EventStreamController::class)->group(function ()
                     {
-                        Route::resource('stream', EventStreamController::class);
+                        Route::resource('{event}/stream', EventStreamController::class);
                         Route::post('{event}/stream/datatable', 'datatable')->name('stream.datatable');
                     });
 
                 Route::controller(EventVideoController::class)->group(function ()
                     {
-                        Route::resource('video', EventVideoController::class);
+                        Route::resource('{event}/video', EventVideoController::class);
                         Route::post('{event}/video/datatable', 'datatable')->name('video.datatable');
                     });
+                Route::controller(RateController::class)->group(function (){
+                    Route::resource('{event}/rate', RateController::class);
+                    Route::post('{event}/rate/datatable', 'datatable')->name('rate.datatable');
+                });
             });
 
 
