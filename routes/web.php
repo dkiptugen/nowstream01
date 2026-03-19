@@ -219,4 +219,4 @@ Route::group([], function () {
     // Define the route for the user documentation
     Route::view(config('idoc.path'), 'idoc::documentation');
 });
-require __DIR__ . '/admin.php';
+
