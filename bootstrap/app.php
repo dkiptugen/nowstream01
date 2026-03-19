@@ -56,7 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
                                    ->middleware(['api'])
                                    ->group(base_path('routes/dpo.php'));
 
-                              include base_path('routes/admin.php');
+
 
                           },
 
