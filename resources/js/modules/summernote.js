@@ -5,7 +5,6 @@ window.$ = $;
 window.jQuery = jQuery;
 
 import summernote from 'script-loader!summernote/dist/summernote-bs4';
-import * as DOMPurify from 'dompurify'
 import './summernote/youtube'
 import './summernote/twitter'
 import './summernote/medialibrary'
@@ -24,7 +23,7 @@ import './summernote/wordcount'
 import './summernote/file_manager'
 
 window.summernote   =   summernote
-window.DOMPurify =DOMPurify
+
 
 
 
