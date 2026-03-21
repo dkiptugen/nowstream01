@@ -3,19 +3,25 @@
 
 
     <div class="col-12 mb-3">
-            <div class="card card-border-primary">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title my-0 h5 text-primary">Events</h3>
-                    @can('create_event')
-                        <a href="{{ route('backend.event.create') }}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-plus"></i> Add Event
-                        </a>
-                    @endcan
-                </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <h1 class="h3 mb-1">Events</h1>
+                <div class="text-muted">Manage your events.</div>
+            </div>
+            <div class="action-toolbar">
+                @can('create_event')
+                    <a href="{{ route('backend.event.create') }}" class="btn btn-dark-blue">
+                        <i class="fas fa-plus"></i> Add Event
+                    </a>
+                @endcan
+            </div>
+        </div>
+            <div class="card shadow-lg border">
+
             	<div class="card-body">
 
                     <div class="table-responsive mt-3">
-							<table id="events_dt" class="table table-striped table-condensed">
+							<table id="events_dt" class="table table-striped ">
 								<thead>
                                 <tr>
                                     <th>#</th>
@@ -55,8 +61,8 @@
 @endsection
 @section('footer')
     <script>
-
-            $('#events_dt').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#events_dt',{
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -77,15 +83,16 @@
                     {"data": "rates"},
                     {"data": "action", "orderable": false}
                 ],
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function (row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
 
                 "order": [[7, "desc"]]
 
             });
+        });
         </script>
 @endsection

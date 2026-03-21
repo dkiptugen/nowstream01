@@ -70,7 +70,7 @@
 
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
             <!-- TV Genres -->
             <div class="ucm-nav-wrap">
@@ -342,6 +342,7 @@
 <!-- top-rated-movie-end -->
 @endsection
 @section('header')
+
 <style>
     .card.bg-dark {
         object-position: top;

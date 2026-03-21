@@ -59,7 +59,7 @@
 
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <select name="status" class="form-control @error('status') is-invalid @enderror" required>
+                        <select name="status" class="form-select @error('status') is-invalid @enderror" required>
                             <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
                             <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active</option>
                         </select>

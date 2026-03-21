@@ -3,17 +3,23 @@
 
     <div class="row">
         <div class="col">
-            <div class="card card-border-primary">
-                <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5 text-primary">Videos</h3>
-                    <a href="{{ route('backend.video.create') }}" class="btn btn-primary m-0 h5">+ Add Video</a>
-
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h3 mb-1">Videos</h1>
+                    <div class="text-muted">Manage your videos.</div>
                 </div>
-                <hr>
+                <div class="action-toolbar">
+                    @can('create_video')
+                        <a href="{{ route('backend.video.create') }}" class="btn btn-dark-blue">+ Add Video</a>
+                    @endcan
+                </div>
+            </div>
+            <div class="card shadow-lg border">
+
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="videos" class="table table-striped table-condensed">
+							<table id="videos" class="table table-striped ">
 								<thead>
                                     <tr>
                                         <th>#</th>
@@ -46,7 +52,8 @@
 @endsection
 @section('footer')
     <script>
-            $('#videos').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#videos',{
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -60,16 +67,17 @@
                     {"data": "title"},
                     {"data": "description"},
                     {"data": "thumbnail", "orderable": false},
-                    {"data":"created_at"},
+                    {"data": "created_at"},
                     {"data": "action", "orderable": false}
                 ],
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function (row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
                 "order": [[1, "asc"]]
             });
+        });
         </script>
 @endsection

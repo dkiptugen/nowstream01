@@ -1,246 +1,165 @@
 @extends('Backend.includes.layout')
 @section('content')
-
     <div class="row">
         <div class="col">
-            <div class="card card-border-primary">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title m-0 h5 text-primary">Add Event</h3>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Events</h1>
+                    <div class="text-muted">Add Event</div>
                 </div>
+            </div>
+            <div class="card shadow-lg border">
                 <div class="card-body">
-
-
-                    <form action="{{ route('backend.event.store') }}" class="form form-horizontal create-form"
-                          enctype="multipart/form-data" method="post">
-                        @csrf
-                        <div class="form-group">
-                            <label for="event_name" class="control-label"> Event Name</label>
-                            <input type="text" name="event_name" id="event_name" class="form-control form-control-sm">
+                    <form action="{{ route('backend.event.store') }}" class="form create-form"
+                          enctype="multipart/form-data" method="post"> @csrf
+                        <div class="mb-3"><label for="event_name" class="form-label"> Event Name</label> <input
+                                type="text" name="event_name" id="event_name" class="form-control form-control-sm">
                         </div>
-                        <div class="form-group mt-2">
-                            <label for="event_description" class="control-label">Description</label>
-                            <textarea name="event_description" id="event_description" class="form-control editor"
-                                      rows="10"></textarea>
+                        <div class="mb-3"><label for="event_description" class="form-label">Description</label>
+                            <textarea name="event_description" id="event_description" class="form-control"
+                                     data-ckeditor data-ckeditor-height="250px"></textarea></div>
+                        <div class="row g-3 mb-3">
+                            <div class="col"><label for="thumbnail" class="form-label">Event Image/ Flyer</label> <input
+                                    type="file" name="thumbnail" id="thumbnail_image" class="form-control"
+                                    accept="image/*"></div>
+                            <div class="col"><label for="stream_thumbnail" class="form-label">Stream Thumbnail</label>
+                                <input type="file" name="stream_thumbnail" id="stream_thumbnail" class="form-control"
+                                       accept="image/*"></div>
                         </div>
-                        <div class="form-group form-row">
-                            <div class="col">
-                                <label for="thumbnail" class="control-label">Event Image/ Flyer</label>
-                                <input type="file" name="thumbnail" id="thumbnail_image" class="form-control-file"
-                                       accept="image/*">
-
+                        <div class="row g-3 mb-3">
+                            <div class="col"><label for="publishdate" class="form-label">Publish Date</label> <input
+                                    type="text" name="publishdate" id="publishdate" class="form-control datesingle">
                             </div>
-                            <div class="col">
-                                <label for="stream_thumbnail" class="control-label">Stream Thumbnail</label>
-                                <input type="file" name="stream_thumbnail" id="stream_thumbnail"
-                                       class="form-control-file" accept="image/*">
-                            </div>
-
+                            <div class="col"><label for="event_time" class="form-label"> Event Time</label> <input
+                                    type="text" name="event_time" id="event_time" class="form-control datetimes"></div>
                         </div>
-                        <div class="form-group form-row">
-                            <div class="col">
-                                <label for="publishdate" class="control-label">Publish Date</label>
-                                <input type="text" name="publishdate" id="publishdate" class="form-control datesingle">
-                            </div>
-                            <div class="col">
-                                <label for="event_time" class="control-label"> Event Time</label>
-                                <input type="text" name="event_time" id="event_time" class="form-control datetimes">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="venue" class="control-label"> Venue</label>
-                            <input type="text" name="venue" id="venue" class="form-control">
-                        </div>
-
-
-                        <!-- TICKETS -->
+                        <div class="mb-3"><label for="venue" class="form-label"> Venue</label> <input type="text"
+                                                                                                      name="venue"
+                                                                                                      id="venue"
+                                                                                                      class="form-control">
+                        </div> <!-- TICKETS -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasTickets" class="form-check-input">
-                                    <label for="hasTickets" class="form-check-label">Has Tickets</label>
-                                </div>
-                                <button type="button" id="addTicketBtn"
-                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
-                                    <i class="fas fa-plus"></i> Ticket
+                                <div class="form-check mb-2"><input type="checkbox" id="hasTickets"
+                                                                    class="form-check-input"
+                                                                    aria-controls="ticketsContainer"
+                                                                    aria-expanded="false"> <label for="hasTickets"
+                                                                                                  class="form-check-label">Has
+                                        Tickets</label></div>
+                                <button type="button" id="addTicketBtn" class="btn btn-link text-decoration-none mb-2"
+                                        style="display:none;" aria-controls="ticketsContainer"><i class="fas fa-plus"
+                                                                                                  aria-hidden="true"></i>
+                                    Ticket
                                 </button>
                             </div>
-                            <div id="ticketsContainer"></div>
-                        </div>
-
-                        <!-- STREAMS -->
+                            <div id="ticketsContainer" aria-live="polite" aria-label="Ticket options"></div>
+                        </div> <!-- STREAMS -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasStream" class="form-check-input">
-                                    <label for="hasStream" class="form-check-label">Has Stream</label>
-                                </div>
-                                <button type="button" id="addStreamBtn"
-                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
-                                    <i class="fas fa-plus"></i> Stream Price
+                                <div class="form-check mb-2"><input type="checkbox" id="hasStream"
+                                                                    class="form-check-input"
+                                                                    aria-controls="streamsContainer"
+                                                                    aria-expanded="false"> <label for="hasStream"
+                                                                                                  class="form-check-label">Has
+                                        Stream</label></div>
+                                <button type="button" id="addStreamBtn" class="btn btn-link text-decoration-none mb-2"
+                                        style="display:none;" aria-controls="streamsContainer"><i class="fas fa-plus"
+                                                                                                  aria-hidden="true"></i>
+                                    Stream Price
                                 </button>
                             </div>
-                            <div id="streamsContainer"></div>
-                        </div>
-
-                        <!-- MERCHANDISE -->
+                            <div id="streamsContainer" aria-live="polite" aria-label="Stream pricing options"></div>
+                        </div> <!-- MERCHANDISE -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2">
-                                    <input type="checkbox" id="hasMerch" class="form-check-input">
-                                    <label for="hasMerch" class="form-check-label">Has Merchandise</label>
-                                </div>
-                                <button type="button" id="addMerchBtn"
-                                        class="btn btn-link text-decoration-none text-dark  mb-2" style="display:none;">
-                                    <i class="fas fa-plus"></i> Merchandise
+                                <div class="form-check mb-2"><input type="checkbox" id="hasMerch"
+                                                                    class="form-check-input"
+                                                                    aria-controls="merchContainer"
+                                                                    aria-expanded="false"> <label for="hasMerch"
+                                                                                                  class="form-check-label">Has
+                                        Merchandise</label></div>
+                                <button type="button" id="addMerchBtn" class="btn btn-link text-decoration-none mb-2"
+                                        style="display:none;" aria-controls="merchContainer"><i class="fas fa-plus"
+                                                                                                aria-hidden="true"></i>
+                                    Merchandise
                                 </button>
                             </div>
-
-                            <div id="merchContainer"></div>
+                            <div id="merchContainer" aria-live="polite" aria-label="Merchandise options"></div>
                         </div>
-                        <div class="form-group">
-
-                            <label class="form-check form-check-inline">
-                                <input class="form-check-input" type="checkbox" name="featured" value="1">
-                                <span class="form-check-label">Is Featured</span>
-                            </label>
-
-                        </div>
-
-                        <div class="form-group d-flex justify-content-end mt-2">
+                        <div class="mb-3"><label class="form-check form-check-inline"> <input class="form-check-input"
+                                                                                              type="checkbox"
+                                                                                              name="featured" value="1">
+                                <span class="form-check-label">Is Featured</span> </label></div>
+                        <div class="d-flex justify-content-end mt-2">
                             <button type="submit" name="" id="" class="btn btn-sm btn-primary">Add Event</button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
-
 @endsection
 @section('header')
 @endsection
 @section('footer')
-
-    <script>
-        $(document).ready(function () {
-            $('#hasTickets, #hasStream, #hasMerch').each(function() {
-                $(this).trigger('change'); // respects backend value
-            });
-            // Default currency
+    <script> document.addEventListener('DOMContentLoaded', function () {
             const defaultCurrency = 'USD';
-
-            /*** TICKETS ***/
-            $('#hasTickets').on('change', function () {
-                $('#addTicketBtn').toggle(this.checked);
-                if (!this.checked) $('#ticketsContainer').empty();
+            const sections = [{
+                checkboxId: 'hasTickets',
+                buttonId: 'addTicketBtn',
+                containerId: 'ticketsContainer',
+                removeClass: 'removeTicketBtn',
+                buildRow(index) {
+                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Ticket #${index} Type</label> <input type="text" name="ticket[type][]" class="form-control"> </div> <div class="col"> <label class="form-label">Quantity</label> <input type="number" name="ticket[quantity][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="ticket[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Cost</label> <input type="number" name="ticket[cost][]" class="form-control"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeTicketBtn mt-4">Remove</button> </div> </div> `;
+                }
+            }, {
+                checkboxId: 'hasStream',
+                buttonId: 'addStreamBtn',
+                containerId: 'streamsContainer',
+                removeClass: 'removeStreamBtn',
+                buildRow(index) {
+                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Stream #${index} Rate Name</label> <input type="text" name="stream[rate_name][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="stream[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Price</label> <input type="number" name="stream[price][]" class="form-control"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeStreamBtn mt-4">Remove</button> </div> </div> `;
+                }
+            }, {
+                checkboxId: 'hasMerch',
+                buttonId: 'addMerchBtn',
+                containerId: 'merchContainer',
+                removeClass: 'removeMerchBtn',
+                buildRow(index) {
+                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Merch #${index} Name</label> <input type="text" name="merch[name][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="merch[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Price</label> <input type="number" name="merch[price][]" class="form-control"> </div> <div class="col"> <label class="form-label">Image</label> <input type="file" name="merch[image][]" class="form-control" accept="image/*"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button> </div> </div> `;
+                }
+            }];
+            sections.forEach(function (section) {
+                const checkbox = document.getElementById(section.checkboxId);
+                const button = document.getElementById(section.buttonId);
+                const container = document.getElementById(section.containerId);
+                if (!checkbox || !button || !container) {
+                    return;
+                }
+                const syncVisibility = function () {
+                    const isExpanded = checkbox.checked;
+                    checkbox.setAttribute('aria-expanded', String(isExpanded));
+                    button.style.display = isExpanded ? '' : 'none';
+                    if (!isExpanded) {
+                        container.innerHTML = '';
+                    }
+                };
+                checkbox.addEventListener('change', syncVisibility);
+                syncVisibility();
+                button.addEventListener('click', function () {
+                    const index = container.querySelectorAll('.form-group').length + 1;
+                    container.insertAdjacentHTML('beforeend', section.buildRow(index));
+                });
+                container.addEventListener('click', function (event) {
+                    const removeButton = event.target.closest('.' + section.removeClass);
+                    if (!removeButton) {
+                        return;
+                    }
+                    const row = removeButton.closest('.form-group');
+                    if (row) {
+                        row.remove();
+                    }
+                });
             });
-
-            $('#addTicketBtn').on('click', function () {
-                let index = $('#ticketsContainer .form-group').length + 1;
-                let row = $(`
-            <div class="form-group form-row border p-2 mb-2">
-                <div class="col">
-                    <label class="control-label">Ticket #${index} Type</label>
-                    <input type="text" name="ticket[type][]" class="form-control">
-                </div>
-                <div class="col">
-                    <label class="control-label">Quantity</label>
-                    <input type="number" name="ticket[quantity][]" class="form-control">
-                </div>
-                <div class="col">
-                    <label class="control-label">Currency</label>
-                    <input type="text" name="ticket[currency][]" class="form-control" value="${defaultCurrency}">
-                </div>
-                <div class="col">
-                    <label class="control-label">Cost</label>
-                    <input type="number" name="ticket[cost][]" class="form-control">
-                </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-danger removeTicketBtn mt-4">Remove</button>
-                </div>
-            </div>
-        `);
-                $('#ticketsContainer').append(row);
-            });
-
-            $('#ticketsContainer').on('click', '.removeTicketBtn', function () {
-                $(this).closest('.form-group').remove();
-            });
-
-
-            /*** STREAMS ***/
-            $('#hasStream').on('change', function () {
-                $('#addStreamBtn').toggle(this.checked);
-                if (!this.checked) $('#streamsContainer').empty();
-            });
-
-            $('#addStreamBtn').on('click', function () {
-                let index = $('#streamsContainer .form-group').length + 1;
-                let row = $(`
-            <div class="form-group form-row border p-2 mb-2">
-                <div class="col">
-                    <label class="control-label">Stream #${index} Rate Name</label>
-                    <input type="text" name="stream[rate_name][]" class="form-control">
-                </div>
-                <div class="col">
-                    <label class="control-label">Currency</label>
-                    <input type="text" name="stream[currency][]" class="form-control" value="${defaultCurrency}">
-                </div>
-                <div class="col">
-                    <label class="control-label">Price</label>
-                    <input type="number" name="stream[price][]" class="form-control">
-                </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-danger removeStreamBtn mt-4">Remove</button>
-                </div>
-            </div>
-        `);
-                $('#streamsContainer').append(row);
-            });
-
-            $('#streamsContainer').on('click', '.removeStreamBtn', function () {
-                $(this).closest('.form-group').remove();
-            });
-
-
-            /*** MERCHANDISE ***/
-            $('#hasMerch').on('change', function () {
-                $('#addMerchBtn').toggle(this.checked);
-                if (!this.checked) $('#merchContainer').empty();
-            });
-
-            $('#addMerchBtn').on('click', function () {
-                let index = $('#merchContainer .form-group').length + 1;
-                let row = $(`
-            <div class="form-group form-row border p-2 mb-2">
-                <div class="col">
-                    <label class="control-label">Merch #${index} Name</label>
-                    <input type="text" name="merch[name][]" class="form-control">
-                </div>
-                <div class="col">
-                    <label class="control-label">Currency</label>
-                    <input type="text" name="merch[currency][]" class="form-control" value="${defaultCurrency}">
-                </div>
-                <div class="col">
-                    <label class="control-label">Price</label>
-                    <input type="number" name="merch[price][]" class="form-control">
-                </div>
-                <div class="col">
-                    <label class="control-label">Image</label>
-                    <input type="file" name="merch[image][]" class="form-control-file" accept="image/*">
-                </div>
-                <div class="col-auto">
-                    <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button>
-                </div>
-            </div>
-        `);
-                $('#merchContainer').append(row);
-            });
-
-            $('#merchContainer').on('click', '.removeMerchBtn', function () {
-                $(this).closest('.form-group').remove();
-            });
-
-        });
-    </script>
+        }); </script>
 @endsection

@@ -1,69 +1,59 @@
 @extends('Backend.includes.layout')
 @section('content')
-<div class="col-12 mb-3">
-    <div class="card card-border-primary ">
-        <div class="card-header">
-            <h3 class="card-title mb-0 h5 text-primary">Add Category</h3>
+    <div class="col-12">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+                <h1 class="h3 mb-1">Categories</h1>
+                <div class="text-muted">Add Category</div>
+            </div>
+
         </div>
-        <div class="card-body">
-
-            <form action="{{ route('backend.category.store') }}" class="form form-horizontal create-form" method="post" id="addCat" >
-                @csrf
-                <div class="form-group row">
-                    <div class="col-12 col-md">
-                        <label class="control-label">Category Name</label>
-                        <input type="text" class="form-control" name="cat_name" placeholder="Name of the category" autofocus=""  />
+        <div class="card shadow-lg border">
+            <div class="card-body">
+                <form action="{{ route('backend.category.store') }}" class="form create-form" method="post"
+                      id="addCat"> @csrf
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md"><label class="form-label">Category Name</label> <input type="text"
+                                                                                                          class="form-control"
+                                                                                                          name="cat_name"
+                                                                                                          placeholder="Name of the category"
+                                                                                                          autofocus=""/>
+                        </div>
                     </div>
-
-
-                </div>
-
-                <div class="form-group form-row">
-                    <div class="col">
-                        <label class="control-label">listorder</label>
-                        <input type="number" min="1" class="form-control" name="list_order" autofocus=""  />
+                    <div class="row g-3 mb-3">
+                        <div class="col"><label class="form-label">Listorder</label> <input type="number" min="1"
+                                                                                            class="form-control"
+                                                                                            name="list_order"
+                                                                                            autofocus=""/></div>
+                        <div class="col">
+                            <label class="form-label">Parent Category</label> <select
+                                class="form-select js-choice" name="p_cat" autofocus="">
+                                <option value="0">No Parent</option> @foreach($cat as $val)
+                                    <option value="{{ $val->id }}">{{ $val->name }}</option>
+                                @endforeach </select></div>
                     </div>
-                    <div class="col">
-                        <label class="control-label">Parent Category</label>
-                        <select class="form-control select2" name="p_cat" autofocus="">
-                            <option value="0">No Parent</option>
-
-                            @foreach($cat as $val)
-                               <option value="{{ $val->id }}">{{  $val->name }}</option>
-                            @endforeach
-
-                        </select>
+                    <div class="mb-3"><label for="description" class="form-label">Description</label> <textarea
+                            name="description" id="description" class="editor form-control" data-ckeditor data-ckeditor-height="250px"></textarea></div>
+                    <div class="mb-3"><label for="updatekeyword" class="form-label">Keywords</label> <input type="text"
+                                                                                                            class="form-control tags-input"
+                                                                                                            id="updatekeyword"
+                                                                                                            name="keywords"
+                                                                                                            placeholder="Keywords separated by ;"
+                                                                                                            autofocus="">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="description" class="control-label">Description</label>
-                    <textarea name="description" id="description" name="description" class="editor form-control"></textarea>
-                </div>
-                <div class="form-group ">
-                    <label for="updatekeyword" class="control-label">Keywords</label>
-                    <input type="text" class="form-control tags-input" id="updatekeyword" name="keywords" placeholder="Keywords separated by ;" autofocus="">
-                </div>
-                <div class="form-group">
-                    <label class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="topmenu" checked value="1">
-                        <span class="form-check-label">
-                            Top Menu
-                        </span>
-                    </label>
-
-
-                </div>
-                <div class="form-group form-row">
-                    <button class="btn btn-primary btn-sm ml-auto"  name="submit"  value="publish"  type="submit">SAVE</button>
-                </div>
-            </form>
+                    <div class="mb-3"><label class="form-check form-check-inline"> <input class="form-check-input"
+                                                                                          type="checkbox" name="topmenu"
+                                                                                          checked value="1"> <span
+                                class="form-check-label"> Top Menu </span> </label></div>
+                    <div class="d-flex justify-content-end g-3 mb-3">
+                        <button class="btn btn-dark-blue ms-auto" name="submit" value="publish" type="submit">
+                            SAVE
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 @endsection
-@section('header')
-
-@endsection
-@section('footer')
-
-@endsection
+@section('header') @endsection
+@section('footer') @endsection

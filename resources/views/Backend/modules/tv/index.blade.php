@@ -3,21 +3,25 @@
 
     <div class="row">
         <div class="col">
-            <div class="card card-border-primary">
-                <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5 text-primary">TVs</h3>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h3 mb-1">Tvs</h1>
+                    <div class="text-muted">Manage your televisions.</div>
+                </div>
+                <div class="action-toolbar">
                     @can('create_tv')
-                        <a href="{{ route('backend.tv.create') }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('backend.tv.create') }}" class="btn btn-dark-blue">
                             <i class="fas fa-plus"></i>
                             Add Tv
                         </a>
                     @endcan
                 </div>
-                <hr>
+            </div>
+            <div class="card shadow-lg border">
 
                 <div class="card-body">
                     <div class="table-responsive w-100">
-                        <table id="tv_dt" class="table table-striped table-condensed">
+                        <table id="tv_dt" class="table table-striped ">
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -54,33 +58,35 @@
 @endsection
 @section('footer')
     <script>
-        $('#tv_dt').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                "url": "{{ route('backend.tv.datatable') }}",
-                "dataType": "json",
-                "type": "POST",
-                "data": {_token: "{{csrf_token()}}"}
-            },
-            "columns": [
-                {"data": "pos"},
-                {"data": "title"},
-                {"data": "thumbnail", "orderable": false},
-                {"data": "category"},
-                {"data": "language"},
-                {"data": "region"},
-                {"data": "status"},
-                {"data": "action", "orderable": false}
-            ],
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#tv_dt',{
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ route('backend.tv.datatable') }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data": {_token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    {"data": "pos"},
+                    {"data": "title"},
+                    {"data": "thumbnail", "orderable": false},
+                    {"data": "category"},
+                    {"data": "language"},
+                    {"data": "region"},
+                    {"data": "status"},
+                    {"data": "action", "orderable": false}
+                ],
 
-            "createdRow": function (row, data, dataIndex) {
-                $(row).find('td').css({
-                    "text-align": "left",
-                    "vertical-align": "middle"
-                });
-            },
-            "order": [[1, "asc"]]
+                "createdRow": function (row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
+                    });
+                },
+                "order": [[1, "asc"]]
+            });
         });
     </script>
 @endsection

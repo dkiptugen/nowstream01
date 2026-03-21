@@ -1,17 +1,21 @@
+
 @extends('Backend.includes.layout')
 @section('content')
 <div class="col-12">
-    <div class="card card-border-primary">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title h5 text-primary">Categories</h3>
-            <div class="actbtn">
-                @if(\Illuminate\Support\Facades\Auth::user()->can('create_category'))
-                    <a href="{{ route('backend.category.create') }}" class="btn btn-sm btn-primary">
-                       <i class="fas fa-plus"></i> Add Category
-                    </a>
-                @endif
-            </div>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="h3 mb-1">Category</h1>
+            <div class="text-muted">Manage your category tree and drag siblings to reorder them.</div>
         </div>
+        <div class="action-toolbar">
+            @can('create_category')
+                <a href="{{ route('backend.category.create') }}" class="btn  btn-dark-blue">
+                    <i class="fas fa-plus"></i> Add Category
+                </a>
+            @endcan
+        </div>
+    </div>
+    <div class="card shadow-lg border">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped" id="category-table">
@@ -56,26 +60,28 @@
 @section('footer')
 
     <script type="application/javascript">
-        $('#category-table').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax":{
-                "url": "{{ route('backend.category.datatable') }}",
-                "dataType": "json",
-                "type": "POST",
-                "data":{ _token: "{{csrf_token()}}"}
-            },
-            "columns": [
-                { "data": "pos" },
-                { "data": "name" },
-                { "data": "parent" },
-                { "data": "position" },
-                { "data": "description" },
-                { "data": "top_menu"},
-                { "data": "action" }
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#category-table', {
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ route('backend.category.datatable') }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data": {_token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    {"data": "pos"},
+                    {"data": "name"},
+                    {"data": "parent"},
+                    {"data": "position"},
+                    {"data": "description"},
+                    {"data": "top_menu"},
+                    {"data": "action"}
 
-            ],
-            "order": [[ 3, "asc" ]]
+                ],
+                "order": [[3, "asc"]]
+            });
         });
     </script>
 @endsection

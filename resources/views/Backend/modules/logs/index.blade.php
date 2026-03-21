@@ -2,16 +2,20 @@
 @section('content')
 
     <div class="col-12">
-            <div class="table-responsive">
-                <div class="card card-border-nation">
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+        <h1 class="h3 mb-1">Logs</h1>
+        <div class="text-muted">Manage your logs.</div>
+    </div>
+</div>
+                <div class="card shadow-lg border">
 
 
 
                     <div class="card-body">
-                        <h3 class="my-0 card-title h5">Logs</h3>
-                        <hr>
+
                         <div class="table-responsive">
-                        <table class="table table-striped table-condensed" id="logger">
+                        <table class="table table-striped " id="logger">
                             <thead>
                             <tr>
                                 <th>#</th>
@@ -44,7 +48,7 @@
                 </div>
             </div>
 
-        </div>
+
 
 @endsection
 @section('header')
@@ -53,26 +57,28 @@
 @endsection
 @section('footer')
     <script>
-        $('#logger').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": {
-                "url": "{{ route('backend.logs.datatable') }}",
-                "dataType": "json",
-                "type": "POST",
-                "data": {_token: "{{csrf_token()}}"}
-            },
-            "columns": [
-                {"data": "pos", "orderable": false},
-                {"data": "action", "orderable": false},
-                {"data": "executer"},
-                {"data": "model", "orderable": false},
-                {"data": "affectedid"},
-                {"data": "change"},
-                {"data": "time"}
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#logger',{
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "{{ route('backend.logs.datatable') }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data": {_token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    {"data": "pos", "orderable": false},
+                    {"data": "action", "orderable": false},
+                    {"data": "executer"},
+                    {"data": "model", "orderable": false},
+                    {"data": "affectedid"},
+                    {"data": "change"},
+                    {"data": "time"}
 
-            ],
-            "order": [[6, "desc"]]
+                ],
+                "order": [[6, "desc"]]
+            });
         });
     </script>
 

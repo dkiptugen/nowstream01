@@ -1,5 +1,5 @@
 @include('Backend.includes.header')
-<main class="content">
+<main id="main-content" class="content" tabindex="-1">
     <div class="container-fluid p-0">
         @yield('content')
     </div>

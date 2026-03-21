@@ -1,12 +1,12 @@
 <div class="wrapper">
-    <nav class="sidebar sidebar-sticky">
-        <span class="sidebar-content  js-simplebar">
-            <a class="sidebar-brand" href="{{ route('backend.admin_dashboard') }}" >
-                <img src="{{ asset($logo) }}?=1" alt="Logo" class="img-fluid w-100"  >
+    <nav id="sidebar" class="sidebar js-sidebar" aria-label="Primary">
+        <div class="sidebar-content  js-simplebar">
+            <a class="sidebar-brand" href="{{ route('backend.admin_dashboard') }}" aria-label="Nowstream admin home">
+                <img src="{{ asset($logo) }}?=1" alt="Nowstream admin logo" class="img-fluid w-100"  >
             </a>
 
-            <ul class="sidebar-nav">
-                <li class="sidebar-header">
+            <ul class="sidebar-nav" role="list">
+                <li class="sidebar-header" role="presentation">
                     Main
                 </li>
                 <li class="sidebar-item">
@@ -85,7 +85,7 @@
                     </li>
                 @endcan
 
-                <li class="sidebar-header">Revenue</li>
+                <li class="sidebar-header" role="presentation">Revenue</li>
                 @can('view_payment_method')
                     <li class="sidebar-item">
                         <a href="{{ route('backend.payment_method.index') }}" class="  sidebar-link">
@@ -105,7 +105,7 @@
                     </li>
                 @endcan
 
-                <li class="sidebar-header">Accounts</li>
+                <li class="sidebar-header" role="presentation">Accounts</li>
                 <li class="sidebar-item">
                     <a href="{{ route('backend.user.index') }}" class="  sidebar-link">
                         <i class='fas fa-user  align-middle'></i>
@@ -130,7 +130,7 @@
                     </a>
 
                 </li>
-                <li class="sidebar-header">Logs</li>
+                <li class="sidebar-header" role="presentation">Logs</li>
 
                 <li class="sidebar-item">
                     <a href="{{ route('backend.logs.index') }}" class="  sidebar-link">
@@ -144,4 +144,3 @@
 
 
     </nav>
-

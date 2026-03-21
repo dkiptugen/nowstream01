@@ -1,62 +1,51 @@
 @extends('Backend.includes.layout')
 
 @section('content')
-    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-        <div class="breadcrumb-title pe-3">Videos</div>
-        <div class="ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('backend.admin_dashboard') }}"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Edit Video</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col">
-            <div class="card  card-border-primary">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h3 mb-1">Videos</h1>
+                    <div class="text-muted">Update video details.</div>
+                </div>
+            </div>
+
+            <div class="card shadow-lg border">
                 <div class="card-header">
-                    <h3 class="card-title m-0 h5 text-primary">Edit Video</h3>
+                    <h3 class="card-title m-0 h5">Edit Video</h3>
                 </div>
                 <div class="card-body">
-                    <!-- Display Success and Error Messages -->
                     @if(session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
                     @if(session('error'))
-                        <div class="alert alert-danger">
-                            {{ session('error') }}
-                        </div>
+                        <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
 
-                    <form action="{{ route('backend.video.update',['video'=>$video->uuid]) }}" method="POST" enctype="multipart/form-data" class="form form-horizontal create-form">
+                    <form action="{{ route('backend.video.update', ['video' => $video->uuid]) }}" method="POST" enctype="multipart/form-data" class="form create-form">
                         @csrf
                         @method('PUT')
-                        <div class="form-group">
-                            <label for="title" class="control-label">Video Title</label>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Video Title</label>
                             <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $video->title) }}">
                             @error('title')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="description" class="control-label">Description</label>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
                             <textarea name="description" id="description" class="form-control editor @error('description') is-invalid @enderror" rows="10">{{ old('description', $video->description) }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="event_id" class="control-label">Event</label>
-                            <select name="event_id" id="event_id" class="form-control @error('event_id') is-invalid @enderror">
+                        <div class="mb-3">
+                            <label for="event_id" class="form-label">Event</label>
+                            <select name="event_id" id="event_id" class="form-select @error('event_id') is-invalid @enderror js-choice">
                                 @foreach($events as $event)
                                     <option value="{{ $event->uuid }}" {{ old('event_id', $video->event_uuid) == $event->uuid ? 'selected' : '' }}>{{ $event->event_name }}</option>
                                 @endforeach
@@ -66,9 +55,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="thumbnail" class="control-label">Thumbnail</label>
-                            <input type="file" name="thumbnail" id="thumbimage" class="form-control-input @error('thumbnail') is-invalid @enderror">
+                        <div class="mb-3">
+                            <label for="thumbimage" class="form-label">Thumbnail</label>
+                            <input type="file" name="thumbnail" id="thumbimage" class="form-control @error('thumbnail') is-invalid @enderror">
                             @if($video->thumbnail_url)
                                 <div class="mt-2">
                                     <img src="{{ $video->thumbnail_url }}" alt="Thumbnail" class="img-fluid" style="max-width: 200px;">
@@ -80,25 +69,23 @@
                             @enderror
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="tags" class="control-label">Tags</label>
-                            <input type="text" name="tags" id="tags" class="form-control tags-input @error('tags') is-invalid @enderror"/>
-
-
+                        <div class="mb-3">
+                            <label for="tags" class="form-label">Tags</label>
+                            <input type="text" name="tags" id="tags" class="form-control tags-input @error('tags') is-invalid @enderror">
                             @error('tags')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="video_path" class="control-label">Video</label>
-                            <input type="file" name="video_path" id="video_path" class="form-control-input @error('video_path') is-invalid @enderror">
+                        <div class="mb-3">
+                            <label for="video_path" class="form-label">Video</label>
+                            <input type="file" name="video_path" id="video_path" class="form-control @error('video_path') is-invalid @enderror">
                             @error('video_path')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        <div class="form-group d-flex justify-content-end mt-2">
+                        <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-sm btn-primary">Update Video</button>
                         </div>
                     </form>
@@ -109,12 +96,4 @@
 @endsection
 
 @section('footer')
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#tags').select2({
-                tags: true,
-                tokenSeparators: [',', ' ']
-            });
-        });
-    </script>
 @endsection

@@ -58,27 +58,28 @@
 @section('footer')
 
     <script type="application/javascript">
-        $('#podcast-table').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax":{
-                "url": "{{ route('backend.podcast.episode.datatable',['podcast'=>$podcast->uuid]) }}",
-                "dataType": "json",
-                "type": "POST",
-                "data":{ _token: "{{csrf_token()}}"}
-            },
-            "columns": [
-                { "data": "pos" },
-                { "data": "title" },
-                { "data": "thumbnail" },
-                { "data": "description" },
-                { "data": "content_rating" },
-                { "data": "status"  },
-                { "data": "action" }
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#podcast-table', {
+                "processing": true,
+                "serverSide": true,
+                "ajax":{
+                    "url": "{{ route('backend.podcast.episode.datatable',['podcast'=>$podcast->uuid]) }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data":{ _token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    { "data": "pos" },
+                    { "data": "title" },
+                    { "data": "thumbnail" },
+                    { "data": "description" },
+                    { "data": "content_rating" },
+                    { "data": "status"  },
+                    { "data": "action" }
 
-            ],
-            "order": [[ 1, "asc" ]]
+                ],
+                "order": [[ 1, "asc" ]]
+            });
         });
     </script>
 @endsection
-
