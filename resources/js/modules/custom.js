@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await fetch(input.dataset.url, {
                     method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    headers: {'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content},
                     body: data
                 });
                 const result = await res.json();
@@ -139,12 +139,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
-import { Notyf } from 'notyf';
+import {Notyf} from 'notyf';
 import 'notyf/notyf.min.css';
 
 const notify = new Notyf({
     duration: 1000,
-    position: { x: 'right', y: 'top' }
+    position: {x: 'right', y: 'top'}
 });
 
 // Event delegation (replaces $(document).on)
@@ -160,30 +160,107 @@ document.addEventListener('submit', async function (e) {
         const res = await fetch(frm.action, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             },
             body: formData
         });
 
-        const Mess = await res.json();
+        const contentType = res.headers.get('content-type') || '';
+        const raw = await res.text();
+
+        let Mess = {};
+        if (contentType.includes('application/json')) {
+            Mess = JSON.parse(raw);
+        } else {
+            throw new Error(raw.startsWith('<')
+                ? 'Server returned HTML instead of JSON. Check login/session or backend error.'
+                : raw || 'Unexpected server response.');
+        }
+
+        if (!res.ok) {
+            throw new Error(
+                Mess.msg ||
+                Mess.message ||
+                (Mess.errors ? Object.values(Mess.errors).flat().join(' ') : '') ||
+                `Request failed with status ${res.status}`
+            );
+        }
 
         if (Mess.status === true) {
             notify.success(Mess.msg || 'Success');
-
-            // redirect after short delay (replaces onHidden)
             setTimeout(() => {
-                if (Mess.url) {
-                    window.location.href = Mess.url;
-                }
+                if (Mess.url) window.location.href = Mess.url;
             }, 1000);
-
         } else {
-            notify.error(Mess.msg || 'Operation failed');
+            throw new Error(Mess.msg || 'Operation failed');
         }
-
     } catch (error) {
         console.error(error);
-
-        notify.error('Something went wrong. Please try again.');
+        notify.error(error.message || 'Something went wrong. Please try again.');
     }
 });
+
+flatpickr('input[name="datetimes"], .datetimes', {
+    enableTime: true,
+    mode: "range",
+    dateFormat: "Y/m/d h:i K", // equivalent to Y/M/DD hh:mm A
+    defaultDate: [
+        new Date().setMinutes(0, 0, 0), // start of hour
+        new Date(Date.now() + 32 * 60 * 60 * 1000) // +32 hours
+    ]
+});
+flatpickr('input[name="datesingle"], .datesingle', {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i:S",
+    defaultDate: new Date(),
+    allowInput: true
+});
+
+flatpickr('input[name="datesingle"], .datesingle', {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i:S",
+    defaultDate: new Date(),
+    allowInput: true
+});
+flatpickr('#schedule_date', {
+    enableTime: false,
+    dateFormat: "Y-m-d",
+    allowInput: true
+});
+flatpickr('.starttime', {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    minuteIncrement: 15
+});
+
+flatpickr('.endtime', {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",
+    minuteIncrement: 15
+});
+const reportInput = document.getElementById('reportRangeInput');
+const reportSpan = document.querySelector('#reportrange span');
+
+const today = new Date();
+const last30 = new Date();
+last30.setDate(today.getDate() - 29);
+
+const fp = flatpickr(reportInput, {
+    mode: "range",
+    dateFormat: "F j, Y",
+    defaultDate: [last30, today],
+    onChange: function(selectedDates) {
+        if (selectedDates.length === 2) {
+            const [start, end] = selectedDates;
+            reportSpan.textContent =
+                `${fp.formatDate(start, "F j, Y")} - ${fp.formatDate(end, "F j, Y")}`;
+        }
+    }
+});
+
+// initialize display
+reportSpan.textContent =
+    `${fp.formatDate(last30, "F j, Y")} - ${fp.formatDate(today, "F j, Y")}`;

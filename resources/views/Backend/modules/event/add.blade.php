@@ -40,7 +40,7 @@
                         </div> <!-- TICKETS -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2"><input type="checkbox" id="hasTickets"
+                                <div class="form-check mb-2"><input type="checkbox" id="hasTickets" name="has_tickets" value="1"
                                                                     class="form-check-input"
                                                                     aria-controls="ticketsContainer"
                                                                     aria-expanded="false"> <label for="hasTickets"
@@ -56,7 +56,7 @@
                         </div> <!-- STREAMS -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2"><input type="checkbox" id="hasStream"
+                                <div class="form-check mb-2"><input type="checkbox" id="hasStream" name="has_stream" value="1"
                                                                     class="form-check-input"
                                                                     aria-controls="streamsContainer"
                                                                     aria-expanded="false"> <label for="hasStream"
@@ -72,7 +72,7 @@
                         </div> <!-- MERCHANDISE -->
                         <div class="mb-4">
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="form-check mb-2"><input type="checkbox" id="hasMerch"
+                                <div class="form-check mb-2"><input type="checkbox" id="hasMerch" name="has_merch" value="1"
                                                                     class="form-check-input"
                                                                     aria-controls="merchContainer"
                                                                     aria-expanded="false"> <label for="hasMerch"
@@ -102,15 +102,75 @@
 @section('header')
 @endsection
 @section('footer')
-    <script> document.addEventListener('DOMContentLoaded', function () {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
             const defaultCurrency = 'USD';
+            const merchContainer = document.getElementById('merchContainer');
+
+            function buildVariantRow(merchIndex, variantIndex, variant = {}) {
+                return `
+                    <div class="variant-row row g-2 align-items-end mb-2">
+                        <div class="col-md-5">
+                            <label class="form-label">Variant #${variantIndex} Name</label>
+                            <input type="text" name="merch[variants][${merchIndex}][name][]" class="form-control" value="${variant.name || ''}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Price Override</label>
+                            <input type="number" name="merch[variants][${merchIndex}][price_override][]" class="form-control" step="0.01" min="0" value="${variant.price_override || ''}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Stock</label>
+                            <input type="number" name="merch[variants][${merchIndex}][stock_total][]" class="form-control" min="0" value="${variant.stock_total || ''}">
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" class="btn btn-outline-danger removeVariantBtn">X</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function buildMerchRow(index) {
+                return `
+                    <div class="form-group border p-3 mb-3 merch-row" data-merch-index="${index}">
+                        <div class="row g-2">
+                            <div class="col-md-3">
+                                <label class="form-label">Merch #${index + 1} Name</label>
+                                <input type="text" name="merch[name][]" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Currency</label>
+                                <input type="text" name="merch[currency][]" class="form-control" value="${defaultCurrency}" maxlength="3">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Price</label>
+                                <input type="number" name="merch[price][]" class="form-control" step="0.01" min="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" name="merch[image][]" class="form-control" accept="image/*">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" class="btn btn-danger removeMerchBtn w-100">Remove</button>
+                            </div>
+                        </div>
+                        <div class="border rounded p-3 mt-3 bg-light-subtle">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Variants</strong>
+                                <button type="button" class="btn btn-sm btn-outline-primary addVariantBtn">Add Variant</button>
+                            </div>
+                            <div class="variantContainer"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
             const sections = [{
                 checkboxId: 'hasTickets',
                 buttonId: 'addTicketBtn',
                 containerId: 'ticketsContainer',
                 removeClass: 'removeTicketBtn',
                 buildRow(index) {
-                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Ticket #${index} Type</label> <input type="text" name="ticket[type][]" class="form-control"> </div> <div class="col"> <label class="form-label">Quantity</label> <input type="number" name="ticket[quantity][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="ticket[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Cost</label> <input type="number" name="ticket[cost][]" class="form-control"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeTicketBtn mt-4">Remove</button> </div> </div> `;
+                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Ticket #${index} Type</label> <input type="text" name="ticket[type][]" class="form-control"> </div> <div class="col"> <label class="form-label">Quantity</label> <input type="number" name="ticket[quantity][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="ticket[currency][]" class="form-control" value="${defaultCurrency}" maxlength="3"> </div> <div class="col"> <label class="form-label">Cost</label> <input type="number" name="ticket[cost][]" class="form-control" step="0.01" min="0"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeTicketBtn mt-4">Remove</button> </div> </div> `;
                 }
             }, {
                 checkboxId: 'hasStream',
@@ -118,7 +178,7 @@
                 containerId: 'streamsContainer',
                 removeClass: 'removeStreamBtn',
                 buildRow(index) {
-                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Stream #${index} Rate Name</label> <input type="text" name="stream[rate_name][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="stream[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Price</label> <input type="number" name="stream[price][]" class="form-control"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeStreamBtn mt-4">Remove</button> </div> </div> `;
+                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Stream #${index} Rate Name</label> <input type="text" name="stream[rate_name][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="stream[currency][]" class="form-control" value="${defaultCurrency}" maxlength="3"> </div> <div class="col"> <label class="form-label">Price</label> <input type="number" name="stream[price][]" class="form-control" step="0.01" min="0"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeStreamBtn mt-4">Remove</button> </div> </div> `;
                 }
             }, {
                 checkboxId: 'hasMerch',
@@ -126,9 +186,10 @@
                 containerId: 'merchContainer',
                 removeClass: 'removeMerchBtn',
                 buildRow(index) {
-                    return ` <div class="form-group row border p-2 mb-2"> <div class="col"> <label class="form-label">Merch #${index} Name</label> <input type="text" name="merch[name][]" class="form-control"> </div> <div class="col"> <label class="form-label">Currency</label> <input type="text" name="merch[currency][]" class="form-control" value="${defaultCurrency}"> </div> <div class="col"> <label class="form-label">Price</label> <input type="number" name="merch[price][]" class="form-control"> </div> <div class="col"> <label class="form-label">Image</label> <input type="file" name="merch[image][]" class="form-control" accept="image/*"> </div> <div class="col-auto"> <button type="button" class="btn btn-danger removeMerchBtn mt-4">Remove</button> </div> </div> `;
+                    return buildMerchRow(index - 1);
                 }
             }];
+
             sections.forEach(function (section) {
                 const checkbox = document.getElementById(section.checkboxId);
                 const button = document.getElementById(section.buttonId);
@@ -142,24 +203,54 @@
                     button.style.display = isExpanded ? '' : 'none';
                     if (!isExpanded) {
                         container.innerHTML = '';
+                        if (container === merchContainer) {
+                            merchContainer.dataset.nextIndex = '0';
+                        }
                     }
                 };
                 checkbox.addEventListener('change', syncVisibility);
                 syncVisibility();
                 button.addEventListener('click', function () {
+                    if (container === merchContainer) {
+                        const nextIndex = Number(merchContainer.dataset.nextIndex || '0');
+                        container.insertAdjacentHTML('beforeend', buildMerchRow(nextIndex));
+                        merchContainer.dataset.nextIndex = String(nextIndex + 1);
+                        return;
+                    }
                     const index = container.querySelectorAll('.form-group').length + 1;
                     container.insertAdjacentHTML('beforeend', section.buildRow(index));
                 });
                 container.addEventListener('click', function (event) {
                     const removeButton = event.target.closest('.' + section.removeClass);
-                    if (!removeButton) {
+                    if (removeButton) {
+                        const row = removeButton.closest('.form-group');
+                        if (row) {
+                            row.remove();
+                        }
                         return;
-                    }
-                    const row = removeButton.closest('.form-group');
-                    if (row) {
-                        row.remove();
                     }
                 });
             });
-        }); </script>
+
+            merchContainer?.addEventListener('click', function (event) {
+                const merchRow = event.target.closest('.merch-row');
+                if (!merchRow) {
+                    return;
+                }
+
+                if (event.target.closest('.addVariantBtn')) {
+                    const merchIndex = merchRow.dataset.merchIndex;
+                    const variantContainer = merchRow.querySelector('.variantContainer');
+                    const variantIndex = variantContainer.querySelectorAll('.variant-row').length + 1;
+                    variantContainer.insertAdjacentHTML('beforeend', buildVariantRow(merchIndex, variantIndex));
+                    return;
+                }
+
+                const removeVariantButton = event.target.closest('.removeVariantBtn');
+                if (removeVariantButton) {
+                    removeVariantButton.closest('.variant-row')?.remove();
+                }
+            });
+        });
+    </script>
 @endsection

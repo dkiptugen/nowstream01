@@ -57,6 +57,11 @@
                     return $this->hasMany(Ticket::class, 'event_id', 'uuid');
                 }
 
+            public function products()
+                {
+                    return $this->morphMany(Product::class, 'payable');
+                }
+
         /**
          * Event belongs to a channel
          */

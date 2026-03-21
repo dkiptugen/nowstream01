@@ -70,6 +70,17 @@
                 'visibility' => 'public',
                 'throw'      => true,
             ],
+            'akamai' => [
+                'driver' => 's3',
+                'key' => env('AKAMAI_KEY'),
+                'secret' => env('AKAMAI_SECRET'),
+                'endpoint' => env('AKAMAI_ENDPOINT'),
+                'region' => env('AKAMAI_REGION'),
+                'bucket' => env('AKAMAI_BUCKET'),
+                'url' => env('AKAMAI_URL'),
+                'visibility' => 'public',
+                'throw' => true,
+            ],
 
         ],
 

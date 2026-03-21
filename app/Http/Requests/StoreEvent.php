@@ -22,9 +22,24 @@ class StoreEvent extends FormRequest
     public function rules(): array
     {
         return [
-            'event_name' =>['Required'],
-            "description"=>["nullable"],
-            "thumbnail" => ['required','image','mimes:jpeg,png,jpg,gif,svg','max:2048'],
+            'event_name' => ['required'],
+            'event_description' => ['nullable'],
+            'thumbnail' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'stream_thumbnail' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'ticket.type.*' => ['nullable', 'string', 'max:255'],
+            'ticket.quantity.*' => ['nullable', 'integer', 'min:0'],
+            'ticket.currency.*' => ['nullable', 'string', 'size:3'],
+            'ticket.cost.*' => ['nullable', 'numeric', 'min:0'],
+            'stream.rate_name.*' => ['nullable', 'string', 'max:255'],
+            'stream.currency.*' => ['nullable', 'string', 'size:3'],
+            'stream.price.*' => ['nullable', 'numeric', 'min:0'],
+            'merch.name.*' => ['nullable', 'string', 'max:255'],
+            'merch.currency.*' => ['nullable', 'string', 'size:3'],
+            'merch.price.*' => ['nullable', 'numeric', 'min:0'],
+            'merch.image.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'merch.variants.*.name.*' => ['nullable', 'string', 'max:255'],
+            'merch.variants.*.price_override.*' => ['nullable', 'numeric', 'min:0'],
+            'merch.variants.*.stock_total.*' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

@@ -4,91 +4,96 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMediaLibraryFileRequest;
+use App\Models\Media;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\Finder\SplFileInfo;
 
 class MediaLibraryController extends Controller
-{
-    public function index(Request $request): JsonResponse
     {
-        $directory = $this->absoluteDirectory();
-        $search = trim((string) $request->string('search')->value());
+        public function index(Request $request): JsonResponse
+            {
+                $search = trim((string)$request->string('search')->value());
 
-        File::ensureDirectoryExists($directory);
+                $items = Media::query()
+                              ->when($search !== '', function ($query) use ($search)
+                                  {
+                                      $query->where('name', 'like', '%' . $search . '%');
+                                  })
+                              ->latest()
+                              ->take((int)config('media-library.max_items', 100))
+                              ->get()
+                              ->map(fn(Media $media): array => $this->formatItem($media))
+                              ->values()
+                              ->all();
 
-        $items = collect(File::allFiles($directory))
-            ->when($search !== '', function ($files) use ($search) {
-                return $files->filter(static function (SplFileInfo $file) use ($search): bool {
-                    return str_contains(Str::lower($file->getFilename()), Str::lower($search));
-                });
-            })
-            ->sortByDesc(static fn (SplFileInfo $file): int => $file->getMTime())
-            ->take((int) config('media-library.max_items', 100))
-            ->map(fn (SplFileInfo $file): array => $this->formatItem($file))
-            ->values()
-            ->all();
+                return response()->json([
+                    'data' => $items,
+                ]);
+            }
 
-        return response()->json([
-            'data' => $items,
-        ]);
+        public function store(StoreMediaLibraryFileRequest $request): JsonResponse
+            {
+                $uploadedFile   = $request->file('file');
+                $disk           = (string)config('media-library.disk', 'akamai');
+                $directory      = trim((string)config('media-library.directory', 'media-library'), '/');
+                $extension      = $uploadedFile->getClientOriginalExtension() ?: $uploadedFile->extension() ?: 'bin';
+                $storedFilename = Str::uuid()->toString() . '.' . $extension;
+                $path           = trim($directory . '/' . date('Y/m') . '/' . $storedFilename, '/');
+
+                Storage::disk($disk)->putFileAs(
+                    dirname($path),
+                    $uploadedFile,
+                    basename($path),
+                    ['visibility' => 'public']
+                );
+
+                $media = Media::create([
+                    'name'          => $storedFilename,
+                    'original_name' => $uploadedFile->getClientOriginalName(),
+                    'disk'          => $disk,
+                    'directory'     => $directory,
+                    'path'          => $path,
+                    'url'           => Storage::disk($disk)->url($path),
+                    'mime_type'     => $uploadedFile->getClientMimeType() ?: 'application/octet-stream',
+                    'extension'     => $extension,
+                    'size'          => $uploadedFile->getSize(),
+                    'type'          => $this->resolveType($uploadedFile->getClientMimeType() ?: 'application/octet-stream'),
+                    'is_image'      => Str::startsWith((string)$uploadedFile->getClientMimeType(), 'image/'),
+                ]);
+
+                $item = $this->formatItem($media);
+
+                return response()->json([
+                    'message' => 'Media uploaded successfully.',
+                    'data'    => $item,
+                    'url'     => $item['url'],
+                ], 201);
+            }
+
+        protected function formatItem(Media $media): array
+            {
+                return [
+                    'name'        => $media->original_name ?: $media->name,
+                    'path'        => $media->path,
+                    'url'         => $media->url,
+                    'size'        => $media->size,
+                    'mime_type'   => $media->mime_type,
+                    'type'        => $media->type,
+                    'uploaded_at' => optional($media->created_at)->toIso8601String(),
+                    'is_image'    => (bool)$media->is_image,
+                ];
+            }
+
+        protected function resolveType(string $mimeType): string
+            {
+                return match (true)
+                    {
+                    Str::startsWith($mimeType, 'image/') => 'image',
+                    Str::startsWith($mimeType, 'video/') => 'video',
+                    Str::startsWith($mimeType, 'audio/') => 'audio',
+                    default                              => 'document',
+                    };
+            }
     }
-
-    public function store(StoreMediaLibraryFileRequest $request): JsonResponse
-    {
-        $uploadedFile = $request->file('file');
-        $directory = $this->absoluteDirectory();
-
-        File::ensureDirectoryExists($directory);
-
-        $extension = $uploadedFile->getClientOriginalExtension() ?: $uploadedFile->extension() ?: 'bin';
-        $storedFilename = Str::uuid()->toString().'.'.$extension;
-
-        $uploadedFile->move($directory, $storedFilename);
-
-        $item = $this->formatItem(new SplFileInfo($directory.DIRECTORY_SEPARATOR.$storedFilename, '', $storedFilename));
-
-        return response()->json([
-            'message' => 'Media uploaded successfully.',
-            'data' => $item,
-            'url' => $item['url'],
-        ], 201);
-    }
-
-    protected function formatItem(SplFileInfo $file): array
-    {
-        $relativePath = ltrim(str_replace($this->absoluteDirectory(), '', $file->getPathname()), DIRECTORY_SEPARATOR);
-        $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath);
-        $publicDirectory = trim((string) config('media-library.directory', 'media-library'), '/');
-        $mimeType = File::mimeType($file->getPathname()) ?: 'application/octet-stream';
-
-        return [
-            'name' => $file->getFilename(),
-            'path' => $relativePath,
-            'url' => asset($publicDirectory.'/'.$relativePath),
-            'size' => $file->getSize(),
-            'mime_type' => $mimeType,
-            'type' => $this->resolveType($mimeType),
-            'uploaded_at' => Carbon::createFromTimestamp($file->getMTime())->toIso8601String(),
-            'is_image' => Str::startsWith($mimeType, 'image/'),
-        ];
-    }
-
-    protected function resolveType(string $mimeType): string
-    {
-        return match (true) {
-            Str::startsWith($mimeType, 'image/') => 'image',
-            Str::startsWith($mimeType, 'video/') => 'video',
-            Str::startsWith($mimeType, 'audio/') => 'audio',
-            default => 'document',
-        };
-    }
-
-    protected function absoluteDirectory(): string
-    {
-        return public_path(trim((string) config('media-library.directory', 'media-library'), '/'));
-    }
-}

@@ -120,13 +120,18 @@ Route::middleware(['auth:admin','choose.channel'])->prefix('backend')->name('bac
 
     Route::name('event.')->prefix('event')->group(function (){
         Route::controller(EventStreamController::class)->group( function (){
-            Route::resource('stream', EventStreamController::class);
+            Route::resource('{event}/stream', EventStreamController::class);
             Route::post('{event}/stream/datatable', 'datatable')->name('stream.datatable');
         });
 
         Route::controller(EventVideoController::class)->group( function (){
-            Route::resource('video', EventVideoController::class);
+            Route::resource('{event}/video', EventVideoController::class);
             Route::post('{event}/video/datatable',  'datatable')->name('video.datatable');
+        });
+
+        Route::controller(EventRateController::class)->group( function (){
+            Route::resource('{event}/rate', EventVideoController::class);
+            Route::post('{event}/rate/datatable',  'datatable')->name('rate.datatable');
         });
     });
 
