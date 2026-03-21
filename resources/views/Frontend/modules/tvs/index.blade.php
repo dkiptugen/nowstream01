@@ -53,7 +53,7 @@
                 <div class="pcar-overlay pcar-overlay-left"></div>
                 <div class="pcar-overlay pcar-overlay-right"></div>
 
-                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3" data-mobile="1">
+                <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="11" data-tablet="3" data-mobile="2">
                     <div class="pcar-track">
                         @foreach($toptvs as $tv)
                         <div class="pcar-item">

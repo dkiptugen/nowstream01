@@ -16,7 +16,7 @@ use App\Http\Controllers\Frontend\TicketController;
 use App\Http\Controllers\Frontend\WatchHistoryController;
 use App\Http\Controllers\Frontend\TenantController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Frontend\StreamController; 
+use App\Http\Controllers\Frontend\StreamController;
 use App\Http\Controllers\Frontend\CommentController;
 use App\Http\Controllers\Frontend\StreamVideoController;
 use App\Http\Controllers\Frontend\SubscriptionController;
@@ -67,7 +67,7 @@ Route::middleware(['detectCountry'])->group(function () {
     Route::get('/somalinite', [HomeController::class, 'landing']);
 
 
-    Route::get('/search', [SearchController::class, 'search'])->name('search'); 
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
     // Route::post('/{commentableType}/{commentableId}/comment', [StreamVideoController::class, 'postComment'])->name('comment.post');
     Route::post(
         '/comment/post/{commentableType}/{commentableId}',
@@ -212,5 +212,11 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/podcasts/load-more', [FrontendPodcastController::class, 'loadmore'])->name('podcasts.loadMore');
 
+Route::group([], function () {
+    // Set the idoc config to the ecommerce config
+    config(['idoc' => config('idoc.ecommerce')]);
 
+    // Define the route for the user documentation
+    Route::view(config('idoc.path'), 'idoc::documentation');
+});
 require __DIR__ . '/admin.php';

@@ -1,5 +1,5 @@
 
-                    <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
+                    <div class="col-xl-4 col-lg-4 col-6 grid-item grid-sizer">
                           @php 
                         $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
                     @endphp
