@@ -64,7 +64,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 									</tr>
 								</thead>
 								<tbody>
-									@foreach($rates as $rate)
+									@foreach($eventRates as $rate)
 									@php
 									// Determine currency based on country
 									$currency = $country == 'KE'
@@ -76,7 +76,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 											{{ ucfirst($rate->name) }}
 										</td>
 										<td class="align-content-center">
-											{{ $currency }}
+											{{ $currency }} {{ $rate->price > 0 ? 'per ticket' : 'Free' }}
 										</td>
 										<td class="align-content-center text-end">
 											<a class="btn btn-sm btn-success p-2 pl-3"

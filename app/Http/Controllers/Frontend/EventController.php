@@ -133,7 +133,8 @@ class EventController extends Controller
                 ->get();
         }); 
         // dd eventRates
-         dd($data['event']->eventRates);
+        //  dd($data['event']->eventRates);
+        $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
 
 
         return view('Frontend.modules.events.event', [
@@ -142,7 +143,8 @@ class EventController extends Controller
             'videos'         => $data['videos'],
             'rates'          => $data['rates'],
             'ticket'          => $ticket,
-            'relatedEvents'  => $relatedEvents, // pass related events to the view
+            'eventRates'     => $data['event']->eventRates,  
+            'relatedEvents'  => $relatedEvents,  
         ]);
     }
 }
