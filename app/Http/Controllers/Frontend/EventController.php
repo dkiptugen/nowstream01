@@ -106,12 +106,14 @@ class EventController extends Controller
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
             $eventId = $event->uuid;
-
+            $event->load('eventRates'); // Load rates with the event
+dd($event);
             return [
                 'event'  => $event,
                 'events' => $this->get_events($eventId),
                 'videos' => $this->get_videos(),
                 'rates'  => $this->get_event_ticket_rates($eventId),
+
             ];
         });
 
