@@ -138,24 +138,13 @@ Route::middleware(['detectCountry'])->group(function () {
         Route::get('/video/{uuid}/{slug?}', [StreamVideoController::class, 'show'])
             ->name('video.show');
 
-/*
-|--------------------------------------------------------------------------
-| Payment Route (PUBLIC)
-|--------------------------------------------------------------------------
-*/
-Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])
-    ->name('event.pay');
 
+        Route::get('/video/file/{filename}', [StreamVideoController::class, 'get_video'])->name('video.file');
+        Route::middleware(['check.event.payment'])->group(function () {
+            Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.payf');
+        });
 
-/*
-|--------------------------------------------------------------------------
-| Stream Route (PROTECTED)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['check.event.payment'])->group(function () {
-    Route::get('/event/stream/{eventId}', [StreamController::class, 'show'])
-        ->name('stream.show');
-});
+            Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
         Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
         Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
         Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
