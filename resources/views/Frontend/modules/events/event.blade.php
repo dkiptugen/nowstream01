@@ -76,7 +76,8 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 											{{ ucfirst($rate->name) }}
 										</td>
 										<td class="align-content-center">
-											{{ $currency }}
+											<!-- {{ $currency }} -->
+											  {{ $country == 'KE' ? 'KES ' : config('custom.BILLING.RESERVED_CURRENCY') . ' ' }}{{ $rate->price }}
 										</td>
 										<td class="align-content-center text-end">
 											<a class="btn btn-sm btn-success p-2 pl-3"
