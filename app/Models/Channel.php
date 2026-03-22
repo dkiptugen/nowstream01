@@ -26,11 +26,7 @@ class Channel extends Model
     {
         return $this->hasMany(Content::class, 'channel_id', 'uuid');
     }
-
-    public function contents()
-    {
-        return $this->hasMany(Content::class, 'channel_id', 'uuid');
-    }
+ 
     public function system_users()
     {
         return $this->belongsToMany(SystemUser::class)->using(SystemUserChannel::class);
