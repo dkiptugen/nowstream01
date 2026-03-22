@@ -103,8 +103,7 @@ class HomeController extends Controller
                 'country'       => $iso,
                 'country_name'  => $countryName,
 
-                // Streams & Channels
-                'channels'      => $this->get_channels(),
+                // Streams & Channels 
                 'streams'       => $this->get_streams(null, 6),
 
                 // Events
