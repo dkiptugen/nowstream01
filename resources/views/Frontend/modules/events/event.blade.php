@@ -65,6 +65,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 								</thead>
 								<tbody>
 									@foreach($eventRates as $rate)
+									{{ dd($rate) }}
 									@php
 									// Determine currency based on country
 									$currency = $country == 'KE'
