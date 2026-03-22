@@ -62,16 +62,7 @@
                     return $this->morphMany(Product::class, 'payable');
                 }
 
-        /**
-         * Event belongs to a channel
-         */
-            public function channel()
-                {
-                    return $this->belongsTo(Channel::class);
-                }
-
-
-
+      
         /**
          * Optional: Return system user ID automatically
          */
