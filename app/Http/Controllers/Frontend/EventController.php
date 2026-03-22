@@ -131,8 +131,9 @@ class EventController extends Controller
                 ->where('content_group', 'event')
                 ->take(4)
                 ->get();
-        });
-dd($data['event']);
+        }); 
+        // dd eventRates
+         dd($data['event']->eventRates);
 
 
         return view('Frontend.modules.events.event', [
