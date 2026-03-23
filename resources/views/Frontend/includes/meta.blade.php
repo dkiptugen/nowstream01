@@ -32,13 +32,5 @@
 <meta name="twitter:title" content="@yield('title', config('site.title'))">
 <meta name="twitter:description" content="@yield('description', config('site.description'))">
 <meta name="twitter:image" content="@yield('image', config('site.image'))">
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FT13EMDEPD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-FT13EMDEPD');
-</script>
 @include('Frontend.includes.components.partials.audio-player')

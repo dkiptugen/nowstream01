@@ -2,7 +2,7 @@
     return [
         "APP"               => [
             "API_KEY"         => env("API_KEY", "2xKy+zv7qVM6}S/4=sH_"),
-            'SITE_URL'        => env('SITE_URL', "https://live.baze.co.ke"),
+            'SITE_URL'        => env('SITE_URL', "https://streamer.co.ke"),
             'ENCRYPTION_KEY'  => env('ENCRYPTION_KEY', 'LJHb1fc6f$2j5FnO7W3@NphwHFmOcMlsg'),
             'ENCRYPTION_SALT' => env('ENCRYPTION_SALT', 'zMjDBmWoUd'),
             'APP_BASE_DOMAIN' => env('APP_BASE_DOMAIN', 'streamer.co.ke'),
@@ -33,6 +33,7 @@
         "STREAM"            => [
             "LIVESTREAM_SERVER" => env('LIVESTREAM_SERVER', "rtmp://stream.livestreamz.xyz/live"),
             "LIVESTREAM_LINK"   => env('LIVESTREAM_LINK', "https://stream.livestreamz.xyz/hls"),
+            "PROXY_TTL_MINUTES" => env('STREAM_PROXY_TTL_MINUTES', 30),
         ], "DATA"           => [
             "DATA_USERNAME"        => env("DATA_USERNAME"),
             "DATA_PASSWORD"        => env("DATA_PASSWORD"),

@@ -41,9 +41,9 @@
                                 </small>
                             </div>
                             <div>
-                                <div class="custom-control custom-checkbox align-items-center">
-                                    <input type="checkbox" class="custom-control-input" value="remember-me" name="remember-me" checked>
-                                    <label class="custom-control-label text-small">Remember me next time</label>
+                                <div class="form-check align-items-center">
+                                    <input type="checkbox" class="form-check-input" value="remember-me" name="remember-me" checked>
+                                    <label class="form-check-label text-small">Remember me next time</label>
                                 </div>
                             </div>
                             <div class="text-center mt-3">
@@ -54,8 +54,8 @@
                 </div>
             </div>
             @if($message = Session::get('error'))
-                <div class="alert alert-danger alert-block">
-                    <button type="button" class="close" data-d.ismiss="alert">×</button>
+                <div class="alert alert-danger ">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     <strong>{{ $message }}</strong>
                 </div>
             @endif

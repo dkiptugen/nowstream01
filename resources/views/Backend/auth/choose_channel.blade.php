@@ -16,7 +16,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="channel">{{ __('Select Brand') }}</label>
-                                <select class="form-control" name="microsite"  id="microsite"  autocomplete="microsite"  >
+                                <select class="form-select" name="microsite"  id="microsite"  autocomplete="microsite"  >
                                     @foreach($product as $value)
                                         <option value="{{ $value->microsite->uuid }}">{{ $value->microsite->name }}</option>
                                     @endforeach
@@ -27,7 +27,7 @@
                                 Don't have a brand yet? <a href="{{ route('backend.create_brand') }}">Create One</a>
                             </div>
                             <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-block btn-info">Proceed</button>
+                                <button type="submit" class="btn w-100 btn-info">Proceed</button>
                             </div>
                         </form>
 
@@ -35,8 +35,8 @@
                 </div>
             </div>
             @if($message = Session::get('error'))
-                <div class="alert alert-danger alert-block">
-                    <button type="button" class="close" data-d.ismiss="alert">×</button>
+                <div class="alert alert-danger ">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     <strong>{{ $message }}</strong>
                 </div>
             @endif

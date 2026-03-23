@@ -1,49 +1,50 @@
- <div id="global-audio-player" class="spotify-player d-none">
+ <div id="global-audio-player" class="spotify-player d-block pb-3 pt-2 pb-md-2 py-md-2">
 
-     <div class="sp-left">
-         <img id="player-thumbnail" class="sp-artwork" src="" alt="">
-         <div class="sp-meta">
-             <div id="player-title" class="sp-title">No audio</div>
-             <div id="player-podcast" class="sp-artist"></div>
-         </div>
-     </div>
-
-     <div class="sp-center">
-         <div class="sp-controls">
-             <button id="player-prev" class="sp-btn">
-                 <i class="fas fa-step-backward"></i>
-             </button>
-
-             <button id="player-play" class="sp-btn sp-play">
-                 <i class="fas fa-play"></i>
-             </button>
-
-             <button id="player-next" class="sp-btn">
-                 <i class="fas fa-step-forward"></i>
-             </button>
+     <div class="w-100 d-flex align-items-center justify-content-between">
+         <div class="sp-left">
+             <img id="player-thumbnail" class="sp-artwork" src="" alt="">
+             <div class="sp-meta">
+                 <div id="player-title" class="sp-title">No audio</div>
+                 <div id="player-podcast" class="sp-artist"></div>
+             </div>
          </div>
 
-         <div class="sp-progress-wrap">
-             <span id="sp-current">0:00</span>
-             <input type="range" id="player-progress" value="0">
-             <span id="sp-duration">0:00</span>
-         </div>
-     </div>
+         <div class="sp-center">
+             <div class="sp-controls">
+                 <button id="player-prev" class="sp-btn">
+                     <i class="fas fa-step-backward"></i>
+                 </button>
 
-     <div class="sp-right">
-         <button id="player-mute" class="sp-btn">
-             <i class="fas fa-volume-up"></i>
-         </button>
-         <input type="range" id="player-volume" min="0" max="1" step="0.01">
-     </div>
+                 <button id="player-play" class="sp-btn sp-play">
+                     <i class="fas fa-play"></i>
+                 </button>
+
+                 <button id="player-next" class="sp-btn">
+                     <i class="fas fa-step-forward"></i>
+                 </button>
+             </div>
+
+             <div class="sp-progress-wrap">
+                 <span id="sp-current">0:00</span>
+                 <input type="range" id="player-progress" value="0">
+                 <span id="sp-duration">0:00</span>
+             </div>
+         </div>
+
+         <div class="sp-right">
+             <button id="player-mute" class="sp-btn">
+                 <i class="fas fa-volume-up"></i>
+             </button>
+             <input type="range" id="player-volume" min="0" max="1" step="0.01">
+         </div>
+     </div> 
 
      <audio id="global-audio"></audio>
  </div>
  <script>
      (function() {
-
          /* ===============================
-            Element Bindings (Safe)
+            Element Bindings
          =============================== */
          const audio = document.getElementById('global-audio');
          const player = document.getElementById('global-audio-player');
@@ -67,6 +68,7 @@
          const STORAGE_KEY = 'audio_state';
          let playlist = [];
          let currentIndex = 0;
+         let saveProgressTimer = null;
 
          /* ===============================
             Helpers
@@ -98,7 +100,6 @@
              durationEl.innerText = '0:00';
              player.classList.remove('d-none');
 
-             // Wait for metadata to load
              audio.addEventListener('loadedmetadata', () => {
                  durationEl.innerText = formatTime(audio.duration);
              });
@@ -106,66 +107,55 @@
 
          function saveState() {
              try {
-                 localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                 const state = {
                      playlist,
                      currentIndex,
-                     time: audio.currentTime || 0,
+                     tracks: playlist.map(track => ({
+                         uuid: track.uuid || track.src,
+                         time: track.currentTime || 0
+                     })),
                      volume: audio.volume,
                      muted: audio.muted,
                      playing: !audio.paused
-                 }));
+                 };
+                 localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
              } catch (e) {}
          }
 
-        function restoreState() {
-    const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!state?.playlist?.length) return;
+         function restoreState() {
+             const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+             if (!state?.playlist?.length) return;
 
-    playlist = state.playlist;
-    currentIndex = state.currentIndex || 0;
+             playlist = state.playlist;
+             currentIndex = state.currentIndex || 0;
+             const track = playlist[currentIndex];
+             audio.src = track.src;
+             updateUI(track);
 
-    const track = playlist[currentIndex];
+             audio.volume = state.volume ?? 1;
+             audio.muted = state.muted ?? false;
+             volume.value = audio.volume;
+             updateMuteIcon();
 
-    // Set src only if different (prevents restart flicker)
-    if (!audio.src || !audio.src.includes(track.src)) {
-        audio.src = track.src;
-    }
+             const trackProgress = state.tracks.find(t => t.uuid === (track.uuid || track.src));
+             const seekTime = trackProgress?.time ?? 0;
 
-    updateUI(track);
+             const seekToTime = () => {
+                 audio.currentTime = seekTime;
+                 if (state.playing) audio.play().catch(() => {});
+                 updatePlayIcon();
+                 audio.removeEventListener('loadedmetadata', seekToTime);
+             };
 
-    // Restore volume & mute
-    audio.volume = state.volume ?? 1;
-    audio.muted = state.muted ?? false;
-    volume.value = audio.volume;
-    updateMuteIcon();
-
-    // Wait for metadata before seeking
-    const seekToTime = () => {
-        audio.currentTime = state.time || 0;
-
-        if (state.playing) {
-            audio.play().catch(() => {});
-        }
-
-        updatePlayIcon();
-        audio.removeEventListener('loadedmetadata', seekToTime);
-    };
-
-    if (audio.readyState >= 1) {
-        seekToTime();
-    } else {
-        audio.addEventListener('loadedmetadata', seekToTime);
-    }
-}
-
-
+             if (audio.readyState >= 1) seekToTime();
+             else audio.addEventListener('loadedmetadata', seekToTime);
+         }
 
          /* ===============================
             Core Playback
          =============================== */
          function loadTrack(index) {
              if (!playlist[index]) return;
-
              const track = playlist[index];
              currentIndex = index;
              audio.src = track.src;
@@ -174,6 +164,52 @@
              audio.play().catch(() => {});
              updatePlayIcon();
              saveState();
+
+             // Increment views immediately
+             if (track.uuid) incrementViews(track.uuid, track.podcast_id);
+         }
+
+         /* ===============================
+            Views + Watch History
+         =============================== */
+         function incrementViews(uuid, podcastId = null) {
+             fetch(`/content/${uuid}/increment-views`, {
+                     method: 'POST',
+                     headers: {
+                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                         'Accept': 'application/json',
+                         'Content-Type': 'application/json'
+                     }
+                 })
+                 .then(res => res.json())
+                 .then(data => {
+                     console.log('Views incremented', data);
+                     const episodeEl = document.querySelector(`#views-${uuid}`);
+                     if (episodeEl) episodeEl.innerText = data.episode_views;
+                     if (podcastId) {
+                         const podcastEl = document.querySelector(`#podcast-views-${podcastId}`);
+                         if (podcastEl && data.podcast_views !== null) podcastEl.innerText = data.podcast_views;
+                     }
+                 })
+                 .catch(err => console.error('Error incrementing views', err));
+         }
+
+         function saveWatchProgress(uuid, currentTime) {
+             if (!uuid) return;
+             fetch(`/watch-history/${uuid}`, {
+                     method: 'POST',
+                     headers: {
+                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                         'Accept': 'application/json',
+                         'Content-Type': 'application/json'
+                     },
+                     body: JSON.stringify({
+                         watch_duration: Math.floor(currentTime)
+                     })
+                 })
+                 .then(res => res.json())
+                 .then(data => console.log('Watch progress saved', data))
+                 .catch(err => console.error('Error saving watch history', err));
          }
 
          /* ===============================
@@ -218,11 +254,21 @@
              if (!isNaN(audio.duration) && audio.duration > 0) {
                  progress.value = (audio.currentTime / audio.duration) * 100;
              }
+
+             if (playlist[currentIndex]) playlist[currentIndex].currentTime = audio.currentTime;
+
              saveState();
+
+             // Save watch progress every 15 seconds
+             if (saveProgressTimer) clearTimeout(saveProgressTimer);
+             saveProgressTimer = setTimeout(() => {
+                 saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime);
+             }, 15000);
          });
 
          audio.addEventListener('ended', () => {
              if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
+             else saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime);
          });
 
          /* ===============================
@@ -234,12 +280,14 @@
              loadTrack(index);
          };
 
-         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '') {
+         window.playSingleAudio = function(src, title = '', podcast = '', thumbnail = '', uuid = '', podcastId = null) {
              playlist = [{
                  src,
                  title,
                  podcast,
-                 thumbnail
+                 thumbnail,
+                 uuid,
+                 podcast_id: podcastId
              }];
              loadTrack(0);
          };
@@ -251,8 +299,6 @@
 
      })();
  </script>
-
-
  <style>
      .spotify-player {
          position: fixed;
@@ -415,5 +461,29 @@
          .sp-right {
              display: none;
          }
+     }
+
+     @media (max-width: 420px) {
+         .sp-left {
+             width: 65%;
+             min-width: 180px;
+         }
+
+         .sp-center {
+             width: 30%;
+         }
+         .sp-title { 
+    max-width: 140px;
+}
+
+.sp-progress-wrap { 
+    gap: 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.sp-artwork {
+    width: 50px;
+    height: 50px;}
      }
  </style>

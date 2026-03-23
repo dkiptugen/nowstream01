@@ -2,7 +2,7 @@
 @section('content')
     <div class="col-12">
         <div class="card card-border-nation">
-            <div class="card-header d-flex justify-content-between align-itens-center">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title my-0 text-nation">Change Password</h3>
                
             </div>
@@ -11,7 +11,7 @@
                       class="form form-horizontal create-form">
                     @csrf
                     @method('patch')
-                    <div class="form-group form-row">
+                    <div class="form-group row">
                          <div class="col">
                              <label for="name" class="control-label">Name</label>
                              <input type="readonly" disabled class="form-control" id="name" name="name"
@@ -35,7 +35,7 @@
                     </div>
                    
                     <div class="form-group d-flex">
-                        <button type="submit" class="btn btn-nation ml-auto">Change password</button>
+                        <button type="submit" class="btn btn-nation ms-auto">Change password</button>
                     </div>
                 </form>
               

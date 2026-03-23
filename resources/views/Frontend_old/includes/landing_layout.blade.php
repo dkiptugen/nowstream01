@@ -304,7 +304,7 @@
         <div class="container">
             <div class="row gy-lg-0 gy-10 justify-content-between align-items-center text-center text-lg-start">
                 <div class="col-lg-4 order-3 order-lg-1">
-                    <p class="custom-roboto mb-0 footer-nav">&copy; 2024 <a href="https://live.baze.co.ke/"
+                    <p class="custom-roboto mb-0 footer-nav">&copy; 2024 <a href="https://streamer.co.ke/"
                             class="text-decoration-none" target="_blank"> Streamer</a>. All Rights Reserved.</p>
                 </div>
                 <div class="col-lg-4 order-1 order-lg-2">

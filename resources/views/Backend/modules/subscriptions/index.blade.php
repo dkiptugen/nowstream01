@@ -12,7 +12,7 @@
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="subscriptions_dt" class="table table-striped table-condensed">
+							<table id="subscriptions_dt" class="table table-striped ">
 								<thead>
                                 <tr>
 									<th>#</th>
@@ -51,7 +51,8 @@
 @endsection
 @section('footer')
     <script>
-            $('#subscriptions_dt').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#subscriptions_dt', {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -72,13 +73,14 @@
                     {"data": "action", "orderable": false}
                 ],
 
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function(row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
                 "order": [[0, "desc"]]
             });
-        </script>
+        });
+    </script>
 @endsection

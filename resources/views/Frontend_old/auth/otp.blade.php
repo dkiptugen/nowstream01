@@ -50,7 +50,7 @@
                                 <img src="{{ asset('nowstream-light.png') }}" width="90" alt="" />
                             </div>
                             <div class="form-body">
-                                <form class="row g-3" method="post" action="{{ route('otp_verification') }}"
+                                <form class="row g-3" method="post" action="{{ route('user.otp_verification') }}"
                                     id="otp-form">
                                     @csrf
                                     <div class="col-12 text-center">
@@ -79,7 +79,7 @@
                                             Didn't Receive SMS?
                                             <!-- <button type="button" class="btn btn-link p-0"
                                                 onClick="window.location.href=window.location.href">Resend OTP</button> -->
-                                                <a href="{{ route('phoneresend') }}" class="btn btn-link p-0" >Resend OTP</a>
+                                                <a href="{{ route('user.phoneresend') }}" class="btn btn-link p-0" >Resend OTP</a>
                                         </div>
                                     </div>
                                 </form>

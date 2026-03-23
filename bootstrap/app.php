@@ -56,6 +56,8 @@ return Application::configure(basePath: dirname(__DIR__))
                                    ->middleware(['api'])
                                    ->group(base_path('routes/dpo.php'));
 
+
+
                           },
 
                   )
@@ -90,7 +92,7 @@ return Application::configure(basePath: dirname(__DIR__))
                           $middleware->appendToGroup('api', [
                               ForceJsonResponse::class,
                               EnsureFrontendRequestsAreStateful::class,
-                              ThrottleRequests::class . ':api',
+                              ThrottleRequests::class,
                               SubstituteBindings::class,
 
                           ]);
@@ -123,3 +125,4 @@ return Application::configure(basePath: dirname(__DIR__))
                       {
                           //
                       })->create();
+

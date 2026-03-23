@@ -1,15 +1,19 @@
 @extends('Frontend.includes.layout')
 
-
+<style>
+    body {
+        background-color: #11181f !important;
+    }
+</style>
 @section('content')
 
 <div class="hero-area">
     @foreach($events->take(1) as $event)
     <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="{{asset('/assets/img/banner/banner_bg01.png')}}">
+    <section class="banner-area banner-bg" data-background="https://img.freepik.com/premium-photo/group-friends-sitting-dimly-lit-movie-theater-laughing-enjoying-film_1351262-11436.jpg?ga=GA1.1.724749049.1771917239&semt=ais_user_personalization&w=740&q=80">
         <div class="container custom-container">
             <div class="row">
-                <div class="col-xl-6 col-lg-8">
+                <div class="col-xl-5 col-lg-8">
                     <div class="banner-content">
                         <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
                         @php
@@ -40,7 +44,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="form-group w-100">
+                        <div class="form-group w-100 d-none">
                             @if (session('error'))
                             <div class="alert alert-danger mt-4">
                                 {{ session('error') }}
@@ -48,13 +52,13 @@
                             @endif
                             <h3 class="text-light mb-3">
                             </h3>
-                            <form action="{{ route('stream.find') }}" method="POST" class="newsletter-form">
+                            <form action="#" method="POST" class="newsletter-form">
                                 @csrf
                                 <div class="input-group mw-500">
                                     <input type="text" class="" name="stream_token"
                                         placeholder="Enter Token or Phone Number" aria-label="Stream token"
                                         aria-describedby="button-addon2">
-                                    <input type="hidden" name="event_id" value="{{$event->id}}">
+                                    <input type="hidden" name="event_id" value="{{$event->uuid}}">
                                     <button class="btn" type="submit" id="button-addon2"><i class="fas fa-play"></i>
                                         Watch Now</button>
                                 </div>
@@ -68,13 +72,31 @@
                     </div>
                 </div>
             </div>
+            <!-- TV Genres -->
+            <div class="ucm-nav-wrap">
+                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
+                    @foreach($genres->filter()->unique() as $genre)
+                    @php
+                    $slug = Str::slug($genre);
+                    $label = ucfirst(trim($genre));
+                    @endphp
+                    @if(!empty($slug))
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endif
+                    @endforeach
+                </ul>
+            </div>
         </div>
     </section>
     <!-- banner-area-end -->
 
     @endforeach
 </div>
- 
+
 
 <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
     <div class="container">
@@ -93,7 +115,7 @@
         <div class="pcar-overlay pcar-overlay-right"></div>
 
         <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-            data-mobile="1">
+            data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topevents as $event)
@@ -141,7 +163,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($toptvs as $item)
@@ -166,7 +188,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topradios as $item)
@@ -276,7 +298,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($podcasts as $item)
@@ -303,7 +325,7 @@
         <div class="pcar-overlay pcar-overlay-left"></div>
         <div class="pcar-overlay pcar-overlay-right"></div>
 
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="1">
+        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
 
             <div class="pcar-track">
                 @foreach($topPodcasts as $item)
@@ -320,6 +342,7 @@
 <!-- top-rated-movie-end -->
 @endsection
 @section('header')
+
 <style>
     .card.bg-dark {
         object-position: top;

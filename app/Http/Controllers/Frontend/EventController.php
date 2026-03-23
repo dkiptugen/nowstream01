@@ -106,12 +106,14 @@ class EventController extends Controller
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
             $eventId = $event->uuid;
+            $event->load('eventRates'); // Load rates with the event 
 
             return [
                 'event'  => $event,
                 'events' => $this->get_events($eventId),
                 'videos' => $this->get_videos(),
                 'rates'  => $this->get_event_ticket_rates($eventId),
+
             ];
         });
 
@@ -129,8 +131,10 @@ class EventController extends Controller
                 ->where('content_group', 'event')
                 ->take(4)
                 ->get();
-        });
-
+        }); 
+        // dd eventRates
+        //  dd($data['event']->eventRates);
+        $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
 
 
         return view('Frontend.modules.events.event', [
@@ -139,7 +143,8 @@ class EventController extends Controller
             'videos'         => $data['videos'],
             'rates'          => $data['rates'],
             'ticket'          => $ticket,
-            'relatedEvents'  => $relatedEvents, // pass related events to the view
+            'eventRates'     => $data['event']->eventRates,  
+            'relatedEvents'  => $relatedEvents,  
         ]);
     }
 }

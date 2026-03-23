@@ -1,10 +1,5 @@
-import $ from "jquery";
-import 'bootstrap'
+import * as bootstrap from "bootstrap";
 
-// Popovers
-// Note: Disable this if you're not using Bootstrap's Popovers
-$('[data-toggle="popover"]').popover()
-
-// Tooltips
-// Note: Disable this if you're not using Bootstrap's Tooltips
-$('[data-toggle="tooltip"]').tooltip()
+// Bootstrap
+// Note: If you want to make bootstrap globally available, e.g. for using `bootstrap.modal`
+window.bootstrap = bootstrap;

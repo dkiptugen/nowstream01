@@ -3,16 +3,19 @@
 
     <div class="row">
         <div class="col">
-            <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center pb-0">
-                    <h3 class="card-title m-0 h5">Transactions</h3>
-
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <h1 class="h3 mb-1">Transactions</h1>
+                    <div class="text-muted">Manage your transactions.</div>
                 </div>
-                <hr>
+
+            </div>
+            <div class="card shadow-lg border">
+
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="transactions_dt" class="table table-striped table-condensed">
+							<table id="transactions_dt" class="table table-striped ">
 								<thead>
                                     <tr>
                                         <th>#</th>
@@ -57,7 +60,8 @@
 @endsection
 @section('footer')
     <script>
-            $('#transactions_dt').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#transactions_dt',{
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -81,13 +85,14 @@
                     {"data": "action", "orderable": false}
                 ],
 
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function (row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
                 "order": [[0, "desc"]]
             });
+        });
         </script>
 @endsection

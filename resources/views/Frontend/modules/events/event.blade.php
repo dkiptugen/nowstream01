@@ -64,19 +64,20 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 									</tr>
 								</thead>
 								<tbody>
-									@foreach($rates as $rate)
+									@foreach($eventRates as $rate) 
 									@php
 									// Determine currency based on country
 									$currency = $country == 'KE'
 									? 'KES ' . $rate->price
-									: config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->reserved_currency_cost;
+									: config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->price;
 									@endphp
 									<tr>
 										<td class="align-content-center">
 											{{ ucfirst($rate->name) }}
 										</td>
 										<td class="align-content-center">
-											{{ $currency }}
+											<!-- {{ $currency }} -->
+											  {{ $rate->currency }} {{ $rate->price }}
 										</td>
 										<td class="align-content-center text-end">
 											<a class="btn btn-sm btn-success p-2 pl-3"
@@ -134,7 +135,7 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 			<div class="pcar-overlay pcar-overlay-right"></div>
 
 			<div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-				data-mobile="1">
+				data-mobile="2">
 
 				<div class="pcar-track">
 					@foreach($events as $event)

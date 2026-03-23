@@ -1,9 +1,25 @@
 <?php
-	
+
 	use App\Http\Controllers\API\APIController;
 	use App\Http\Controllers\Callbacks\DPOCallbackController;
 	use Illuminate\Support\Facades\Route;
-	
+	use App\Http\Controllers\Api\PodcastApiController;
+
+	Route::prefix('podcasts')->group(function () {
+
+		// List podcasts
+		Route::get('/', [PodcastApiController::class, 'index']);
+
+		// Single podcast
+		Route::get('/{slug}', [PodcastApiController::class, 'show']);
+
+		// Podcast episodes
+		Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
+
+		// Record watch history
+		Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
+
+	});
 	/*
 	|--------------------------------------------------------------------------
 	| API Routes
@@ -14,7 +30,7 @@
 	| be assigned to the "api" middleware group. Make something great!
 	|
 	*/
-	
+
 	Route::post('auth',[APIController::class,'login']);
 	Route::middleware(['auth:sanctum','passkey', 'force_json', 'cors'])->group(function () {
 		Route::post('msisdn_decrypt',[APIController::class,'decrypt_msisdn']);
@@ -22,3 +38,4 @@
 		Route::get("check-subscription/{identifier}",[APIController::class,'check_specific_subscription']);
 		Route::get("cancel-subscription/{identifier}",[APIController::class,'cancel_subscription']);
 	});
+    Route::post('content/{content}/failure', [APIController::class, 'disableContent'])->name('api.disable-content');

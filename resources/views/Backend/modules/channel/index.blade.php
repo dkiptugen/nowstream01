@@ -30,7 +30,7 @@
 
             	<div class="card-body">
                     <div class="table-responsive w-100">
-							<table id="channels_dt" class="table table-striped table-condensed">
+							<table id="channels_dt" class="table table-striped ">
 								<thead>
                                 <tr>
 									<th>#</th>
@@ -65,7 +65,8 @@
 @endsection
 @section('footer')
     <script>
-            $('#channels_dt').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#channels_dt', {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -85,22 +86,20 @@
                 ],
                 "columnDefs": [{
                     "targets": 3, // Index of the column you want to add the class to (e.g., 'age' column)
-                    "createdCell": function(td, cellData, rowData, row, col) {
-                        $(td).css({
-                            'width': '200px',
-                            'white-space': 'normal !important',
-                            'word-wrap': 'break-word !important'
-                        });
-
+                    "createdCell": function(td) {
+                        td.style.width = '200px';
+                        td.style.whiteSpace = 'normal';
+                        td.style.wordWrap = 'break-word';
                     }
                 }],
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function(row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
                 "order": [[1, "desc"]]
             });
-        </script>
+        });
+    </script>
 @endsection

@@ -3,7 +3,7 @@
 @section('content')
 <!-- main-area -->
 <main>
- 
+
 	<!-- breadcrumb-area -->
 	<section class="breadcrumb-area breadcrumb-bg" data-background="{{ asset('assets/img')}}/bg/breadcrumb_bg.jpg">
 		<div class="container">
@@ -23,45 +23,49 @@
 		</div>
 	</section>
 	<!-- breadcrumb-area-end -->
-	 
-    <section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-        <div class="container">
-            <div class="episode-top-wrap">
-                <div class="section-title"> 
+
+	@if($topstreams->isNotEmpty())
+	<section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+		<div class="container">
+			<div class="episode-top-wrap">
+				<div class="section-title">
 					<span class="sub-title">Trending Streams</span>
-                    <h2 class="title">Trending Streams</h2>
-                </div>
-            </div>
-        </div>
+					<h2 class="title">Trending Streams</h2>
+				</div>
+			</div>
+		</div>
 
-        <div class="pcar-wrapper">
+		<div class="pcar-wrapper">
 
-            <!-- Outside container overlays -->
-            <div class="pcar-overlay pcar-overlay-left"></div>
-            <div class="pcar-overlay pcar-overlay-right"></div>
+			<!-- Outside container overlays -->
+			<div class="pcar-overlay pcar-overlay-left"></div>
+			<div class="pcar-overlay pcar-overlay-right"></div>
 
-            <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-                data-mobile="1">
+			<div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
+				data-mobile="2">
 
-                <div class="pcar-track">
-                    @foreach($topstreams as $stream)
-                    <div class="pcar-item">
-					@include('Frontend.includes.components.cards.stream-card')
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </section>
+				<div class="pcar-track">
+					@foreach($topstreams as $stream)
+					<div class="pcar-item">
+						@include('Frontend.includes.components.cards.stream-card')
+					</div>
+					@endforeach
+				</div>
+			</div>
+		</div>
+	</section>
+	@endif
+
+	@if($streams->isNotEmpty())
 	<!-- movie-area -->
 	<section class="movie-area movie-bg" data-background="{{ asset('assets/img')}}/bg/movie_bg.jpg">
 		<div class="container">
 			<h5 class="mb-3 section-title">
 				<!-- Error Alert -->
 				@if (session('success'))
-					You dont Have an active subscription. Pick an Event Below <br>
+				You dont Have an active subscription. Pick an Event Below <br>
 
-				@endif 
+				@endif
 			</h5>
 			<div class="row align-items-end mb-60">
 				<div class="col-lg-6">
@@ -74,7 +78,7 @@
 				</div>
 			</div>
 			<div class="row tr-movie-active">
-				@foreach($streams as $stream)  
+				@foreach($streams as $stream)
 				<div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
 					@include('Frontend.includes.components.cards.stream-card')
 				</div>
@@ -98,6 +102,7 @@
 		</div>
 	</section>
 	<!-- movie-area-end -->
+	@endif
 	@endsection
 	@section('header')
 	@endsection

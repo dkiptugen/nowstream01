@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::limit(16)->get(); 
+        $categories = Category::limit(16)->get();
         $tvs = Content::where('content_group', 'tv')
             ->whereNotNull('stream_url')
             ->where('category_id', 1)
@@ -28,42 +28,100 @@ class CategoryController extends Controller
     /**
      * Single category (all content)
      */
-public function show($slug)
-{
-    // Get the category by slug
-    $category = Category::where('slug', $slug)->firstOrFail();
+    public function show($slug)
+    {
+        // Get the category by slug
+        $category = Category::where('slug', $slug)->firstOrFail();
 
-    // Fetch TVs where content_group is 'tv' and genre JSON contains the category name
-    $tvs = Content::where('content_group', 'tv')
-        ->whereJsonContains('genre', strtolower($category->name)) // store genres in lowercase
-        ->orderBy('views', 'desc')
-        ->get();
+        // Fetch TVs where content_group is 'tv' and genre JSON contains the category name
+        $tvs = Content::where('content_group', 'tv')
+            ->whereJsonContains('genre', strtolower($category->name)) // store genres in lowercase
+            ->orderBy('views', 'desc')
+            ->get();
 
-    // Similarly, fetch radios and podcasts
-    $radios = Content::where('content_group', 'radio')
-        ->whereJsonContains('genre', strtolower($category->name))
-        ->orderBy('views', 'desc')
-        ->get();
+        // Similarly, fetch radios and podcasts
+        $radios = Content::where('content_group', 'radio')
+            ->whereJsonContains('genre', strtolower($category->name))
+            ->orderBy('views', 'desc')
+            ->get();
 
-    $podcasts = Content::where('content_group', 'podcast')
-        ->whereJsonContains('genre', strtolower($category->name))
-        ->orderBy('views', 'desc')
-        ->get();
+        $podcasts = Content::where('content_group', 'podcast')
+            ->whereJsonContains('genre', strtolower($category->name))
+            ->orderBy('views', 'desc')
+            ->get();
 
-    return view('Frontend.modules.categories.show', compact(
-        'category', 'tvs', 'radios', 'podcasts'
-    ));
-}
-public function genreContents($genre)
-{
-    // Fetch content where the JSON genre array contains the requested genre
-    $contents = Content::whereJsonContains('genre', $genre)
-        ->orderBy('views', 'desc')
-        ->paginate(12); // or get() if no pagination
+        return view('Frontend.modules.categories.show', compact(
+            'category',
+            'tvs',
+            'radios',
+            'podcasts'
+        ));
+    }
 
-    return view('Frontend.modules.genres.show', compact('genre', 'contents'));
-}
+    public function genretvs(Request $request, $genre)
+    {
+        $perPage = 30;
+        $page = $request->get('page', 1);
 
+        $genre = urldecode($genre);
+        $genre = str_replace('-', ' ', $genre);
+        $genre = ucwords($genre);
+
+        $tvs = Content::where('content_group', 'tv')
+            ->where(function ($q) use ($genre) {
+                // Matches: ["Balada","Pop"]
+                $q->where('genre', 'like', '%"' . $genre . '"%')
+
+                    // Matches: Balada, Pop
+                    ->orWhere('genre', 'like', '%' . $genre . '%');
+            })
+            ->orderBy('views', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        // AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.tv-items',
+                    compact('tvs')
+                )->render(),
+                'hasMore' => $tvs->hasMorePages()
+            ]);
+        }
+
+        return view('Frontend.modules.genres.show', compact('genre', 'tvs'));
+    }
+    public function genreRadios(Request $request, $genre)
+    {
+        $perPage = 30;
+        $page = $request->get('page', 1);
+
+        $genre = urldecode($genre);
+        $genre = str_replace('-', ' ', $genre);
+        $genre = ucwords($genre);
+
+        $radios = Content::where('content_group', 'radio')
+            ->where(function ($q) use ($genre) {
+                // Matches: ["Balada","Pop"]
+                $q->where('genre', 'like', '%"' . $genre . '"%')
+
+                    // Matches: Balada, Pop
+                    ->orWhere('genre', 'like', '%' . $genre . '%');
+            })
+            ->orderBy('views', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        // AJAX request
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view(
+                    'Frontend.includes.components.partials.radio-items',
+                    compact('radios')
+                )->render(),
+                'hasMore' => $radios->hasMorePages()
+            ]);
+        }
+
+        return view('Frontend.modules.genres.radio', compact('genre', 'radios'));
+    }
 
     /**
      * Category filtered by content group

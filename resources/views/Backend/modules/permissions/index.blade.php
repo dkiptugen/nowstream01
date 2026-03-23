@@ -42,24 +42,26 @@
 
 @section("footer")
     <script>
-        $('#permissions-table').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax":{
-                "url": "{{ route('backend.role.permission.datatable',$userid??0) }}",
-                "dataType": "json",
-                "type": "POST",
-                "data":{ _token: "{{csrf_token()}}"}
-            },
-            "columns": [
-                { "data": "pos","orderable": false },
-                { "data": "display_name" },
-                { "data": "name" },
-                { "data": "group" },
-                { "data": "roles","orderable":false },
-                { "data": "action","orderable":false }
-            ],
-            "order": [[ 1, "asc" ]]
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#permissions-table', {
+                "processing": true,
+                "serverSide": true,
+                "ajax":{
+                    "url": "{{ route('backend.role.permission.datatable',$userid??0) }}",
+                    "dataType": "json",
+                    "type": "POST",
+                    "data":{ _token: "{{csrf_token()}}"}
+                },
+                "columns": [
+                    { "data": "pos","orderable": false },
+                    { "data": "display_name" },
+                    { "data": "name" },
+                    { "data": "group" },
+                    { "data": "roles","orderable":false },
+                    { "data": "action","orderable":false }
+                ],
+                "order": [[ 1, "asc" ]]
+            });
         });
     </script>
 @endsection

@@ -1,25 +1,47 @@
-import SimpleBar from 'simplebar' // Usage: https://github.com/Grsmto/simplebar
+// Usage: https://github.com/Grsmto/simplebar
+import SimpleBar from "simplebar";
 
-$(function(){
-  const simpleBarEnabled = document.getElementsByClassName('js-simplebar').length > 0;
-  const simpleBarInstance = simpleBarEnabled ?
-  new SimpleBar(document.getElementsByClassName('js-simplebar')[0]) : null;
+const initialize = () => {
+  initializeSimplebar();
+  initializeSidebarCollapse();
+}
 
-  /* Sidebar toggle behaviour */
-  $('.sidebar-toggle').on('click', function () {
-    $('.sidebar').toggleClass('toggled');
-  });
+const initializeSimplebar = () => {
+  const simplebarElement = document.getElementsByClassName("js-simplebar")[0];
 
-  const active = $('.sidebar .active');
+  if(simplebarElement){
+    const simplebarInstance = new SimpleBar(document.getElementsByClassName("js-simplebar")[0]);
 
-  if (active.length && active.parent('.collapse').length) {
-    const parent = active.parent('.collapse');
-
-    parent.prev('a').attr('aria-expanded', true);
-    parent.addClass('show');
+    /* Recalculate simplebar on sidebar dropdown toggle */
+    const sidebarDropdowns = document.querySelectorAll(".js-sidebar [data-bs-parent]");
+    
+    sidebarDropdowns.forEach(link => {
+      link.addEventListener("shown.bs.collapse", () => {
+        simplebarInstance.recalculate();
+      });
+      link.addEventListener("hidden.bs.collapse", () => {
+        simplebarInstance.recalculate();
+      });
+    });
   }
+}
 
-  $(".sidebar").bind("transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
-    window.dispatchEvent(new Event('resize'));
-  });
-});
+const initializeSidebarCollapse = () => {
+  const sidebarElement = document.getElementsByClassName("js-sidebar")[0];
+  const sidebarToggleElement = document.getElementsByClassName("js-sidebar-toggle")[0];
+
+  if(sidebarElement && sidebarToggleElement) {
+    sidebarToggleElement.addEventListener("click", () => {
+      sidebarElement.classList.toggle("collapsed");
+      const isExpanded = !sidebarElement.classList.contains("collapsed");
+      sidebarToggleElement.setAttribute("aria-expanded", String(isExpanded));
+
+      sidebarElement.addEventListener("transitionend", () => {
+        window.dispatchEvent(new Event("resize"));
+      });
+    });
+  }
+}
+
+// Wait until page is loaded
+document.addEventListener("DOMContentLoaded", () => initialize());

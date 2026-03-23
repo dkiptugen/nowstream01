@@ -129,12 +129,12 @@ trait CacheHelper
 							$stream = Content::when ($not != 0, function ($query) use ($not)
 								{
 									return $query->where ('uuid', '!=', $not);
-								})->orderBy ("created_at", "asc")->where('content_group', 'livestream')->with('channel')->get ()
+								})->orderBy ("created_at", "asc")->where('content_group', 'livestream')->get ()
 							;
 						}
 					else
 						{
-							$stream = Content::where('uuid', $uuid)->with('channel')->first();
+							$stream = Content::where('uuid', $uuid)->first();
 						}
 					return $stream;
 				}

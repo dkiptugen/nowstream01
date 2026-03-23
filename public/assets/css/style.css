@@ -1108,7 +1108,7 @@ label {
     font-weight: 600;
     color: #e3dfdf;
     border: 2px solid #2d303d;
-    padding: 11px 27px;
+    padding: 7px 9px;
 	margin-bottom: 0;
 	transition: none !important;
 }
@@ -1174,6 +1174,7 @@ label {
 .movie-poster img {
     max-width: 100%;
     border-radius: 5px;
+    object-fit: cover;
 }
 .movie-poster {
     margin-bottom: 23px;

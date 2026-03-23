@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class WatchHistoryService
 {
@@ -19,6 +20,10 @@ class WatchHistoryService
     {
         $user = Auth::user();
         if (!$user || !$watchable) {
+            Log::warning('[WatchHistory] No user or invalid content', [
+                'user' => $user?->id,
+                'content' => $watchable?->uuid ?? null,
+            ]);
             return null;
         }
 
@@ -28,8 +33,17 @@ class WatchHistoryService
             $data['watch_duration'] = $watchDuration;
         }
 
-        return $watchable->watch()->updateOrCreate(
-            ['user_id' => $user->id],
+        Log::info('[WatchHistory] Saving watch history', [
+            'user_id' => $user->id,
+            'content_id' => $watchable->uuid,
+            'watch_duration' => $watchDuration,
+        ]);
+
+        return WatchHistory::updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'content_id' => $watchable->uuid,
+            ],
             $data
         );
     }
@@ -49,7 +63,6 @@ class WatchHistoryService
         }
 
         return WatchHistory::where('user_id', $user->id)
-            ->where('watchable_type', $watchableType)
             ->with('watchable')
             ->latest('watched_at')
             ->paginate($perPage);

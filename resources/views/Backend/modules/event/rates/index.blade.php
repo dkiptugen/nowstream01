@@ -15,7 +15,7 @@
                 </div>
             	<div class="card-body">
                     <div class="table-responsive mt-3">
-							<table id="rates_dt" class="table table-striped table-condensed">
+							<table id="rates_dt" class="table table-striped ">
 								<thead>
                                 <tr>
                                     <th>#</th>
@@ -55,8 +55,8 @@
 @section('footer')
 
     <script>
-        $(document).ready(function() {
-            $('#rates_dt').DataTable({
+        document.addEventListener('DOMContentLoaded', function () {
+            new window.DataTable('#rates_dt', {
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
@@ -77,10 +77,10 @@
                     {"data": "status"},
                     {"data": "action", "orderable": false, "searchable": false}
                 ],
-                "createdRow": function(row, data, dataIndex) {
-                    $(row).find('td').css({
-                        "text-align": "left",
-                        "vertical-align": "middle"
+                "createdRow": function(row) {
+                    row.querySelectorAll('td').forEach(function (cell) {
+                        cell.style.textAlign = 'left';
+                        cell.style.verticalAlign = 'middle';
                     });
                 },
                 "order": [[4, "desc"]]

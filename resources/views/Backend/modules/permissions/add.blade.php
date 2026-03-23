@@ -1,4 +1,2 @@
 @extends('Backend.includes.layout')
-@section('content')
-
-@endsection
+@section('content') @endsection

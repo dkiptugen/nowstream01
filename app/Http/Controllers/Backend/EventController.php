@@ -1,311 +1,411 @@
 <?php
 
-    namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend;
 
-    use App\Http\Controllers\Controller;
-    use App\Http\Datatables\EventDatatable;
-    use App\Http\Requests\StoreEvent;
-    use App\Http\Requests\UpdateEvent;
-    use App\Http\Services\UploadService;
-    use App\Models\Channel;
-    use App\Models\Event;
-    use App\Models\Content;
-    use App\Traits\Meta;
-    use Carbon\Carbon;
-    use Illuminate\Container\Attributes\Auth;
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\Log;
-    use Illuminate\Support\Facades\Storage;
-    use Illuminate\Support\Str;
-    use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Datatables\EventDatatable;
+use App\Http\Requests\StoreEvent;
+use App\Http\Requests\UpdateEvent;
+use App\Http\Services\UploadService;
+use App\Models\Content;
+use App\Models\Event;
+use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Traits\Meta;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
-    class EventController extends Controller
-        {
-            use Meta;
+class EventController extends Controller
+    {
+        use Meta;
 
-            public $data = [];
+        public $data = [];
 
-            public function __construct()
-                {
-                    $this->data = self::product_def();
-                }
+        public function __construct()
+            {
+                $this->data = self::product_def();
+            }
 
-        /**
-         * Display a listing of the resource.
-         */
-            public function index()
-                {
+    /**
+     * Display a listing of the resource.
+     */
+        public function index()
+            {
+                $this->data['title'] = 'Events : ' . $this->data['title'];
 
-                    $this->data['title'] = 'Events : ' . $this->data['title'];
+                return view('Backend.modules.event.index', $this->data);
+            }
 
-                    return view('Backend.modules.event.index', $this->data);
-                }
+    /**
+     * Show the form for creating a new resource.
+     */
+        public function create()
+            {
+                $this->data['title'] = 'Events : ' . $this->data['title'];
 
-        /**
-         * Show the form for creating a new resource.
-         */
-            public function create()
-                {
+                return view('Backend.modules.event.add', $this->data);
+            }
 
-                    $this->data['title'] = 'Events : ' . $this->data['title'];
-                    return view('Backend.modules.event.add', $this->data);
-                }
+    /**
+     * Store a newly created resource in storage.
+     */
+        public function store(StoreEvent $request)
+            {
+                DB::beginTransaction();
 
-        /**
-         * Store a newly created resource in storage.
-         */
-            public function store(StoreEvent $request)
-                {
-                    DB::beginTransaction();
+                try
+                    {
+                        if (!str_contains((string)$request->event_time, ' to '))
+                            {
+                                return self::failed('event', 'Invalid event time format', route('backend.event.index'));
+                            }
 
-                    try
-                        {
+                        [$startDateString, $endDateString] = explode(' to ', $request->event_time);
 
-                            // Validate time format
-                            if (!str_contains($request->event_time, ' - '))
-                                {
-                                    return self::failed('event', 'Invalid event time format', route('backend.event.index'));
-                                }
+                        $startDate = Carbon::createFromFormat('Y/m/d h:i A', trim($startDateString));
+                        $endDate   = Carbon::createFromFormat('Y/m/d h:i A', trim($endDateString));
+                        $admin     = $request->user('admin');
 
-                            [$startDateString, $endDateString] = explode(' - ', $request->event_time);
+                        $event                 = new Event();
+                        $event->event_name     = $request->event_name;
+                        $event->description    = $request->event_description;
+                        $event->publish_date   = $request->publishdate;
+                        $event->start_time     = $startDate;
+                        $event->end_time       = $endDate;
+                        $event->venue          = $request->venue;
+                        $event->system_user_id = $admin->id;
+                        $event->microsite_id   = $admin->microsite_id;
+                        $event->status         = 1;
+                        $event->is_featured    = $request->featured ?? 0;
 
-                            $startDate = Carbon::createFromFormat('Y/m/d h:i A', trim($startDateString));
-                            $endDate   = Carbon::createFromFormat('Y/m/d h:i A', trim($endDateString));
+                        if ($request->hasFile('thumbnail'))
+                            {
+                                $upload             = (new UploadService())->file_upload($request, 'thumbnail', 'event_image');
+                                $event->event_image = $upload['path'];
+                            }
 
-                            $admin = $request->user('admin');
+                        $event->save();
 
-                            // Create Event
-                            $event                 = new Event();
-                            $event->event_name     = $request->event_name;
-                            $event->description    = $request->event_description;
-                            $event->publish_date   = $request->publishdate;
-                            $event->start_time     = $startDate;
-                            $event->end_time       = $endDate;
-                            $event->venue          = $request->venue;
-                            $event->system_user_id = $admin->id;
-                            $event->microsite_id   = $admin->microsite_id;
-                            $event->status         = 1;
-                            $event->is_featured    = $request->featured;
-                            // Event thumbnail
-                            if ($request->hasFile('thumbnail'))
-                                {
-                                    $upload             = (new UploadService())->file_upload($request, 'thumbnail', 'event_image');
-                                    $event->event_image = $upload['path'];
-                                }
+                        if ($request->boolean('has_stream'))
+                            {
+                                $streamKey = Str::ulid();
 
-                            $event->save();
+                                $stream                    = new Content();
+                                $stream->title             = $event->event_name;
+                                $stream->description       = $request->event_description;
+                                $stream->content_group     = 'livestream';
+                                $stream->type              = 'application/x-mpegURL';
+                                $stream->stream_key        = $streamKey;
+                                $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
+                                $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamKey . '.m3u8';
+                                $stream->start_time        = $startDate;
+                                $stream->event_id          = $event->uuid;
+                                $stream->system_user_id    = $admin->id;
+                                $stream->microsite_id      = $admin->microsite_id;
+                                $stream->status            = 1;
 
-                            /*
-                        |--------------------------------------------------------------------------
-                        | Create Livestream (optional)
-                        |--------------------------------------------------------------------------
-                        */
-                            if ($request->boolean('has_stream'))
-                                {
+                                if ($request->hasFile('stream_thumbnail'))
+                                    {
+                                        $upload                = (new UploadService())->file_upload($request, 'stream_thumbnail', 'stream_thumbnail');
+                                        $stream->thumbnail_url = $upload['path'];
+                                    }
 
-                                    $streamKey = Str::ulid();
+                                $stream->save();
+                            }
 
-                                    $stream                    = new Content();
-                                    $stream->title             = $event->event_name;
-                                    $stream->description       = $request->event_description;
-                                    $stream->content_group     = 'livestream';
-                                    $stream->type              = 'application/x-mpegURL';
-                                    $stream->stream_key        = $streamKey;
-                                    $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
-                                    $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $streamKey . '.m3u8';
-                                    $stream->start_time     = $startDate;
-                                    $stream->event_id       = $event->id;
-                                    $stream->system_user_id = $admin->id;
-                                    $event->microsite_id    = $admin->microsite_id;
-                                    $stream->status         = 1;
+                        $this->syncEventProducts($event, $request);
 
-                                    // Stream thumbnail
-                                    if ($request->hasFile('stream_thumbnail'))
-                                        {
-                                            $upload                = (new UploadService())->file_upload($request, 'stream_thumbnail', 'stream_thumbnail');
-                                            $stream->thumbnail_url = $upload['path'];
-                                        }
+                        DB::commit();
 
-                                    $stream->save();
-                                }
+                        return self::success('event', 'Saved successfully', route('backend.event.index'));
+                    }
+                catch (\Exception $e)
+                    {
+                        DB::rollBack();
 
-                            DB::commit();
+                        Log::error('Event store failed: ' . $e->getMessage(), [
+                            'trace' => $e->getTraceAsString(),
+                        ]);
 
-                            return self::success('event', 'Saved successfully', route('backend.event.index'));
-                        }
-                    catch (\Exception $e)
-                        {
+                        return self::failed('event', 'Something went wrong. Please try again.', route('backend.event.index'));
+                    }
+            }
 
-                            DB::rollBack();
+    /**
+     * Display the specified resource.
+     */
+        public function show(Event $event)
+            {
+                //
+            }
 
-                            Log::error('Event store failed: ' . $e->getMessage(), [
-                                'trace' => $e->getTraceAsString()
-                            ]);
+    /**
+     * Show the form for editing the specified resource.
+     */
+        public function edit(Event $event)
+            {
+                $this->data['event'] = $event->load([
+                    'products' => fn($query) => $query->with('variants')->orderBy('id'),
+                ]);
+                $this->data['title'] = $this->data['event']->event_name . ' Event : ' . $this->data['title'];
 
-                            return self::failed('event', 'Something went wrong. Please try again.', route('backend.event.index'));
-                        }
-                }
+                return view('Backend.modules.event.edit', $this->data);
+            }
 
-        /**
-         * Display the specified resource.
-         */
-            public function show(Event $event)
-                {
-                    //
-                }
+    /**
+     * Update the specified resource in storage.
+     */
+        public function update(UpdateEvent $request, $id)
+            {
+                DB::beginTransaction();
 
-        /**
-         * Show the form for editing the specified resource.
-         */
-            public function edit(Event $event)
-                {
+                try
+                    {
+                        if (!str_contains((string)$request->event_time, ' to '))
+                            {
+                                return self::failed('event', 'Invalid event time format', route('backend.event.index'));
+                            }
 
-                    $this->data['event'] = $event;
-                    $this->data['title'] = $this->data['event']->title . ' Event : ' . $this->data['title'];
-                    return view('Backend.modules.event.edit', $this->data);
-                }
+                        [$startDateString, $endDateString] = explode(' to ', $request->event_time);
 
-        /**
-         * Update the specified resource in storage.
-         */
-            public function update(UpdateEvent $request, $id)
-                {
-                    try
-                        {
+                        $startDate = Carbon::createFromFormat('Y/m/d h:i A', trim($startDateString));
+                        $endDate   = Carbon::createFromFormat('Y/m/d h:i A', trim($endDateString));
 
-                            // =============================
-                            // Parse Event Time
-                            // =============================
-                            [$startDateString, $endDateString] = explode(' - ', $request->event_time);
+                        $event = Event::findOrFail($id);
+                        $admin = $request->user('admin');
 
-                            $startDate = Carbon::createFromFormat('Y/m/d h:i A', $startDateString);
-                            $endDate   = Carbon::createFromFormat('Y/m/d h:i A', $endDateString);
+                        $event->event_name     = $request->event_name;
+                        $event->description    = $request->event_description;
+                        $event->publish_date   = $request->publishdate;
+                        $event->start_time     = $startDate;
+                        $event->end_time       = $endDate;
+                        $event->venue          = $request->venue;
+                        $event->system_user_id = $admin->id;
+                        $event->microsite_id   = $admin->microsite_id;
+                        $event->status         = 1;
+                        $event->is_featured    = $request->featured ?? 0;
 
-                            $validated = $request->validated();
+                        if ($request->hasFile('thumbnail'))
+                            {
+                                $upload             = (new UploadService())->file_upload($request, 'thumbnail', 'event_image');
+                                $event->event_image = $upload['path'];
+                            }
 
-                            if (!$validated)
-                                {
-                                    return self::failed('event', $validated, route('backend.event.index'));
-                                }
+                        $event->save();
 
-                            // =============================
-                            // Update Event
-                            // =============================
-                            $event = Event::findOrFail($id);
+                        $this->syncEventProducts($event, $request);
 
-                            $event->event_name     = $request->event_name;
-                            $event->description    = $request->event_description;
-                            $event->publish_date   = $request->publishdate;
-                            $event->start_time     = $startDate;
-                            $event->end_time       = $endDate;
-                            $event->venue          = $request->venue;
-                            $event->system_user_id = $request->user('admin')->id;
-                            $event->microsite_id   = $request->user('admin')->microsite_id;
-                            $event->status         = 1;
-                            $event->is_featured    = $request->featured??0;
+                        $stream = $event->streams()->first();
 
-                            // Event image
-                            if ($request->hasFile('thumbnail'))
-                                {
-                                    $upload             = (new UploadService())->file_upload(
-                                        $request,
-                                        'thumbnail',
-                                        'event_image',
-                                        'linode'
-                                    );
-                                    $event->event_image = $upload['path'];
-                                }
+                        if ($request->boolean('has_stream'))
+                            {
+                                if (!$stream)
+                                    {
+                                        $stream                    = new Content();
+                                        $stream->event_id          = $event->uuid;
+                                        $stream->content_group     = 'livestream';
+                                        $stream->type              = 'application/x-mpegURL';
+                                        $stream->stream_key        = Str::ulid();
+                                        $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
+                                        $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK') . '/' . $stream->stream_key . '.m3u8';
+                                    }
 
-                            $event->save();
+                                $stream->title          = $event->event_name;
+                                $stream->description    = $event->description;
+                                $stream->start_time     = $startDate;
+                                $stream->system_user_id = $admin->id;
+                                $stream->microsite_id   = $admin->microsite_id;
+                                $stream->status         = 1;
 
-                            // =============================
-                            // Handle Livestream
-                            // =============================
-                            $stream = $event->streams()->first();
+                                if ($request->hasFile('stream_thumbnail'))
+                                    {
+                                        $upload                = (new UploadService())->file_upload($request, 'stream_thumbnail', 'stream_thumbnail');
+                                        $stream->thumbnail_url = $upload['path'];
+                                    }
 
-                            if ($request->has('has_stream'))
-                                {
+                                $stream->save();
+                            }
+                        elseif ($stream)
+                            {
+                                $stream->delete();
+                            }
 
-                                    // Create if not exists
-                                    if (!$stream)
-                                        {
-                                            $stream                    = new Content();
-                                            $stream->event_id          = $event->id;
-                                            $stream->content_group     = 'livestream';
-                                            $stream->type              = 'application/x-mpegURL';
-                                            $stream->stream_key        = \Str::ulid();
-                                            $stream->stream_url        = config('custom.STREAM.LIVESTREAM_SERVER');
-                                            $stream->stream_video_link = config('custom.STREAM.LIVESTREAM_LINK')
-                                                                         . '/' . $stream->stream_key . '.m3u8';
-                                        }
+                        DB::commit();
 
-                                    // Update stream
-                                    $stream->title          = $event->event_name;
-                                    $stream->description    = $event->description;
-                                    $stream->start_time     = $startDate;
-                                    $stream->system_user_id = $request->user('admin')->id;
-                                    $stream->channel_id     = $request->user()->channel_id;
-                                    $stream->status         = 1;
+                        return self::success('event', 'Saved successfully', route('backend.event.index'));
+                    }
+                catch (\Exception $e)
+                    {
+                        DB::rollBack();
 
-                                    // Stream thumbnail
-                                    if ($request->hasFile('stream_thumbnail'))
-                                        {
-                                            $upload                = (new UploadService())->file_upload(
-                                                $request,
-                                                'stream_thumbnail',
-                                                'stream_thumbnail'
-                                            );
-                                            $stream->thumbnail_url = $upload['path'];
-                                        }
+                        Log::error('Event update failed: ' . $e->getMessage(), [
+                            'trace' => $e->getTraceAsString(),
+                        ]);
 
-                                    $stream->save();
+                        return self::failed('event', 'An error occurred while updating', route('backend.event.index'));
+                    }
+            }
 
-                                }
-                            else
-                                {
-                                    // If unchecked, delete existing stream
-                                    if ($stream)
-                                        {
-                                            $stream->delete();
-                                        }
-                                }
+        private function syncEventProducts(Event $event, Request $request): void
+            {
+                $event
+                    ->products()
+                    ->whereIn('type', ['ticket', 'content', 'merch'])
+                    ->delete();
 
-                            return self::success(
-                                'event',
-                                'Saved successfully',
-                                route('backend.event.index')
-                            );
+                $this->saveTicketProducts($event, $request);
+                $this->saveStreamProducts($event, $request);
+                $this->saveMerchProducts($event, $request);
+            }
 
-                        }
-                    catch (\Exception $e)
-                        {
-                            Log::error('Event Update Error: ' . $e->getMessage());
-                            return self::failed(
-                                'event',
-                                'An error occurred while updating',
-                                route('backend.event.index')
-                            );
-                        }
-                }
+        private function saveTicketProducts(Event $event, Request $request): void
+            {
+                $types      = $request->input('ticket.type', []);
+                $quantities = $request->input('ticket.quantity', []);
+                $currencies = $request->input('ticket.currency', []);
+                $costs      = $request->input('ticket.cost', []);
 
-        /**
-         * Remove the specified resource from storage.
-         */
-            public function destroy($channelId, $id)
-                {
-                }
+                foreach ($types as $index => $type)
+                    {
+                        $type = trim((string)$type);
+                        $cost = $costs[$index] ?? null;
 
-            public function datatable(Request $request, EventDatatable $datatable)
-                {
+                        if ($type === '' || $cost === null || $cost === '')
+                            {
+                                continue;
+                            }
 
+                        $event->products()->create([
+                            'microsite_id' => $event->microsite_id,
+                            'type'         => 'ticket',
+                            'name'         => $type,
+                            'price'        => $cost,
+                            'currency'     => strtoupper((string)($currencies[$index] ?? 'USD')),
+                            'stock_total'  => $this->nullableInteger($quantities[$index] ?? null),
+                            'is_active'    => true,
+                        ]);
+                    }
+            }
 
-                    $datatable->columns = [
-                        1 => 'event_name',
-                        2 => 'thumbnail',
-                        7 => 'created_at',
-                        6 => 'status',
-                        8 => 'publish_date'
-                    ];
-                    return response()->json($datatable->data($request));
-                }
-        }
+        private function saveStreamProducts(Event $event, Request $request): void
+            {
+                $names      = $request->input('stream.rate_name', []);
+                $currencies = $request->input('stream.currency', []);
+                $prices     = $request->input('stream.price', []);
+
+                foreach ($names as $index => $name)
+                    {
+                        $name  = trim((string)$name);
+                        $price = $prices[$index] ?? null;
+
+                        if ($name === '' || $price === null || $price === '')
+                            {
+                                continue;
+                            }
+
+                        $event->products()->create([
+                            'microsite_id' => $event->microsite_id,
+                            'type'         => 'content',
+                            'name'         => $name,
+                            'price'        => $price,
+                            'currency'     => strtoupper((string)($currencies[$index] ?? 'USD')),
+                            'is_active'    => true,
+                        ]);
+                    }
+            }
+
+        private function saveMerchProducts(Event $event, Request $request): void
+            {
+                $names        = $request->input('merch.name', []);
+                $currencies   = $request->input('merch.currency', []);
+                $prices       = $request->input('merch.price', []);
+                $images       = $request->file('merch.image', []);
+                $variantNames = $request->input('merch.variants', []);
+
+                foreach ($names as $index => $name)
+                    {
+                        $name  = trim((string)$name);
+                        $price = $prices[$index] ?? null;
+
+                        if ($name === '' || $price === null || $price === '')
+                            {
+                                continue;
+                            }
+
+                        $product = new Product([
+                            'microsite_id' => $event->microsite_id,
+                            'type'         => 'merch',
+                            'name'         => $name,
+                            'price'        => $price,
+                            'currency'     => strtoupper((string)($currencies[$index] ?? 'USD')),
+                            'is_active'    => true,
+                        ]);
+
+                        if (!empty($images[$index]))
+                            {
+                                $path                = $images[$index]->store('nowstream/merchandise/' . date('Y/m'), config('filesystems.default'));
+                                $product->image_path = $path;
+                            }
+
+                        $event->products()->save($product);
+
+                        $this->saveMerchVariants($product, $variantNames[$index] ?? []);
+                    }
+            }
+
+        private function saveMerchVariants(Product $product, array $variants): void
+            {
+                $names          = $variants['name'] ?? [];
+                $priceOverrides = $variants['price_override'] ?? [];
+                $stocks         = $variants['stock_total'] ?? [];
+
+                foreach ($names as $variantIndex => $variantName)
+                    {
+                        $variantName   = trim((string)$variantName);
+                        $priceOverride = $priceOverrides[$variantIndex] ?? null;
+                        $stockTotal    = $stocks[$variantIndex] ?? null;
+
+                        if ($variantName === '')
+                            {
+                                continue;
+                            }
+
+                        $product->variants()->create([
+                            'name'           => $variantName,
+                            'price_override' => $priceOverride !== null && $priceOverride !== '' ? $priceOverride : null,
+                            'stock_total'    => $this->nullableInteger($stockTotal),
+                        ]);
+                    }
+            }
+
+        private function nullableInteger($value): ?int
+            {
+                if ($value === null || $value === '')
+                    {
+                        return null;
+                    }
+
+                return (int)$value;
+            }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+        public function destroy($channelId, $id) {}
+
+        public function datatable(Request $request, EventDatatable $datatable)
+            {
+                $datatable->columns = [
+                    1 => 'event_name',
+                    2 => 'thumbnail',
+                    7 => 'created_at',
+                    6 => 'status',
+                    8 => 'publish_date',
+                ];
+
+                return response()->json($datatable->data($request));
+            }
+    }
