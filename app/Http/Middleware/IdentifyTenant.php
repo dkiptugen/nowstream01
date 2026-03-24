@@ -9,25 +9,45 @@
         {
             public function handle($request, Closure $next)
                 {
-                    $host       = $request->getHost();
+                    $host = $request->getHost();
                     $baseDomain = config('app.base_domain');
-                    // Ignore main domain
-                    if (in_array($host, [$baseDomain, 'www.' . $baseDomain]))
-                        {
-                            return $next($request);
-                        }
+
+                    $ignoredHosts = [
+                        $baseDomain,
+                        'www.' . $baseDomain,
+                        'localhost',
+                        '127.0.0.1',
+                    ];
+
+// Ignore main domain and local development
+                    if (in_array($host, $ignoredHosts)) {
+                        return $next($request);
+                    }
+
                     $tenant = Microsite::where('domain', $host)
                                        ->where('status', 1)
-                                       ->where('visible',1)
+                                       ->where('visible', 1)
                                        ->first();
 
-                    if (!$tenant)
-                        {
-                            return redirect()->route('home');
-                        }
+                    if (!$tenant) {
+                        return redirect()->route('home');
+                    }
 
-                    // Make tenant globally available
-                    app()->instance('tenant', collect($tenant)->only(['uuid','name','logo','domain','banner','cover','colorscheme','favicon','description','keywords','views','followers']));
+// Make tenant globally available
+                    app()->instance('tenant', collect($tenant)->only([
+                        'uuid',
+                        'name',
+                        'logo',
+                        'domain',
+                        'banner',
+                        'cover',
+                        'colorscheme',
+                        'favicon',
+                        'description',
+                        'keywords',
+                        'views',
+                        'followers'
+                    ]));
 
                     return $next($request);
                 }
