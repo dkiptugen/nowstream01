@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Order extends Model
 {
@@ -46,5 +47,29 @@ class Order extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'order_id', 'subscription_token');
+    }
+
+    public function scopeForPaidEvent(Builder $query, int $userId, string $eventId): Builder
+    {
+        return $query
+            ->select('orders.*')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->where('orders.user_id', $userId)
+            ->where('orders.payment_status', 'paid')
+            ->where('products.payable_id', $eventId)
+            ->where('products.payable_type', Event::class)
+            ->distinct();
+    }
+
+    public function scopeForPendingEventRate(Builder $query, int $userId, int $rateId): Builder
+    {
+        return $query
+            ->select('orders.*')
+            ->join('order_items', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.user_id', $userId)
+            ->where('orders.payment_status', 'pending')
+            ->where('order_items.product_id', $rateId)
+            ->distinct();
     }
 }

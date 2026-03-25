@@ -52,11 +52,7 @@ class EventController extends Controller
 
             $user = Auth::user();
             $paidOrder = Order::query()
-                ->where('user_id', $user->id)
-                ->where('payment_status', 'paid')
-                ->whereHas('items.product', fn($query) => $query
-                    ->where('payable_id', $event->uuid)
-                    ->where('payable_type', Event::class))
+                ->forPaidEvent($user->id, $event->uuid)
                 ->latest('paid_at')
                 ->first();
 
@@ -74,8 +70,8 @@ class EventController extends Controller
                     ->with('success', 'You already have a paid ticket for this event.');
             }
 
-            $events = Cache::rememberOnce('events', now()->addDay(), fn() => $this->get_events());
-            $videos = Cache::rememberOnce('videos', now()->addDay(), fn() => $this->get_videos());
+            $events = $this->get_events();
+            $videos = $this->get_videos();
             $country = session('country', 'US');
 
             return view('Frontend.modules.payments.plans', compact('event', 'rate', 'user', 'events', 'videos', 'country'));
@@ -115,11 +111,7 @@ class EventController extends Controller
      */
     public function succeed($eventId)
     {
-        $event = Cache::rememberOnce(
-            'event_' . $eventId,
-            now()->addDay(),
-            fn() => $this->get_events($eventId)
-        );
+        $event = Event::where('uuid', $eventId)->where('status', 1)->firstOrFail();
 
         return view('Frontend.modules.payments.success', compact('event'));
     }
@@ -171,11 +163,7 @@ class EventController extends Controller
         $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
         $paidOrder = Auth::check()
             ? Order::query()
-                ->where('user_id', Auth::id())
-                ->where('payment_status', 'paid')
-                ->whereHas('items.product', fn($query) => $query
-                    ->where('payable_id', $data['event']->uuid)
-                    ->where('payable_type', Event::class))
+                ->forPaidEvent(Auth::id(), $data['event']->uuid)
                 ->latest('paid_at')
                 ->first()
             : null;

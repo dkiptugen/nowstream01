@@ -20,11 +20,7 @@ class CheckEventPayment
 
         // Check if user has paid for THIS event
         $order = Order::query()
-            ->where('user_id', $request->user()->id)
-            ->where('payment_status', 'paid')
-            ->whereHas('items.product', fn($query) => $query
-                ->where('payable_id', $eventId)
-                ->where('payable_type', \App\Models\Event::class))
+            ->forPaidEvent($request->user()->id, $eventId)
             ->first();
 
         if (!$order) {

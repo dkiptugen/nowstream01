@@ -42,11 +42,7 @@ class EventOrderController extends Controller
             ->where('event_id', $event->uuid)
             ->first();
         $existingPaidOrder = Order::query()
-            ->where('user_id', $request->user()->id)
-            ->where('payment_status', 'paid')
-            ->whereHas('items.product', fn($query) => $query
-                ->where('payable_id', $event->uuid)
-                ->where('payable_type', Event::class))
+            ->forPaidEvent($request->user()->id, $event->uuid)
             ->first();
 
         if ($existingTicket || $existingPaidOrder) {
@@ -59,9 +55,7 @@ class EventOrderController extends Controller
 
         DB::transaction(function () use (&$order, $request, $event, $rate) {
             $order = Order::query()
-                ->where('user_id', $request->user()->id)
-                ->where('payment_status', 'pending')
-                ->whereHas('items', fn($query) => $query->where('product_id', $rate->id))
+                ->forPendingEventRate($request->user()->id, $rate->id)
                 ->latest()
                 ->first();
 
@@ -188,9 +182,7 @@ class EventOrderController extends Controller
 
             if (!$ticket) {
                 $paidOrder = Order::query()
-                    ->where('user_id', Auth::id())
-                    ->where('payment_status', 'paid')
-                    ->whereHas('items.product', fn($query) => $query->where('payable_id', $event->uuid)->where('payable_type', Event::class))
+                    ->forPaidEvent(Auth::id(), $event->uuid)
                     ->with('items.product')
                     ->latest('paid_at')
                     ->first();
