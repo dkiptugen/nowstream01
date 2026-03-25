@@ -41,17 +41,8 @@ class EventController extends Controller
     public function pay(Request $request, $eventId, $rateId)
     {
         try {
-            $event = Cache::remember(
-                'event_checkout_' . $eventId,
-                now()->addMinutes(10),
-                fn() => Event::where('uuid', $eventId)->where('status', 1)->firstOrFail()
-            );
-
-            $rate = Cache::remember(
-                'event_rate_' . $eventId . '_' . $rateId,
-                now()->addMinutes(10),
-                fn() => $event->eventRates()->whereKey($rateId)->first()
-            );
+            $event = Event::where('uuid', $eventId)->where('status', 1)->firstOrFail();
+            $rate = $event->eventRates()->whereKey($rateId)->first();
 
             if (is_null($rate)) {
                 return redirect()
