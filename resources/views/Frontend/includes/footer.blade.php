@@ -585,6 +585,7 @@
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script> 
+@include('Frontend.includes.components.partials.audio-player')
 </body>
 
 </html>
