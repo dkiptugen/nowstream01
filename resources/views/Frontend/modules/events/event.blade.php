@@ -85,9 +85,9 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 													href="{{ route('ticket.download', ['uuid' => $ticket->uuid]) }}">
 													Download Ticket <i class='fas fa-download'></i>
 												</a>
-											@elseif($activeSubscription)
+											@elseif($paidOrder)
 												<a class="btn btn-sm btn-primary p-2 pl-3"
-													href="{{ route('success', ['eventId' => $event->uuid]) }}">
+													href="{{ route('event.success', ['eventId' => $event->uuid]) }}">
 													View Ticket <i class='fas fa-ticket-alt'></i>
 												</a>
 											@else

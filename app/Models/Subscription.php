@@ -32,7 +32,7 @@
 			];
 			public function transactions()
 				{
-					return $this->hasMany(Transaction::class);
+					return $this->hasMany(Transaction::class, 'subscription_id', 'id');
 				}
 			public function user()
 				{

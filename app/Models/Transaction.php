@@ -36,7 +36,12 @@ class Transaction extends Model
 
         public function subscription()
             {
-                return $this->belongsTo(Subscription::class);
+                return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
+            }
+
+        public function order()
+            {
+                return $this->belongsTo(Order::class, 'order_id', 'subscription_token');
             }
 
         public function user()

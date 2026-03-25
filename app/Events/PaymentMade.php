@@ -18,18 +18,18 @@
 		/**
 		 * Create a new event instance.
 		 */
-			public $subscription;
+			public $payment;
 
 
-			public function __construct($subscription)
+			public function __construct($payment)
 				{
-					$this->subscription = $subscription;
+					$this->payment = $payment;
 				}
 
 
 			public function broadcastOn()
 				{
-					return new Channel('payment.'.$this->subscription->identifier);
+					return new Channel('payment.'.$this->identifier());
 				}
 
 			public function broadcastAs()
@@ -38,9 +38,36 @@
 				}
 			public function broadcastWith() {
 				return [
-					'check' => $this->subscription->status,
-					'balance' =>$this->subscription->balance
+					'check' => $this->isPaid(),
+					'balance' => $this->balance()
 				];
 			}
+
+			private function identifier()
+				{
+					return $this->payment->identifier
+						?? $this->payment->order_number
+						?? $this->payment->subscription_token;
+				}
+
+			private function isPaid()
+				{
+					if (isset($this->payment->status))
+						{
+							return (int) $this->payment->status === 1;
+						}
+
+					return ($this->payment->payment_status ?? null) === 'paid';
+				}
+
+			private function balance()
+				{
+					if (isset($this->payment->balance))
+						{
+							return $this->payment->balance;
+						}
+
+					return 0;
+				}
 
 		}

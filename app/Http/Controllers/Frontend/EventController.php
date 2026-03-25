@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\Content;
-use App\Models\Subscription;
+use App\Models\Order;
 use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -66,16 +66,18 @@ class EventController extends Controller
                 ->where('event_id', $event->uuid)
                 ->latest()
                 ->first();
-            $subscription = Subscription::where('user_id', $user->id)
-                ->where('event_id', $event->uuid)
-                ->where('event_rate_id', $rate->id)
-                ->where('status', 1)
-                ->latest()
+            $paidOrder = Order::query()
+                ->where('user_id', $user->id)
+                ->where('payment_status', 'paid')
+                ->whereHas('items.product', fn($query) => $query
+                    ->where('payable_id', $event->uuid)
+                    ->where('payable_type', Event::class))
+                ->latest('paid_at')
                 ->first();
 
-            if ($ticket || $subscription) {
+            if ($ticket || $paidOrder) {
                 return redirect()
-                    ->route('success', ['eventId' => $event->uuid])
+                    ->route('event.success', ['eventId' => $event->uuid])
                     ->with('success', 'You already have a paid ticket for this event.');
             }
 
@@ -161,11 +163,14 @@ class EventController extends Controller
         // dd eventRates
         //  dd($data['event']->eventRates);
         $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
-        $activeSubscription = Auth::check()
-            ? Subscription::where('user_id', Auth::id())
-                ->where('event_id', $data['event']->uuid)
-                ->where('status', 1)
-                ->latest()
+        $paidOrder = Auth::check()
+            ? Order::query()
+                ->where('user_id', Auth::id())
+                ->where('payment_status', 'paid')
+                ->whereHas('items.product', fn($query) => $query
+                    ->where('payable_id', $data['event']->uuid)
+                    ->where('payable_type', Event::class))
+                ->latest('paid_at')
                 ->first()
             : null;
 
@@ -178,7 +183,7 @@ class EventController extends Controller
             'ticket'         => $ticket,
             'eventRates'     => $data['event']->eventRates,
             'relatedEvents'  => $relatedEvents,
-            'activeSubscription' => $activeSubscription,
+            'paidOrder'      => $paidOrder,
         ]);
     }
 }

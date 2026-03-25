@@ -60,7 +60,7 @@
 
                         <p class="mt-2">Please Select Your Payment Option</p>
                         <div class="card-body w-100 radius-10 mt-2">
-                            <form action="{{ route('subscribe') }}" method="POST">
+                            <form action="{{ route('event.checkout') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="event_id" value="{{ $event->uuid }}">
                                 <input type="hidden" name="rate_id" value="{{ $rate->id }}">
@@ -75,21 +75,6 @@
                                             <div class="ms-auto">
                                                 <input class="widgets-icons-2 bg-success text-white" type="radio"
                                                     name="payment_method_id" id="mpesa" value="1" checked>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="card radius-10 border-primary border shadow-none">
-                                    <label class="card-body radius-10" for="creditcard">
-                                        <div class="d-flex align-items-center">
-                                            <div>
-                                                <img src="{{asset('frontend-assets/images/card.png')}}" height="40"
-                                                    alt="">
-                                            </div>
-                                            <div class="ms-auto">
-                                                <input class="widgets-icons-2 bg-gradient-ibiza text-white" type="radio"
-                                                    name="payment_method_id" id="creditcard" value="2">
                                             </div>
                                         </div>
                                     </label>

@@ -13,6 +13,7 @@ use App\Http\Controllers\Frontend\SearchController;
 use App\Http\Controllers\Frontend\TVController;
 use App\Http\Controllers\Frontend\RadioController;
 use App\Http\Controllers\Frontend\TicketController;
+use App\Http\Controllers\Frontend\EventOrderController;
 use App\Http\Controllers\Frontend\WatchHistoryController;
 use App\Http\Controllers\Frontend\TenantController;
 use Illuminate\Http\Request;
@@ -180,6 +181,10 @@ Route::middleware(['detectCountry'])->group(function ()
 
                 Route::get('/video/file/{filename}', [StreamVideoController::class, 'get_video'])->name('video.file');
                 Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
+                Route::post('/event/checkout', [EventOrderController::class, 'checkout'])->name('event.checkout');
+                Route::get('/event/payment/mpesa/{order}', [EventOrderController::class, 'mpesa'])->name('event.payment.mpesa');
+                Route::post('/event/payment/mpesa', [EventOrderController::class, 'mpesaStk'])->name('event.payment.mpesa.stk');
+                Route::get('/event/success/{eventId}', [EventOrderController::class, 'success'])->name('event.success');
                 Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
                 Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
                 Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
