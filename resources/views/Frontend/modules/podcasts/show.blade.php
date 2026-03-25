@@ -3,7 +3,7 @@
 @section('content')
 @php
 $episodeHistory = $episodeHistory ?? collect();
-$playlist = $podcast->episodes->map(function($ep) use ($podcast) {
+$playlist = $podcast->episodes->map(function($ep) use ($podcast, $episodeHistory) {
 return [
 'src' => $ep->stream_url,
 'title' => $ep->title,
