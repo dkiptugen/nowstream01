@@ -1,5 +1,6 @@
 @include('Frontend.includes.header')
 @yield('content') 
+@include('Frontend.includes.components.partials.audio-player')
 @include('Frontend.includes.footer')
 @yield('header')
 @yield('footer')
