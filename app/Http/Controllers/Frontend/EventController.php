@@ -38,6 +38,7 @@ class EventController extends Controller
      */
     public function pay(Request $request, $eventId, $rateId)
     {
+        dd($eventId, $rateId);
         try {
             $event = Cache::remember(
                 'event_checkout_' . $eventId,
