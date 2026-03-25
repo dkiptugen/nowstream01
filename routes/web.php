@@ -178,13 +178,7 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::get('/video/{uuid}/{slug?}', [StreamVideoController::class, 'show'])
                      ->name('video.show');
 
-
                 Route::get('/video/file/{filename}', [StreamVideoController::class, 'get_video'])->name('video.file');
-                Route::middleware(['check.event.payment'])->group(function ()
-                    {
-                        Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.payf');
-                    });
-
                 Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
                 Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
                 Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');

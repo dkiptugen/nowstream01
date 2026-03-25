@@ -49,9 +49,9 @@
                             {{ $event->event_name }} for <b>
                                 @if($country == 'KE')
                                     KES
-                                    {{ $rate->cost }}
+                                    {{ $rate->price }}
                                 @else
-                                    {{ config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->reserved_currency_cost }}
+                                    {{ ($rate->currency ?? config('custom.BILLING.RESERVED_CURRENCY')) . " " . $rate->price }}
                                 @endif 
 
                            </b>
@@ -62,11 +62,9 @@
                         <div class="card-body w-100 radius-10 mt-2">
                             <form action="{{ route('subscribe') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                <input type="hidden" name="channel_id" value="{{ $event->channel_id }}">
-                                <input type="hidden" name="cost" value="{{ $rate->cost }}">
-                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                <input type="hidden" name="event_id" value="{{ $event->uuid }}">
                                 <input type="hidden" name="rate_id" value="{{ $rate->id }}">
+                                <input type="hidden" name="country" value="{{ $country }}">
                                 <div class="card radius-10 border-primary border shadow-none">
                                     <label class="card-body" for="mpesa">
                                         <div class="d-flex align-items-center">

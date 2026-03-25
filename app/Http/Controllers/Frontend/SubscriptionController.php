@@ -9,7 +9,7 @@
 	use App\Libs\DPO;
 	use App\Libs\Mpesa;
 	use App\Models\Event;
-	use App\Models\ContentRate;
+	use App\Models\Product;
 	use App\Models\Region;
 	use App\Models\Subscription;
 	use App\Models\Transaction;
@@ -28,30 +28,35 @@
             use Meta;
 			public function subscribe (Request $request)
 				{
-					// Log the incoming request data
-					//Log::info('Subscription request data:', $request->all());
-
-					// Validate the request data
 					$request->validate ([
-						                    'event_id' => 'required|integer|exists:events,id', 'channel_id' => 'required|integer|exists:channels,id', 'cost' => 'required|numeric', 'user_id' => 'required|integer|exists:users,id', 'payment_method_id' => 'required|integer|in:1,2'
+						                    'event_id' => 'required|uuid|exists:events,uuid',
+						                    'rate_id' => 'required|integer|exists:products,id',
+						                    'payment_method_id' => 'required|integer|in:1,2'
 					                    ]);
 
 					DB::beginTransaction ();
 
 					try
 						{
+							$event = Event::where('uuid', $request->event_id)->firstOrFail();
+							$eventRate = Product::query()
+								->whereKey($request->rate_id)
+								->where('payable_id', $event->uuid)
+								->where('payable_type', Event::class)
+								->where('type', 'ticket')
+								->where('is_active', 1)
+								->first();
 
-							// Fetch the cost from the ContentRate model
-							$eventRate = ContentRate::find ($request->rate_id);
 							if (is_null ($eventRate))
 								{
-									//Log::error('Event rate not found for event_id: ' . $request->event_id);
 									return redirect ()->back ()->with ('error', 'Event rate not found');
 								}
 
-							$cost         = $eventRate->cost;
+							$cost         = $eventRate->price;
+							$channelId    = optional($event->streams()->first())->channel_id;
 							$subscription = Subscription::where ('user_id', $request->user ()->id)
 							                            ->where ('event_id', $request->event_id)
+							                            ->where ('event_rate_id', $eventRate->id)
 							                            ->first ();
 
 
@@ -67,13 +72,13 @@
 										$paymentmethod = 'Safaricom Content';
 										break;
 								}
+							$country = $request->country ?? session('country', 'KE');
 							$currency = 'KES';
-							if ($request->country != 'KE')
+							if ($country != 'KE')
 								{
-
 									if ($paymentmethod == 'dpo')
 										{
-											$cost     = $eventRate->reserved_currency_cost;
+											$cost     = $eventRate->price;
 											$currency = 'USD';
 										}
 								}
@@ -81,9 +86,9 @@
 								{
 									$mpesaTransactionId = $this->identifer ('Subscription', 'identifier', 10);
 									$subscription       = Subscription::create ([
-										                                            'user_id' => $request->user_id,
+										                                            'user_id' => $request->user ()->id,
 										                                            'identifier' => $mpesaTransactionId,
-										                                            'type' => 'stream',
+										                                            'type' => 'ticket',
 										                                            'currency' => $currency,
 										                                            'cost' => $cost,
 										                                            'amount_paid' => 0,
@@ -91,7 +96,7 @@
 										                                            'status' => 0,
 										                                            'event_rate_id' => $request->rate_id,
 										                                            'event_id' => $request->event_id,
-										                                            'channel_id' => $request->channel_id,
+										                                            'channel_id' => $channelId,
 										                                            'stream_token' => uniqid ()
 									                                            ]);
 
@@ -105,10 +110,7 @@
 											$ss                   = $subscription->save ();
 											if ($ss)
 												{
-													$check = Event::find ($subscription->event_id);
-													return redirect ()->route ('event.show', [
-														$check->streams->id, $check->streams->slug
-													]);
+													return redirect ()->route ('success', ['eventId' => $subscription->event_id]);
 												}
 										}
 									if ($subscription->cost != $cost)
@@ -128,11 +130,11 @@
 							// Redirect based on the payment method
 							if ($request->payment_method_id == 1)
 								{
-									return redirect ()->route ('mpesa', ['id' => $subscription->id]);
+									return redirect ()->route ('mpesa', ['id' => $subscription->getKey ()]);
 								}
 							elseif ($request->payment_method_id == 2)
 								{
-									return redirect ()->route ('dpo', ['id' => $subscription->id]);
+									return redirect ()->route ('dpo', ['id' => $subscription->getKey ()]);
 								}
 							else
 								{
@@ -148,10 +150,40 @@
 				}
 
 
-				public function succeed ($eventId)
+			public function succeed ($eventId)
 				{
-					$event = Event::find ($eventId);
-					return view ('Frontend.modules.payments.successful', compact ('event'));
+					$event = Event::where('uuid', $eventId)->firstOrFail();
+					$ticket = null;
+
+					if (Auth::check())
+						{
+							$ticket = \App\Models\Ticket::where('user_id', Auth::id())
+								->where('event_id', $event->uuid)
+								->latest()
+								->first();
+
+							if (!$ticket)
+								{
+									$subscription = Subscription::where('user_id', Auth::id())
+										->where('event_id', $event->uuid)
+										->where('status', 1)
+										->latest()
+										->first();
+
+									if ($subscription)
+										{
+											$rate = Product::find($subscription->event_rate_id);
+											$ticket = \App\Models\Ticket::create([
+												'user_id' => Auth::id(),
+												'event_id' => $event->uuid,
+												'type' => optional($rate)->name ?? 'Standard',
+												'price' => $subscription->cost,
+											]);
+										}
+								}
+						}
+
+					return view ('Frontend.modules.payments.successful', compact ('event', 'ticket'));
 				}
 				public function succeess ()
 					{
@@ -163,10 +195,7 @@
 					$subscription = Subscription::findOrFail ($id);
 					if(	$subscription->status ==1)
 						{
-							$check = Event::find ($subscription->event_id);
-							return redirect ()->route ('event.show', [
-								$check->streams->id, $check->streams->slug
-							]);
+							return redirect ()->route ('success', ['eventId' => $subscription->event_id]);
 						}
 					return view ('Frontend.modules.payments.mpesa', compact ('subscription'));
 				}
@@ -184,11 +213,11 @@
 										{
 											if ($sub->currency == 'USD')
 												{
-													$eventRate = ContentRate::find ($sub->event_rate_id);
+													$eventRate = Product::find ($sub->event_rate_id);
 													$sub       = Subscription::create ([
 														                                   'user_id' => Auth::user ()->id, 'identifier' => $this->identifer ('Subscription',
 														                                                                                                     'identifier',
-														                                                                                                     10), 'type' => 'stream', 'currency' => "KES", 'cost' => $eventRate->cost, 'amount_paid' => 0, 'balance' => $eventRate->cost, 'status' => 0, 'event_rate_id' => $eventRate->id, 'event_id' => $eventRate->event_id, 'channel_id' => $sub->channel_id, 'stream_token' => uniqid ()
+														                                                                                                     10), 'type' => 'ticket', 'currency' => "KES", 'cost' => $eventRate->price, 'amount_paid' => 0, 'balance' => $eventRate->price, 'status' => 0, 'event_rate_id' => $eventRate->id, 'event_id' => $sub->event_id, 'channel_id' => $sub->channel_id, 'stream_token' => uniqid ()
 													                                   ]);
 												}
 											$transaction                  = new Transaction();
@@ -255,10 +284,7 @@
 							$subscription = Subscription::findOrFail ($id);
 							if(	$subscription->status ==1)
 								{
-									$check = Event::find ($subscription->event_id);
-									return redirect ()->route ('event.show', [
-										$check->streams->id, $check->streams->slug
-									]);
+									return redirect ()->route ('success', ['eventId' => $subscription->event_id]);
 								}
 							$transaction  = Transaction::find ($subscription->latest_transaction_id);
 							if (is_null ($transaction))
@@ -287,7 +313,7 @@
 									$dpo->currency                  = $subscription->currency;
 									$dpo->accountref                = $subscription->identifier;
 									$dpo->back_url                  = route ('event.pay', [
-										$subscription->event_id, $subscription->event->slug
+										$subscription->event_id, $subscription->event_rate_id
 									]);
 									$dpo->redirect_url              = route ('dpo.verify_token');
 									$dpo->service[0]["type"]        = config ('custom.DPO.DPO_SERVICE_CODE');

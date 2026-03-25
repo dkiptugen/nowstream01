@@ -4,7 +4,9 @@
 	
 	use App\Events\PaymentMade;
 	use App\Libs\AfricasTalking;
+	use App\Models\Product;
 	use App\Models\Subscription;
+	use App\Models\Ticket;
 	use App\Models\Transaction;
 	use App\Notifications\StreamKeyNotification;
 	use App\Traits\Helper;
@@ -126,8 +128,22 @@
 							$res = $sub->save ();
 							if ($res)
 								{
-									$check = Subscription::find ($sub->id);
-									if(!$this->isBazeEmail($check->user->email))
+									$check = Subscription::find ($sub->getKey ());
+									if ($check->type === 'ticket')
+										{
+											$rate = Product::find($check->event_rate_id);
+											Ticket::firstOrCreate(
+												[
+													'user_id' => $check->user_id,
+													'event_id' => $check->event_id,
+												],
+												[
+													'type' => optional($rate)->name ?? 'Standard',
+													'price' => $check->cost,
+												]
+											);
+										}
+									elseif(!$this->isBazeEmail($check->user->email))
 										{
 											$check->user->notify(new  StreamKeyNotification
 											                            ($check->user,$check));

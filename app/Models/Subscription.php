@@ -14,6 +14,7 @@
             public $incrementing = false;
             protected $primaryKey='uuid';
 			protected $fillable = [
+				'identifier',
 				'stream_token',
 				'user_id',
 				'type',
@@ -25,6 +26,7 @@
 				'event_id',
 				'event_rate_id',
 				'channel_id',
+				'latest_transaction_id',
 				'activated_by',
 				'activation_reason'
 			];
@@ -42,6 +44,6 @@
 				}
 			public function event()
 				{
-					return $this->belongsTo(Event::class);
+					return $this->belongsTo(Event::class, 'event_id', 'uuid');
 				}
 		}

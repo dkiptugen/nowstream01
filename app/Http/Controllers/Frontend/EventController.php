@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Models\Event;
 use App\Models\Ticket;
 use App\Models\Content;
-use App\Models\ContentRate;
+use App\Models\Subscription;
 use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -39,16 +39,22 @@ class EventController extends Controller
     public function pay(Request $request, $eventId, $rateId)
     {
         try {
-            $event = Cache::rememberOnce(
-                'event_' . $eventId,
-                now()->addDay(),
-                fn() => $this->get_events($eventId)
+            $event = Cache::remember(
+                'event_checkout_' . $eventId,
+                now()->addMinutes(10),
+                fn() => Event::where('uuid', $eventId)->where('status', 1)->firstOrFail()
             );
 
-            $rate = Cache::rememberOnce(
-                'rates_' . $eventId . '_' . $rateId,
-                now()->addDay(),
-                fn() => $this->get_event_rates($eventId, $rateId)
+            $rate = Cache::remember(
+                'event_rate_' . $eventId . '_' . $rateId,
+                now()->addMinutes(10),
+                fn() => Product::query()
+                    ->whereKey($rateId)
+                    ->where('payable_id', $eventId)
+                    ->where('payable_type', Event::class)
+                    ->where('type', 'ticket')
+                    ->where('is_active', 1)
+                    ->first()
             );
 
             if (is_null($rate)) {
@@ -56,10 +62,28 @@ class EventController extends Controller
             }
 
             $user   = Auth::user();
+            $ticket = Ticket::where('user_id', $user->id)
+                ->where('event_id', $event->uuid)
+                ->latest()
+                ->first();
+            $subscription = Subscription::where('user_id', $user->id)
+                ->where('event_id', $event->uuid)
+                ->where('event_rate_id', $rate->id)
+                ->where('status', 1)
+                ->latest()
+                ->first();
+
+            if ($ticket || $subscription) {
+                return redirect()
+                    ->route('success', ['eventId' => $event->uuid])
+                    ->with('success', 'You already have a paid ticket for this event.');
+            }
+
             $events = Cache::rememberOnce('events', now()->addDay(), fn() => $this->get_events());
             $videos = Cache::rememberOnce('videos', now()->addDay(), fn() => $this->get_videos());
+            $country = session('country', 'US');
 
-            return view('Frontend.modules.payments.plans', compact('event', 'rate', 'user', 'events', 'videos'));
+            return view('Frontend.modules.payments.plans', compact('event', 'rate', 'user', 'events', 'videos', 'country'));
         } catch (\Exception $e) {
             abort(404, 'Event not found.');
         }
@@ -101,7 +125,9 @@ class EventController extends Controller
         // Cache key per event page
         $cacheKey = "event_page_{$slug}";
 
-        $ticket = Ticket::first();
+        $ticket = Auth::check()
+            ? Ticket::where('user_id', Auth::id())->whereHas('event', fn($query) => $query->where('slug', $slug))->latest()->first()
+            : null;
 
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
@@ -135,6 +161,13 @@ class EventController extends Controller
         // dd eventRates
         //  dd($data['event']->eventRates);
         $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
+        $activeSubscription = Auth::check()
+            ? Subscription::where('user_id', Auth::id())
+                ->where('event_id', $data['event']->uuid)
+                ->where('status', 1)
+                ->latest()
+                ->first()
+            : null;
 
 
         return view('Frontend.modules.events.event', [
@@ -142,9 +175,10 @@ class EventController extends Controller
             'events'         => $data['events'],
             'videos'         => $data['videos'],
             'rates'          => $data['rates'],
-            'ticket'          => $ticket,
-            'eventRates'     => $data['event']->eventRates,  
-            'relatedEvents'  => $relatedEvents,  
+            'ticket'         => $ticket,
+            'eventRates'     => $data['event']->eventRates,
+            'relatedEvents'  => $relatedEvents,
+            'activeSubscription' => $activeSubscription,
         ]);
     }
 }

@@ -12,14 +12,20 @@
 								<h1 class="text-center text-success mt-2">
 									Payment Successful!
 								</h1>
-								<a target="_blank" href="{{ route('stream.show', [$event->streams->id, $event->streams->slug]) }}"
-										class="w-100">
 								<img src="{{asset('/success.png')}}" height="150" width="150" alt="">
-								</a>
+								<p class="mt-3 mb-0 text-dark">
+									Your ticket for <strong>{{ $event->event_name }}</strong> is ready.
+								</p>
 								<div class="text-center my-4">
-								<a target="_blank" href="{{ route('stream.show', [$event->streams->id, $event->streams->slug]) }}"
-										class="btn btn-dark">
-										Watch Now
+									@if($ticket)
+										<a target="_blank" href="{{ route('ticket.download', ['uuid' => $ticket->uuid]) }}"
+											class="btn btn-dark">
+											Download Ticket
+										</a>
+									@endif
+									<a href="{{ route('event.show', ['slug' => $event->slug]) }}"
+										class="btn btn-outline-dark ms-2">
+										Back to Event
 									</a>
 								</div>
 							</div>

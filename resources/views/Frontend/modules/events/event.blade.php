@@ -80,10 +80,22 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 											  {{ $rate->currency }} {{ $rate->price }}
 										</td>
 										<td class="align-content-center text-end">
-											<a class="btn btn-sm btn-success p-2 pl-3"
-												href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
-												Buy Link <i class='fas fa-link'></i>
-											</a>
+											@if($ticket)
+												<a class="btn btn-sm btn-primary p-2 pl-3"
+													href="{{ route('ticket.download', ['uuid' => $ticket->uuid]) }}">
+													Download Ticket <i class='fas fa-download'></i>
+												</a>
+											@elseif($activeSubscription)
+												<a class="btn btn-sm btn-primary p-2 pl-3"
+													href="{{ route('success', ['eventId' => $event->uuid]) }}">
+													View Ticket <i class='fas fa-ticket-alt'></i>
+												</a>
+											@else
+												<a class="btn btn-sm btn-success p-2 pl-3"
+													href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
+													Buy Ticket <i class='fas fa-link'></i>
+												</a>
+											@endif
 										</td>
 									</tr>
 									@endforeach
