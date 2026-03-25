@@ -180,7 +180,7 @@ Route::middleware(['detectCountry'])->group(function ()
                      ->name('video.show');
 
                 Route::get('/video/file/{filename}', [StreamVideoController::class, 'get_video'])->name('video.file');
-                Route::get('/event/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
+                Route::get('/pay/{eventId}/{rate_id}', [EventController::class, 'pay'])->name('event.pay');
                 Route::post('/event/checkout', [EventOrderController::class, 'checkout'])->name('event.checkout');
                 Route::get('/event/payment/mpesa/{order}', [EventOrderController::class, 'mpesa'])->name('event.payment.mpesa');
                 Route::post('/event/payment/mpesa', [EventOrderController::class, 'mpesaStk'])->name('event.payment.mpesa.stk');
