@@ -10,8 +10,10 @@ use App\Traits\CacheHelper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -86,8 +88,21 @@ class EventController extends Controller
             $country = session('country', 'US');
 
             return view('Frontend.modules.payments.plans', compact('event', 'rate', 'user', 'events', 'videos', 'country'));
-        } catch (\Exception $e) {
+        } catch (ModelNotFoundException $e) {
             abort(404, 'Event not found.');
+        } catch (\Throwable $e) {
+            Log::error('Event payment page failed.', [
+                'event_id' => $eventId,
+                'rate_id' => $rateId,
+                'user_id' => Auth::id(),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return redirect()
+                ->route('events')
+                ->with('error', 'Unable to load the payment page right now.');
         }
     }
 
