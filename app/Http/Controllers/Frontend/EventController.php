@@ -51,7 +51,7 @@ class EventController extends Controller
                 fn() => $event->eventRates()->whereKey($rateId)->first()
             );
 
-        dd($eventId, $rateId);
+        dd($eventId, $rateId, $event, $rate);
             if (is_null($rate)) {
                 return redirect()
                     ->route('event.show', ['slug' => $event->slug])
