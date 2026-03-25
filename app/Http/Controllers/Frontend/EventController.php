@@ -38,7 +38,6 @@ class EventController extends Controller
      */
     public function pay(Request $request, $eventId, $rateId)
     {
-        dd($eventId, $rateId);
         try {
             $event = Cache::remember(
                 'event_checkout_' . $eventId,
@@ -52,6 +51,7 @@ class EventController extends Controller
                 fn() => $event->eventRates()->whereKey($rateId)->first()
             );
 
+        dd($eventId, $rateId);
             if (is_null($rate)) {
                 return redirect()
                     ->route('event.show', ['slug' => $event->slug])
