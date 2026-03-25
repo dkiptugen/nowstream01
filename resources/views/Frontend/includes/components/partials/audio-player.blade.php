@@ -65,10 +65,12 @@
          const currentTimeEl = document.getElementById('sp-current');
          const durationEl = document.getElementById('sp-duration');
 
-         const STORAGE_KEY = 'audio_state';
+         const STORAGE_KEY = 'audio_state_v2';
          let playlist = [];
          let currentIndex = 0;
-         let saveProgressTimer = null;
+         let lastPersistedSecond = null;
+
+         audio.preload = 'auto';
 
          /* ===============================
             Helpers
@@ -99,10 +101,6 @@
              currentTimeEl.innerText = '0:00';
              durationEl.innerText = '0:00';
              player.classList.remove('d-none');
-
-             audio.addEventListener('loadedmetadata', () => {
-                 durationEl.innerText = formatTime(audio.duration);
-             });
          }
 
          function saveState() {
@@ -116,14 +114,18 @@
                      })),
                      volume: audio.volume,
                      muted: audio.muted,
-                     playing: !audio.paused
+                     playing: !audio.paused,
+                     updatedAt: Date.now()
                  };
                  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
              } catch (e) {}
          }
 
          function restoreState() {
-             const state = JSON.parse(localStorage.getItem(STORAGE_KEY));
+             const rawState = localStorage.getItem(STORAGE_KEY);
+             if (!rawState) return;
+
+             const state = JSON.parse(rawState);
              if (!state?.playlist?.length) return;
 
              playlist = state.playlist;
@@ -138,10 +140,16 @@
              updateMuteIcon();
 
              const trackProgress = state.tracks.find(t => t.uuid === (track.uuid || track.src));
-             const seekTime = trackProgress?.time ?? 0;
+             const elapsedSeconds = state.playing && state.updatedAt
+                 ? Math.max(0, Math.floor((Date.now() - state.updatedAt) / 1000))
+                 : 0;
+             const seekTime = Math.max(
+                 trackProgress?.time ?? 0,
+                 track.resume_at ?? 0
+             ) + elapsedSeconds;
 
              const seekToTime = () => {
-                 audio.currentTime = seekTime;
+                 audio.currentTime = Math.min(seekTime, audio.duration || seekTime);
                  if (state.playing) audio.play().catch(() => {});
                  updatePlayIcon();
                  audio.removeEventListener('loadedmetadata', seekToTime);
@@ -154,15 +162,29 @@
          /* ===============================
             Core Playback
          =============================== */
-         function loadTrack(index) {
+         function loadTrack(index, { autoplay = true, resumeTime = null } = {}) {
              if (!playlist[index]) return;
              const track = playlist[index];
              currentIndex = index;
              audio.src = track.src;
-             audio.currentTime = 0;
              updateUI(track);
-             audio.play().catch(() => {});
-             updatePlayIcon();
+             lastPersistedSecond = null;
+
+             const applyResume = () => {
+                 const initialTime = resumeTime ?? track.currentTime ?? track.resume_at ?? 0;
+                 audio.currentTime = Math.min(initialTime, audio.duration || initialTime);
+                 durationEl.innerText = formatTime(audio.duration);
+                 currentTimeEl.innerText = formatTime(audio.currentTime);
+                 if (autoplay) {
+                     audio.play().catch(() => {});
+                 }
+                 updatePlayIcon();
+                 audio.removeEventListener('loadedmetadata', applyResume);
+             };
+
+             if (audio.readyState >= 1) applyResume();
+             else audio.addEventListener('loadedmetadata', applyResume);
+
              saveState();
 
              // Increment views immediately
@@ -194,10 +216,11 @@
                  .catch(err => console.error('Error incrementing views', err));
          }
 
-         function saveWatchProgress(uuid, currentTime) {
+         function saveWatchProgress(uuid, currentTime, useKeepalive = false) {
              if (!uuid) return;
              fetch(`/watch-history/${uuid}`, {
                      method: 'POST',
+                     keepalive: useKeepalive,
                      headers: {
                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                          'Accept': 'application/json',
@@ -249,6 +272,10 @@
              }
          });
 
+         audio.addEventListener('loadedmetadata', () => {
+             durationEl.innerText = formatTime(audio.duration);
+         });
+
          audio.addEventListener('timeupdate', () => {
              currentTimeEl.innerText = formatTime(audio.currentTime);
              if (!isNaN(audio.duration) && audio.duration > 0) {
@@ -259,16 +286,45 @@
 
              saveState();
 
-             // Save watch progress every 15 seconds
-             if (saveProgressTimer) clearTimeout(saveProgressTimer);
-             saveProgressTimer = setTimeout(() => {
+             const currentSecond = Math.floor(audio.currentTime);
+             if (currentSecond > 0 && currentSecond % 10 === 0 && currentSecond !== lastPersistedSecond) {
+                 lastPersistedSecond = currentSecond;
                  saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime);
-             }, 15000);
+             }
+         });
+
+         audio.addEventListener('pause', () => {
+             updatePlayIcon();
+             saveState();
+             saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime);
+         });
+
+         audio.addEventListener('play', () => {
+             updatePlayIcon();
+             saveState();
          });
 
          audio.addEventListener('ended', () => {
+             saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime, true);
              if (currentIndex < playlist.length - 1) loadTrack(currentIndex + 1);
              else saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime);
+         });
+
+         window.addEventListener('beforeunload', () => {
+             saveState();
+             saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime, true);
+         });
+
+         window.addEventListener('pagehide', () => {
+             saveState();
+             saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime, true);
+         });
+
+         document.addEventListener('visibilitychange', () => {
+             if (document.hidden) {
+                 saveState();
+                 saveWatchProgress(playlist[currentIndex]?.uuid, audio.currentTime, true);
+             }
          });
 
          /* ===============================
@@ -295,7 +351,7 @@
          /* ===============================
             Init
          =============================== */
-         document.addEventListener('DOMContentLoaded', restoreState);
+         restoreState();
 
      })();
  </script>

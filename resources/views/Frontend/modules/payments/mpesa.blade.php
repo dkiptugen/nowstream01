@@ -1,4 +1,4 @@
-@extends('Frontend.includes.layout')
+@extends('Frontend.auth.layout')
 @section('content')
 <!--start page wrapper -->
 <div class="page-wrapper">
@@ -117,9 +117,13 @@
 
 		</section>
 
-		@endsection
-		@section('header')
-		@endsection
+<style>
+    .btn {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+    }
+</style>
+@endsection
 		@section('footer')
 		<script>
 			$(document).on('submit', '#m-pay', function (e) {
