@@ -57,12 +57,7 @@ class EventController extends Controller
                     ->with('error', 'That ticket option is no longer available.');
             }
 
-            $user   = Auth::user();
-            $ticket = Ticket::where('user_id', $user->id)
-                ->where('event_id', $event->uuid)
-                ->latest()
-                ->first();
-        dd($eventId, $rateId, $ticket, $user);
+            $user = Auth::user();
             $paidOrder = Order::query()
                 ->where('user_id', $user->id)
                 ->where('payment_status', 'paid')
@@ -71,6 +66,14 @@ class EventController extends Controller
                     ->where('payable_type', Event::class))
                 ->latest('paid_at')
                 ->first();
+
+            $ticket = null;
+            if (!$paidOrder) {
+                $ticket = Ticket::where('user_id', $user->id)
+                    ->where('event_id', $event->uuid)
+                    ->latest()
+                    ->first();
+            }
 
             if ($ticket || $paidOrder) {
                 return redirect()
