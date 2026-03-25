@@ -2,6 +2,7 @@
 @extends('Frontend.includes.layout')
 @section('content')
 @php
+$episodeHistory = $episodeHistory ?? collect();
 $playlist = $podcast->episodes->map(function($ep) use ($podcast) {
 return [
 'src' => $ep->stream_url,
