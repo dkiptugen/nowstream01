@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class EventOrderController extends Controller
@@ -140,11 +141,25 @@ class EventOrderController extends Controller
                 $order->save();
             }
 
+            $shortcode = config('mpesa.paybill');
+            $passkey = config('mpesa.pass_key');
+            $consumerKey = config('mpesa.consumer_key');
+            $consumerSecret = config('mpesa.consumer_secret');
+
+            if (!$shortcode || !$passkey || !$consumerKey || !$consumerSecret) {
+                Log::error('M-Pesa credentials are missing for event checkout.', [
+                    'order_number' => $order->order_number,
+                    'user_id' => Auth::id(),
+                ]);
+
+                return response()->json(['message' => 'M-Pesa is not configured right now.'], 500);
+            }
+
             $mpesa = new Mpesa('production');
-            $mpesa->shortcode = config('custom.MPESA.MPESA_SHORTCODE');
-            $mpesa->passkey = config('custom.MPESA.MPESA_PASS_KEY');
-            $mpesa->consumerkey = config('custom.MPESA.MPESA_CONSUMER_KEY');
-            $mpesa->consumersecret = config('custom.MPESA.MPESA_CONSUMER_SECRET');
+            $mpesa->shortcode = $shortcode;
+            $mpesa->passkey = $passkey;
+            $mpesa->consumerkey = $consumerKey;
+            $mpesa->consumersecret = $consumerSecret;
             $mpesa->type = 'Paybill';
             $mpesa->msisdn = '254' . substr($this->removeSpaces($request->msisdn), -9);
             $mpesa->amount = (int) ceil($order->total_amount);
@@ -166,6 +181,16 @@ class EventOrderController extends Controller
             return response()->json(['message' => 'STK push sent.']);
         } catch (ModelNotFoundException $exception) {
             return response()->json(['message' => 'Order not found.'], 404);
+        } catch (\Throwable $exception) {
+            Log::error('Event M-Pesa STK request failed.', [
+                'order_number' => $request->order_number,
+                'user_id' => Auth::id(),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ]);
+
+            return response()->json(['message' => 'Unable to initiate M-Pesa payment right now.'], 500);
         }
     }
 
