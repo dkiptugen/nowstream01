@@ -30,13 +30,13 @@ class EventOrderController extends Controller
         ]);
 
         $event = Event::where('uuid', $validated['event_id'])->where('status', 1)->firstOrFail();
-        $rate = Product::query()
-            ->whereKey($validated['rate_id'])
-            ->where('payable_id', $event->uuid)
-            ->where('payable_type', Event::class)
-            ->where('type', 'ticket')
-            ->where('is_active', 1)
-            ->firstOrFail();
+        $rate = $event->eventRates()->whereKey($validated['rate_id'])->first();
+
+        if (!$rate) {
+            return redirect()
+                ->route('event.show', ['slug' => $event->slug])
+                ->with('error', 'That ticket option is no longer available.');
+        }
 
         $existingTicket = Ticket::where('user_id', $request->user()->id)
             ->where('event_id', $event->uuid)

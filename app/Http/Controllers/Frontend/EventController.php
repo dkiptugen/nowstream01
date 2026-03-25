@@ -48,17 +48,13 @@ class EventController extends Controller
             $rate = Cache::remember(
                 'event_rate_' . $eventId . '_' . $rateId,
                 now()->addMinutes(10),
-                fn() => Product::query()
-                    ->whereKey($rateId)
-                    ->where('payable_id', $eventId)
-                    ->where('payable_type', Event::class)
-                    ->where('type', 'ticket')
-                    ->where('is_active', 1)
-                    ->first()
+                fn() => $event->eventRates()->whereKey($rateId)->first()
             );
 
             if (is_null($rate)) {
-                return redirect()->back()->with('error', 'Event rate not found.');
+                return redirect()
+                    ->route('event.show', ['slug' => $event->slug])
+                    ->with('error', 'That ticket option is no longer available.');
             }
 
             $user   = Auth::user();
