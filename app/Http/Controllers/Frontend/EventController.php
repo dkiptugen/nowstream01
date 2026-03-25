@@ -51,7 +51,6 @@ class EventController extends Controller
                 fn() => $event->eventRates()->whereKey($rateId)->first()
             );
 
-        dd($eventId, $rateId, $event, $rate);
             if (is_null($rate)) {
                 return redirect()
                     ->route('event.show', ['slug' => $event->slug])
@@ -63,6 +62,7 @@ class EventController extends Controller
                 ->where('event_id', $event->uuid)
                 ->latest()
                 ->first();
+        dd($eventId, $rateId, $ticket, $user);
             $paidOrder = Order::query()
                 ->where('user_id', $user->id)
                 ->where('payment_status', 'paid')
