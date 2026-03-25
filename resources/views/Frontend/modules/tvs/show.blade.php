@@ -18,14 +18,12 @@
 						</video>
 						<div class="live-badge">LIVE</div>
 					</div>
-				</div>
-                <div class="col-xl-3 col-lg-4">
+				</div> 
                     @include('Frontend.includes.components.partials.video-comments', [
                     'comments' => $comments,
                     'commentableType' => 'tv',
                     'commentableId' => $tv->uuid
-                    ])
-                </div>
+                    ]) 
 
 				<div class="col-xl-12 col-lg-12 mt-4">
 					<div class="movie-details-content">
