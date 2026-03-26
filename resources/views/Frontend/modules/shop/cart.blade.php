@@ -7,7 +7,9 @@
 @section('content')
 <main class="shop-page">
     <div class="container shop-shell">
-        @include('Frontend.modules.shop.partials.flash')
+        <div id="shop-cart-flash">
+            @include('Frontend.modules.shop.partials.flash')
+        </div>
 
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
@@ -17,80 +19,90 @@
             <a href="{{ route('shop.index') }}" class="shop-btn-secondary">Continue Shopping</a>
         </div>
 
-        @if($summary['items']->isEmpty())
-            <div class="shop-panel shop-empty">
-                <h2 class="h4 text-white mb-2">Your cart is empty.</h2>
-                <p class="shop-muted mb-4">Add a product from the store to begin checkout.</p>
-                <a href="{{ route('shop.index') }}" class="shop-btn-primary">Browse Merchandise</a>
-            </div>
-        @else
-            <div class="row g-4">
+        <div id="shop-cart-page">
+            @if($summary['items']->isEmpty())
+                @include('Frontend.modules.shop.partials.cart-empty')
+            @else
+                <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="shop-panel p-4">
-                        <table class="shop-table">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($summary['items'] as $item)
-                                    @php
-                                        $product = $item['product'];
-                                        $variant = $item['variant'];
-                                    @endphp
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center gap-3">
-                                                <img src="{{ $product->image_url ?? asset('frontend-assets/images/default.png') }}" alt="{{ $product->name }}" width="72" height="72" style="border-radius:14px;object-fit:cover;">
-                                                <div>
-                                                    <div class="text-white font-weight-bold">{{ $product->name }}</div>
-                                                    @if($variant)
-                                                        <div class="shop-muted">Variant: {{ $variant->name }}</div>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>{{ $summary['currency'] }} {{ number_format((float) $item['unit_price'], 2) }}</td>
-                                        <td>
-                                            <form action="{{ route('cart.update', $item['id']) }}" method="POST" class="d-flex align-items-center gap-2">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="number" name="quantity" min="0" value="{{ $item['quantity'] }}" class="shop-input" style="max-width:96px;">
-                                                <button type="submit" class="shop-btn-secondary">Update</button>
-                                            </form>
-                                        </td>
-                                        <td>{{ $summary['currency'] }} {{ number_format((float) $item['line_total'], 2) }}</td>
-                                        <td class="text-right">
-                                            <form action="{{ route('cart.destroy', $item['id']) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="shop-btn-danger">Remove</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <div class="shop-panel p-4" id="shop-cart-items">
+                        @include('Frontend.modules.shop.partials.cart-items', ['summary' => $summary])
                     </div>
                 </div>
 
-                <div class="col-lg-4">
-                    <div class="shop-summary p-4">
-                        <h2 class="h4 text-white mb-3">Order Summary</h2>
-                        <div class="shop-summary__row"><span>Subtotal</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['subtotal'], 2) }}</strong></div>
-                        <div class="shop-summary__row"><span>Tax</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['tax'], 2) }}</strong></div>
-                        <div class="shop-summary__row"><span>Fees</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['fees'], 2) }}</strong></div>
-                        <div class="shop-summary__row"><span>Total</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['total'], 2) }}</strong></div>
-                        <a href="{{ route('shop.checkout') }}" class="shop-btn-primary w-100 mt-3">Proceed To Checkout</a>
+                    <div class="col-lg-4" id="shop-cart-summary">
+                        @include('Frontend.modules.shop.partials.cart-summary', ['summary' => $summary])
                     </div>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
 </main>
+@endsection
+
+@section('footer')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const page = document.getElementById('shop-cart-page');
+        const flash = document.getElementById('shop-cart-flash');
+
+        if (!page || !flash) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const showFlash = (message, type = 'success') => {
+            flash.innerHTML = `<div class="shop-flash shop-flash--${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+        };
+
+        const bindCartActions = () => {
+            page.querySelectorAll('.js-cart-update-form, .js-cart-remove-form').forEach((form) => {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const formData = new FormData(form);
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken || '',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json',
+                            },
+                            body: formData,
+                        });
+
+                        const payload = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(payload.message || 'Unable to update cart.');
+                        }
+
+                        if (payload.empty) {
+                            page.innerHTML = payload.empty_html;
+                        } else {
+                            page.innerHTML = `
+                                <div class="row g-4">
+                                    <div class="col-lg-8">
+                                        <div class="shop-panel p-4" id="shop-cart-items">${payload.items_html}</div>
+                                    </div>
+                                    <div class="col-lg-4" id="shop-cart-summary">${payload.summary_html}</div>
+                                </div>
+                            `;
+                        }
+
+                        showFlash(payload.message || 'Cart updated.');
+                        bindCartActions();
+                    } catch (error) {
+                        showFlash(error.message || 'Unable to update cart.', 'error');
+                    }
+                });
+            });
+        };
+
+        bindCartActions();
+    });
+</script>
 @endsection
