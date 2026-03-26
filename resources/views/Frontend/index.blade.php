@@ -5,6 +5,28 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+$heroEvents = $heroEvents ?? (($topevents ?? collect())->take(3)->values());
+if ($heroEvents->isEmpty() && isset($events)) {
+    $heroEvents = collect($events)->take(3)->values();
+}
+
+$heroGenres = $heroGenres ?? collect($genres ?? [])->filter()->unique()->take(8)->values();
+$heroLiveChannels = $heroLiveChannels ?? collect($toptvs ?? [])->take(4)->values();
+$eventShelf = $eventShelf ?? collect($topevents ?? [])->take(8)->values();
+$tvShelf = $tvShelf ?? collect($toptvs ?? [])->take(12)->values();
+$radioShelf = $radioShelf ?? collect($topradios ?? [])->take(12)->values();
+$videoFeatureShelf = $videoFeatureShelf ?? collect($top_videos ?? [])->take(4)->values();
+$videoShelf = $videoShelf ?? collect($videos ?? [])->take(8)->values();
+$podcastShelf = $podcastShelf ?? collect($podcasts ?? [])->take(12)->values();
+$latestPodcastShelf = $latestPodcastShelf ?? collect($topPodcasts ?? [])->take(12)->values();
+$quickLinks = collect($quickLinks ?? [
+    ['title' => 'Live TV', 'meta' => 'Top channels in ' . ($country_name ?? 'your region'), 'route' => route('tvs')],
+    ['title' => 'Radio', 'meta' => 'Streaming stations and talk audio', 'route' => route('radios')],
+    ['title' => 'Videos', 'meta' => 'Fresh clips, replays, and on-demand', 'route' => route('videos')],
+    ['title' => 'Podcasts', 'meta' => 'Interviews, stories, and series', 'route' => route('podcasts')],
+    ['title' => 'Events', 'meta' => 'Major live nights and ticketed streams', 'route' => route('events')],
+]);
+
 $routeForContent = function ($item) {
     return match ($item->content_group) {
         'tv' => route('tv.show', $item->slug),
