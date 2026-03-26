@@ -14,8 +14,7 @@ class MerchandiseController extends Controller
     public function index()
     {
         $products = Product::query()
-            ->merch()
-            ->active()
+            ->merch() 
             ->with(['payable', 'variants'])
             ->latest()
             ->paginate(12);
