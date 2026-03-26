@@ -981,7 +981,13 @@ $quickLinks = collect([
 
             <div class="clean-track" data-slider-track="radio">
                 @foreach($radioShelf as $item)
-                    <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
+                    <div
+                        class="clean-shelf-card"
+                        role="button"
+                        tabindex="0"
+                        onclick="playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}')"
+                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}'); }"
+                    >
                         <div class="clean-shelf-card__media">
                             <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
                             <span class="clean-badge">{{ $labelForContent($item) }}</span>
@@ -995,7 +1001,7 @@ $quickLinks = collect([
                                 <span>Stream ready</span>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 @endforeach
             </div>
         </section>
