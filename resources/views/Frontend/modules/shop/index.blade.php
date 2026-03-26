@@ -2,6 +2,45 @@
 
 @section('header')
 @include('Frontend.modules.shop.partials.theme')
+<style>
+    .infinite-scroll-loader {
+        display: grid;
+        place-items: center;
+        gap: 12px;
+        min-height: 88px;
+    }
+
+    .infinite-scroll-loader[hidden] {
+        display: none !important;
+    }
+
+    .infinite-scroll-dot {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-top-color: #ffd24f;
+        animation: infiniteScrollSpin 0.9s linear infinite;
+    }
+
+    .infinite-scroll-loader:not(.is-loading) .infinite-scroll-dot {
+        animation-play-state: paused;
+        opacity: 0.45;
+    }
+
+    .infinite-scroll-copy {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    @keyframes infiniteScrollSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 @endsection
 
 @section('content')
@@ -44,16 +83,23 @@
             </div>
 
             @if($products->count())
-                <div class="row g-4">
-                    @foreach($products as $product)
-                        <div class="col-sm-6 col-lg-4 col-xl-3">
-                            @include('Frontend.modules.shop.partials.product-card', ['product' => $product])
-                        </div>
-                    @endforeach
+                <div
+                    class="row g-4"
+                    id="shop-product-container"
+                    data-next-page-url="{{ $products->nextPageUrl() }}"
+                    data-loading-label="Loading more merchandise..."
+                    data-idle-label="More merch drops coming up"
+                    data-complete-label="All merchandise loaded"
+                    data-error-label="Could not load more merchandise right now"
+                >
+                    @include('Frontend.modules.shop.partials.product-grid-items', ['products' => $products])
                 </div>
 
-                <div class="mt-4">
-                    {{ $products->links() }}
+                <div class="text-center mt-4 infinite-scroll-loader" id="shop-product-loading" @if(!$products->hasMorePages()) hidden @endif>
+                    <span class="infinite-scroll-dot" aria-hidden="true"></span>
+                    <span class="infinite-scroll-copy" id="shop-product-loading-status">
+                        {{ $products->hasMorePages() ? 'More merch drops coming up' : 'All merchandise loaded' }}
+                    </span>
                 </div>
             @else
                 <div class="shop-panel shop-empty">
@@ -64,4 +110,12 @@
         </section>
     </div>
 </main>
+@endsection
+
+@section('footer')
+@include('Frontend.includes.components.partials.infinite-scroll', [
+    'containerId' => 'shop-product-container',
+    'loaderId' => 'shop-product-loading',
+    'statusId' => 'shop-product-loading-status',
+])
 @endsection

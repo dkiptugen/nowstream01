@@ -23,14 +23,33 @@ class EventController extends Controller
     /**
      * Display a listing of all active events.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::where('status', 1)->orderBy('created_at', 'desc')->get();
-        $events->load('eventRates');
-        $topevents = Event::where('status', 1)
-                          ->orderByDesc('views')
-                          ->get();
-        $topevents->load('eventRates');
+        $page = $request->get('page', 1);
+
+        $events = Cache::remember("events:index:page:{$page}", now()->addMinutes(10), function () {
+            return Event::where('status', 1)
+                ->with('tickets')
+                ->latest('created_at')
+                ->paginate(12);
+        });
+        $events->appends($request->all());
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('Frontend.includes.components.partials.event-items', compact('events'))->render(),
+                'hasMore' => $events->hasMorePages(),
+                'nextPageUrl' => $events->nextPageUrl(),
+            ]);
+        }
+
+        $topevents = Cache::remember('events:top', now()->addMinutes(10), function () {
+            return Event::where('status', 1)
+                ->with('tickets')
+                ->orderByDesc('views')
+                ->limit(20)
+                ->get();
+        });
 
 
         return view('Frontend.modules.events.index', compact('events', 'topevents'));

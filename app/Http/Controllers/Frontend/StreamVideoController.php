@@ -28,33 +28,43 @@ class StreamVideoController extends Controller
     /**
      * Videos homepage
      */
-  public function index()
-{
-    $page = request()->get('page', 1);
+    public function index(Request $request)
+    {
+        $page = $request->get('page', 1);
 
-    $top_videos = Cache::remember('videos:top', 600, function () {
-        return Content::select('uuid','slug','title','thumbnail_url','views')
-            ->where('content_group', 'video')
-            ->orderByDesc('views')
-            ->limit(4)
-            ->get();
-    });
+        $top_videos = Cache::remember('videos:top', 600, function () {
+            return Content::select('uuid', 'slug', 'title', 'thumbnail_url', 'views', 'channel_id')
+                ->where('content_group', 'video')
+                ->orderByDesc('views')
+                ->limit(4)
+                ->get();
+        });
 
-    $videos = Cache::remember("videos:page:{$page}", 600, function () {
-        return Content::select('uuid','slug','title','thumbnail_url','created_at')
-            ->where('content_group', 'video')
-            ->latest()
-            ->paginate(12);
-    });
+        $videos = Cache::remember("videos:page:{$page}", 600, function () {
+            return Content::select('uuid', 'slug', 'title', 'thumbnail_url', 'created_at', 'views', 'channel_id')
+                ->where('content_group', 'video')
+                ->latest()
+                ->paginate(12);
+        });
 
-    $channels = Cache::remember('channels:active', 1800, function () {
-        return Microsite::select('uuid','name','cover', 'logo','banner')
-            ->where('status', 1)
-            ->get();
-    });
+        $videos->appends($request->all());
 
-    return view('Frontend.modules.videos.index', compact('top_videos','videos','channels'));
-}
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('Frontend.includes.components.partials.video-items', compact('videos'))->render(),
+                'hasMore' => $videos->hasMorePages(),
+                'nextPageUrl' => $videos->nextPageUrl(),
+            ]);
+        }
+
+        $channels = Cache::remember('channels:active', 1800, function () {
+            return Microsite::select('uuid', 'name', 'cover', 'logo', 'banner')
+                ->where('status', 1)
+                ->get();
+        });
+
+        return view('Frontend.modules.videos.index', compact('top_videos', 'videos', 'channels'));
+    }
 
     /**
      * Show single video by UUID
