@@ -72,5 +72,10 @@
                     return $this->belongsToMany(Channel::class, 'channel_user', 'user_id', 'channel_id');
                 }
 
+            public function cart()
+                {
+                    return $this->hasOne(Cart::class);
+                }
+
 
         }

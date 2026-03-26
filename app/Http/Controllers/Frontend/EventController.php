@@ -152,7 +152,7 @@ class EventController extends Controller
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
             $eventId = $event->uuid;
-            $event->load(['eventRates', 'streamRates']);
+            $event->load(['eventRates', 'streamRates', 'merchProducts']);
             $eventStream = $event->streams()
                 ->where('content_group', 'livestream')
                 ->where('status', 1)
@@ -164,6 +164,7 @@ class EventController extends Controller
                 'videos' => $this->get_videos(),
                 'rates'  => $this->get_event_ticket_rates($eventId),
                 'stream' => $eventStream,
+                'merch'  => $event->merchProducts,
 
             ];
         });
@@ -177,6 +178,10 @@ class EventController extends Controller
                 ->where('content_group', 'livestream')
                 ->where('status', 1)
                 ->first();
+        }
+
+        if (!array_key_exists('merch', $data)) {
+            $data['merch'] = $data['event']->merchProducts()->get();
         }
 
         // Increment views dynamically (not cached)
@@ -194,6 +199,7 @@ class EventController extends Controller
         //  dd($data['event']->eventRates);
         $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values();
         $data['event']->streamRates = $data['event']->streamRates->sortBy('price')->values();
+        $data['event']->merchProducts = collect($data['merch'])->values();
         $paidOrder = Auth::check()
             ? Order::query()
                 ->forPaidEvent(Auth::id(), $data['event']->uuid)
@@ -225,6 +231,7 @@ class EventController extends Controller
             'ticket'         => $ticket,
             'eventRates'     => $data['event']->eventRates,
             'streamRates'    => $data['event']->streamRates,
+            'merchProducts'  => $data['event']->merchProducts,
             'eventStream'    => $data['stream'],
             'relatedEvents'  => $relatedEvents,
             'paidOrder'      => $paidOrder,

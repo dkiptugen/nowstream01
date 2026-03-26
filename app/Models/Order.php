@@ -9,6 +9,8 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id',
+        'customer_name',
+        'customer_phone',
         'type',
         'order_number',
         'subtotal',
@@ -16,6 +18,8 @@ class Order extends Model
         'fees',
         'total_amount',
         'currency',
+        'delivery_address',
+        'notes',
         'is_subscribable',
         'is_recurrent',
         'next_payment',

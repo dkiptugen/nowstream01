@@ -23,6 +23,9 @@ use App\Http\Controllers\Frontend\StreamVideoController;
 use App\Http\Controllers\Frontend\SubscriptionController;
 use App\Http\Controllers\Frontend\VideoFavoriteController;
 use App\Http\Controllers\Frontend\CategoryController;
+use App\Http\Controllers\Frontend\MerchandiseController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\MerchCheckoutController;
 use Illuminate\Support\Str;
 
 /*
@@ -105,6 +108,8 @@ Route::middleware(['detectCountry'])->group(function ()
 
 
         Route::get('/search', [SearchController::class, 'search'])->name('search');
+        Route::get('/shop', [MerchandiseController::class, 'index'])->name('shop.index');
+        Route::get('/shop/{product}', [MerchandiseController::class, 'show'])->name('shop.show');
         // Route::post('/{commentableType}/{commentableId}/comment', [StreamVideoController::class, 'postComment'])->name('comment.post');
         Route::post(
             '/comment/post/{commentableType}/{commentableId}',
@@ -185,6 +190,15 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::get('/event/payment/mpesa/{order}', [EventOrderController::class, 'mpesa'])->name('event.payment.mpesa');
                 Route::post('/event/payment/mpesa', [EventOrderController::class, 'mpesaStk'])->name('event.payment.mpesa.stk');
                 Route::get('/event/success/{eventId}', [EventOrderController::class, 'success'])->name('event.success');
+                Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+                Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+                Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
+                Route::delete('/cart/{cartItem}', [CartController::class, 'destroy'])->name('cart.destroy');
+                Route::get('/shop/checkout', [MerchCheckoutController::class, 'create'])->name('shop.checkout');
+                Route::post('/shop/checkout', [MerchCheckoutController::class, 'store'])->name('shop.checkout.store');
+                Route::get('/shop/payment/mpesa/{order}', [MerchCheckoutController::class, 'mpesa'])->name('shop.payment.mpesa');
+                Route::post('/shop/payment/mpesa', [MerchCheckoutController::class, 'mpesaStk'])->name('shop.payment.mpesa.stk');
+                Route::get('/shop/success/{order}', [MerchCheckoutController::class, 'success'])->name('shop.success');
                 Route::post('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
                 Route::get('mpesa/{id}', [SubscriptionController::class, 'mpesa'])->name('mpesa');
                 Route::post('mpesa/pay', [SubscriptionController::class, 'mpesaStk'])->name('mpesa_stk_pay');
