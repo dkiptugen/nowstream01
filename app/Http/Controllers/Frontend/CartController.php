@@ -34,7 +34,9 @@ class CartController extends Controller
             ->merch() 
             ->with('variants')
             ->findOrFail($validated['product_id']);
-        $variant = $validated['variant_id']
+        $variantId = $validated['variant_id'] ?? null;
+
+        $variant = $variantId
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
