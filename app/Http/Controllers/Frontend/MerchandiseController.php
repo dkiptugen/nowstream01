@@ -33,8 +33,7 @@ class MerchandiseController extends Controller
 
         $related = Cache::remember("shop_related_{$product->id}", now()->addMinutes(30), function () use ($product) {
             return Product::query()
-                ->merch()
-                ->active()
+                ->merch() 
                 ->whereKeyNot($product->id)
                 ->with('payable')
                 ->latest()
