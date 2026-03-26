@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class StreamVideoController extends Controller
@@ -31,17 +32,18 @@ class StreamVideoController extends Controller
     public function index(Request $request)
     {
         $page = $request->get('page', 1);
+        $videoListColumns = $this->videoListColumns();
 
-        $top_videos = Cache::remember('videos:top', 600, function () {
-            return Content::select('uuid', 'slug', 'title', 'thumbnail_url', 'views', 'channel_id')
+        $top_videos = Cache::remember('videos:top', 600, function () use ($videoListColumns) {
+            return Content::select($videoListColumns)
                 ->where('content_group', 'video')
                 ->orderByDesc('views')
                 ->limit(4)
                 ->get();
         });
 
-        $videos = Cache::remember("videos:page:{$page}", 600, function () {
-            return Content::select('uuid', 'slug', 'title', 'thumbnail_url', 'created_at', 'views', 'channel_id')
+        $videos = Cache::remember("videos:page:{$page}", 600, function () use ($videoListColumns) {
+            return Content::select(array_unique(array_merge($videoListColumns, ['created_at'])))
                 ->where('content_group', 'video')
                 ->latest()
                 ->paginate(12);
@@ -64,6 +66,19 @@ class StreamVideoController extends Controller
         });
 
         return view('Frontend.modules.videos.index', compact('top_videos', 'videos', 'channels'));
+    }
+
+    protected function videoListColumns(): array
+    {
+        $columns = ['uuid', 'slug', 'title', 'thumbnail_url', 'views'];
+
+        foreach (['channel_id', 'microsite_id'] as $optionalColumn) {
+            if (Schema::hasColumn('contents', $optionalColumn)) {
+                $columns[] = $optionalColumn;
+            }
+        }
+
+        return $columns;
     }
 
     /**
