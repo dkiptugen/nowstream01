@@ -40,7 +40,11 @@ class CartController extends Controller
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
-        $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        $cart = $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Item added to cart.');
+        }
 
         return redirect()
             ->back()
@@ -53,7 +57,11 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:0'],
         ]);
 
-        $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+        $cart = $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Cart updated.');
+        }
 
         return redirect()
             ->route('cart.index')
@@ -62,10 +70,28 @@ class CartController extends Controller
 
     public function destroy(Request $request, CartItem $cartItem)
     {
-        $this->cartService->removeItem($request->user(), $cartItem->load('cart'));
+        $cart = $this->cartService->removeItem($request->user(), $cartItem->load('cart'));
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Item removed from cart.');
+        }
 
         return redirect()
             ->route('cart.index')
             ->with('success', 'Item removed from cart.');
+    }
+
+    protected function ajaxCartResponse($cart, string $message)
+    {
+        $summary = $this->cartService->cartSummary($cart);
+
+        return response()->json([
+            'message' => $message,
+            'count' => $summary['items']->sum('quantity'),
+            'empty' => $summary['items']->isEmpty(),
+            'items_html' => view('Frontend.modules.shop.partials.cart-items', compact('summary'))->render(),
+            'summary_html' => view('Frontend.modules.shop.partials.cart-summary', compact('summary'))->render(),
+            'empty_html' => view('Frontend.modules.shop.partials.cart-empty')->render(),
+        ]);
     }
 }

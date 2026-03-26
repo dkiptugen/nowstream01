@@ -54,6 +54,14 @@
                 <div class="menu-title">Live TV</div>
             </a>
         </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url('shop') }}">
+                    <div class="parent-icon mr-1">
+                        <i class="bx bx-store"></i>
+                    </div>
+                    <div class="menu-title">Shop</div>
+                </a>
+            </li>
 
     </ul>
 </div>
