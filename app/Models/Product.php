@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
-    protected static ?string $activeColumn = null;
+    protected static array $activeColumnCache = [];
 
     protected $fillable = [
         'microsite_id',
@@ -43,7 +43,14 @@ class Product extends Model
 
     public function scopeActive($query)
     {
-        return $query->where($this->resolveActiveColumn(), 1);
+        $model = $query->getModel();
+        $column = $this->resolveActiveColumn($model);
+
+        if ($column === null) {
+            return $query;
+        }
+
+        return $query->where($column, 1);
     }
 
     public function scopeMerch($query)
@@ -60,14 +67,25 @@ class Product extends Model
         return Storage::disk(config('filesystems.default'))->url($this->image_path);
     }
 
-    protected function resolveActiveColumn(): string
+    protected function resolveActiveColumn(Model $model): ?string
     {
-        if (static::$activeColumn !== null) {
-            return static::$activeColumn;
+        $connectionName = $model->getConnectionName() ?: config('database.default');
+        $cacheKey = $connectionName . ':' . $model->getTable();
+
+        if (array_key_exists($cacheKey, static::$activeColumnCache)) {
+            return static::$activeColumnCache[$cacheKey];
         }
 
-        static::$activeColumn = Schema::hasColumn($this->getTable(), 'is_active') ? 'is_active' : 'status';
+        $schema = $model->getConnection()->getSchemaBuilder();
 
-        return static::$activeColumn;
+        if ($schema->hasColumn($model->getTable(), 'is_active')) {
+            return static::$activeColumnCache[$cacheKey] = 'is_active';
+        }
+
+        if ($schema->hasColumn($model->getTable(), 'status')) {
+            return static::$activeColumnCache[$cacheKey] = 'status';
+        }
+
+        return static::$activeColumnCache[$cacheKey] = null;
     }
 }
