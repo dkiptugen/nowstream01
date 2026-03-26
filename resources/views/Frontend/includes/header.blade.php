@@ -48,6 +48,34 @@
         .navbar-wrap>ul>li>a {
             display: inline-flex;
         }
+
+        .header-cart-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #ffd24f;
+            color: #09131d;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(255, 210, 79, 0.3);
+        }
+
+        .header-cart-count.d-none {
+            display: none !important;
+        }
     </style>
 
     @yield('header')
@@ -219,7 +247,14 @@
                                                 data-target="#search-modal"><i class="fas fa-search"></i></a></li>
                                         <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
                                         <li class="header-search"><a href="{{ route('watch.content') }}"><i class="fas fa-history"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('cart.index') }}"><i class="fas fa-shopping-cart"></i></a></li>
+                                        <li class="header-search">
+                                            <a href="{{ route('cart.index') }}" class="header-cart-link">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <span id="header-cart-count" class="header-cart-count {{ ($headerCartCount ?? 0) > 0 ? '' : 'd-none' }}">
+                                                    {{ $headerCartCount ?? 0 }}
+                                                </span>
+                                            </a>
+                                        </li>
 
                                         <li class="menu-item-has-children header-lang d-none">
                                             <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"

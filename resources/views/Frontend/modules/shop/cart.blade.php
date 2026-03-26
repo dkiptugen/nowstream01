@@ -51,9 +51,19 @@
         }
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const headerCartCount = document.getElementById('header-cart-count');
 
         const showFlash = (message, type = 'success') => {
             flash.innerHTML = `<div class="shop-flash shop-flash--${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+        };
+
+        const updateHeaderCartCount = (count) => {
+            if (!headerCartCount) {
+                return;
+            }
+
+            headerCartCount.textContent = count;
+            headerCartCount.classList.toggle('d-none', Number(count) <= 0);
         };
 
         const bindCartActions = () => {
@@ -93,6 +103,7 @@
                             `;
                         }
 
+                        updateHeaderCartCount(payload.count ?? 0);
                         showFlash(payload.message || 'Cart updated.');
                         bindCartActions();
                     } catch (error) {

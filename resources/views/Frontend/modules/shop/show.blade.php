@@ -110,6 +110,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('shop-add-to-cart-form');
         const flash = document.getElementById('shop-product-flash');
+        const headerCartCount = document.getElementById('header-cart-count');
 
         if (!form || !flash) {
             return;
@@ -119,6 +120,15 @@
 
         const showFlash = (message, type = 'success') => {
             flash.innerHTML = `<div class="shop-flash shop-flash--${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+        };
+
+        const updateHeaderCartCount = (count) => {
+            if (!headerCartCount) {
+                return;
+            }
+
+            headerCartCount.textContent = count;
+            headerCartCount.classList.toggle('d-none', Number(count) <= 0);
         };
 
         form.addEventListener('submit', async (event) => {
@@ -150,6 +160,7 @@
                     throw new Error(payload.message || 'Unable to add item to cart.');
                 }
 
+                updateHeaderCartCount(payload.count ?? 0);
                 showFlash(payload.message || 'Item added to cart.');
             } catch (error) {
                 showFlash(error.message || 'Unable to add item to cart.', 'error');
