@@ -349,6 +349,8 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 16px;
         margin-top: 22px;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 180px;
     }
 
     .clean-link-card {
@@ -384,6 +386,8 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
     .clean-section {
         margin-top: 38px;
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 760px;
     }
 
     .clean-section__head {
@@ -798,7 +802,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                             <div class="clean-live-list">
                                 @forelse($heroLiveChannels as $item)
                                     <a href="{{ route('tv.show', $item->slug) }}" class="clean-live-item">
-                                        <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                                        <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                                         <div>
                                             <strong>{{ ucfirst($item->title) }}</strong>
                                             <small>Live TV</small>
@@ -806,7 +810,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                                     </a>
                                 @empty
                                     <div class="clean-live-item">
-                                        <img src="{{ asset('frontend-assets/images/default.png') }}" alt="Nowstream" loading="lazy">
+                                        <img src="{{ asset('frontend-assets/images/default.png') }}" alt="Nowstream" loading="lazy" decoding="async" fetchpriority="low">
                                         <div>
                                             <strong>Content is loading</strong>
                                             <small>Check back for fresh live picks</small>
@@ -857,7 +861,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                     @endphp
                     <a href="{{ route('event.show', $event->slug) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $eventImage }}" alt="{{ $event->event_name }}" loading="lazy">
+                            <img src="{{ $eventImage }}" alt="{{ $event->event_name }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">Live</span>
                         </div>
                         <div class="clean-shelf-card__body">
@@ -900,7 +904,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                     @foreach($videoFeatureShelf as $video)
                         <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}" class="clean-video-card">
                             <div class="clean-video-card__media">
-                                <img src="{{ $imageForContent($video) }}" alt="{{ $video->title }}" loading="lazy">
+                                <img src="{{ $imageForContent($video) }}" alt="{{ $video->title }}" loading="lazy" decoding="async" fetchpriority="low">
                                 <span class="clean-badge">{{ $labelForContent($video) }}</span>
                             </div>
                             <div class="clean-video-card__body">
@@ -940,7 +944,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 @foreach($tvShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">Live</span>
                         </div>
                         <div class="clean-shelf-card__body">
@@ -985,7 +989,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                         onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}'); }"
                     >
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">{{ $labelForContent($item) }}</span>
                         </div>
                         <div class="clean-shelf-card__body">
@@ -1024,7 +1028,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 @foreach($videoShelf as $item)
                     <a href="{{ route('video.show', [$item->uuid, $item->slug]) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">{{ $labelForContent($item) }}</span>
                         </div>
                         <div class="clean-shelf-card__body">
@@ -1090,7 +1094,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 @foreach($podcastShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">{{ $labelForContent($item) }}</span>
                         </div>
                         <div class="clean-shelf-card__body">
@@ -1129,7 +1133,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 @foreach($latestPodcastShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
-                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
                             <span class="clean-badge">{{ $labelForContent($item) }}</span>
                         </div>
                         <div class="clean-shelf-card__body">
