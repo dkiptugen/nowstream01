@@ -137,7 +137,7 @@ class HomeController extends Controller
             'categories' => $cache->remember('home_categories', now()->addHours(6), fn () => Category::limit(6)->get()),
             'heroEvents' => $heroEvents,
             'heroGenres' => $heroGenres,
-            'heroLiveChannels' => $topTvs->take(4)->values(),
+            'heroLiveChannels' => $topTvs->shuffle()->take(4)->values(),
             'eventShelf' => $topEvents->take(8)->values(),
             'tvShelf' => $topTvs->take(12)->values(),
             'radioShelf' => $topRadios->take(12)->values(),
