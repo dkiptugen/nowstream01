@@ -24,18 +24,15 @@
                     'commentableType' => 'tv',
                     'commentableId' => $tv->uuid
                     ]) 
-
 				<div class="col-xl-12 col-lg-12 mt-4">
 					<div class="movie-details-content">
 						<h5>TV Channel</h5>
 						@php
 						$words = preg_split('/\s+/', trim(ucfirst($tv->title)));
 						$half = (int) ceil(count($words) / 2);
-
 						$firstHalf = implode(' ', array_slice($words, 0, $half));
 						$secondHalf = implode(' ', array_slice($words, $half));
 						@endphp
-
 						<h2>
 							{{ $firstHalf }}
 							<span>{{ $secondHalf }}</span>
