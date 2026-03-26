@@ -2,14 +2,16 @@
 @extends('Frontend.includes.layout')
 @section('content')
 @php
-$playlist = $podcast->episodes->map(function($ep) use ($podcast) {
+$episodeHistory = $episodeHistory ?? collect();
+$playlist = $podcast->episodes->map(function($ep) use ($podcast, $episodeHistory) {
 return [
 'src' => $ep->stream_url,
 'title' => $ep->title,
 'podcast' => $podcast->title,
 'thumbnail' => $podcast->thumbnail_url,
 'type' => 'audio',
-'uuid' => $ep->uuid
+'uuid' => $ep->uuid,
+'resume_at' => (int) optional($episodeHistory->get($ep->uuid))->watch_duration,
 ];
 });
 @endphp  
@@ -54,12 +56,7 @@ return [
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
                                             <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
-
-<<<<<<< HEAD
-                                            {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
-=======
                                                 {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
->>>>>>> 99f382eff5913e96d051f53ee007855c326cb2f6
                                             </span>
                                             <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"

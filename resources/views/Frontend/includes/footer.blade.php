@@ -73,6 +73,14 @@
                         </a>
 
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('shop.index') }}">
+                            <div class="parent-icon"><i class='bx bx-store'></i>
+                            </div>
+                            <div class="menu-title">Shop</div>
+                        </a>
+
+                    </li>
                     <!-- <li class="nav-item">
                         <a class="nav-link" href=" {{ url('continue') }}">
                             <div class="parent-icon"> <i class="bx bx-video"></i>
@@ -194,6 +202,14 @@
                 <div class="parent-icon"><i class="bx bx-video-recording"></i>
                 </div>
                 <div class="menu-title">Streams</div>
+            </a>
+
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('shop.index') }}">
+                <div class="parent-icon"><i class='bx bx-store'></i>
+                </div>
+                <div class="menu-title">Shop</div>
             </a>
 
         </li>
@@ -585,6 +601,7 @@
 			setTimeout(syncCommentsHeight, 1000);
 		});
 	</script> 
+@include('Frontend.includes.components.partials.audio-player')
 </body>
 
 </html>

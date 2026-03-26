@@ -47,7 +47,7 @@
 						//	Log::info ($trans);
 							if (!is_null ($trans))
 								{
-									$subscription = Subscription::find($trans->subscription_id);
+									$subscription = $trans->subscription;
 									$this->dpo->transaction_token = $trans->transaction_token;
 									$this->dpo->company_token     = config ('custom.DPO.DPO_COMPANY_TOKEN');
 									$this->dpo->accountref        = $trans->identifier;

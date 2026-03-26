@@ -44,29 +44,30 @@
 
                 <div class="row">
                     <div class="col-md-6 mx-auto text-center card pt-3">
+                        @php
+                            $isStreamRate = $rate->type === 'content';
+                        @endphp
                         <h5>
-                            Get Unlimited Streaming Access <br> to
+                            Get {{ $isStreamRate ? 'Livestream Access' : 'Event Access' }} <br> to
                             {{ $event->event_name }} for <b>
                                 @if($country == 'KE')
                                     KES
-                                    {{ $rate->cost }}
+                                    {{ $rate->price }}
                                 @else
-                                    {{ config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->reserved_currency_cost }}
+                                    {{ ($rate->currency ?? config('custom.BILLING.RESERVED_CURRENCY')) . " " . $rate->price }}
                                 @endif 
 
                            </b>
                         </h5>
 
 
-                        <p class="mt-2">Please Select Your Payment Option</p>
+                        <p class="mt-2">Please select your payment option for {{ $isStreamRate ? 'the stream link' : 'this ticket' }}.</p>
                         <div class="card-body w-100 radius-10 mt-2">
-                            <form action="{{ route('subscribe') }}" method="POST">
+                            <form action="{{ route('event.checkout') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                <input type="hidden" name="channel_id" value="{{ $event->channel_id }}">
-                                <input type="hidden" name="cost" value="{{ $rate->cost }}">
-                                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                <input type="hidden" name="event_id" value="{{ $event->uuid }}">
                                 <input type="hidden" name="rate_id" value="{{ $rate->id }}">
+                                <input type="hidden" name="country" value="{{ $country }}">
                                 <div class="card radius-10 border-primary border shadow-none">
                                     <label class="card-body" for="mpesa">
                                         <div class="d-flex align-items-center">
@@ -77,21 +78,6 @@
                                             <div class="ms-auto">
                                                 <input class="widgets-icons-2 bg-success text-white" type="radio"
                                                     name="payment_method_id" id="mpesa" value="1" checked>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <div class="card radius-10 border-primary border shadow-none">
-                                    <label class="card-body radius-10" for="creditcard">
-                                        <div class="d-flex align-items-center">
-                                            <div>
-                                                <img src="{{asset('frontend-assets/images/card.png')}}" height="40"
-                                                    alt="">
-                                            </div>
-                                            <div class="ms-auto">
-                                                <input class="widgets-icons-2 bg-gradient-ibiza text-white" type="radio"
-                                                    name="payment_method_id" id="creditcard" value="2">
                                             </div>
                                         </div>
                                     </label>
@@ -111,7 +97,9 @@
                                 @endif
 
                                 <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-danger w-100">Proceed to Pay</button>
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Proceed to Pay for {{ $isStreamRate ? 'Stream Access' : 'Ticket' }}
+                                    </button>
                                 </div>
                             </form>
                         </div>

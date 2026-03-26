@@ -1,0 +1,270 @@
+<?php
+
+namespace App\Http\Controllers\Frontend;
+
+use App\Events\PaymentFailed;
+use App\Http\Controllers\Controller;
+use App\Libs\Mpesa;
+use App\Models\Event;
+use App\Models\Order;
+use App\Models\Product;
+use App\Models\Ticket;
+use App\Models\Transaction;
+use App\Traits\Meta;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
+class EventOrderController extends Controller
+{
+    use Meta;
+
+    public function checkout(Request $request)
+    {
+        $validated = $request->validate([
+            'event_id' => 'required|uuid|exists:events,uuid',
+            'rate_id' => 'required|integer|exists:products,id',
+            'payment_method_id' => 'required|integer|in:1',
+        ]);
+
+        $event = Event::where('uuid', $validated['event_id'])->where('status', 1)->firstOrFail();
+        $rate = $event->products()
+            ->active()
+            ->whereKey($validated['rate_id'])
+            ->whereIn('type', ['ticket', 'content'])
+            ->first();
+
+        if (!$rate) {
+            return redirect()
+                ->route('event.show', ['slug' => $event->slug])
+                ->with('error', 'That purchase option is no longer available.');
+        }
+
+        $existingPaidOrder = Order::query()
+            ->forPaidEventProductType($request->user()->id, $event->uuid, $rate->type)
+            ->first();
+        $existingTicket = null;
+        if ($rate->type === 'ticket') {
+            $existingTicket = Ticket::where('user_id', $request->user()->id)
+                ->where('event_id', $event->uuid)
+                ->first();
+        }
+
+        if ($existingTicket || $existingPaidOrder) {
+            if ($rate->type === 'content') {
+                $stream = $event->streams()
+                    ->where('content_group', 'livestream')
+                    ->where('status', 1)
+                    ->first();
+
+                if ($stream) {
+                    return redirect()
+                        ->route('stream.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug])
+                        ->with('success', 'You already have stream access for this event.');
+                }
+            }
+
+            return redirect()
+                ->route('event.success', ['eventId' => $event->uuid])
+                ->with('success', $rate->type === 'ticket'
+                    ? 'You already have a paid ticket for this event.'
+                    : 'You already have stream access for this event.');
+        }
+
+        $order = null;
+
+        DB::transaction(function () use (&$order, $request, $event, $rate) {
+            $order = Order::query()
+                ->forPendingEventRate($request->user()->id, $rate->id)
+                ->latest()
+                ->first();
+
+            if (!$order) {
+                $order = Order::create([
+                    'user_id' => $request->user()->id,
+                    'type' => 'product',
+                    'order_number' => 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(8)),
+                    'subtotal' => $rate->price,
+                    'tax' => 0,
+                    'fees' => 0,
+                    'total_amount' => $rate->price,
+                    'currency' => $rate->currency ?? 'KES',
+                    'payment_status' => 'pending',
+                    'subscription_token' => (string) Str::uuid(),
+                ]);
+
+                $order->items()->create([
+                    'product_id' => $rate->id,
+                    'quantity' => 1,
+                    'unit_price' => $rate->price,
+                    'total_price' => $rate->price,
+                ]);
+            } else {
+                $order->update([
+                    'subtotal' => $rate->price,
+                    'total_amount' => $rate->price,
+                    'currency' => $rate->currency ?? 'KES',
+                ]);
+            }
+        });
+
+        return redirect()->route('event.payment.mpesa', ['order' => $order->id]);
+    }
+
+    public function mpesa(Order $order)
+    {
+        abort_unless($order->user_id === Auth::id(), 403);
+
+        if ($order->payment_status === 'paid') {
+            $event = $this->getOrderEvent($order);
+
+            return redirect()->route('event.success', ['eventId' => $event->uuid]);
+        }
+
+        $order->loadMissing('items.product');
+
+        return view('Frontend.modules.payments.event-mpesa', compact('order'));
+    }
+
+    public function mpesaStk(Request $request)
+    {
+        $request->validate([
+            'order_number' => 'required|string',
+            'msisdn' => 'required|string',
+        ]);
+
+        try {
+            $order = Order::where('order_number', $request->order_number)
+                ->where('user_id', Auth::id())
+                ->with('items.product')
+                ->firstOrFail();
+
+            if ($order->payment_status === 'paid') {
+                return response()->json(['message' => 'Order already paid.']);
+            }
+
+            $transaction = Transaction::find($order->latest_transaction_id);
+            if (is_null($transaction)) {
+                $transaction = new Transaction();
+                $transaction->payment_method = 'mpesa';
+                $transaction->cost = $order->total_amount;
+                $transaction->amount_paid = 0;
+                $transaction->currency = $order->currency;
+                $transaction->event_id = optional($order->items->first()?->product)->payable_id;
+                $transaction->channel_id = null;
+                $transaction->order_id = $order->subscription_token;
+                $transaction->user_id = Auth::id();
+                $transaction->save();
+
+                $order->latest_transaction_id = $transaction->id;
+                $order->save();
+            }
+
+            $shortcode = config('mpesa.paybill');
+            $passkey = config('mpesa.pass_key');
+            $consumerKey = config('mpesa.consumer_key');
+            $consumerSecret = config('mpesa.consumer_secret');
+
+            if (!$shortcode || !$passkey || !$consumerKey || !$consumerSecret) {
+                Log::error('M-Pesa credentials are missing for event checkout.', [
+                    'order_number' => $order->order_number,
+                    'user_id' => Auth::id(),
+                ]);
+
+                return response()->json(['message' => 'M-Pesa is not configured right now.'], 500);
+            }
+
+            $mpesa = new Mpesa('production');
+            $mpesa->shortcode = $shortcode;
+            $mpesa->passkey = $passkey;
+            $mpesa->consumerkey = $consumerKey;
+            $mpesa->consumersecret = $consumerSecret;
+            $mpesa->type = 'Paybill';
+            $mpesa->msisdn = '254' . substr($this->removeSpaces($request->msisdn), -9);
+            $mpesa->amount = (int) ceil($order->total_amount);
+            $mpesa->ref = $order->order_number;
+            $mpesa->stk_callback = route('mpesa.stk_push_request', ['subscription' => $order->order_number]);
+            $mpesa->desc = 'payment for event access';
+
+            $response = $mpesa->stkpush();
+
+            $transaction->response = $response;
+            $transaction->save();
+
+            if (isset($response->errorCode)) {
+                event(new PaymentFailed($order->order_number, ['message' => $response->errorMessage]));
+
+                return response()->json(['message' => $response->errorMessage], 422);
+            }
+
+            return response()->json(['message' => 'STK push sent.']);
+        } catch (ModelNotFoundException $exception) {
+            return response()->json(['message' => 'Order not found.'], 404);
+        } catch (\Throwable $exception) {
+            Log::error('Event M-Pesa STK request failed.', [
+                'order_number' => $request->order_number,
+                'user_id' => Auth::id(),
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ]);
+
+            return response()->json(['message' => 'Unable to initiate M-Pesa payment right now.'], 500);
+        }
+    }
+
+    public function success($eventId)
+    {
+        $event = Event::where('uuid', $eventId)->firstOrFail();
+        $ticket = null;
+        $accessOrder = null;
+        $eventStream = $event->streams()
+            ->where('content_group', 'livestream')
+            ->where('status', 1)
+            ->first();
+
+        if (Auth::check()) {
+            $accessOrder = Order::query()
+                ->forPaidEventProductType(Auth::id(), $event->uuid, ['ticket', 'content'])
+                ->with('items.product')
+                ->latest('paid_at')
+                ->first();
+
+            if (optional($accessOrder->items->first()?->product)->type === 'ticket') {
+                $ticket = Ticket::where('user_id', Auth::id())
+                    ->where('event_id', $event->uuid)
+                    ->latest()
+                    ->first();
+
+                if (!$ticket && $accessOrder) {
+                    $ticketProduct = optional($accessOrder->items->first())->product;
+
+                    $ticket = Ticket::firstOrCreate(
+                        [
+                            'user_id' => Auth::id(),
+                            'event_id' => $event->uuid,
+                        ],
+                        [
+                            'type' => optional($ticketProduct)->name ?? 'Standard',
+                            'price' => $accessOrder->total_amount,
+                        ]
+                    );
+                }
+            }
+        }
+
+        return view('Frontend.modules.payments.event-successful', compact('event', 'ticket', 'accessOrder', 'eventStream'));
+    }
+
+    private function getOrderEvent(Order $order): Event
+    {
+        $order->loadMissing('items.product');
+
+        $eventId = optional($order->items->first()?->product)->payable_id;
+
+        return Event::where('uuid', $eventId)->firstOrFail();
+    }
+}

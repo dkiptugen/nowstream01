@@ -139,6 +139,15 @@ class PodcastController extends Controller
                 }
             );
 
+            $episodeHistory = collect();
+            if (Auth::check() && $episodes->isNotEmpty()) {
+                $episodeHistory = WatchHistory::query()
+                    ->where('user_id', Auth::id())
+                    ->whereIn('content_id', $episodes->pluck('uuid'))
+                    ->get()
+                    ->keyBy('content_id');
+            }
+
             $podcast->episodes       = $episodes;
             $podcast->episodes_count = $episodes->count();
 
@@ -195,7 +204,8 @@ class PodcastController extends Controller
                 'related',
                 'videos',
                 'episodes',
-                'comments'
+                'comments',
+                'episodeHistory'
             ));
         } catch (\Exception $e) {
             abort(404, 'Podcast not found');

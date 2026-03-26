@@ -3,18 +3,12 @@
 namespace App\Models;
 
 use App\Casts\JsonCast;
-use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
     {
         use HasFactory;
-        use HasUuid;
-
-        protected $keyType      = 'string';
-        public    $incrementing = false;
-        protected $primaryKey   = 'uuid';
         protected $casts        = ['response' => JsonCast::class];
 
         protected $fillable
@@ -23,6 +17,7 @@ class Transaction extends Model
                 'name',
                 'event_id',
                 'channel_id',
+                'order_id',
                 'currency',
                 'payment_method',
                 'subscription_id',
@@ -36,7 +31,12 @@ class Transaction extends Model
 
         public function subscription()
             {
-                return $this->belongsTo(Subscription::class);
+                return $this->belongsTo(Subscription::class, 'subscription_id', 'id');
+            }
+
+        public function order()
+            {
+                return $this->belongsTo(Order::class, 'order_id', 'subscription_token');
             }
 
         public function user()
@@ -51,7 +51,6 @@ class Transaction extends Model
 
         public function event()
             {
-                return $this->belongsTo(Event::class);
+                return $this->belongsTo(Event::class, 'event_id', 'uuid');
             }
     }
-

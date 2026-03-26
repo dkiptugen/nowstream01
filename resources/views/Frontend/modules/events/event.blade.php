@@ -5,6 +5,10 @@
 @php
 $country = session('country', 'US'); // Default to 'US' if not set
 $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))->url($event->event_image) : asset('frontend-assets/images/default.png');
+$combinedRates = collect($eventRates ?? [])
+	->concat(collect($streamRates ?? []))
+	->sortBy('price')
+	->values();
 @endphp
 <main>
 
@@ -58,39 +62,65 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 							<table class="table mb-0 table-striped text-white">
 								<thead class="table-dark">
 									<tr>
-										<th scope="col">Ticket</th>
+										<th scope="col">Access</th>
 										<th scope="col">Sub Total</th>
 										<th class="text-end pe-md-3" scope="col">Buy</th>
 									</tr>
 								</thead>
 								<tbody>
-									@foreach($eventRates as $rate) 
+									@foreach($combinedRates as $rate) 
 									@php
-									// Determine currency based on country
-									$currency = $country == 'KE'
-									? 'KES ' . $rate->price
-									: config('custom.BILLING.RESERVED_CURRENCY') . " " . $rate->price;
+										$isStreamRate = $rate->type === 'content';
 									@endphp
 									<tr>
 										<td class="align-content-center">
 											{{ ucfirst($rate->name) }}
+											@if($isStreamRate)
+												<span class="badge badge-info ms-2">Stream</span>
+											@endif
 										</td>
 										<td class="align-content-center">
-											<!-- {{ $currency }} -->
 											  {{ $rate->currency }} {{ $rate->price }}
 										</td>
 										<td class="align-content-center text-end">
-											<a class="btn btn-sm btn-success p-2 pl-3"
-												href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
-												Buy Link <i class='fas fa-link'></i>
-											</a>
+											@if($isStreamRate)
+												@if($eventStream && ($paidStreamOrder || $legacyStreamAccess))
+													<a class="btn btn-sm btn-primary p-2 pl-3"
+														href="{{ route('stream.show', ['uuid' => $eventStream->uuid, 'slug' => $eventStream->slug]) }}">
+														Watch Stream <i class='fas fa-play'></i>
+													</a>
+												@elseif($event->has_livestream && $eventStream)
+													<a class="btn btn-sm btn-success p-2 pl-3"
+														href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
+														Buy Stream Link <i class='fas fa-link'></i>
+													</a>
+												@else
+													<span class="badge badge-secondary">Stream unavailable</span>
+												@endif
+											@else
+												@if($ticket)
+													<a class="btn btn-sm btn-primary p-2 pl-3"
+														href="{{ route('ticket.download', ['uuid' => $ticket->uuid]) }}">
+														Download Ticket <i class='fas fa-download'></i>
+													</a>
+												@elseif($paidOrder)
+													<a class="btn btn-sm btn-primary p-2 pl-3"
+														href="{{ route('event.success', ['eventId' => $event->uuid]) }}">
+														View Ticket <i class='fas fa-ticket-alt'></i>
+													</a>
+												@else
+													<a class="btn btn-sm btn-success p-2 pl-3"
+														href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
+														Buy Ticket <i class='fas fa-link'></i>
+													</a>
+												@endif
+											@endif
 										</td>
 									</tr>
 									@endforeach
 
 								</tbody>
 							</table>
-							 
 
 						</div>
 						<div class="movie-details-prime d-none">

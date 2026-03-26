@@ -1,4 +1,4 @@
-@extends('Frontend.includes.layout')
+@extends('Frontend.auth.layout')
 @section('content')
 <!--start page wrapper -->
 <div class="page-wrapper">
@@ -117,9 +117,13 @@
 
 		</section>
 
-		@endsection
-		@section('header')
-		@endsection
+<style>
+    .btn {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+    }
+</style>
+@endsection
 		@section('footer')
 		<script>
 			$(document).on('submit', '#m-pay', function (e) {
@@ -157,15 +161,15 @@
 
 			var channel = pusher.subscribe('payment.{{$subscription->identifier}}');
 			channel.bind('new_payment', function (data) {
-				console.log(data);
+					console.log(data);
 				if (data.check) {
                     gtag('event', 'purchase', {
                         transaction_id: '{{$subscription->identifier}}',  // Unique transaction ID
-                        affiliation: '{{ $subscription->event->name }}',
+                        affiliation: '{{ $subscription->event->event_name }}',
                         value:	'{{$subscription->balance}}',
                         currency: 'KES ',
                     });
-					window.location.href = '{{ route('stream.show', [$subscription->event->streams->id, $subscription->event->streams->slug]) }}';
+					window.location.href = '{{ route('success', ['eventId' => $subscription->event_id]) }}';
 				} else {
 					window.location.reload();
 				}

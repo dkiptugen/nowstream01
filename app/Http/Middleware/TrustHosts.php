@@ -15,9 +15,11 @@
             : array
                 {
 
-                    $baseDomain = preg_quote(config('app.base_domain'));
+                    $baseDomain = preg_quote(config('app.base_domain'), '/');
+
                     return [
-                        'localhost',
+                        '^localhost$',
+                        '^127\.0\.0\.1$',
                         '^(.+\.)?' . $baseDomain . '$',
                     ];
                 }

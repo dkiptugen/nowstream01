@@ -32,5 +32,3 @@
 <meta name="twitter:title" content="@yield('title', config('site.title'))">
 <meta name="twitter:description" content="@yield('description', config('site.description'))">
 <meta name="twitter:image" content="@yield('image', config('site.image'))">
-
-@include('Frontend.includes.components.partials.audio-player')

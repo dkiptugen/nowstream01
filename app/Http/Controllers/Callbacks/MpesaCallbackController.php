@@ -5,10 +5,13 @@
 	use App\Events\PaymentFailed;
 	use App\Http\Controllers\Controller;
 	use App\Jobs\MpesaPaymentJob;
+	use App\Jobs\OrderPaymentJob;
+	use App\Models\Order;
 	use App\Models\Subscription;
 	use App\Models\Transaction;
 	use Illuminate\Http\Request;
 	use Illuminate\Support\Facades\Log;
+	use Illuminate\Support\Facades\Schema;
 	
 	class MpesaCallbackController extends Controller
 		{
@@ -76,7 +79,10 @@
 					$lastName          = optional ($callbackData)->LastName;
 					
 					//Log::error ('Validation: '.$callbackJSONData);
-					$sub = Subscription::where ('identifier', $billRefNumber)->first ();
+					$sub = Schema::hasTable('subscriptions')
+						? Subscription::where ('identifier', $billRefNumber)->first ()
+						: null;
+					$order = Order::where('order_number', $billRefNumber)->first();
 					//Log::info('validation :',(array)$sub);
 					//Log::info($trans);
 					if (!is_null ($sub))
@@ -108,9 +114,40 @@
 							                          ]
 							);
 						}
+					elseif (!is_null($order))
+						{
+							if ((float) $order->total_amount !== (float) $transAmount)
+								{
+									event (new PaymentFailed($order->order_number, ["message" => "Invalid Amount"]));
+									return response ()->json ([
+										                          "ResultCode" => "C2B00013",
+										                          "ResultDesc" => "Invalid Amount"
+									                          ]
+									);
+								}
+
+							if ($order->payment_status === 'paid')
+								{
+									event (new PaymentFailed($order->order_number,
+									                         ["message" => "Payment blocked due to double payment"]
+									       )
+									);
+									return response ()->json ([
+										                          "ResultCode" => "C2B00016",
+										                          "ResultDesc" => "The account has already been charged"
+									                          ]
+									);
+								}
+
+							return response ()->json ([
+								                          "ResultCode" => "0",
+								                          "ResultDesc" => "Accepted"
+							                          ]
+							);
+						}
 					else
 						{
-							event (new PaymentFailed($sub->identifier, ["message" => "Invalid Account Number"]));
+							event (new PaymentFailed($billRefNumber, ["message" => "Invalid Account Number"]));
 							return response ()->json ([
 								                          "ResultCode" => "C2B00012",
 								                          "ResultDesc" => "Invalid Account Number"
@@ -139,13 +176,23 @@
 					$firstName         = optional ($callbackData)->FirstName;
 					$middleName        = optional ($callbackData)->MiddleName;
 					$lastName          = optional ($callbackData)->LastName;
-					$transaction       = Subscription::where ('identifier', $billRefNumber)->first ();
-					if (!is_null ($transaction))
+					$subscription = Schema::hasTable('subscriptions')
+						? Subscription::where ('identifier', $billRefNumber)->first ()
+						: null;
+					$order = Order::where('order_number', $billRefNumber)->first();
+					if (!is_null ($subscription))
 						{
 							$name = trim ($firstName." ".$middleName." ".$lastName);
 							MpesaPaymentJob::dispatch ($billRefNumber, $transAmount, $transID, $name, $MSISDN,
 							                           $transTime, $callbackJSONData
 							)->onQueue ('high');
+						}
+					elseif (!is_null($order))
+						{
+							$name = trim ($firstName." ".$middleName." ".$lastName);
+							OrderPaymentJob::dispatch($billRefNumber, $transAmount, $transID, $name, $MSISDN,
+								$transTime, $callbackJSONData
+							)->onQueue('high');
 						}
 					
 					
