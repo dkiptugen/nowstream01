@@ -13,7 +13,9 @@
 
 <main class="shop-page">
     <div class="container shop-shell">
-        @include('Frontend.modules.shop.partials.flash')
+        <div id="shop-product-flash">
+            @include('Frontend.modules.shop.partials.flash')
+        </div>
 
         <section class="shop-hero p-4 p-lg-5 mb-5">
             <div class="row g-4 align-items-center">
@@ -34,7 +36,7 @@
                     </div>
 
                     @auth
-                        <form action="{{ route('cart.store') }}" method="POST" class="shop-form-card p-4">
+                        <form action="{{ route('cart.store') }}" method="POST" class="shop-form-card p-4" id="shop-add-to-cart-form">
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -100,4 +102,65 @@
         @endif
     </div>
 </main>
+@endsection
+
+@section('footer')
+@auth
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('shop-add-to-cart-form');
+        const flash = document.getElementById('shop-product-flash');
+
+        if (!form || !flash) {
+            return;
+        }
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const showFlash = (message, type = 'success') => {
+            flash.innerHTML = `<div class="shop-flash shop-flash--${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+        };
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalLabel = submitButton?.textContent;
+            const formData = new FormData(form);
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Adding...';
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken || '',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(payload.message || 'Unable to add item to cart.');
+                }
+
+                showFlash(payload.message || 'Item added to cart.');
+            } catch (error) {
+                showFlash(error.message || 'Unable to add item to cart.', 'error');
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalLabel || 'Add To Cart';
+                }
+            }
+        });
+    });
+</script>
+@endauth
 @endsection
