@@ -64,11 +64,15 @@ $quickLinks = collect([
     }
 
     .clean-home {
+        width: 100%;
         padding: 28px 0 72px;
     }
 
     .clean-home .container {
-        max-width: 1380px;
+        width: 100%;
+        max-width: none;
+        padding-left: clamp(16px, 3vw, 42px);
+        padding-right: clamp(16px, 3vw, 42px);
     }
 
     .clean-hero {
@@ -366,6 +370,9 @@ $quickLinks = collect([
         overflow-x: auto;
         padding-bottom: 8px;
         scrollbar-width: thin;
+        scroll-behavior: smooth;
+        scroll-snap-type: x proximity;
+        cursor: grab;
     }
 
     .clean-track--event {
@@ -385,6 +392,55 @@ $quickLinks = collect([
         background: linear-gradient(180deg, rgba(12, 24, 36, 0.94), rgba(7, 15, 24, 0.98));
         overflow: hidden;
         transition: transform 0.22s ease, border-color 0.22s ease;
+        scroll-snap-align: start;
+    }
+
+    .clean-track::-webkit-scrollbar {
+        height: 0;
+    }
+
+    .clean-track.is-dragging {
+        cursor: grabbing;
+        scroll-behavior: auto;
+        user-select: none;
+    }
+
+    .clean-slider {
+        position: relative;
+    }
+
+    .clean-slider__controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .clean-slider__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 50%;
+        background: rgba(10, 21, 31, 0.84);
+        color: #ffffff;
+        font-size: 18px;
+        transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+    }
+
+    .clean-slider__button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        border-color: rgba(143, 215, 255, 0.35);
+    }
+
+    .clean-slider__button:disabled {
+        opacity: 0.38;
+        cursor: default;
+    }
+
+    .clean-slider__icon {
+        line-height: 1;
     }
 
     .clean-shelf-card__media,
@@ -541,6 +597,11 @@ $quickLinks = collect([
             flex-direction: column;
         }
 
+        .clean-slider__controls {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
         .clean-track {
             grid-auto-columns: minmax(164px, 164px);
         }
@@ -654,17 +715,25 @@ $quickLinks = collect([
             @endforeach
         </div>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="events">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Pay Per View</p>
                     <h2 class="clean-section__title">Trending Events</h2>
                     <p class="clean-section__sub">The biggest live nights, all in one clean row.</p>
                 </div>
-                <a href="{{ route('events') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="events" aria-label="Previous trending events">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="events" aria-label="Next trending events">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('events') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track clean-track--event">
+            <div class="clean-track clean-track--event" data-slider-track="events">
                 @foreach($eventShelf as $event)
                     @php
                         $eventImage = $event->event_image
@@ -695,17 +764,25 @@ $quickLinks = collect([
         </section>
 
         @if($videoFeatureShelf->isNotEmpty())
-            <section class="clean-section">
+            <section class="clean-section clean-slider" data-slider="featured-videos">
                 <div class="clean-section__head">
                     <div>
                         <p class="clean-section__eyebrow">Watch Now</p>
                         <h2 class="clean-section__title">Trending Videos</h2>
                         <p class="clean-section__sub">A sharper, lighter presentation for your on-demand highlights.</p>
                     </div>
-                    <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+                    <div class="clean-slider__controls">
+                        <button type="button" class="clean-slider__button" data-slider-prev="featured-videos" aria-label="Previous trending videos">
+                            <span class="clean-slider__icon">&larr;</span>
+                        </button>
+                        <button type="button" class="clean-slider__button" data-slider-next="featured-videos" aria-label="Next trending videos">
+                            <span class="clean-slider__icon">&rarr;</span>
+                        </button>
+                        <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+                    </div>
                 </div>
 
-                <div class="clean-track clean-track--video">
+                <div class="clean-track clean-track--video" data-slider-track="featured-videos">
                     @foreach($videoFeatureShelf as $video)
                         <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}" class="clean-video-card">
                             <div class="clean-video-card__media">
@@ -727,17 +804,25 @@ $quickLinks = collect([
             </section>
         @endif
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="tv">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Country Picks</p>
                     <h2 class="clean-section__title">Top TV in {{ $country_name ?? 'your region' }}</h2>
                     <p class="clean-section__sub">Fast access to the channels people are already watching.</p>
                 </div>
-                <a href="{{ route('tvs') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="tv" aria-label="Previous live TV items">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="tv" aria-label="Next live TV items">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('tvs') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track">
+            <div class="clean-track" data-slider-track="tv">
                 @foreach($tvShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
@@ -758,17 +843,25 @@ $quickLinks = collect([
             </div>
         </section>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="radio">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Listen Live</p>
                     <h2 class="clean-section__title">Trending Radios</h2>
                     <p class="clean-section__sub">Live audio stations presented with the same visual order as video.</p>
                 </div>
-                <a href="{{ route('radios') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="radio" aria-label="Previous radio items">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="radio" aria-label="Next radio items">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('radios') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track">
+            <div class="clean-track" data-slider-track="radio">
                 @foreach($radioShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
@@ -789,17 +882,25 @@ $quickLinks = collect([
             </div>
         </section>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="latest-videos">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Fresh Drops</p>
                     <h2 class="clean-section__title">Latest Videos</h2>
                     <p class="clean-section__sub">Recently added clips and uploads, without the heavy old homepage chrome.</p>
                 </div>
-                <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="latest-videos" aria-label="Previous latest videos">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="latest-videos" aria-label="Next latest videos">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track">
+            <div class="clean-track" data-slider-track="latest-videos">
                 @foreach($videoShelf as $item)
                     <a href="{{ route('video.show', [$item->uuid, $item->slug]) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
@@ -820,16 +921,24 @@ $quickLinks = collect([
             </div>
         </section>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="genres">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Explore</p>
                     <h2 class="clean-section__title">Browse By Genre</h2>
                     <p class="clean-section__sub">A cleaner way into the long tail of your TV catalog.</p>
                 </div>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="genres" aria-label="Previous genres">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="genres" aria-label="Next genres">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="clean-genre-grid">
+            <div class="clean-track" data-slider-track="genres" style="grid-auto-columns: minmax(240px, 240px);">
                 @foreach($heroGenres as $genre)
                     <a href="{{ route('genre.tvs', ['genre' => Str::slug($genre)]) }}" class="clean-genre-card">
                         <h3 class="clean-genre-card__label">{{ ucfirst($genre) }}</h3>
@@ -839,17 +948,25 @@ $quickLinks = collect([
             </div>
         </section>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="podcasts">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Listen Later</p>
                     <h2 class="clean-section__title">Trending Podcasts</h2>
                     <p class="clean-section__sub">Long-form listening gets its own cleaner shelf instead of feeling buried.</p>
                 </div>
-                <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="podcasts" aria-label="Previous podcasts">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="podcasts" aria-label="Next podcasts">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track">
+            <div class="clean-track" data-slider-track="podcasts">
                 @foreach($podcastShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
@@ -870,17 +987,25 @@ $quickLinks = collect([
             </div>
         </section>
 
-        <section class="clean-section">
+        <section class="clean-section clean-slider" data-slider="latest-podcasts">
             <div class="clean-section__head">
                 <div>
                     <p class="clean-section__eyebrow">Just Added</p>
                     <h2 class="clean-section__title">Latest Podcasts</h2>
                     <p class="clean-section__sub">Recent podcast additions with the same shelf rhythm as the rest of the home.</p>
                 </div>
-                <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+                <div class="clean-slider__controls">
+                    <button type="button" class="clean-slider__button" data-slider-prev="latest-podcasts" aria-label="Previous latest podcasts">
+                        <span class="clean-slider__icon">&larr;</span>
+                    </button>
+                    <button type="button" class="clean-slider__button" data-slider-next="latest-podcasts" aria-label="Next latest podcasts">
+                        <span class="clean-slider__icon">&rarr;</span>
+                    </button>
+                    <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+                </div>
             </div>
 
-            <div class="clean-track">
+            <div class="clean-track" data-slider-track="latest-podcasts">
                 @foreach($latestPodcastShelf as $item)
                     <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
                         <div class="clean-shelf-card__media">
@@ -902,4 +1027,108 @@ $quickLinks = collect([
         </section>
     </div>
 </div>
+@endsection
+
+@section('footer')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sliders = document.querySelectorAll('[data-slider]');
+
+        const getStepSize = (track) => {
+            const firstCard = track.firstElementChild;
+
+            if (!firstCard) {
+                return track.clientWidth * 0.9;
+            }
+
+            const trackStyle = window.getComputedStyle(track);
+            const gap = parseFloat(trackStyle.columnGap || trackStyle.gap || 0);
+
+            return firstCard.getBoundingClientRect().width + gap;
+        };
+
+        sliders.forEach((slider) => {
+            const sliderName = slider.getAttribute('data-slider');
+            const track = slider.querySelector(`[data-slider-track="${sliderName}"]`);
+            const prevButton = slider.querySelector(`[data-slider-prev="${sliderName}"]`);
+            const nextButton = slider.querySelector(`[data-slider-next="${sliderName}"]`);
+
+            if (!track || !prevButton || !nextButton) {
+                return;
+            }
+
+            const updateButtons = () => {
+                const maxScrollLeft = Math.max(track.scrollWidth - track.clientWidth - 4, 0);
+                prevButton.disabled = track.scrollLeft <= 4;
+                nextButton.disabled = track.scrollLeft >= maxScrollLeft;
+            };
+
+            const scrollTrack = (direction) => {
+                track.scrollBy({
+                    left: getStepSize(track) * direction * 2,
+                    behavior: 'smooth',
+                });
+            };
+
+            let isDragging = false;
+            let startX = 0;
+            let startScrollLeft = 0;
+
+            prevButton.addEventListener('click', () => scrollTrack(-1));
+            nextButton.addEventListener('click', () => scrollTrack(1));
+            track.addEventListener('scroll', updateButtons, { passive: true });
+
+            track.addEventListener('pointerdown', (event) => {
+                if (event.pointerType === 'mouse' && event.button !== 0) {
+                    return;
+                }
+
+                isDragging = true;
+                startX = event.clientX;
+                startScrollLeft = track.scrollLeft;
+                track.classList.add('is-dragging');
+                track.setPointerCapture(event.pointerId);
+            });
+
+            track.addEventListener('pointermove', (event) => {
+                if (!isDragging) {
+                    return;
+                }
+
+                const deltaX = event.clientX - startX;
+                track.scrollLeft = startScrollLeft - deltaX;
+            });
+
+            const stopDragging = (event) => {
+                if (!isDragging) {
+                    return;
+                }
+
+                isDragging = false;
+                track.classList.remove('is-dragging');
+
+                if (event && typeof track.releasePointerCapture === 'function') {
+                    try {
+                        track.releasePointerCapture(event.pointerId);
+                    } catch (error) {
+                        // Ignore pointer capture release errors.
+                    }
+                }
+
+                updateButtons();
+            };
+
+            track.addEventListener('pointerup', stopDragging);
+            track.addEventListener('pointercancel', stopDragging);
+            track.addEventListener('pointerleave', (event) => {
+                if (event.pointerType === 'mouse') {
+                    stopDragging(event);
+                }
+            });
+
+            window.addEventListener('resize', updateButtons);
+            updateButtons();
+        });
+    });
+</script>
 @endsection
