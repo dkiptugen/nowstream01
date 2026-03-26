@@ -51,6 +51,11 @@ class Order extends Model
 
     public function scopeForPaidEvent(Builder $query, int $userId, string $eventId): Builder
     {
+        return $this->scopeForPaidEventProductType($query, $userId, $eventId, 'ticket');
+    }
+
+    public function scopeForPaidEventProductType(Builder $query, int $userId, string $eventId, string|array $productTypes): Builder
+    {
         return $query
             ->select('orders.*')
             ->join('order_items', 'order_items.order_id', '=', 'orders.id')
@@ -59,6 +64,7 @@ class Order extends Model
             ->where('orders.payment_status', 'paid')
             ->where('products.payable_id', $eventId)
             ->where('products.payable_type', Event::class)
+            ->whereIn('products.type', (array) $productTypes)
             ->distinct();
     }
 

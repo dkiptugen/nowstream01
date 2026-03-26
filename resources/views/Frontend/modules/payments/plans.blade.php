@@ -44,8 +44,11 @@
 
                 <div class="row">
                     <div class="col-md-6 mx-auto text-center card pt-3">
+                        @php
+                            $isStreamRate = $rate->type === 'content';
+                        @endphp
                         <h5>
-                            Get Unlimited Streaming Access <br> to
+                            Get {{ $isStreamRate ? 'Livestream Access' : 'Event Access' }} <br> to
                             {{ $event->event_name }} for <b>
                                 @if($country == 'KE')
                                     KES
@@ -58,7 +61,7 @@
                         </h5>
 
 
-                        <p class="mt-2">Please Select Your Payment Option</p>
+                        <p class="mt-2">Please select your payment option for {{ $isStreamRate ? 'the stream link' : 'this ticket' }}.</p>
                         <div class="card-body w-100 radius-10 mt-2">
                             <form action="{{ route('event.checkout') }}" method="POST">
                                 @csrf
@@ -94,7 +97,9 @@
                                 @endif
 
                                 <div class="text-center mt-4">
-                                    <button type="submit" class="btn btn-danger w-100">Proceed to Pay</button>
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Proceed to Pay for {{ $isStreamRate ? 'Stream Access' : 'Ticket' }}
+                                    </button>
                                 </div>
                             </form>
                         </div>

@@ -24,14 +24,16 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+	use Illuminate\Support\Facades\Cache;
+	use Illuminate\Support\Facades\DB;
+	use Illuminate\Support\Facades\Hash;
+	use Illuminate\Support\Facades\Http;
+	use Illuminate\Support\Facades\Log;
+	use Illuminate\Support\Facades\Schema;
+	use Illuminate\Support\Facades\Session;
+	use Illuminate\Support\Facades\URL;
+	use Illuminate\Support\Str;
+	use App\Models\Order;
 
 
 class StreamController extends Controller
@@ -597,16 +599,26 @@ public function show($uuid, $slug = "")
 
         // Event subscription check for logged-in users
         if ($user && $stream->event_id) {
-            $subscription = Subscription::where('user_id', $user->id)
-                ->where('event_id', $stream->event_id)
-                ->where('status', 1)
+            $order = Order::query()
+                ->forPaidEventProductType($user->id, $stream->event_id, 'content')
                 ->first();
+            $subscription = null;
+            if (Schema::hasTable('subscriptions')) {
+                $subscription = Subscription::where('user_id', $user->id)
+                    ->where('event_id', $stream->event_id)
+                    ->where('status', 1)
+                    ->where('type', 'stream')
+                    ->first();
+            }
 
-            if (!$subscription) {
-                return redirect()->route('event.show', [
-                    'eventId' => $stream->event_id,
-                    'slug'    => $stream->slug
-                ]);
+            if (!$order && !$subscription) {
+                $event = $stream->event;
+
+                if ($event) {
+                    return redirect()->route('event.show', ['slug' => $event->slug]);
+                }
+
+                return redirect()->route('events');
             }
         }
 

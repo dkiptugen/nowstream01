@@ -31,25 +31,47 @@ class EventOrderController extends Controller
         ]);
 
         $event = Event::where('uuid', $validated['event_id'])->where('status', 1)->firstOrFail();
-        $rate = $event->eventRates()->whereKey($validated['rate_id'])->first();
+        $rate = $event->products()
+            ->active()
+            ->whereKey($validated['rate_id'])
+            ->whereIn('type', ['ticket', 'content'])
+            ->first();
 
         if (!$rate) {
             return redirect()
                 ->route('event.show', ['slug' => $event->slug])
-                ->with('error', 'That ticket option is no longer available.');
+                ->with('error', 'That purchase option is no longer available.');
         }
 
-        $existingTicket = Ticket::where('user_id', $request->user()->id)
-            ->where('event_id', $event->uuid)
-            ->first();
         $existingPaidOrder = Order::query()
-            ->forPaidEvent($request->user()->id, $event->uuid)
+            ->forPaidEventProductType($request->user()->id, $event->uuid, $rate->type)
             ->first();
+        $existingTicket = null;
+        if ($rate->type === 'ticket') {
+            $existingTicket = Ticket::where('user_id', $request->user()->id)
+                ->where('event_id', $event->uuid)
+                ->first();
+        }
 
         if ($existingTicket || $existingPaidOrder) {
+            if ($rate->type === 'content') {
+                $stream = $event->streams()
+                    ->where('content_group', 'livestream')
+                    ->where('status', 1)
+                    ->first();
+
+                if ($stream) {
+                    return redirect()
+                        ->route('stream.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug])
+                        ->with('success', 'You already have stream access for this event.');
+                }
+            }
+
             return redirect()
                 ->route('event.success', ['eventId' => $event->uuid])
-                ->with('success', 'You already have a paid ticket for this event.');
+                ->with('success', $rate->type === 'ticket'
+                    ? 'You already have a paid ticket for this event.'
+                    : 'You already have stream access for this event.');
         }
 
         $order = null;
@@ -165,7 +187,7 @@ class EventOrderController extends Controller
             $mpesa->amount = (int) ceil($order->total_amount);
             $mpesa->ref = $order->order_number;
             $mpesa->stk_callback = route('mpesa.stk_push_request', ['subscription' => $order->order_number]);
-            $mpesa->desc = 'payment for event ticket';
+            $mpesa->desc = 'payment for event access';
 
             $response = $mpesa->stkpush();
 
@@ -198,22 +220,27 @@ class EventOrderController extends Controller
     {
         $event = Event::where('uuid', $eventId)->firstOrFail();
         $ticket = null;
+        $accessOrder = null;
+        $eventStream = $event->streams()
+            ->where('content_group', 'livestream')
+            ->where('status', 1)
+            ->first();
 
         if (Auth::check()) {
-            $ticket = Ticket::where('user_id', Auth::id())
-                ->where('event_id', $event->uuid)
-                ->latest()
+            $accessOrder = Order::query()
+                ->forPaidEventProductType(Auth::id(), $event->uuid, ['ticket', 'content'])
+                ->with('items.product')
+                ->latest('paid_at')
                 ->first();
 
-            if (!$ticket) {
-                $paidOrder = Order::query()
-                    ->forPaidEvent(Auth::id(), $event->uuid)
-                    ->with('items.product')
-                    ->latest('paid_at')
+            if (optional($accessOrder->items->first()?->product)->type === 'ticket') {
+                $ticket = Ticket::where('user_id', Auth::id())
+                    ->where('event_id', $event->uuid)
+                    ->latest()
                     ->first();
 
-                if ($paidOrder) {
-                    $ticketProduct = optional($paidOrder->items->first())->product;
+                if (!$ticket && $accessOrder) {
+                    $ticketProduct = optional($accessOrder->items->first())->product;
 
                     $ticket = Ticket::firstOrCreate(
                         [
@@ -222,14 +249,14 @@ class EventOrderController extends Controller
                         ],
                         [
                             'type' => optional($ticketProduct)->name ?? 'Standard',
-                            'price' => $paidOrder->total_amount,
+                            'price' => $accessOrder->total_amount,
                         ]
                     );
                 }
             }
         }
 
-        return view('Frontend.modules.payments.event-successful', compact('event', 'ticket'));
+        return view('Frontend.modules.payments.event-successful', compact('event', 'ticket', 'accessOrder', 'eventStream'));
     }
 
     private function getOrderEvent(Order $order): Event

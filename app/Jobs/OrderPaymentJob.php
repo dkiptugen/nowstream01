@@ -54,7 +54,7 @@ class OrderPaymentJob implements ShouldQueue
             $order->save();
 
             $product = optional($order->items->first())->product;
-            if ($product) {
+            if ($product && $product->type === 'ticket') {
                 Ticket::firstOrCreate(
                     [
                         'user_id' => $order->user_id,

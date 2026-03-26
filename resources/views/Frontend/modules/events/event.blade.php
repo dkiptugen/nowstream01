@@ -120,10 +120,18 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 														<td class="align-content-center">{{ ucfirst($streamRate->name) }}</td>
 														<td class="align-content-center">{{ $streamRate->currency }} {{ $streamRate->price }}</td>
 														<td class="align-content-center">
-															@if($event->has_livestream)
-																<span class="badge badge-success">Livestream enabled</span>
+															@if($eventStream && ($paidStreamOrder || $legacyStreamAccess))
+																<a class="btn btn-sm btn-primary p-2 pl-3"
+																	href="{{ route('stream.show', ['uuid' => $eventStream->uuid, 'slug' => $eventStream->slug]) }}">
+																	Watch Stream <i class='fas fa-play'></i>
+																</a>
+															@elseif($event->has_livestream && $eventStream)
+																<a class="btn btn-sm btn-success p-2 pl-3"
+																	href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $streamRate->id]) }}">
+																	Buy Stream Link <i class='fas fa-link'></i>
+																</a>
 															@else
-																<span class="badge badge-secondary">Configured</span>
+																<span class="badge badge-secondary">Stream unavailable</span>
 															@endif
 														</td>
 													</tr>

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class EventController extends Controller
 {
@@ -42,22 +43,26 @@ class EventController extends Controller
     {
         try {
             $event = Event::where('uuid', $eventId)->where('status', 1)->firstOrFail();
-            $rate = $event->eventRates()->whereKey($rateId)->first();
+            $rate = $event->products()
+                ->active()
+                ->whereKey($rateId)
+                ->whereIn('type', ['ticket', 'content'])
+                ->first();
 
             if (is_null($rate)) {
                 return redirect()
                     ->route('event.show', ['slug' => $event->slug])
-                    ->with('error', 'That ticket option is no longer available.');
+                    ->with('error', 'That purchase option is no longer available.');
             }
 
             $user = Auth::user();
             $paidOrder = Order::query()
-                ->forPaidEvent($user->id, $event->uuid)
+                ->forPaidEventProductType($user->id, $event->uuid, $rate->type)
                 ->latest('paid_at')
                 ->first();
 
             $ticket = null;
-            if (!$paidOrder) {
+            if ($rate->type === 'ticket' && !$paidOrder) {
                 $ticket = Ticket::where('user_id', $user->id)
                     ->where('event_id', $event->uuid)
                     ->latest()
@@ -65,9 +70,24 @@ class EventController extends Controller
             }
 
             if ($ticket || $paidOrder) {
+                if ($rate->type === 'content') {
+                    $eventStream = $event->streams()
+                        ->where('content_group', 'livestream')
+                        ->where('status', 1)
+                        ->first();
+
+                    if ($eventStream) {
+                        return redirect()
+                            ->route('stream.show', ['uuid' => $eventStream->uuid, 'slug' => $eventStream->slug])
+                            ->with('success', 'You already have stream access for this event.');
+                    }
+                }
+
                 return redirect()
                     ->route('event.success', ['eventId' => $event->uuid])
-                    ->with('success', 'You already have a paid ticket for this event.');
+                    ->with('success', $rate->type === 'ticket'
+                        ? 'You already have a paid ticket for this event.'
+                        : 'You already have stream access for this event.');
             }
 
             $events = $this->get_events();
@@ -133,12 +153,17 @@ class EventController extends Controller
             $event = Event::where('slug', $slug)->firstOrFail();
             $eventId = $event->uuid;
             $event->load(['eventRates', 'streamRates']);
+            $eventStream = $event->streams()
+                ->where('content_group', 'livestream')
+                ->where('status', 1)
+                ->first();
 
             return [
                 'event'  => $event,
                 'events' => $this->get_events($eventId),
                 'videos' => $this->get_videos(),
                 'rates'  => $this->get_event_ticket_rates($eventId),
+                'stream' => $eventStream,
 
             ];
         });
@@ -168,6 +193,21 @@ class EventController extends Controller
                 ->latest('paid_at')
                 ->first()
             : null;
+        $paidStreamOrder = Auth::check()
+            ? Order::query()
+                ->forPaidEventProductType(Auth::id(), $data['event']->uuid, 'content')
+                ->latest('paid_at')
+                ->first()
+            : null;
+        $legacyStreamAccess = null;
+        if (Auth::check() && Schema::hasTable('subscriptions')) {
+            $legacyStreamAccess = \App\Models\Subscription::where('user_id', Auth::id())
+                ->where('event_id', $data['event']->uuid)
+                ->where('status', 1)
+                ->where('type', 'stream')
+                ->latest()
+                ->first();
+        }
 
 
         return view('Frontend.modules.events.event', [
@@ -178,8 +218,11 @@ class EventController extends Controller
             'ticket'         => $ticket,
             'eventRates'     => $data['event']->eventRates,
             'streamRates'    => $data['event']->streamRates,
+            'eventStream'    => $data['stream'],
             'relatedEvents'  => $relatedEvents,
             'paidOrder'      => $paidOrder,
+            'paidStreamOrder'=> $paidStreamOrder,
+            'legacyStreamAccess' => $legacyStreamAccess,
         ]);
     }
 }
