@@ -102,7 +102,37 @@ $thumbnail = $event->event_image ? Storage::disk(config('filesystems.default'))-
 
 								</tbody>
 							</table>
-							 
+							@if(!empty($streamRates) && $streamRates->isNotEmpty())
+								<div class="mt-4">
+									<h5 class="mb-3 text-white">Stream Access</h5>
+									<div class="table-responsive">
+										<table class="table mb-0 table-striped text-white">
+											<thead class="table-dark">
+												<tr>
+													<th scope="col">Stream Rate</th>
+													<th scope="col">Sub Total</th>
+													<th scope="col">Availability</th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach($streamRates as $streamRate)
+													<tr>
+														<td class="align-content-center">{{ ucfirst($streamRate->name) }}</td>
+														<td class="align-content-center">{{ $streamRate->currency }} {{ $streamRate->price }}</td>
+														<td class="align-content-center">
+															@if($event->has_livestream)
+																<span class="badge badge-success">Livestream enabled</span>
+															@else
+																<span class="badge badge-secondary">Configured</span>
+															@endif
+														</td>
+													</tr>
+												@endforeach
+											</tbody>
+										</table>
+									</div>
+								</div>
+							@endif
 
 						</div>
 						<div class="movie-details-prime d-none">

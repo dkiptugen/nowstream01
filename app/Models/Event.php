@@ -114,4 +114,12 @@
                         ->where('is_active',1)
                         ->orderBy('price', 'asc');
                 }
+
+            public function streamRates()
+                {
+                    return $this->morphMany(Product::class, 'payable')
+                        ->where('type', 'content')
+                        ->where('is_active', 1)
+                        ->orderBy('price', 'asc');
+                }
         }

@@ -132,7 +132,7 @@ class EventController extends Controller
         $data = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($slug) {
             $event = Event::where('slug', $slug)->firstOrFail();
             $eventId = $event->uuid;
-            $event->load('eventRates'); // Load rates with the event 
+            $event->load(['eventRates', 'streamRates']);
 
             return [
                 'event'  => $event,
@@ -160,7 +160,8 @@ class EventController extends Controller
         }); 
         // dd eventRates
         //  dd($data['event']->eventRates);
-        $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values()->all();
+        $data['event']->eventRates = $data['event']->eventRates->sortBy('price')->values();
+        $data['event']->streamRates = $data['event']->streamRates->sortBy('price')->values();
         $paidOrder = Auth::check()
             ? Order::query()
                 ->forPaidEvent(Auth::id(), $data['event']->uuid)
@@ -176,6 +177,7 @@ class EventController extends Controller
             'rates'          => $data['rates'],
             'ticket'         => $ticket,
             'eventRates'     => $data['event']->eventRates,
+            'streamRates'    => $data['event']->streamRates,
             'relatedEvents'  => $relatedEvents,
             'paidOrder'      => $paidOrder,
         ]);
