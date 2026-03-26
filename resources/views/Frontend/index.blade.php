@@ -5,14 +5,13 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-$featuredEvent = $topevents->first() ?? $events->first();
-$featuredEventImage = $featuredEvent && $featuredEvent->event_image
-    ? Storage::disk(config('filesystems.default'))->url($featuredEvent->event_image)
-    : ($top_videos->first()->thumbnail_url ?? asset('frontend-assets/images/default.png'));
+$heroEvents = $topevents->take(3)->values();
 
-$featuredDescription = $featuredEvent
-    ? Str::limit(trim(strip_tags($featuredEvent->description ?? 'Live events, top TV, radio, podcasts, and on-demand video in one place.')), 170)
-    : 'Live events, top TV, radio, podcasts, and on-demand video in one place.';
+if ($heroEvents->isEmpty() && $events->isNotEmpty()) {
+    $heroEvents = $events->take(3)->values();
+}
+
+$featuredEvent = $heroEvents->first();
 
 $heroGenres = $genres->filter()->unique()->take(8);
 $heroLiveChannels = $toptvs->take(4);
@@ -102,13 +101,27 @@ $quickLinks = collect([
         z-index: 1;
     }
 
-    .clean-hero__bg {
+    .clean-hero__bg,
+    .clean-hero__slide {
         position: absolute;
         inset: 0;
+    }
+
+    .clean-hero__bg {
+        z-index: 0;
+    }
+
+    .clean-hero__slide {
         background-size: cover;
         background-position: center;
         transform: scale(1.04);
         filter: saturate(1.04);
+        opacity: 0;
+        transition: opacity 0.9s ease;
+    }
+
+    .clean-hero__slide.is-active {
+        opacity: 1;
     }
 
     .clean-hero__content,
@@ -123,6 +136,52 @@ $quickLinks = collect([
         justify-content: flex-end;
         min-height: 620px;
         padding: 56px;
+    }
+
+    .clean-hero__carousel {
+        position: relative;
+        min-height: 620px;
+    }
+
+    .clean-hero__copy {
+        position: absolute;
+        inset: 56px auto 56px 56px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        max-width: 640px;
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
+        pointer-events: none;
+    }
+
+    .clean-hero__copy.is-active {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .clean-hero__controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .clean-hero__dot {
+        width: 10px;
+        height: 10px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.35);
+        transition: transform 0.22s ease, background-color 0.22s ease, width 0.22s ease;
+    }
+
+    .clean-hero__dot.is-active {
+        width: 28px;
+        background: #ffd24f;
     }
 
     .clean-eyebrow {
@@ -376,7 +435,8 @@ $quickLinks = collect([
         gap: 16px;
         overflow-x: auto;
         padding-bottom: 8px;
-        scrollbar-width: thin;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
         scroll-behavior: smooth;
         scroll-snap-type: x proximity;
         cursor: grab;
@@ -560,6 +620,15 @@ $quickLinks = collect([
             padding: 42px 34px 24px;
         }
 
+        .clean-hero__carousel {
+            min-height: auto;
+        }
+
+        .clean-hero__copy {
+            inset: 42px auto 24px 34px;
+            max-width: calc(100% - 68px);
+        }
+
         .clean-hero__aside {
             padding: 0 34px 34px;
         }
@@ -584,6 +653,11 @@ $quickLinks = collect([
 
         .clean-hero__content {
             padding: 28px 22px 18px;
+        }
+
+        .clean-hero__copy {
+            inset: 28px 22px 18px 22px;
+            max-width: none;
         }
 
         .clean-hero__aside {
@@ -627,59 +701,96 @@ $quickLinks = collect([
 <div class="clean-home">
     <div class="container">
         <section class="clean-hero">
-            <div class="clean-hero__bg" style="background-image: url('{{ $featuredEventImage }}');"></div>
+            <div class="clean-hero__bg" data-hero-slider>
+                @forelse($heroEvents as $index => $heroEvent)
+                    @php
+                        $heroEventImage = $heroEvent->event_image
+                            ? Storage::disk(config('filesystems.default'))->url($heroEvent->event_image)
+                            : ($top_videos->first()->thumbnail_url ?? asset('frontend-assets/images/default.png'));
+                    @endphp
+                    <div
+                        class="clean-hero__slide {{ $index === 0 ? 'is-active' : '' }}"
+                        data-hero-slide
+                        style="background-image: url('{{ $heroEventImage }}');"
+                    ></div>
+                @empty
+                    <div
+                        class="clean-hero__slide is-active"
+                        data-hero-slide
+                        style="background-image: url('{{ $top_videos->first()->thumbnail_url ?? asset('frontend-assets/images/default.png') }}');"
+                    ></div>
+                @endforelse
+            </div>
             <div class="row no-gutters">
                 <div class="col-xl-8">
                     <div class="clean-hero__content">
-                        <div class="clean-eyebrow">Nowstream Home</div>
+                        <div class="clean-hero__carousel">
+                            @forelse($heroEvents as $index => $heroEvent)
+                                @php
+                                    $titleWords = preg_split('/\s+/', trim($heroEvent->event_name));
+                                    $splitPoint = (int) ceil(count($titleWords) / 2);
+                                    $titleStart = implode(' ', array_slice($titleWords, 0, $splitPoint));
+                                    $titleEnd = implode(' ', array_slice($titleWords, $splitPoint));
+                                    $heroDescription = Str::limit(trim(strip_tags($heroEvent->description ?? 'Live events, top TV, radio, podcasts, and on-demand video in one place.')), 170);
+                                @endphp
+                                <div class="clean-hero__copy {{ $index === 0 ? 'is-active' : '' }}" data-hero-copy>
+                                    <div class="clean-eyebrow">Nowstream Home</div>
+                                    <h1 class="clean-hero__title">
+                                        {{ $titleStart }}
+                                        @if($titleEnd)
+                                            <span>{{ $titleEnd }}</span>
+                                        @endif
+                                    </h1>
 
-                        @if($featuredEvent)
-                            @php
-                                $titleWords = preg_split('/\s+/', trim($featuredEvent->event_name));
-                                $splitPoint = (int) ceil(count($titleWords) / 2);
-                                $titleStart = implode(' ', array_slice($titleWords, 0, $splitPoint));
-                                $titleEnd = implode(' ', array_slice($titleWords, $splitPoint));
-                            @endphp
-                            <h1 class="clean-hero__title">
-                                {{ $titleStart }}
-                                @if($titleEnd)
-                                    <span>{{ $titleEnd }}</span>
-                                @endif
-                            </h1>
+                                    <p class="clean-hero__description">{{ $heroDescription }}</p>
 
-                            <p class="clean-hero__description">{{ $featuredDescription }}</p>
+                                    <div class="clean-meta">
+                                        <span>Featured event</span>
+                                        @if($heroEvent->start_time)
+                                            <span>{{ Carbon::parse($heroEvent->start_time)->format('M d, Y') }}</span>
+                                        @endif
+                                        @if($heroEvent->venue)
+                                            <span>{{ $heroEvent->venue }}</span>
+                                        @endif
+                                        <span>{{ $topevents->count() }} event picks</span>
+                                    </div>
 
-                            <div class="clean-meta">
-                                <span>Featured event</span>
-                                @if($featuredEvent->start_time)
-                                    <span>{{ Carbon::parse($featuredEvent->start_time)->format('M d, Y') }}</span>
-                                @endif
-                                @if($featuredEvent->venue)
-                                    <span>{{ $featuredEvent->venue }}</span>
-                                @endif
-                                <span>{{ $topevents->count() }} event picks</span>
-                            </div>
+                                    <div class="clean-actions">
+                                        <a href="{{ route('event.show', $heroEvent->slug) }}" class="clean-btn clean-btn--primary">Watch Event</a>
+                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--ghost">Browse Live TV</a>
+                                    </div>
 
-                            <div class="clean-actions">
-                                <a href="{{ route('event.show', $featuredEvent->slug) }}" class="clean-btn clean-btn--primary">Watch Event</a>
-                                <a href="{{ route('tvs') }}" class="clean-btn clean-btn--ghost">Browse Live TV</a>
-                            </div>
-                        @else
-                            <h1 class="clean-hero__title">Live TV, radio, <span>events, and video</span></h1>
-                            <p class="clean-hero__description">{{ $featuredDescription }}</p>
-                            <div class="clean-actions">
-                                <a href="{{ route('tvs') }}" class="clean-btn clean-btn--primary">Browse Live TV</a>
-                                <a href="{{ route('videos') }}" class="clean-btn clean-btn--ghost">Watch Videos</a>
-                            </div>
-                        @endif
+                                    <div class="clean-hero__controls">
+                                        @foreach($heroEvents as $dotIndex => $dotEvent)
+                                            <button
+                                                type="button"
+                                                class="clean-hero__dot {{ $dotIndex === $index ? 'is-active' : '' }}"
+                                                data-hero-dot="{{ $dotIndex }}"
+                                                aria-label="Show hero event {{ $dotIndex + 1 }}"
+                                            ></button>
+                                        @endforeach
+                                    </div>
 
-                        @if($heroGenres->isNotEmpty())
-                            <div class="clean-meta">
-                                @foreach($heroGenres as $genre)
-                                    <a href="{{ route('genre.tvs', ['genre' => Str::slug($genre)]) }}" class="clean-chip">{{ ucfirst($genre) }}</a>
-                                @endforeach
-                            </div>
-                        @endif
+                                    @if($heroGenres->isNotEmpty())
+                                        <div class="clean-meta">
+                                            @foreach($heroGenres as $genre)
+                                                <a href="{{ route('genre.tvs', ['genre' => Str::slug($genre)]) }}" class="clean-chip">{{ ucfirst($genre) }}</a>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @empty
+                                <div class="clean-hero__copy is-active" data-hero-copy>
+                                    <div class="clean-eyebrow">Nowstream Home</div>
+                                    <h1 class="clean-hero__title">Live TV, radio, <span>events, and video</span></h1>
+                                    <p class="clean-hero__description">Live events, top TV, radio, podcasts, and on-demand video in one place.</p>
+                                    <div class="clean-actions">
+                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--primary">Browse Live TV</a>
+                                        <a href="{{ route('videos') }}" class="clean-btn clean-btn--ghost">Watch Videos</a>
+                                    </div>
+                                </div>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
 
@@ -1039,6 +1150,56 @@ $quickLinks = collect([
 @section('footer')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const heroSlides = Array.from(document.querySelectorAll('[data-hero-slide]'));
+        const heroCopies = Array.from(document.querySelectorAll('[data-hero-copy]'));
+
+        if (heroSlides.length > 1 && heroCopies.length === heroSlides.length) {
+            let activeHeroIndex = 0;
+            let heroTimer = null;
+
+            const setHeroSlide = (index) => {
+                activeHeroIndex = index;
+
+                heroSlides.forEach((slide, slideIndex) => {
+                    slide.classList.toggle('is-active', slideIndex === index);
+                });
+
+                heroCopies.forEach((copy, copyIndex) => {
+                    copy.classList.toggle('is-active', copyIndex === index);
+
+                    copy.querySelectorAll('[data-hero-dot]').forEach((dot) => {
+                        dot.classList.toggle('is-active', Number(dot.getAttribute('data-hero-dot')) === index);
+                    });
+                });
+            };
+
+            const startHeroAutoplay = () => {
+                heroTimer = window.setInterval(() => {
+                    const nextIndex = (activeHeroIndex + 1) % heroSlides.length;
+                    setHeroSlide(nextIndex);
+                }, 5000);
+            };
+
+            const restartHeroAutoplay = () => {
+                if (heroTimer) {
+                    window.clearInterval(heroTimer);
+                }
+
+                startHeroAutoplay();
+            };
+
+            document.querySelectorAll('[data-hero-dot]').forEach((dot) => {
+                dot.addEventListener('click', () => {
+                    const index = Number(dot.getAttribute('data-hero-dot'));
+                    setHeroSlide(index);
+                    restartHeroAutoplay();
+                });
+            });
+
+            setHeroSlide(0);
+            startHeroAutoplay();
+        }
+
         const sliders = document.querySelectorAll('[data-slider]');
 
         const getStepSize = (track) => {
