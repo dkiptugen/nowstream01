@@ -143,7 +143,7 @@ class EventController extends Controller
     public function show($slug)
     {
         // Cache key per event page
-        $cacheKey = "event_page_{$slug}";
+        $cacheKey = "event_page_v2_{$slug}";
 
         $ticket = Auth::check()
             ? Ticket::where('user_id', Auth::id())->whereHas('event', fn($query) => $query->where('slug', $slug))->latest()->first()
@@ -170,6 +170,13 @@ class EventController extends Controller
 
         if (!$data) {
             abort(404, 'Event not found.');
+        }
+
+        if (!array_key_exists('stream', $data)) {
+            $data['stream'] = $data['event']->streams()
+                ->where('content_group', 'livestream')
+                ->where('status', 1)
+                ->first();
         }
 
         // Increment views dynamically (not cached)
