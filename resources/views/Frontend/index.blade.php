@@ -65,7 +65,7 @@ $quickLinks = collect([
 
     .clean-home {
         width: 100%;
-        padding: 28px 0 72px;
+        padding: 0 0 72px;
     }
 
     .clean-home .container {
@@ -78,8 +78,15 @@ $quickLinks = collect([
     .clean-hero {
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 30px;
+        top: 0;
+        width: 100vw;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        border-top: 0;
+        border-left: 0;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0;
         min-height: 620px;
         background-color: #09131d;
         box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
@@ -568,11 +575,11 @@ $quickLinks = collect([
 
     @media (max-width: 767px) {
         .clean-home {
-            padding-top: 16px;
+            padding-top: 0;
         }
 
         .clean-hero {
-            border-radius: 24px;
+            border-radius: 0;
         }
 
         .clean-hero__content {
