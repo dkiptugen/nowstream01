@@ -45,6 +45,7 @@ class HomeController extends Controller
 
         $cacheKey = "homepage_{$iso}";
         $data = $cache->remember($cacheKey, now()->addMinutes(30), fn () => $this->buildHomepagePayload($cache, $iso, $countryName));
+        $data['heroLiveChannels'] = collect($data['toptvs'] ?? [])->shuffle()->take(4)->values();
 
         $this->data['microsites'] = Microsite::all();
 

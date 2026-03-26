@@ -11,7 +11,7 @@ if ($heroEvents->isEmpty() && isset($events)) {
 }
 
 $heroGenres = $heroGenres ?? collect($genres ?? [])->filter()->unique()->take(8)->values();
-$heroLiveChannels = $heroLiveChannels ?? collect($toptvs ?? [])->take(4)->values();
+$heroLiveChannels = $heroLiveChannels ?? collect($toptvs ?? [])->shuffle()->take(4)->values();
 $eventShelf = $eventShelf ?? collect($topevents ?? [])->take(8)->values();
 $tvShelf = $tvShelf ?? collect($toptvs ?? [])->take(12)->values();
 $radioShelf = $radioShelf ?? collect($topradios ?? [])->take(12)->values();
