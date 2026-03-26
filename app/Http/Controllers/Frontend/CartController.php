@@ -31,8 +31,7 @@ class CartController extends Controller
         ]);
 
         $product = Product::query()
-            ->merch()
-            ->active()
+            ->merch() 
             ->with('variants')
             ->findOrFail($validated['product_id']);
         $variant = $validated['variant_id']
