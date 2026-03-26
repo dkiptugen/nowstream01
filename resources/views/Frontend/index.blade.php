@@ -1245,8 +1245,10 @@ $quickLinks = collect([
             };
 
             let isDragging = false;
+            let hasDragged = false;
             let startX = 0;
             let startScrollLeft = 0;
+            let activePointerId = null;
 
             prevButton.addEventListener('click', () => scrollTrack(-1));
             nextButton.addEventListener('click', () => scrollTrack(1));
@@ -1258,30 +1260,42 @@ $quickLinks = collect([
                 }
 
                 isDragging = true;
+                hasDragged = false;
+                activePointerId = event.pointerId;
                 startX = event.clientX;
                 startScrollLeft = track.scrollLeft;
-                track.classList.add('is-dragging');
-                track.setPointerCapture(event.pointerId);
             });
 
             track.addEventListener('pointermove', (event) => {
-                if (!isDragging) {
+                if (!isDragging || event.pointerId !== activePointerId) {
                     return;
                 }
 
                 const deltaX = event.clientX - startX;
+
+                 if (!hasDragged && Math.abs(deltaX) > 6) {
+                    hasDragged = true;
+                    track.classList.add('is-dragging');
+                    track.setPointerCapture(event.pointerId);
+                }
+
+                if (!hasDragged) {
+                    return;
+                }
+
                 track.scrollLeft = startScrollLeft - deltaX;
             });
 
             const stopDragging = (event) => {
-                if (!isDragging) {
+                if (!isDragging || (event && event.pointerId !== activePointerId)) {
                     return;
                 }
 
                 isDragging = false;
                 track.classList.remove('is-dragging');
+                activePointerId = null;
 
-                if (event && typeof track.releasePointerCapture === 'function') {
+                if (hasDragged && event && typeof track.releasePointerCapture === 'function') {
                     try {
                         track.releasePointerCapture(event.pointerId);
                     } catch (error) {
@@ -1291,6 +1305,16 @@ $quickLinks = collect([
 
                 updateButtons();
             };
+
+            track.addEventListener('click', (event) => {
+                if (!hasDragged) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                hasDragged = false;
+            }, true);
 
             track.addEventListener('pointerup', stopDragging);
             track.addEventListener('pointercancel', stopDragging);
