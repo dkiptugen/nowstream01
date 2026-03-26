@@ -1,871 +1,905 @@
 @extends('Frontend.includes.layout')
 
+@php
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+$featuredEvent = $topevents->first() ?? $events->first();
+$featuredEventImage = $featuredEvent && $featuredEvent->event_image
+    ? Storage::disk(config('filesystems.default'))->url($featuredEvent->event_image)
+    : ($top_videos->first()->thumbnail_url ?? asset('frontend-assets/images/default.png'));
+
+$featuredDescription = $featuredEvent
+    ? Str::limit(trim(strip_tags($featuredEvent->description ?? 'Live events, top TV, radio, podcasts, and on-demand video in one place.')), 170)
+    : 'Live events, top TV, radio, podcasts, and on-demand video in one place.';
+
+$heroGenres = $genres->filter()->unique()->take(8);
+$heroLiveChannels = $toptvs->take(4);
+$eventShelf = $topevents->take(8);
+$tvShelf = $toptvs->take(12);
+$radioShelf = $topradios->take(12);
+$videoFeatureShelf = $top_videos->take(4);
+$videoShelf = $videos->take(8);
+$podcastShelf = $podcasts->take(12);
+$latestPodcastShelf = $topPodcasts->take(12);
+
+$routeForContent = function ($item) {
+    return match ($item->content_group) {
+        'tv' => route('tv.show', $item->slug),
+        'radio' => route('radio.show', $item->slug),
+        'podcast' => route('podcast.show', $item->slug),
+        'video' => route('video.show', [$item->uuid, $item->slug]),
+        default => '#',
+    };
+};
+
+$labelForContent = function ($item) {
+    return match ($item->content_group) {
+        'tv' => 'Live TV',
+        'radio' => 'Radio',
+        'podcast' => 'Podcast',
+        'video' => 'Video',
+        default => 'Nowstream',
+    };
+};
+
+$imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/images/default.png');
+
+$quickLinks = collect([
+    ['title' => 'Live TV', 'meta' => 'Top channels in ' . ($country_name ?? 'your region'), 'route' => route('tvs')],
+    ['title' => 'Radio', 'meta' => 'Streaming stations and talk audio', 'route' => route('radios')],
+    ['title' => 'Videos', 'meta' => 'Fresh clips, replays, and on-demand', 'route' => route('videos')],
+    ['title' => 'Podcasts', 'meta' => 'Interviews, stories, and series', 'route' => route('podcasts')],
+    ['title' => 'Events', 'meta' => 'Major live nights and ticketed streams', 'route' => route('events')],
+]);
+@endphp
+
 <style>
     body {
-        background-color: #11181f !important;
-    }
-</style>
-@section('content')
-
-<div class="hero-area">
-    @foreach($events->take(1) as $event)
-    <!-- banner-area -->
-    <section class="banner-area banner-bg" data-background="https://img.freepik.com/premium-photo/group-friends-sitting-dimly-lit-movie-theater-laughing-enjoying-film_1351262-11436.jpg?ga=GA1.1.724749049.1771917239&semt=ais_user_personalization&w=740&q=80">
-        <div class="container custom-container">
-            <div class="row">
-                <div class="col-xl-5 col-lg-8">
-                    <div class="banner-content">
-                        <h6 class="sub-title wow fadeInUp" data-wow-delay=".2s" data-wow-duration="1.8s">Streamer</h6>
-                        @php
-                        $words = preg_split('/\s+/', trim(ucfirst($event->event_name)));
-                        $half = (int) ceil(count($words) / 2);
-
-                        $firstHalf = implode(' ', array_slice($words, 0, $half));
-                        $secondHalf = implode(' ', array_slice($words, $half));
-                        @endphp
-
-                        <h2 class="title wow fadeInUp" data-wow-delay=".4s" data-wow-duration="1.8s">
-                            {{ $firstHalf }}
-                            <span>{{ $secondHalf }}</span>
-                        </h2>
-                        <div class="banner-meta wow fadeInUp" data-wow-delay=".6s" data-wow-duration="1.8s">
-                            <ul>
-                                <li class="quality">
-                                    <span>Pg 18</span>
-                                    <span>hd</span>
-                                </li>
-                                <li class="category">
-                                    <a href="#">Comedy,</a>
-                                    <a href="#">Entertainment</a>
-                                </li>
-                                <li class="release-time">
-                                    <span><i class="far fa-calendar-alt"></i> 2021</span>
-                                    <span><i class="far fa-clock"></i> 128 min</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="form-group w-100 d-none">
-                            @if (session('error'))
-                            <div class="alert alert-danger mt-4">
-                                {{ session('error') }}
-                            </div>
-                            @endif
-                            <h3 class="text-light mb-3">
-                            </h3>
-                            <form action="#" method="POST" class="newsletter-form">
-                                @csrf
-                                <div class="input-group mw-500">
-                                    <input type="text" class="" name="stream_token"
-                                        placeholder="Enter Token or Phone Number" aria-label="Stream token"
-                                        aria-describedby="button-addon2">
-                                    <input type="hidden" name="event_id" value="{{$event->uuid}}">
-                                    <button class="btn" type="submit" id="button-addon2"><i class="fas fa-play"></i>
-                                        Watch Now</button>
-                                </div>
-                            </form>
-                            <p class="w-100 text-left text-light mt-2 mb-0">Already Bought? Enter Stream Token
-                                Or Phone Number
-                                To Watch.
-                            </p>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- TV Genres -->
-            <div class="ucm-nav-wrap">
-                <ul class="nav nav-tabs" id="genreTabs" role="tablist">
-                    @foreach($genres->filter()->unique() as $genre)
-                    @php
-                    $slug = Str::slug($genre);
-                    $label = ucfirst(trim($genre));
-                    @endphp
-                    @if(!empty($slug))
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" href="{{ route('genre.tvs', ['genre' => $slug]) }}">
-                            {{ $label }}
-                        </a>
-                    </li>
-                    @endif
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    </section>
-    <!-- banner-area-end -->
-
-    @endforeach
-</div>
-
-
-<section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="episode-top-wrap">
-            <div class="section-title">
-                <span class="sub-title">Trending Events</span>
-                <h2 class="title">Trending Events</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="3500" data-desktop="5" data-tablet="3"
-            data-mobile="2">
-
-            <div class="pcar-track">
-                @foreach($topevents as $event)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.events')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- top-rated-movie -->
-<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="row align-items-end mb-30">
-            <div class="col-lg-4">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">TOP Tvs in {{ $country_name ?? 'Other Countries' }}</span>
-                    <h2 class="title">Live Tvs</h2>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="ucm-nav-wrap">
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        @foreach($categories as $category)
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab"
-                                href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}"
-                                aria-selected="false">
-                                {{ ucfirst($category->name) }}
-                            </a>
-                        </li>
-                        @endforeach
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
-
-            <div class="pcar-track">
-                @foreach($toptvs as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    <div class="container mb-30 mt-5">
-        <div class="episode-top-wrap">
-            <div class="section-title"> <span class="sub-title">Trending Radios</span>
-                <h2 class="title">Trending Radios</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="false" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
-
-            <div class="pcar-track">
-                @foreach($topradios as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-<!-- top-rated-movie-end -->
-@if($videos->count() > 0)
-<!-- top-rated-movie -->
-<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="row align-items-end mb-30">
-            <div class="col-lg-6">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">TOP VIDEOS</span>
-                    <h2 class="title">Trending Videos</h2>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <!-- <div class="ucm-nav-wrap">
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="tvShow-tab" data-toggle="tab" href="#tvShow" role="tab" aria-controls="tvShow" aria-selected="true">TV Shows</a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="movies-tab" data-toggle="tab" href="#movies" role="tab" aria-controls="movies" aria-selected="false">Movies</a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="anime-tab" data-toggle="tab" href="#anime" role="tab" aria-controls="anime" aria-selected="false">Anime</a>
-                                    </li>
-                                </ul>
-                            </div> -->
-            </div>
-        </div>
-        <div class="row tr-movie-active">
-            <style>
-                .tr-movie-bg {
-                    background-position: top center;
-                    background-size: cover;
-                    padding: 40px 0 60px;
-                }
-            </style>
-            @foreach($top_videos as $video)
-            <div class="col-xl-4 col-lg-4 col-sm-6 grid-item grid-sizer">
-                <div class="movie-item mb-4">
-                    <div class="movie-poster mb-2">
-                        <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
-                            @php
-                            $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
-                            @endphp
-                            <img src="{{ $thumbnail }}"
-                                alt="{{ $video->title }}"
-                                class="w-100 d-block"
-                                style="object-fit: cover; aspect-ratio: 16/9;"
-                                loading="lazy">
-                            <div class="play fs-40">
-                                <i class="fadeIn animated bx bx-play-circle"></i>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="movie-content">
-                        <div class="bottom pt-2" style="position: relative;">
-                            <!-- Display number of views -->
-
-                            <h5 class="title mt-0 mb-3">
-                                <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}">
-                                    {{ucfirst($video->title)}}
-                                </a>
-                            </h5>
-                            <ul>
-                                <li><span class="quality">hd</span></li>
-                                <li>
-                                    <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
-                                    <span class="views ml-2">
-                                        <i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</section>
-<!-- top-rated-movie-end -->
-@endif
-<!-- top-rated-movie -->
-<section class="top-rated-movie tr-movie-bg" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
-    <div class="container">
-        <div class="episode-top-wrap">
-            <div class="section-title"> <span class="sub-title">Trending Podcasts</span>
-                <h2 class="title">Trending Podcasts</h2>
-            </div>
-        </div>
-    </div>
-
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
-
-            <div class="pcar-track">
-                @foreach($podcasts as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="row align-items-end mb-30 mt-5">
-            <div class="col-lg-6">
-                <div class="section-title text-center text-lg-left">
-                    <span class="sub-title">New Podcasts</span>
-                    <h2 class="title">Latest Podcasts</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="pcar-wrapper">
-
-        <!-- Outside container overlays -->
-        <div class="pcar-overlay pcar-overlay-left"></div>
-        <div class="pcar-overlay pcar-overlay-right"></div>
-
-        <div class="pcar" data-autoplay="true" data-interval="6000" data-desktop="11" data-tablet="3" data-mobile="2">
-
-            <div class="pcar-track">
-                @foreach($topPodcasts as $item)
-                <div class="pcar-item">
-                    @include('Frontend.includes.components.cards.slider-card')
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
-    </div>
-</section>
-<!-- top-rated-movie-end -->
-@endsection
-@section('header')
-
-<style>
-    .card.bg-dark {
-        object-position: top;
+        background:
+            radial-gradient(circle at top, rgba(20, 93, 150, 0.35), transparent 32%),
+            linear-gradient(180deg, #06111d 0%, #08131b 28%, #050b11 100%) !important;
+        color: #f6f8fb;
     }
 
-    .card-img-overlay {
-        padding: 2rem 0 3rem;
-        z-index: 9;
-
-        background: linear-gradient(180deg, transparent, #00000014, #0000007a, #000000b3, #000000cc);
+    .clean-home {
+        padding: 28px 0 72px;
     }
 
-    a,
-    button {
-        cursor: pointer;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        border: none;
-        outline: none;
-        background: none;
+    .clean-home .container {
+        max-width: 1380px;
     }
 
-    .bottom {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        background: linear-gradient(1deg, #0b0908, #231c1900);
-        padding-left: 19px;
-        left: 0;
-        padding: 13px;
-        color: #69df04;
-    }
-
-    html.dark-theme .form-control {
-        background-color: #3b3b3bc2;
-        border: 1px solid rgb(55 52 51) !important;
-    }
-
-    .section {
-        margin: 0 auto;
-        padding: 5rem 0 2rem;
-    }
-
-    .relative {
+    .clean-hero {
         position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 30px;
+        min-height: 620px;
+        background-color: #09131d;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
     }
 
-    .black-bg {
-        background: linear-gradient(90deg, #177373, #30c5ca, #30c5ca, #30c5ca);
-        padding: 0;
+    .clean-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(90deg, rgba(5, 10, 15, 0.96) 0%, rgba(5, 10, 15, 0.8) 34%, rgba(5, 10, 15, 0.24) 68%, rgba(5, 10, 15, 0.72) 100%),
+            linear-gradient(180deg, rgba(8, 17, 28, 0.15) 0%, rgba(8, 17, 28, 0.78) 100%);
+        z-index: 1;
     }
 
-    .banner-column {
-        background: linear-gradient(90deg, #0000001c, #00000000, #00000000, #00000000, #00000000);
-        padding: 0;
+    .clean-hero__bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transform: scale(1.04);
+        filter: saturate(1.04);
     }
 
-    html.dark-theme .form-control {
-        background-color: #3b3b3bc2;
-        border: 1px solid rgb(0 0 0 / 34%);
+    .clean-hero__content,
+    .clean-hero__aside {
+        position: relative;
+        z-index: 2;
     }
 
-    .paragraph {
-        font-family: inherit;
-        text-wrap: balance;
-        color: white;
+    .clean-hero__content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        min-height: 620px;
+        padding: 56px;
     }
 
-    .heading-xl {
-        font-family: inherit;
-        font-size: clamp(2.648rem, 6vw, 3.241rem);
+    .clean-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+        color: #ffd965;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .clean-eyebrow::before {
+        content: "";
+        width: 36px;
+        height: 2px;
+        background: linear-gradient(90deg, #ffd965, rgba(255, 217, 101, 0.2));
+    }
+
+    .clean-hero__title {
+        max-width: 640px;
+        margin: 0;
+        font-size: clamp(2.6rem, 4vw, 4.7rem);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        color: #ffffff;
+        text-shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
+    }
+
+    .clean-hero__title span {
+        color: #8fd7ff;
+    }
+
+    .clean-hero__description {
+        max-width: 560px;
+        margin: 18px 0 0;
+        color: rgba(236, 242, 249, 0.84);
+        font-size: 15px;
+        line-height: 1.75;
+    }
+
+    .clean-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+    }
+
+    .clean-meta span,
+    .clean-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 9px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        color: #f8fbff;
+        font-size: 12px;
         font-weight: 600;
-        line-height: 1.15;
-        letter-spacing: -1px;
-        color: white;
-        text-shadow: 3px 3px 12px #1f09067d;
+        backdrop-filter: blur(16px);
     }
 
-    .heading-lg {
-        font-family: inherit;
-        font-size: clamp(2.179rem, 5vw, 3.176rem);
-        font-weight: 600;
-        line-height: 1.15;
-        letter-spacing: -1px;
-        color: white;
+    .clean-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 28px;
     }
 
-    .heading-md {
-        font-family: inherit;
-        font-size: clamp(1.794rem, 4vw, 2.379rem);
-        font-weight: 600;
-        line-height: 1.25;
-        letter-spacing: -1px;
-        color: white;
-    }
-
-    .btn {
-        display: inline-block;
-        font-family: inherit;
-        font-size: 0.95rem;
-        font-weight: 500;
-        line-height: 1.5;
-        text-align: center;
-        vertical-align: middle;
-        white-space: nowrap;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        outline: none;
-        border: none;
-        border-radius: 0.25rem;
-        text-transform: unset;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .btn-inline {
+    .clean-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        -moz-column-gap: 0.5rem;
-        column-gap: 0.5rem;
-    }
-
-    .btn-darken {
-        padding: 0.75rem 2rem;
-        color: var(--color-white-100);
-        background-color: var(--color-black-200);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .darkmode .btn-darken {
-        background-color: var(--color-blue-500);
-    }
-
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        z-index: 100;
-        width: 100%;
-        height: auto;
-        margin: 0 auto;
-        background-color: var(--color-white-100);
-        box-shadow: var(--shadow-medium);
-    }
-
-    .darkmode .header {
-        background-color: var(--color-black-400);
-    }
-
-    .navbar {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        align-content: center;
-        justify-content: space-between;
-        width: 100%;
-        height: 4rem;
-        margin: 0 auto;
-    }
-
-    .brand {
-        font-family: inherit;
-        font-size: 1.6rem;
-        font-weight: 600;
-        line-height: 1.25;
-        margin-right: auto;
-        letter-spacing: -1px;
+        min-height: 48px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
-        color: var(--color-blue-500);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
     }
 
-    @media only screen and (max-width: 992px) {
-        .heading-xl {
-            font-size: 25px;
-            margin-bottom: 0;
-        }
-
-        .btn-darken {
-            padding: 0 7px;
-        }
-
-        .banner-section,
-        .banner-column {
-            margin-top: 0 !important;
-            padding-top: 0 !important;
-        }
-
-        .banner-column input {
-            height: 40px;
-        }
-
-        .banner-column p {
-            font-size: 14px;
-            font-weight: 400;
-        }
-
-        .mw-500 {
-            max-width: 327px;
-        }
+    .clean-btn:hover {
+        transform: translateY(-2px);
     }
 
-    .banner-section {
-        background-size: cover;
-        background-position: center;
-        background-image: url({{asset('/landing-assets/images/somalibg2.png')
-    }
-    }) !important;
+    .clean-btn--primary {
+        background: linear-gradient(135deg, #ffd24f, #f7a400);
+        color: #07111a;
+        box-shadow: 0 16px 28px rgba(247, 164, 0, 0.26);
     }
 
-    .burger {
-        position: relative;
-        display: block;
-        cursor: pointer;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        order: -1;
-        z-index: 12;
-        width: 1.6rem;
-        height: 1.15rem;
-        margin-right: 1.25rem;
-        border: none;
-        outline: none;
-        background: none;
-        visibility: visible;
-        transform: rotate(0deg);
-        transition: 0.35s ease;
+    .clean-btn--ghost {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(7, 16, 24, 0.42);
+        color: #f4f7fb;
     }
 
-    @media only screen and (min-width: 48rem) {
-        .burger {
-            display: none;
-            visibility: hidden;
-        }
-    }
-
-    .burger-line {
-        position: absolute;
-        display: block;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        border: none;
-        outline: none;
-        opacity: 1;
-        border-radius: 1rem;
-        transform: rotate(0deg);
-        background-color: var(--color-black-300);
-        transition: 0.25s ease-in-out;
-    }
-
-    .darkmode .burger-line {
-        background-color: var(--color-white-100);
-    }
-
-    .burger-line:nth-child(1) {
-        top: 0px;
-    }
-
-    .burger-line:nth-child(2) {
-        top: 0.5rem;
-        width: 70%;
-    }
-
-    .burger-line:nth-child(3) {
-        top: 1rem;
-    }
-
-    .burger.is-active .burger-line:nth-child(1) {
-        top: 0.5rem;
-        transform: rotate(135deg);
-    }
-
-    .burger.is-active .burger-line:nth-child(2) {
-        opacity: 0;
-        visibility: hidden;
-    }
-
-    .burger.is-active .burger-line:nth-child(3) {
-        top: 0.5rem;
-        transform: rotate(-135deg);
-    }
-
-    .switch {
-        position: relative;
-        display: block;
-        cursor: pointer;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        z-index: 9;
-        margin-left: 5rem;
-        margin-right: 0.5rem;
-    }
-
-    .switch-light,
-    .switch-dark {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform-origin: center;
-        transform: translate(-50%, -50%);
-        transition: all 0.3s ease-in;
-    }
-
-    .banner-column {
-        position: relative;
-        display: grid;
-        align-items: center;
-        row-gap: 2rem;
-    }
-
-    @media only screen and (min-width: 48rem) {
-        .banner-column {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            justify-content: center;
-            margin-top: 3rem;
-        }
-    }
-
-    @media only screen and (min-width: 64rem) {
-        .banner-column {
-            grid-template-columns: 1fr -webkit-max-content;
-            grid-template-columns: 1fr max-content;
-            -moz-column-gap: 2rem;
-            column-gap: 2rem;
-        }
-    }
-
-    .banner-image {
-        display: block;
-        max-width: 45rem;
-        height: auto;
-        -o-object-fit: cover;
-        object-fit: cover;
-        justify-self: center;
-    }
-
-    @media only screen and (min-width: 48rem) {
-        .banner-image {
-            order: 1;
-            max-width: 45rem;
-            height: auto;
-        }
-    }
-
-    @media only screen and (min-width: 64rem) {
-        .banner-image {
-            max-width: 38rem;
-            height: auto;
-        }
-    }
-
-    .banner-inner {
+    .clean-hero__aside {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        row-gap: 1.5rem;
+        align-items: flex-end;
+        height: 100%;
+        padding: 32px 32px 40px 0;
     }
 
-    @media only screen and (max-width: 1024px) {
-        .heading-xl {
-            font-size: 35px;
-            margin-bottom: 0;
+    .clean-panel {
+        width: 100%;
+        max-width: 340px;
+        margin-left: auto;
+        padding: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        background: rgba(8, 17, 28, 0.8);
+        backdrop-filter: blur(18px);
+    }
+
+    .clean-panel__title {
+        margin: 0 0 18px;
+        color: #ffffff;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .clean-live-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .clean-live-item {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .clean-live-item img {
+        width: 58px;
+        height: 58px;
+        border-radius: 14px;
+        object-fit: cover;
+    }
+
+    .clean-live-item strong,
+    .clean-shelf-card__title,
+    .clean-video-card__title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .clean-live-item small,
+    .clean-shelf-card__meta,
+    .clean-section__sub,
+    .clean-link-card__meta,
+    .clean-video-card__meta {
+        color: rgba(231, 238, 247, 0.68);
+    }
+
+    .clean-link-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 22px;
+    }
+
+    .clean-link-card {
+        min-height: 108px;
+        padding: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(15, 31, 45, 0.9), rgba(8, 17, 28, 0.92));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        transition: transform 0.22s ease, border-color 0.22s ease;
+    }
+
+    .clean-link-card:hover,
+    .clean-shelf-card:hover,
+    .clean-video-card:hover,
+    .clean-genre-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(143, 215, 255, 0.35);
+    }
+
+    .clean-link-card__title {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .clean-link-card__meta {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .clean-section {
+        margin-top: 38px;
+    }
+
+    .clean-section__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .clean-section__eyebrow {
+        margin: 0 0 4px;
+        color: #ffd965;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .clean-section__title {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.35rem, 2vw, 2rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+    }
+
+    .clean-section__sub {
+        margin: 6px 0 0;
+        font-size: 14px;
+    }
+
+    .clean-section__link {
+        color: #f2f6fb;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .clean-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(190px, 190px);
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: thin;
+    }
+
+    .clean-track--event {
+        grid-auto-columns: minmax(250px, 250px);
+    }
+
+    .clean-track--video {
+        grid-auto-columns: minmax(320px, 320px);
+    }
+
+    .clean-shelf-card,
+    .clean-video-card,
+    .clean-genre-card {
+        display: block;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(12, 24, 36, 0.94), rgba(7, 15, 24, 0.98));
+        overflow: hidden;
+        transition: transform 0.22s ease, border-color 0.22s ease;
+    }
+
+    .clean-shelf-card__media,
+    .clean-video-card__media {
+        position: relative;
+        overflow: hidden;
+        background: #0d1822;
+    }
+
+    .clean-shelf-card__media img,
+    .clean-video-card__media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .clean-shelf-card__media {
+        aspect-ratio: 0.84;
+    }
+
+    .clean-track--event .clean-shelf-card__media {
+        aspect-ratio: 0.72;
+    }
+
+    .clean-video-card__media {
+        aspect-ratio: 16 / 9;
+    }
+
+    .clean-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 28px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(8, 17, 28, 0.82);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .clean-badge::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #ff5757;
+        box-shadow: 0 0 0 5px rgba(255, 87, 87, 0.14);
+    }
+
+    .clean-shelf-card__body,
+    .clean-video-card__body {
+        padding: 16px;
+    }
+
+    .clean-shelf-card__title,
+    .clean-video-card__title {
+        margin: 0 0 8px;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .clean-shelf-card__meta,
+    .clean-video-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .clean-genre-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .clean-genre-card {
+        padding: 20px;
+    }
+
+    .clean-genre-card__label {
+        margin: 0;
+        color: #ffffff;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .clean-genre-card__meta {
+        margin: 8px 0 0;
+        color: rgba(231, 238, 247, 0.68);
+        font-size: 13px;
+    }
+
+    @media (max-width: 1199px) {
+        .clean-hero {
+            min-height: auto;
         }
 
-        .btn-darken {
-            padding: 0 7px;
+        .clean-hero__content {
+            min-height: auto;
+            padding: 42px 34px 24px;
         }
 
-        .banner-image {
-            max-width: 36rem;
-            height: auto;
+        .clean-hero__aside {
+            padding: 0 34px 34px;
         }
 
-        .banner-column input {
-            height: 40px;
+        .clean-link-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
-        .banner-column p {
-            font-size: 14px;
-            font-weight: 400;
+        .clean-genre-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 
-    @media screen and (max-width: 1244px) {
-        .heading-xl {
-            font-size: 33px;
-            margin-bottom: 0;
+    @media (max-width: 767px) {
+        .clean-home {
+            padding-top: 16px;
         }
 
-        .btn-darken {
-            padding: 0 7px;
-        }
-
-        .banner-image {
-            max-width: 36rem;
-            height: auto;
-        }
-
-        .banner-column input {
-            height: 40px;
-        }
-
-        .banner-column p {
-            font-size: 14px;
-            font-weight: 400;
-        }
-    }
-
-    @media screen and (max-width: 768px) {
-        .mw-500 {
-            max-width: 500px;
-        }
-    }
-
-
-
-    @media (min-width: 768px) {
-        .card-img-overlay form {
-            max-width: 79%;
-            margin: auto;
-            background: #a4a4a44a;
-            padding: 30px;
+        .clean-hero {
             border-radius: 24px;
-            border: 1px solid #6e6e6e;
         }
 
-        .card-img-overlay form .input-group {
-            max-width: 56%;
-            margin: auto;
+        .clean-hero__content {
+            padding: 28px 22px 18px;
         }
 
-        html.dark-theme .form-control {
-            background-color: #00000038;
-            border: 1px solid rgb(0 0 0 / 34%);
-            color: red;
-        }
-    }
-
-    @media (min-width: 768px) and (max-width: 992px) {
-        .card.bg-dark img {
-            min-height: 430px;
-            object-fit: cover;
+        .clean-hero__aside {
+            padding: 0 22px 22px;
         }
 
-        .card-img-overlay form {
-            max-width: 91%;
-            padding: 25px;
-            border-radius: 20px;
+        .clean-panel {
+            max-width: none;
         }
 
-        .card-img-overlay form .input-group {
-            max-width: 75%;
+        .clean-link-grid,
+        .clean-genre-grid {
+            grid-template-columns: 1fr;
         }
 
-        .heading-xl {
-            font-size: 46px;
-            margin-bottom: 0;
+        .clean-section__head {
+            align-items: flex-start;
+            flex-direction: column;
         }
 
-        .card-img-overlay form {
-            max-width: 91%;
-            padding: 25px;
-            border-radius: 20px;
-            margin-bottom: 25px !important;
+        .clean-track {
+            grid-auto-columns: minmax(164px, 164px);
         }
-    }
 
-    .btn-darken {
-        background: black;
-        color: white;
+        .clean-track--event {
+            grid-auto-columns: minmax(210px, 210px);
+        }
+
+        .clean-track--video {
+            grid-auto-columns: minmax(270px, 270px);
+        }
     }
 </style>
 
-@endsection
-@section('footer')
-<script>
-    const navbarMenu = document.getElementById("menu");
-    const burgerMenu = document.getElementById("burger");
-    const headerMenu = document.getElementById("header");
-    const overlayMenu = document.querySelector(".overlay");
+@section('content')
+<div class="clean-home">
+    <div class="container">
+        <section class="clean-hero">
+            <div class="clean-hero__bg" style="background-image: url('{{ $featuredEventImage }}');"></div>
+            <div class="row no-gutters">
+                <div class="col-xl-8">
+                    <div class="clean-hero__content">
+                        <div class="clean-eyebrow">Nowstream Home</div>
 
-    // Open Close Navbar Menu on Click Burger
-    if (burgerMenu && navbarMenu) {
-        burgerMenu.addEventListener("click", () => {
-            burgerMenu.classList.toggle("is-active");
-            navbarMenu.classList.toggle("is-active");
-        });
-    }
+                        @if($featuredEvent)
+                            @php
+                                $titleWords = preg_split('/\s+/', trim($featuredEvent->event_name));
+                                $splitPoint = (int) ceil(count($titleWords) / 2);
+                                $titleStart = implode(' ', array_slice($titleWords, 0, $splitPoint));
+                                $titleEnd = implode(' ', array_slice($titleWords, $splitPoint));
+                            @endphp
+                            <h1 class="clean-hero__title">
+                                {{ $titleStart }}
+                                @if($titleEnd)
+                                    <span>{{ $titleEnd }}</span>
+                                @endif
+                            </h1>
 
-    // Close Navbar Menu on Click Links
-    document.querySelectorAll(".menu-link").forEach((link) => {
-        link.addEventListener("click", () => {
-            burgerMenu.classList.remove("is-active");
-            navbarMenu.classList.remove("is-active");
-        });
-    });
+                            <p class="clean-hero__description">{{ $featuredDescription }}</p>
 
-    // Fixed Navbar Menu on Window Resize
-    window.addEventListener("resize", () => {
-        if (window.innerWidth >= 992) {
-            if (navbarMenu.classList.contains("is-active")) {
-                navbarMenu.classList.remove("is-active");
-                overlayMenu.classList.remove("is-active");
-            }
-        }
-    });
+                            <div class="clean-meta">
+                                <span>Featured event</span>
+                                @if($featuredEvent->start_time)
+                                    <span>{{ Carbon::parse($featuredEvent->start_time)->format('M d, Y') }}</span>
+                                @endif
+                                @if($featuredEvent->venue)
+                                    <span>{{ $featuredEvent->venue }}</span>
+                                @endif
+                                <span>{{ $topevents->count() }} event picks</span>
+                            </div>
 
-    // Dark and Light Mode on Switch Click
-    document.addEventListener("DOMContentLoaded", () => {
-        const darkSwitch = document.getElementById("switch");
+                            <div class="clean-actions">
+                                <a href="{{ route('event.show', $featuredEvent->slug) }}" class="clean-btn clean-btn--primary">Watch Event</a>
+                                <a href="{{ route('tvs') }}" class="clean-btn clean-btn--ghost">Browse Live TV</a>
+                            </div>
+                        @else
+                            <h1 class="clean-hero__title">Live TV, radio, <span>events, and video</span></h1>
+                            <p class="clean-hero__description">{{ $featuredDescription }}</p>
+                            <div class="clean-actions">
+                                <a href="{{ route('tvs') }}" class="clean-btn clean-btn--primary">Browse Live TV</a>
+                                <a href="{{ route('videos') }}" class="clean-btn clean-btn--ghost">Watch Videos</a>
+                            </div>
+                        @endif
 
-        darkSwitch.addEventListener("click", () => {
-            document.documentElement.classList.toggle("darkmode");
-            document.body.classList.toggle("darkmode");
-        });
-    });
-</script>
+                        @if($heroGenres->isNotEmpty())
+                            <div class="clean-meta">
+                                @foreach($heroGenres as $genre)
+                                    <a href="{{ route('genre.tvs', ['genre' => Str::slug($genre)]) }}" class="clean-chip">{{ ucfirst($genre) }}</a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="clean-hero__aside">
+                        <div class="clean-panel">
+                            <h2 class="clean-panel__title">Live Now in {{ $country_name ?? 'your region' }}</h2>
+
+                            <div class="clean-live-list">
+                                @forelse($heroLiveChannels as $item)
+                                    <a href="{{ route('tv.show', $item->slug) }}" class="clean-live-item">
+                                        <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                                        <div>
+                                            <strong>{{ ucfirst($item->title) }}</strong>
+                                            <small>Live TV</small>
+                                        </div>
+                                    </a>
+                                @empty
+                                    <div class="clean-live-item">
+                                        <img src="{{ asset('frontend-assets/images/default.png') }}" alt="Nowstream" loading="lazy">
+                                        <div>
+                                            <strong>Content is loading</strong>
+                                            <small>Check back for fresh live picks</small>
+                                        </div>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="clean-link-grid">
+            @foreach($quickLinks as $link)
+                <a href="{{ $link['route'] }}" class="clean-link-card">
+                    <h2 class="clean-link-card__title">{{ $link['title'] }}</h2>
+                    <p class="clean-link-card__meta">{{ $link['meta'] }}</p>
+                </a>
+            @endforeach
+        </div>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Pay Per View</p>
+                    <h2 class="clean-section__title">Trending Events</h2>
+                    <p class="clean-section__sub">The biggest live nights, all in one clean row.</p>
+                </div>
+                <a href="{{ route('events') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track clean-track--event">
+                @foreach($eventShelf as $event)
+                    @php
+                        $eventImage = $event->event_image
+                            ? Storage::disk(config('filesystems.default'))->url($event->event_image)
+                            : asset('frontend-assets/images/default.png');
+                        $ticket = optional($event->eventRates)->sortBy('price')->first();
+                    @endphp
+                    <a href="{{ route('event.show', $event->slug) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $eventImage }}" alt="{{ $event->event_name }}" loading="lazy">
+                            <span class="clean-badge">Live</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ $event->event_name }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                @if($event->start_time)
+                                    <span>{{ Carbon::parse($event->start_time)->format('M d') }}</span>
+                                @endif
+                                @if($event->venue)
+                                    <span>{{ $event->venue }}</span>
+                                @endif
+                                <span>{{ $ticket ? 'From KES ' . number_format($ticket->price) : 'Free' }}</span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        @if($videoFeatureShelf->isNotEmpty())
+            <section class="clean-section">
+                <div class="clean-section__head">
+                    <div>
+                        <p class="clean-section__eyebrow">Watch Now</p>
+                        <h2 class="clean-section__title">Trending Videos</h2>
+                        <p class="clean-section__sub">A sharper, lighter presentation for your on-demand highlights.</p>
+                    </div>
+                    <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+                </div>
+
+                <div class="clean-track clean-track--video">
+                    @foreach($videoFeatureShelf as $video)
+                        <a href="{{ route('video.show', [$video->uuid, $video->slug]) }}" class="clean-video-card">
+                            <div class="clean-video-card__media">
+                                <img src="{{ $imageForContent($video) }}" alt="{{ $video->title }}" loading="lazy">
+                                <span class="clean-badge">{{ $labelForContent($video) }}</span>
+                            </div>
+                            <div class="clean-video-card__body">
+                                <h3 class="clean-video-card__title">{{ ucfirst($video->title) }}</h3>
+                                <div class="clean-video-card__meta">
+                                    <span>{{ number_format($video->views ?? 0) }} views</span>
+                                    @if($video->duration)
+                                        <span>{{ $video->duration }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Country Picks</p>
+                    <h2 class="clean-section__title">Top TV in {{ $country_name ?? 'your region' }}</h2>
+                    <p class="clean-section__sub">Fast access to the channels people are already watching.</p>
+                </div>
+                <a href="{{ route('tvs') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track">
+                @foreach($tvShelf as $item)
+                    <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <span class="clean-badge">Live</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ ucfirst($item->title) }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                <span>{{ $labelForContent($item) }}</span>
+                                @if($item->country)
+                                    <span>{{ $item->country }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Listen Live</p>
+                    <h2 class="clean-section__title">Trending Radios</h2>
+                    <p class="clean-section__sub">Live audio stations presented with the same visual order as video.</p>
+                </div>
+                <a href="{{ route('radios') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track">
+                @foreach($radioShelf as $item)
+                    <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <span class="clean-badge">{{ $labelForContent($item) }}</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ ucfirst($item->title) }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                @if($item->country)
+                                    <span>{{ $item->country }}</span>
+                                @endif
+                                <span>Stream ready</span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Fresh Drops</p>
+                    <h2 class="clean-section__title">Latest Videos</h2>
+                    <p class="clean-section__sub">Recently added clips and uploads, without the heavy old homepage chrome.</p>
+                </div>
+                <a href="{{ route('videos') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track">
+                @foreach($videoShelf as $item)
+                    <a href="{{ route('video.show', [$item->uuid, $item->slug]) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <span class="clean-badge">{{ $labelForContent($item) }}</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ ucfirst($item->title) }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                <span>{{ number_format($item->views ?? 0) }} views</span>
+                                @if($item->country)
+                                    <span>{{ $item->country }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Explore</p>
+                    <h2 class="clean-section__title">Browse By Genre</h2>
+                    <p class="clean-section__sub">A cleaner way into the long tail of your TV catalog.</p>
+                </div>
+            </div>
+
+            <div class="clean-genre-grid">
+                @foreach($heroGenres as $genre)
+                    <a href="{{ route('genre.tvs', ['genre' => Str::slug($genre)]) }}" class="clean-genre-card">
+                        <h3 class="clean-genre-card__label">{{ ucfirst($genre) }}</h3>
+                        <p class="clean-genre-card__meta">Open TV channels tagged under this genre.</p>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Listen Later</p>
+                    <h2 class="clean-section__title">Trending Podcasts</h2>
+                    <p class="clean-section__sub">Long-form listening gets its own cleaner shelf instead of feeling buried.</p>
+                </div>
+                <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track">
+                @foreach($podcastShelf as $item)
+                    <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <span class="clean-badge">{{ $labelForContent($item) }}</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ ucfirst($item->title) }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                @if($item->author)
+                                    <span>{{ $item->author }}</span>
+                                @endif
+                                <span>On demand</span>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+
+        <section class="clean-section">
+            <div class="clean-section__head">
+                <div>
+                    <p class="clean-section__eyebrow">Just Added</p>
+                    <h2 class="clean-section__title">Latest Podcasts</h2>
+                    <p class="clean-section__sub">Recent podcast additions with the same shelf rhythm as the rest of the home.</p>
+                </div>
+                <a href="{{ route('podcasts') }}" class="clean-section__link">View All</a>
+            </div>
+
+            <div class="clean-track">
+                @foreach($latestPodcastShelf as $item)
+                    <a href="{{ $routeForContent($item) }}" class="clean-shelf-card">
+                        <div class="clean-shelf-card__media">
+                            <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy">
+                            <span class="clean-badge">{{ $labelForContent($item) }}</span>
+                        </div>
+                        <div class="clean-shelf-card__body">
+                            <h3 class="clean-shelf-card__title">{{ ucfirst($item->title) }}</h3>
+                            <div class="clean-shelf-card__meta">
+                                <span>{{ number_format($item->views ?? 0) }} listens</span>
+                                @if($item->country)
+                                    <span>{{ $item->country }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    </div>
+</div>
 @endsection
