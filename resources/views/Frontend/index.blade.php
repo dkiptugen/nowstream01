@@ -5,24 +5,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-$heroEvents = $topevents->take(3)->values();
-
-if ($heroEvents->isEmpty() && $events->isNotEmpty()) {
-    $heroEvents = $events->take(3)->values();
-}
-
-$featuredEvent = $heroEvents->first();
-
-$heroGenres = $genres->filter()->unique()->take(8);
-$heroLiveChannels = $toptvs->take(4);
-$eventShelf = $topevents->take(8);
-$tvShelf = $toptvs->take(12);
-$radioShelf = $topradios->take(12);
-$videoFeatureShelf = $top_videos->take(4);
-$videoShelf = $videos->take(8);
-$podcastShelf = $podcasts->take(12);
-$latestPodcastShelf = $topPodcasts->take(12);
-
 $routeForContent = function ($item) {
     return match ($item->content_group) {
         'tv' => route('tv.show', $item->slug),
@@ -44,14 +26,6 @@ $labelForContent = function ($item) {
 };
 
 $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/images/default.png');
-
-$quickLinks = collect([
-    ['title' => 'Live TV', 'meta' => 'Top channels in ' . ($country_name ?? 'your region'), 'route' => route('tvs')],
-    ['title' => 'Radio', 'meta' => 'Streaming stations and talk audio', 'route' => route('radios')],
-    ['title' => 'Videos', 'meta' => 'Fresh clips, replays, and on-demand', 'route' => route('videos')],
-    ['title' => 'Podcasts', 'meta' => 'Interviews, stories, and series', 'route' => route('podcasts')],
-    ['title' => 'Events', 'meta' => 'Major live nights and ticketed streams', 'route' => route('events')],
-]);
 @endphp
 
 <style>
