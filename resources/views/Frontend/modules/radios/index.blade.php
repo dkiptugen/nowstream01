@@ -70,12 +70,24 @@
                 </div>
             </div>
 
-            <div class="row tr-movie-active h-100" id="radio-container" style="position: relative; height:auto !important;">
+            <div
+                class="row tr-movie-active h-100"
+                id="radio-container"
+                data-next-page-url="{{ $radios->nextPageUrl() }}"
+                data-loading-label="Loading more radios..."
+                data-idle-label="More stations coming up"
+                data-complete-label="All radio stations loaded"
+                data-error-label="Could not load more radios right now"
+                style="position: relative; height:auto !important;"
+            >
                 @include('Frontend.includes.components.partials.radio-items', ['radios' => $radios])
             </div>
 
-            <div class="text-center my-4" id="loading" style="display:none;">
-                <span class="text-light">Loading more radios...</span>
+            <div class="text-center my-4 infinite-scroll-loader" id="radio-loading" @if(!$radios->hasMorePages()) hidden @endif>
+                <span class="infinite-scroll-dot" aria-hidden="true"></span>
+                <span class="infinite-scroll-copy" id="radio-loading-status">
+                    {{ $radios->hasMorePages() ? 'More stations coming up' : 'All radio stations loaded' }}
+                </span>
             </div>
 
         </div>
@@ -89,53 +101,50 @@
     .col-xl-2.col-lg-3.col-sm-6.grid-item{
         position: relative !important;
     }
+
+    .infinite-scroll-loader {
+        display: grid;
+        place-items: center;
+        gap: 12px;
+        min-height: 88px;
+    }
+
+    .infinite-scroll-loader[hidden] {
+        display: none !important;
+    }
+
+    .infinite-scroll-dot {
+        width: 42px;
+        height: 42px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-top-color: #ffd24f;
+        animation: infiniteScrollSpin 0.9s linear infinite;
+    }
+
+    .infinite-scroll-loader:not(.is-loading) .infinite-scroll-dot {
+        animation-play-state: paused;
+        opacity: 0.45;
+    }
+
+    .infinite-scroll-copy {
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    @keyframes infiniteScrollSpin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 @endsection
 @section('footer')
-
-
-<script>
-    let page = 1;
-    let loading = false;
-    let hasMore = true;
-
-    const container = document.getElementById('radio-container');
-    const loader = document.getElementById('loading');
-
-    window.addEventListener('scroll', () => {
-        if (loading || !hasMore) return;
-
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
-            loadMore();
-        }
-    });
-
-    function loadMore() {
-        loading = true;
-        loader.style.display = 'block';
-        page++;
-
-        fetch(`?page=${page}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.html) {
-                    container.insertAdjacentHTML('beforeend', data.html);
-                }
-
-                hasMore = data.hasMore;
-                loading = false;
-                loader.style.display = hasMore ? 'block' : 'none';
-            })
-            .catch(() => {
-                loading = false;
-                hasMore = false;
-                loader.style.display = 'none';
-            });
-    }
-</script>
-
+@include('Frontend.includes.components.partials.infinite-scroll', [
+    'containerId' => 'radio-container',
+    'loaderId' => 'radio-loading',
+    'statusId' => 'radio-loading-status',
+])
 @endsection

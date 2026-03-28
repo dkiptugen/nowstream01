@@ -344,55 +344,6 @@
     const player = new Plyr('#player');
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const darkModeMoonIcon = document.querySelector('.dark-mode-icon.moon');
-        const darkModeSunIcon = document.querySelector('.dark-mode-icon.sun');
-        const darkThemeClass = 'dark-theme';
-        const storageKey = 'theme';
-
-        // Function to apply the dark theme based on the value
-        function applyTheme(theme) {
-            if (theme === 'dark') {
-                document.documentElement.classList.add(darkThemeClass);
-                darkModeMoonIcon.style.display = 'none';
-                darkModeSunIcon.style.display = 'flex';
-            } else {
-                document.documentElement.classList.remove(darkThemeClass);
-                darkModeMoonIcon.style.display = 'flex';
-                darkModeSunIcon.style.display = 'none';
-            }
-        }
-
-        // Function to toggle the dark theme
-        function toggleDarkTheme() {
-            if (document.documentElement.classList.contains(darkThemeClass)) {
-                applyTheme('light');
-                localStorage.setItem(storageKey, 'light');
-            } else {
-                applyTheme('dark');
-                localStorage.setItem(storageKey, 'dark');
-            }
-        }
-
-        // Add event listener to the dark mode icons
-        darkModeMoonIcon.addEventListener('click', toggleDarkTheme);
-        darkModeSunIcon.addEventListener('click', toggleDarkTheme);
-
-        // Check the stored theme preference or the system preference
-        const storedTheme = localStorage.getItem(storageKey);
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (storedTheme) {
-            applyTheme(storedTheme);
-        } else if (systemPrefersDark) {
-            applyTheme('dark');
-        } else {
-            applyTheme('light');
-        }
-    });
-</script>
- 
-<script>
     document.addEventListener("DOMContentLoaded", function() {
         var subscribeButton = document.getElementById("subscribe-button");
         var unsubscribeButton = document.getElementById("unsubscribe-button");

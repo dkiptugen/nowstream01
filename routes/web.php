@@ -109,7 +109,6 @@ Route::middleware(['detectCountry'])->group(function ()
 
         Route::get('/search', [SearchController::class, 'search'])->name('search');
         Route::get('/shop', [MerchandiseController::class, 'index'])->name('shop.index');
-        Route::get('/shop/{product}', [MerchandiseController::class, 'show'])->whereNumber('product')->name('shop.show');
         // Route::post('/{commentableType}/{commentableId}/comment', [StreamVideoController::class, 'postComment'])->name('comment.post');
         Route::post(
             '/comment/post/{commentableType}/{commentableId}',
@@ -205,6 +204,7 @@ Route::middleware(['detectCountry'])->group(function ()
                 Route::get('dpo/{id}', [SubscriptionController::class, 'dpo'])->name('dpo');
                 Route::get('/continue', [WatchHistoryController::class, 'watchedContent'])->name('watch.content');
             });
+        Route::get('/shop/{product}', [MerchandiseController::class, 'show'])->whereNumber('product')->name('shop.show');
         Route::get('/event/{slug}', [EventController::class, 'show'])->name('event.show');
 
         // Content within a category (specific)

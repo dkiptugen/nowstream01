@@ -1,103 +1,132 @@
 @extends('Frontend.includes.layout')
 
+@section('header')
+@include('Frontend.modules.shop.partials.theme')
+@endsection
+
 @section('content')
-<div class="page-wrapper">
-    <div class="page-content">
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-5 mx-auto">
-                        <p>
-                            Enter your mobile number. You will receive an M-Pesa prompt to complete your merchandise order.
-                            <br>
-                            <span id="message" class="w-100"></span>
-                        </p>
+<main class="shop-page">
+    <div class="container shop-shell">
+        @include('Frontend.modules.shop.partials.flash')
 
-                        <div class="card w-100 radius-10 mt-4">
-                            <div class="card-body">
-                                <form action="{{ route('shop.payment.mpesa.stk') }}" method="post" id="m-pay">
-                                    @csrf
-                                    <label>Enter Your Mpesa Number</label>
-                                    <div class="w-100 d-flex align-items-center mt-2">
-                                        +254
-                                        <input type="text" placeholder="eg XXXXXXXXX" class="ms-2 form-control" name="msisdn">
-                                    </div>
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-7">
+                <div class="shop-form-card p-4 p-lg-5">
+                    <p class="shop-kicker mb-2">M-Pesa Payment</p>
+                    <h1 class="shop-title mb-3">Complete your payment</h1>
+                    <p class="shop-subtitle mb-4">Use your M-Pesa number to receive an STK push and pay for order <strong>{{ $order->order_number }}</strong>.</p>
 
-                                    <input type="hidden" name="order_number" value="{{ $order->order_number }}">
-
-                                    <div class="text-end mt-3">
-                                        <button type="submit" class="btn btn-danger w-100">Pay Now</button>
-                                    </div>
-                                </form>
-
-                                <div class="mt-3">
-                                    <p>You can also pay using Lipa na M-PESA with the details below:</p>
-                                    <p class="mb-1">1. Go to the M-PESA menu</p>
-                                    <p class="mb-1">2. Select Lipa na <b>M-PESA</b></p>
-                                    <p class="mb-1">3. Select the Paybill option</p>
-                                    <p class="mb-1">4. Enter business number: <b>{{ config('mpesa.paybill') }}</b></p>
-                                    <p class="mb-1">5. Enter account number: <b>{{ $order->order_number }}</b></p>
-                                    <p class="mb-1">6. Enter the amount: <b>{{ $order->currency }} {{ $order->total_amount }}</b></p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="shop-meta mb-4">
+                        <span>Order total: {{ $order->currency }} {{ number_format((float) $order->total_amount, 2) }}</span>
+                        <span>Status: {{ ucfirst($order->payment_status) }}</span>
                     </div>
+
+                    <form id="mpesa-form" class="d-grid gap-3">
+                        @csrf
+                        <input type="hidden" name="order_number" value="{{ $order->order_number }}">
+
+                        <div>
+                            <label class="shop-label" for="msisdn">M-Pesa Number</label>
+                            <input type="text" class="shop-input" id="msisdn" name="msisdn" value="{{ $order->customer_phone }}" required>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-3">
+                            <button type="submit" class="shop-btn-primary">Send STK Push</button>
+                            <a href="{{ route('shop.success', $order) }}" class="shop-btn-secondary">Refresh Order</a>
+                        </div>
+                    </form>
+
+                    <div id="mpesa-status" class="shop-flash shop-flash--success mt-4 d-none"></div>
                 </div>
             </div>
-        </section>
+
+            <div class="col-lg-5">
+                <div class="shop-summary p-4">
+                    <h2 class="h4 text-white mb-3">Order Items</h2>
+                    @foreach($order->items as $item)
+                        <div class="shop-summary__row">
+                            <div>
+                                <div class="text-white">{{ $item->product?->name }}</div>
+                                <div class="shop-muted">
+                                    Qty {{ $item->quantity }}
+                                    @if($item->variant)
+                                        · {{ $item->variant->name }}
+                                    @endif
+                                </div>
+                            </div>
+                            <strong>{{ $order->currency }} {{ number_format((float) $item->total_price, 2) }}</strong>
+                        </div>
+                    @endforeach
+                    <div class="shop-summary__row"><span>Total</span><strong>{{ $order->currency }} {{ number_format((float) $order->total_amount, 2) }}</strong></div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</main>
 @endsection
 
 @section('footer')
 <script>
-    $(document).on('submit', '#m-pay', function (e) {
-        e.preventDefault();
-        var frm = $(this);
-        var formData = new FormData(this);
-        $.ajax({
-            type: 'POST',
-            url: frm.attr('action'),
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function () {
-                $('#message').html('<h6 class="text-success">Please check your phone for the STK Push prompt.</h6>');
-                $('input[name=msisdn]').attr('disabled', 'true');
-                $('#m-pay button').attr('disabled', 'true');
-            },
-            error: function (xhr) {
-                var message = xhr.responseJSON?.message || 'Failed to initiate payment.';
-                $('#message').html('<h6 class="text-danger">' + message + '</h6>');
-                $('input[name=msisdn]').removeAttr('disabled');
-                $('#m-pay button').removeAttr('disabled');
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('mpesa-form');
+        const statusBox = document.getElementById('mpesa-status');
+
+        if (!form || !statusBox) {
+            return;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            statusBox.classList.remove('d-none', 'shop-flash--error');
+            statusBox.classList.add('shop-flash--success');
+            statusBox.textContent = 'Sending STK push...';
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('{{ route('shop.payment.mpesa.stk') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                    },
+                    body: formData,
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(payload.message || 'Unable to start payment.');
+                }
+
+                statusBox.textContent = payload.message || 'STK push sent.';
+            } catch (error) {
+                statusBox.classList.remove('shop-flash--success');
+                statusBox.classList.add('shop-flash--error');
+                statusBox.textContent = error.message || 'Unable to start payment.';
             }
         });
-    });
-</script>
 
-<script>
-    Pusher.logToConsole = true;
-    var pusher = new Pusher("cfc4e18a5372052374ee", {
-        cluster: 'mt1',
-        encrypted: true,
-        authEndpoint: '/pusher/auth',
-    });
+        Pusher.logToConsole = true;
+        var pusher = new Pusher("cfc4e18a5372052374ee", {
+            cluster: 'mt1',
+            encrypted: true,
+            authEndpoint: '/pusher/auth',
+        });
 
-    var channel = pusher.subscribe('payment.{{ $order->order_number }}');
-    channel.bind('new_payment', function (data) {
-        if (data.check) {
-            window.location.href = '{{ route('shop.success', ['order' => $order->id]) }}';
-        } else {
-            window.location.reload();
-        }
-    });
+        var channel = pusher.subscribe('payment.{{ $order->order_number }}');
+        channel.bind('new_payment', function (data) {
+            if (data.check) {
+                window.location.href = '{{ route('shop.success', ['order' => $order->id]) }}';
+            }
+        });
 
-    channel.bind('failed_payment', function (data) {
-        $('#message').addClass('w-100').html('<h6 class="text-danger">' + data.error_message.message + '</h6>');
-        $('input[name=msisdn]').removeAttr('disabled');
-        $('#m-pay button').removeAttr('disabled');
+        channel.bind('failed_payment', function (data) {
+            statusBox.classList.remove('d-none', 'shop-flash--success');
+            statusBox.classList.add('shop-flash--error');
+            statusBox.textContent = data.error_message.message || 'Payment failed.';
+        });
     });
 </script>
 @endsection

@@ -49,7 +49,8 @@ class TVController extends Controller
                     'Frontend.includes.components.partials.tv-items',
                     compact('tvs')
                 )->render(),
-                'hasMore' => $tvs->hasMorePages()
+                'hasMore' => $tvs->hasMorePages(),
+                'nextPageUrl' => $tvs->nextPageUrl(),
             ]);
         }
 

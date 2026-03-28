@@ -1,37 +1,65 @@
 @extends('Frontend.includes.layout')
 
+@section('header')
+@include('Frontend.modules.shop.partials.theme')
+@endsection
+
 @section('content')
-<div class="page-wrapper">
-    <div class="page-content">
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 mx-auto mt-4">
-                        <div class="card w-100 radius-10 mt-4" style="background: #f7f7f7;">
-                            <div class="card-body text-center text-success">
-                                <h1 class="text-center text-success mt-2">Order Received!</h1>
-                                <img src="{{ asset('/success.png') }}" height="150" width="150" alt="">
-                                <p class="mt-3 mb-0 text-dark">
-                                    Your merchandise order <strong>{{ $order->order_number }}</strong> has been placed successfully.
-                                </p>
-                                <div class="text-start mt-4 text-dark">
-                                    <p class="mb-2"><strong>Name:</strong> {{ $order->customer_name }}</p>
-                                    <p class="mb-2"><strong>Phone:</strong> {{ $order->customer_phone }}</p>
-                                    @if($order->delivery_address)
-                                        <p class="mb-2"><strong>Delivery Address:</strong> {{ $order->delivery_address }}</p>
-                                    @endif
+<main class="shop-page">
+    <div class="container shop-shell">
+        <section class="shop-hero p-4 p-lg-5">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div>
+                    <p class="shop-kicker mb-2">Order Status</p>
+                    <h1 class="shop-title mb-0">Your merchandise order</h1>
+                </div>
+                <span class="shop-order-badge">{{ ucfirst($order->payment_status) }}</span>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="shop-panel p-4 h-100">
+                        <div class="shop-summary__row"><span>Order number</span><strong>{{ $order->order_number }}</strong></div>
+                        <div class="shop-summary__row"><span>Customer</span><strong>{{ $order->customer_name }}</strong></div>
+                        <div class="shop-summary__row"><span>Phone</span><strong>{{ $order->customer_phone }}</strong></div>
+                        <div class="shop-summary__row"><span>Payment</span><strong>{{ ucfirst($order->payment_status) }}</strong></div>
+                        @if($order->delivery_address)
+                            <div class="shop-summary__row"><span>Delivery</span><strong>{{ $order->delivery_address }}</strong></div>
+                        @endif
+                        @if($order->notes)
+                            <div class="shop-summary__row"><span>Notes</span><strong>{{ $order->notes }}</strong></div>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="shop-summary p-4">
+                        <h2 class="h4 text-white mb-3">Items</h2>
+                        @foreach($order->items as $item)
+                            <div class="shop-summary__row">
+                                <div>
+                                    <div class="text-white">{{ $item->product?->name }}</div>
+                                    <div class="shop-muted">
+                                        Qty {{ $item->quantity }}
+                                        @if($item->variant)
+                                            · {{ $item->variant->name }}
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="text-center my-4">
-                                    <a href="{{ route('shop.index') }}" class="btn btn-dark">
-                                        Continue Shopping
-                                    </a>
-                                </div>
+                                <strong>{{ $order->currency }} {{ number_format((float) $item->total_price, 2) }}</strong>
                             </div>
-                        </div>
+                        @endforeach
+                        <div class="shop-summary__row"><span>Total</span><strong>{{ $order->currency }} {{ number_format((float) $order->total_amount, 2) }}</strong></div>
                     </div>
                 </div>
             </div>
+
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                @if($order->payment_status !== 'paid')
+                    <a href="{{ route('shop.payment.mpesa', $order) }}" class="shop-btn-primary">Complete Payment</a>
+                @endif
+                <a href="{{ route('shop.index') }}" class="shop-btn-secondary">Back To Store</a>
+            </div>
         </section>
     </div>
-</div>
+</main>
 @endsection

@@ -1,32 +1,35 @@
 @php
     $image = $product->image_url ?? asset('frontend-assets/images/default.png');
-    $hasVariants = $product->variants->isNotEmpty();
-    $basePrice = $hasVariants
-        ? ($product->variants->min(fn($variant) => $variant->price_override ?? $product->price) ?? $product->price)
-        : $product->price;
+    $remaining = $product->stock_total !== null ? max(0, (int) $product->stock_total - (int) $product->stock_sold) : null;
+    $payableLabel = $product->payable?->event_name ?? $product->payable?->title ?? 'Nowstream Merch';
 @endphp
-<div class="movie-item h-100">
-    <div class="movie-poster position-relative">
-        <a href="{{ route('shop.show', ['product' => $product->id]) }}">
-            <img src="{{ $image }}" class="w-100 d-block" alt="{{ $product->name }}" style="object-fit: cover; aspect-ratio: 1 / 1;" loading="lazy">
-        </a>
-    </div>
-    <div class="movie-content">
-        <div class="top">
-            <h6 class="mt-0">
-                <a href="{{ route('shop.show', ['product' => $product->id]) }}">{{ $product->name }}</a>
-            </h6>
+
+<div class="shop-card">
+    <a href="{{ route('shop.show', $product) }}">
+        <img
+            src="{{ $image }}"
+            alt="{{ $product->name }}"
+            class="shop-card__image"
+            loading="lazy"
+            decoding="async"
+        >
+    </a>
+    <div class="shop-card__body">
+        <p class="shop-kicker mb-2">Merchandise</p>
+        <h3 class="h5 mb-2">
+            <a href="{{ route('shop.show', $product) }}" class="text-white">{{ $product->name }}</a>
+        </h3>
+        <p class="shop-muted mb-3">{{ \Illuminate\Support\Str::limit(strip_tags($product->description), 90) }}</p>
+        <div class="d-flex align-items-center justify-content-between gap-3 mb-3">
+            <span class="shop-price">{{ $product->currency ?? 'KES' }} {{ number_format((float) $product->price, 2) }}</span>
+            <span class="shop-muted">{{ $remaining === null ? 'In stock' : $remaining . ' left' }}</span>
         </div>
-        <p class="mb-2 small text-light">
-            @if($product->payable)
-                Linked to {{ $product->payable->event_name ?? $product->payable->title ?? 'Event' }}
-            @else
-                Merchandise item
+        <div class="shop-meta mb-3">
+            <span>{{ $payableLabel }}</span>
+            @if($product->variants->isNotEmpty())
+                <span>{{ $product->variants->count() }} variants</span>
             @endif
-        </p>
-        <div class="d-flex align-items-center justify-content-between gap-2">
-            <span class="text-warning fw-bold">{{ $product->currency }} {{ number_format($basePrice, 2) }}</span>
-            <a href="{{ route('shop.show', ['product' => $product->id]) }}" class="btn btn-sm btn-outline-light">View</a>
         </div>
+        <a href="{{ route('shop.show', $product) }}" class="shop-btn-secondary w-100">View Product</a>
     </div>
 </div>

@@ -79,7 +79,8 @@ class PodcastController extends Controller
                     'Frontend.includes.components.partials.podcast-list',
                     compact('podcasts')
                 )->render(),
-                'hasMore' => $podcasts->hasMorePages()
+                'hasMore' => $podcasts->hasMorePages(),
+                'nextPageUrl' => $podcasts->nextPageUrl(),
             ]);
         }
 

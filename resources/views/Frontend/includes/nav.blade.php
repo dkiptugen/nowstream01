@@ -63,6 +63,43 @@
                 <div class="menu-title">Live TV</div>
             </a>
         </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url('shop') }}">
+                    <div class="parent-icon mr-1">
+                        <i class="bx bx-store"></i>
+                    </div>
+                    <div class="menu-title">Shop</div>
+                </a>
+            </li>
+
+        <li class="menu-item-has-children theme-switcher-menu">
+            <a class="nav-link theme-switcher-trigger" href="#">
+                <div class="parent-icon mr-1">
+                    <i class="bx bx-palette"></i>
+                </div>
+                <div class="menu-title">Theme</div>
+            </a>
+            <ul class="submenu">
+                <li>
+                    <a href="#" class="theme-switcher-option" data-theme-value="light">
+                        <span>Light</span>
+                        <i class="bx bx-check theme-switcher-option-check"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="theme-switcher-option" data-theme-value="dark">
+                        <span>Dark</span>
+                        <i class="bx bx-check theme-switcher-option-check"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="theme-switcher-option" data-theme-value="system">
+                        <span>System</span>
+                        <i class="bx bx-check theme-switcher-option-check"></i>
+                    </a>
+                </li>
+            </ul>
+        </li>
 
     </ul>
 </div>

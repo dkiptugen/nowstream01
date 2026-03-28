@@ -117,7 +117,8 @@ class RadioController extends Controller
                     'Frontend.includes.components.partials.radio-items',
                     compact('radios')
                 )->render(),
-                'hasMore' => $radios->hasMorePages()
+                'hasMore' => $radios->hasMorePages(),
+                'nextPageUrl' => $radios->nextPageUrl(),
             ]);
         }
 

@@ -73,33 +73,72 @@
 				<div class="col-lg-6">
 				</div>
 			</div>
-			<div class="row tr-movie-active">
-				@foreach($events as $event)  
-				<div class="col-xl-3 col-lg-4 col-sm-6 grid-item grid-sizer">
-					@include('Frontend.includes.components.cards.events')
-				</div>
-				@endforeach
+			<div
+                class="row tr-movie-active"
+                id="event-container"
+                data-next-page-url="{{ $events->nextPageUrl() }}"
+                data-loading-label="Loading more events..."
+                data-idle-label="More events on the way"
+                data-complete-label="All events loaded"
+                data-error-label="Could not load more events right now"
+            >
+				@include('Frontend.includes.components.partials.event-items', ['events' => $events])
 			</div>
-			<div class="row">
-				<div class="col-12">
-					<div class="pagination-wrap mt-30">
-						<nav>
-							<ul>
-								<li class="active"><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">Next</a></li>
-							</ul>
-						</nav>
-					</div>
-				</div>
-			</div>
+            <div class="text-center my-4 infinite-scroll-loader" id="event-loading" @if(!$events->hasMorePages()) hidden @endif>
+                <span class="infinite-scroll-dot" aria-hidden="true"></span>
+                <span class="infinite-scroll-copy" id="event-loading-status">
+                    {{ $events->hasMorePages() ? 'More events on the way' : 'All events loaded' }}
+                </span>
+            </div>
 		</div>
 	</section>
 	<!-- movie-area-end -->
 	@endsection
 	@section('header')
+    <style>
+        .infinite-scroll-loader {
+            display: grid;
+            place-items: center;
+            gap: 12px;
+            min-height: 88px;
+        }
+
+        .infinite-scroll-loader[hidden] {
+            display: none !important;
+        }
+
+        .infinite-scroll-dot {
+            width: 42px;
+            height: 42px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-top-color: #ffd24f;
+            animation: infiniteScrollSpin 0.9s linear infinite;
+        }
+
+        .infinite-scroll-loader:not(.is-loading) .infinite-scroll-dot {
+            animation-play-state: paused;
+            opacity: 0.45;
+        }
+
+        .infinite-scroll-copy {
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 13px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        @keyframes infiniteScrollSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 	@endsection
 	@section('footer')
+    @include('Frontend.includes.components.partials.infinite-scroll', [
+        'containerId' => 'event-container',
+        'loaderId' => 'event-loading',
+        'statusId' => 'event-loading-status',
+    ])
 	@endsection

@@ -48,19 +48,108 @@
         .navbar-wrap>ul>li>a {
             display: inline-flex;
         }
+
+        .theme-switcher-menu .submenu {
+            min-width: 180px;
+            padding: 10px;
+            border-radius: 16px;
+            background: rgba(10, 17, 26, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        .theme-switcher-trigger,
+        .theme-switcher-option {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-switcher-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .theme-switcher-option {
+            width: 100%;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: #f5f7fb;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .theme-switcher-option:hover,
+        .theme-switcher-option.is-active {
+            background: rgba(255, 210, 79, 0.16);
+            color: #ffd24f;
+        }
+
+        .theme-switcher-option-check {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .theme-switcher-option.is-active .theme-switcher-option-check {
+            opacity: 1;
+        }
+
+        .header-cart-link {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 5px;
+            border-radius: 999px;
+            background: #ffd24f;
+            color: #09131d;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(255, 210, 79, 0.3);
+        }
+
+        .header-cart-count.d-none {
+            display: none !important;
+        }
     </style>
 
     @yield('header')
     <script>
         (function() {
-            const storageKey = 'theme';
+            const storageKey = 'theme-preference';
+            const legacyStorageKey = 'theme';
             const darkThemeClass = 'dark-theme';
-            const storedTheme = localStorage.getItem(storageKey);
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const lightThemeClass = 'light-theme';
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const legacyValue = localStorage.getItem(legacyStorageKey);
+            const storedTheme = localStorage.getItem(storageKey) || legacyValue || 'system';
 
-            if (storedTheme === 'dark' || (!storedTheme && systemPrefersDark)) {
-                document.documentElement.classList.add(darkThemeClass);
-            }
+            const applyTheme = (theme) => {
+                const resolvedTheme = theme === 'system'
+                    ? (mediaQuery.matches ? 'dark' : 'light')
+                    : theme;
+
+                document.documentElement.classList.toggle(darkThemeClass, resolvedTheme === 'dark');
+                document.documentElement.classList.toggle(lightThemeClass, resolvedTheme === 'light');
+                document.documentElement.setAttribute('data-theme-preference', theme);
+                document.documentElement.setAttribute('data-theme-resolved', resolvedTheme);
+            };
+
+            applyTheme(storedTheme);
+            localStorage.setItem(storageKey, storedTheme);
+            localStorage.removeItem(legacyStorageKey);
         })();
     </script>
 
@@ -189,6 +278,69 @@
 </head>
 
 <body>
+    <script>
+        (function() {
+            const storageKey = 'theme-preference';
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const optionSelector = '[data-theme-value]';
+
+            const getThemePreference = () => localStorage.getItem(storageKey) || 'system';
+
+            const applyTheme = (theme) => {
+                const resolvedTheme = theme === 'system'
+                    ? (mediaQuery.matches ? 'dark' : 'light')
+                    : theme;
+
+                document.documentElement.classList.toggle('dark-theme', resolvedTheme === 'dark');
+                document.documentElement.classList.toggle('light-theme', resolvedTheme === 'light');
+                document.documentElement.setAttribute('data-theme-preference', theme);
+                document.documentElement.setAttribute('data-theme-resolved', resolvedTheme);
+            };
+
+            const updateThemeSwitcherUI = () => {
+                const currentTheme = getThemePreference();
+                document.querySelectorAll(optionSelector).forEach((option) => {
+                    const isActive = option.getAttribute('data-theme-value') === currentTheme;
+                    option.classList.toggle('is-active', isActive);
+                    option.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                });
+            };
+
+            const setThemePreference = (theme) => {
+                localStorage.setItem(storageKey, theme);
+                applyTheme(theme);
+                updateThemeSwitcherUI();
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                updateThemeSwitcherUI();
+            });
+
+            document.addEventListener('click', (event) => {
+                const option = event.target.closest(optionSelector);
+
+                if (!option) {
+                    return;
+                }
+
+                event.preventDefault();
+                setThemePreference(option.getAttribute('data-theme-value'));
+            });
+
+            const syncSystemTheme = () => {
+                if (getThemePreference() === 'system') {
+                    applyTheme('system');
+                    updateThemeSwitcherUI();
+                }
+            };
+
+            if (typeof mediaQuery.addEventListener === 'function') {
+                mediaQuery.addEventListener('change', syncSystemTheme);
+            } else if (typeof mediaQuery.addListener === 'function') {
+                mediaQuery.addListener(syncSystemTheme);
+            }
+        })();
+    </script>
 
 
     <!-- Scroll-top -->
@@ -219,7 +371,14 @@
                                                 data-target="#search-modal"><i class="fas fa-search"></i></a></li>
                                         <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
                                         <li class="header-search"><a href="{{ route('watch.content') }}"><i class="fas fa-history"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('cart.index') }}"><i class="fas fa-shopping-cart"></i></a></li>
+                                        <li class="header-search">
+                                            <a href="{{ route('cart.index') }}" class="header-cart-link">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <span id="header-cart-count" class="header-cart-count {{ ($headerCartCount ?? 0) > 0 ? '' : 'd-none' }}">
+                                                    {{ $headerCartCount ?? 0 }}
+                                                </span>
+                                            </a>
+                                        </li>
 
                                         <li class="menu-item-has-children header-lang d-none">
                                             <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"

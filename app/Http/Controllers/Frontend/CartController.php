@@ -35,14 +35,23 @@ class CartController extends Controller
             ->active()
             ->with('variants')
             ->findOrFail($validated['product_id']);
-        $variant = $validated['variant_id']
+
+        $variant = !empty($validated['variant_id'])
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
         try {
-            $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+            $cart = $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
         } catch (\RuntimeException $exception) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['message' => $exception->getMessage()], 422);
+            }
+
             return redirect()->back()->with('error', $exception->getMessage());
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Item added to cart.');
         }
 
         return redirect()
@@ -57,9 +66,21 @@ class CartController extends Controller
         ]);
 
         try {
-            $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+            $cart = $this->cartService->updateItem(
+                $request->user(),
+                $cartItem->load('cart', 'product', 'variant'),
+                (int) $validated['quantity']
+            );
         } catch (\RuntimeException $exception) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['message' => $exception->getMessage()], 422);
+            }
+
             return redirect()->back()->with('error', $exception->getMessage());
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Cart updated.');
         }
 
         return redirect()
@@ -69,10 +90,28 @@ class CartController extends Controller
 
     public function destroy(Request $request, CartItem $cartItem)
     {
-        $this->cartService->removeItem($request->user(), $cartItem->load('cart'));
+        $cart = $this->cartService->removeItem($request->user(), $cartItem->load('cart'));
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->ajaxCartResponse($cart, 'Item removed from cart.');
+        }
 
         return redirect()
             ->route('cart.index')
             ->with('success', 'Item removed from cart.');
+    }
+
+    protected function ajaxCartResponse($cart, string $message)
+    {
+        $summary = $this->cartService->cartSummary($cart);
+
+        return response()->json([
+            'message' => $message,
+            'count' => $summary['items']->sum('quantity'),
+            'empty' => $summary['items']->isEmpty(),
+            'items_html' => view('Frontend.modules.shop.partials.cart-items', compact('summary'))->render(),
+            'summary_html' => view('Frontend.modules.shop.partials.cart-summary', compact('summary'))->render(),
+            'empty_html' => view('Frontend.modules.shop.partials.cart-empty')->render(),
+        ]);
     }
 }

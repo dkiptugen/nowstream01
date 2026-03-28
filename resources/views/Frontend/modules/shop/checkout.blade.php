@@ -1,64 +1,78 @@
 @extends('Frontend.includes.layout')
 
-@section('content')
-<main>
-    <section class="movie-details-area" data-background="{{ asset('assets/img/bg/movie_details_bg.jpg') }}">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-7">
-                    <div class="card bg-dark border-secondary text-white">
-                        <div class="card-body">
-                            <h3 class="mb-4">Checkout</h3>
-                            <form action="{{ route('shop.checkout.store') }}" method="POST">
-                                @csrf
-                                <div class="mb-3">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" name="customer_name" value="{{ old('customer_name', auth()->user()->name) }}" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="text" name="customer_phone" value="{{ old('customer_phone', auth()->user()->phone) }}" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Delivery Address</label>
-                                    <textarea name="delivery_address" class="form-control" rows="4">{{ old('delivery_address') }}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Notes</label>
-                                    <textarea name="notes" class="form-control" rows="3">{{ old('notes') }}</textarea>
-                                </div>
-                                <input type="hidden" name="payment_method_id" value="1">
-                                <button type="submit" class="btn btn-warning">Continue to Payment</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+@section('header')
+@include('Frontend.modules.shop.partials.theme')
+@endsection
 
-                <div class="col-lg-5">
-                    <div class="card bg-dark border-secondary text-white">
-                        <div class="card-body">
-                            <h4 class="mb-3">Order Summary</h4>
-                            @foreach($summary['items'] as $item)
-                                <div class="d-flex justify-content-between mb-2">
-                                    <div>
-                                        {{ $item['product']->name }}
-                                        @if($item['variant'])
-                                            <div class="small text-light">{{ $item['variant']->name }}</div>
-                                        @endif
-                                    </div>
-                                    <div>{{ $summary['currency'] }} {{ number_format($item['line_total'], 2) }}</div>
-                                </div>
-                            @endforeach
-                            <hr class="border-secondary">
-                            <div class="d-flex justify-content-between fw-bold">
-                                <span>Total</span>
-                                <span>{{ $summary['currency'] }} {{ number_format($summary['total'], 2) }}</span>
-                            </div>
+@section('content')
+<main class="shop-page">
+    <div class="container shop-shell">
+        @include('Frontend.modules.shop.partials.flash')
+
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <p class="shop-kicker mb-2">Checkout</p>
+                <h1 class="shop-title mb-0">Confirm your order</h1>
+            </div>
+            <a href="{{ route('cart.index') }}" class="shop-btn-secondary">Back To Cart</a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <form action="{{ route('shop.checkout.store') }}" method="POST" class="shop-form-card p-4 p-lg-5">
+                    @csrf
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="shop-label" for="customer_name">Full Name</label>
+                            <input type="text" class="shop-input" id="customer_name" name="customer_name" value="{{ old('customer_name', auth()->user()->name ?? '') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="shop-label" for="customer_phone">Phone Number</label>
+                            <input type="text" class="shop-input" id="customer_phone" name="customer_phone" value="{{ old('customer_phone', auth()->user()->phone ?? '') }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="shop-label" for="delivery_address">Delivery Address</label>
+                            <textarea class="shop-textarea" id="delivery_address" name="delivery_address">{{ old('delivery_address') }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="shop-label" for="notes">Notes</label>
+                            <textarea class="shop-textarea" id="notes" name="notes">{{ old('notes') }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="shop-label" for="payment_method_id">Payment Method</label>
+                            <select id="payment_method_id" name="payment_method_id" class="shop-select" required>
+                                <option value="1" selected>M-Pesa</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="shop-btn-primary">Place Order</button>
                         </div>
                     </div>
+                </form>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="shop-summary p-4">
+                    <h2 class="h4 text-white mb-3">Items</h2>
+                    @foreach($summary['items'] as $item)
+                        <div class="shop-summary__row">
+                            <div>
+                                <div class="text-white">{{ $item['product']->name }}</div>
+                                <div class="shop-muted">
+                                    Qty {{ $item['quantity'] }}
+                                    @if($item['variant'])
+                                        · {{ $item['variant']->name }}
+                                    @endif
+                                </div>
+                            </div>
+                            <strong>{{ $summary['currency'] }} {{ number_format((float) $item['line_total'], 2) }}</strong>
+                        </div>
+                    @endforeach
+                    <div class="shop-summary__row"><span>Subtotal</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['subtotal'], 2) }}</strong></div>
+                    <div class="shop-summary__row"><span>Total</span><strong>{{ $summary['currency'] }} {{ number_format((float) $summary['total'], 2) }}</strong></div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 </main>
 @endsection

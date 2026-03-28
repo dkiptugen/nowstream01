@@ -5,20 +5,29 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Traits\CacheHelper;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class MerchandiseController extends Controller
 {
     use CacheHelper;
 
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::query()
             ->merch()
-            ->active()
             ->with(['payable', 'variants'])
             ->latest()
             ->paginate(12);
+        $products->appends($request->all());
+
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('Frontend.modules.shop.partials.product-grid-items', compact('products'))->render(),
+                'hasMore' => $products->hasMorePages(),
+                'nextPageUrl' => $products->nextPageUrl(),
+            ]);
+        }
 
         $events = $this->get_events();
         $videos = $this->get_videos();
@@ -34,8 +43,7 @@ class MerchandiseController extends Controller
 
         $related = Cache::remember("shop_related_{$product->id}", now()->addMinutes(30), function () use ($product) {
             return Product::query()
-                ->merch()
-                ->active()
+                ->merch() 
                 ->whereKeyNot($product->id)
                 ->with(['payable', 'variants'])
                 ->latest()
