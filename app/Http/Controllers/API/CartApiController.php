@@ -33,7 +33,11 @@ class CartApiController extends Controller
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
-        $cart = $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        try {
+            $cart = $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        } catch (\RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response()->json($this->cartService->cartSummary($cart), 201);
     }
@@ -44,7 +48,11 @@ class CartApiController extends Controller
             'quantity' => ['required', 'integer', 'min:0'],
         ]);
 
-        $cart = $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+        try {
+            $cart = $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+        } catch (\RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
 
         return response()->json($this->cartService->cartSummary($cart));
     }

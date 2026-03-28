@@ -39,7 +39,11 @@ class CartController extends Controller
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
-        $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        try {
+            $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        } catch (\RuntimeException $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
 
         return redirect()
             ->back()
@@ -52,7 +56,11 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:0'],
         ]);
 
-        $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+        try {
+            $this->cartService->updateItem($request->user(), $cartItem->load('cart', 'product', 'variant'), (int) $validated['quantity']);
+        } catch (\RuntimeException $exception) {
+            return redirect()->back()->with('error', $exception->getMessage());
+        }
 
         return redirect()
             ->route('cart.index')

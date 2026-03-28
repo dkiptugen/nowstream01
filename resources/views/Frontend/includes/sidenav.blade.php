@@ -41,6 +41,14 @@
 
     </li>
     <li>
+        <a href="{{ route('shop.index') }}">
+            <div class="parent-icon"><i class='bx bx-store'></i>
+            </div>
+            <div class="menu-title">Shop</div>
+        </a>
+
+    </li>
+    <li>
         <a href="{{ url('continue') }}">
             <div class="parent-icon"> <i class="bx bx-video"></i>
             </div>

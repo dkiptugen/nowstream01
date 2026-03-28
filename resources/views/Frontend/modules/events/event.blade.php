@@ -146,6 +146,26 @@ $combinedRates = collect($eventRates ?? [])
 		</div>
 	</section>
 
+	@if(!empty($merchProducts) && $merchProducts->isNotEmpty())
+	<section class="top-rated-movie tr-movie-bg pt-5" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">
+		<div class="container">
+			<div class="episode-top-wrap">
+				<div class="section-title">
+					<span class="sub-title">Event Merchandise</span>
+					<h2 class="title">Shop This Event</h2>
+				</div>
+			</div>
+			<div class="row g-4 mt-1">
+				@foreach($merchProducts as $product)
+					<div class="col-lg-3 col-md-6">
+						@include('Frontend.modules.shop.partials.product-card', ['product' => $product])
+					</div>
+				@endforeach
+			</div>
+		</div>
+	</section>
+	@endif
+
 	@if($events->isNotEmpty())
 
 	<section class="top-rated-movie tr-movie-bg pb-0" data-background="{{ asset('assets/img')}}/bg/tr_movies_bg.jpg">

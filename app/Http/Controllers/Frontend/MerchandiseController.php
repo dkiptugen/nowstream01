@@ -37,7 +37,7 @@ class MerchandiseController extends Controller
                 ->merch()
                 ->active()
                 ->whereKeyNot($product->id)
-                ->with('payable')
+                ->with(['payable', 'variants'])
                 ->latest()
                 ->take(4)
                 ->get();

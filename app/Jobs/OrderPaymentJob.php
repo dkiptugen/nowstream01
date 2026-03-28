@@ -35,7 +35,7 @@ class OrderPaymentJob implements ShouldQueue
     {
         try {
             $order = Order::where('order_number', $this->orderNumber)
-                ->with('items.product')
+                ->with('items.product', 'items.variant')
                 ->firstOrFail();
 
             $transaction = Transaction::find($order->latest_transaction_id);
@@ -52,6 +52,21 @@ class OrderPaymentJob implements ShouldQueue
             $order->payment_status = 'paid';
             $order->paid_at = Carbon::parse($this->transtime);
             $order->save();
+
+            foreach ($order->items as $item) {
+                $product = $item->product;
+                if (!$product) {
+                    continue;
+                }
+
+                if ($product->type === 'merch') {
+                    $product->increment('stock_sold', $item->quantity);
+
+                    if ($item->variant) {
+                        $item->variant->increment('stock_sold', $item->quantity);
+                    }
+                }
+            }
 
             $product = optional($order->items->first())->product;
             if ($product && $product->type === 'ticket') {

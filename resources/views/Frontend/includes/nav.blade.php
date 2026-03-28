@@ -47,6 +47,15 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{{ route('shop.index') }}">
+                <div class="parent-icon mr-1">
+                    <i class="bx bx-store"></i>
+                </div>
+                <div class="menu-title">Shop</div>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{{ url('tvs') }}">
                 <div class="parent-icon mr-1">
                     <i class="bx bx-tv"></i>
