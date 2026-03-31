@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class RadioController extends Controller
 {
@@ -134,24 +135,18 @@ class RadioController extends Controller
     public function show($slug)
     {
         try {
+            $cacheKey = "radio_detail_{$slug}";
+            $radio = Cache::get($cacheKey);
 
-            /**
-             * Radio detail (cache)
-             */
-            $radio = Cache::remember(
-                "radio_detail_{$slug}",
-                now()->addHours(12),
-                function () use ($slug) {
-                    return Content::where('content_group', 'radio')
-                        ->where('status', 1)
-                        ->where(function ($query) use ($slug) {
-                            $query
-                                ->where('slug', $slug)
-                                ->orWhere('old_id', $slug);
-                        })
-                        ->first();
+            if (!$radio instanceof Content) {
+                $radio = $this->resolveRadio($slug);
+
+                if ($radio) {
+                    Cache::put($cacheKey, $radio, now()->addHours(12));
+                } else {
+                    Cache::forget($cacheKey);
                 }
-            );
+            }
 
             if (!$radio) {
                 abort(404, 'Radio not found');
@@ -255,5 +250,32 @@ class RadioController extends Controller
             'views' => $content->views,
             'content_group' => $content->content_group
         ]);
+    }
+
+    private function resolveRadio(string $slug): ?Content
+    {
+        $slugifiedTitle = Str::slug($slug);
+
+        $baseQuery = Content::query()
+            ->where('content_group', 'radio')
+            ->where(function ($query) use ($slug, $slugifiedTitle) {
+                $query
+                    ->where('slug', $slug)
+                    ->orWhere('old_id', $slug)
+                    ->orWhereRaw('LOWER(slug) = ?', [strtolower($slug)])
+                    ->orWhereRaw('LOWER(old_id) = ?', [strtolower($slug)])
+                    ->orWhereRaw('LOWER(REPLACE(title, \" \", \"-\")) = ?', [strtolower($slug)])
+                    ->orWhereRaw('LOWER(REPLACE(title, \" \", \"-\")) = ?', [strtolower($slugifiedTitle)]);
+            });
+
+        $activeRadio = (clone $baseQuery)
+            ->where('status', 1)
+            ->first();
+
+        if ($activeRadio) {
+            return $activeRadio;
+        }
+
+        return $baseQuery->first();
     }
 }
