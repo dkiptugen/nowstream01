@@ -114,6 +114,7 @@
         const form = document.getElementById('shop-add-to-cart-form');
         const flash = document.getElementById('shop-product-flash');
         const headerCartCount = document.getElementById('header-cart-count');
+        let isSubmitting = false;
 
         if (!form || !flash) {
             return;
@@ -153,6 +154,12 @@
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
+            if (isSubmitting) {
+                return;
+            }
+
+            isSubmitting = true;
+
             const submitButton = form.querySelector('button[type="submit"]');
             const originalLabel = submitButton?.textContent;
             const formData = new FormData(form);
@@ -184,6 +191,8 @@
             } catch (error) {
                 showFlash(error.message || 'Unable to add item to cart.', 'error');
             } finally {
+                isSubmitting = false;
+
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.textContent = originalLabel || 'Add To Cart';
