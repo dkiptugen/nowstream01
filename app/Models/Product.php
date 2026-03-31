@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected static array $activeColumnCache = [];
+    protected static array $hasIsActiveColumnCache = [];
 
     protected $fillable = [
         'microsite_id',
@@ -44,13 +43,21 @@ class Product extends Model
     public function scopeActive($query)
     {
         $model = $query->getModel();
-        $column = $this->resolveActiveColumn($model);
+        $connectionName = $model->getConnectionName() ?: config('database.default');
+        $cacheKey = $connectionName . ':' . $model->getTable();
 
-        if ($column === null) {
+        if (!array_key_exists($cacheKey, static::$hasIsActiveColumnCache)) {
+            static::$hasIsActiveColumnCache[$cacheKey] = $model
+                ->getConnection()
+                ->getSchemaBuilder()
+                ->hasColumn($model->getTable(), 'is_active');
+        }
+
+        if (!static::$hasIsActiveColumnCache[$cacheKey]) {
             return $query;
         }
 
-        return $query->where($column, 1);
+        return $query->where('is_active', 1);
     }
 
     public function scopeMerch($query)
@@ -67,25 +74,4 @@ class Product extends Model
         return Storage::disk(config('filesystems.default'))->url($this->image_path);
     }
 
-    protected function resolveActiveColumn(Model $model): ?string
-    {
-        $connectionName = $model->getConnectionName() ?: config('database.default');
-        $cacheKey = $connectionName . ':' . $model->getTable();
-
-        if (array_key_exists($cacheKey, static::$activeColumnCache)) {
-            return static::$activeColumnCache[$cacheKey];
-        }
-
-        $schema = $model->getConnection()->getSchemaBuilder();
-
-        if ($schema->hasColumn($model->getTable(), 'is_active')) {
-            return static::$activeColumnCache[$cacheKey] = 'is_active';
-        }
-
-        if ($schema->hasColumn($model->getTable(), 'status')) {
-            return static::$activeColumnCache[$cacheKey] = 'status';
-        }
-
-        return static::$activeColumnCache[$cacheKey] = null;
-    }
 }
