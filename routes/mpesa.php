@@ -3,7 +3,7 @@
 	
 	use App\Http\Controllers\Callbacks\MpesaCallbackController;
 	use Illuminate\Support\Facades\Route;
-    Route::middleware(['cor'])->group( function () {
+    Route::middleware(['cors'])->group( function () {
         Route::post('notify', [MpesaCallbackController::class, 'notify'])->name('mpesa.notify');
         Route::post('check_payment', [MpesaCallbackController::class, 'check_mpesa_payment'])->name('mpesa.check_payment');
         Route::any('validation', [MpesaCallbackController::class, 'validation'])->name('mpesa.validation');
@@ -13,8 +13,8 @@
         Route::any('account_balance', [MpesaCallbackController::class, 'account_balance'])->name('mpesa.account_balance');
         Route::any('reversal', [MpesaCallbackController::class, 'reversal'])->name('mpesa.reversal');
         Route::get('transaction_status', [MpesaCallbackController::class, 'transaction_status'])->name('mpesa.transaction_status');
-        Route::get('stk_push_request/{subscription}', [MpesaCallbackController::class, 'stk_push_request'])->name('mpesa.stk_push_request');
-        Route::get('stk_callback', [MpesaCallbackController::class, 'stk_callback'])->name('mpesa.stk_callback');
-        Route::get('stk_push_query', [MpesaCallbackController::class, 'stk_push_query'])->name('mpesa.stk_push_query');
+        Route::any('stk_push_request/{subscription}', [MpesaCallbackController::class, 'stk_push_request'])->name('mpesa.stk_push_request');
+        Route::any('stk_callback', [MpesaCallbackController::class, 'stk_callback'])->name('mpesa.stk_callback');
+        Route::any('stk_push_query', [MpesaCallbackController::class, 'stk_push_query'])->name('mpesa.stk_push_query');
     });
 	 
