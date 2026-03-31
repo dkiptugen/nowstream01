@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Channel;
 use App\Models\Content;
 use App\Models\Event;
+use App\Models\Microsite;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -135,23 +135,22 @@ class SearchController extends Controller
 
     private function searchChannels(string $query): array
     {
-        $channelQuery = Channel::query()
-            ->where('name', 'like', "%{$query}%");
-
-        if (Schema::hasColumn('channels', 'status')) {
-            $channelQuery->where('status', 1);
+        if (!Schema::hasTable('microsites')) {
+            return $this->makeSection('Channels', collect());
         }
 
-        $items = $channelQuery
+        $items = Microsite::query()
+            ->where('name', 'like', "%{$query}%")
+            ->where('status', 1)
             ->limit(8)
             ->get()
-            ->map(function (Channel $channel) {
+            ->map(function (Microsite $channel) {
                 return [
                     'title' => $channel->name,
                     'description' => $channel->description ?? null,
                     'meta' => 'Channel',
-                    'url' => url("/channel/{$channel->id}/{$channel->name}"),
-                    'image' => $channel->thumbnail ?? null,
+                    'url' => $channel->slug ? url("/channel/{$channel->slug}") : url("/channel/{$channel->uuid}/{$channel->name}"),
+                    'image' => $channel->logo ?: $channel->cover,
                     'type' => 'Channel',
                 ];
             });
