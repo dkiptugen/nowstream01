@@ -140,6 +140,38 @@
         color: #94a3b8;
     }
 
+    .search-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-tab {
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 999px;
+        padding: 0.7rem 1rem;
+        background: rgba(15, 23, 42, 0.72);
+        color: #cbd5e1;
+        font-weight: 600;
+    }
+
+    .search-tab.active,
+    .search-tab:hover,
+    .search-tab:focus {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: #fff;
+    }
+
+    .search-tab-pane {
+        display: none;
+    }
+
+    .search-tab-pane.active {
+        display: block;
+    }
+
     @media (max-width: 767.98px) {
         .search-page {
             padding-top: 6rem;
@@ -195,9 +227,38 @@
                 <p class="search-muted mb-0">Try a different title, a shorter phrase, or a broader keyword.</p>
             </div>
         @else
-            <div class="d-grid gap-4">
-                @foreach($sections as $section)
-                    <div class="search-group p-4">
+            <div class="search-tabs" role="tablist" aria-label="Search result types">
+                @foreach($sections as $index => $section)
+                    @php
+                        $tabId = 'search-tab-' . \Illuminate\Support\Str::slug($section['title']);
+                        $paneId = 'search-pane-' . \Illuminate\Support\Str::slug($section['title']);
+                    @endphp
+                    <button
+                        type="button"
+                        id="{{ $tabId }}"
+                        class="search-tab {{ $index === 0 ? 'active' : '' }}"
+                        data-search-tab-target="#{{ $paneId }}"
+                        role="tab"
+                        aria-controls="{{ $paneId }}"
+                        aria-selected="{{ $index === 0 ? 'true' : 'false' }}"
+                    >
+                        {{ $section['title'] }} ({{ $section['count'] }})
+                    </button>
+                @endforeach
+            </div>
+
+            <div class="search-tab-content">
+                @foreach($sections as $index => $section)
+                    @php
+                        $paneId = 'search-pane-' . \Illuminate\Support\Str::slug($section['title']);
+                    @endphp
+                    <div
+                        id="{{ $paneId }}"
+                        class="search-tab-pane {{ $index === 0 ? 'active' : '' }}"
+                        role="tabpanel"
+                        aria-labelledby="search-tab-{{ \Illuminate\Support\Str::slug($section['title']) }}"
+                    >
+                        <div class="search-group p-4">
                         <div class="search-group__header">
                             <h2 class="search-group__title">{{ $section['title'] }}</h2>
                             <span class="search-count">{{ $section['count'] }} found</span>
@@ -227,10 +288,47 @@
                                 </div>
                             @endforeach
                         </div>
+                        </div>
                     </div>
                 @endforeach
             </div>
         @endif
     </div>
 </section>
+
+@if($sections->isNotEmpty())
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = Array.from(document.querySelectorAll('[data-search-tab-target]'));
+        const panes = Array.from(document.querySelectorAll('.search-tab-pane'));
+
+        if (!tabs.length || !panes.length) {
+            return;
+        }
+
+        const activateTab = (tab) => {
+            const target = document.querySelector(tab.getAttribute('data-search-tab-target'));
+
+            if (!target) {
+                return;
+            }
+
+            tabs.forEach((item) => {
+                item.classList.remove('active');
+                item.setAttribute('aria-selected', 'false');
+            });
+
+            panes.forEach((pane) => pane.classList.remove('active'));
+
+            tab.classList.add('active');
+            tab.setAttribute('aria-selected', 'true');
+            target.classList.add('active');
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', () => activateTab(tab));
+        });
+    });
+</script>
+@endif
 @endsection
