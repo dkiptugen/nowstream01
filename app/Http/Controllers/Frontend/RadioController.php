@@ -7,6 +7,7 @@ use App\Models\Content;
 use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RadioController extends Controller
 {
@@ -141,9 +142,13 @@ class RadioController extends Controller
                 "radio_detail_{$slug}",
                 now()->addHours(12),
                 function () use ($slug) {
-                    return Content::where('slug', $slug)
-                        ->where('content_group', 'radio')
+                    return Content::where('content_group', 'radio')
                         ->where('status', 1)
+                        ->where(function ($query) use ($slug) {
+                            $query
+                                ->where('slug', $slug)
+                                ->orWhere('old_id', $slug);
+                        })
                         ->first();
                 }
             );
@@ -221,7 +226,14 @@ class RadioController extends Controller
                 'comments',
                 'genres'
             ));
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            Log::error('Radio show failed.', [
+                'slug' => $slug,
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
             abort(404, 'Radio not found');
         }
     }
