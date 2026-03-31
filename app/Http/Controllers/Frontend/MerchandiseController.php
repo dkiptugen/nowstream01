@@ -37,7 +37,7 @@ class MerchandiseController extends Controller
 
     public function show(Product $product)
     {
-        abort_unless($product->type === 'merch', 404);
+        abort_unless($product->type === 'merch' && $product->is_active, 404);
 
         $product->loadMissing(['payable', 'variants']);
 
