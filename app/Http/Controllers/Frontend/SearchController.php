@@ -104,8 +104,7 @@ class SearchController extends Controller
     private function searchProducts(string $query): array
     {
         $items = Product::query()
-            ->merch()
-            ->active()
+            ->merch() 
             ->with('payable')
             ->where(function ($search) use ($query) {
                 $search
