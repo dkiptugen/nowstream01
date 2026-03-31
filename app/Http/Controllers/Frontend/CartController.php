@@ -88,7 +88,7 @@ class CartController extends Controller
         }
 
         if ($request->expectsJson() || $request->ajax()) {
-            return $this->ajaxCartResponse($cart, 'Item added to cart.');
+            return $this->storeAjaxResponse($cart, 'Item added to cart.');
         }
 
         return redirect()
@@ -149,6 +149,17 @@ class CartController extends Controller
             'items_html' => view('Frontend.modules.shop.partials.cart-items', compact('summary'))->render(),
             'summary_html' => view('Frontend.modules.shop.partials.cart-summary', compact('summary'))->render(),
             'empty_html' => view('Frontend.modules.shop.partials.cart-empty')->render(),
+        ]);
+    }
+
+    protected function storeAjaxResponse($cart, string $message)
+    {
+        $summary = $this->cartService->cartSummary($cart);
+
+        return response()->json([
+            'message' => $message,
+            'count' => $summary['items']->sum('quantity'),
+            'empty' => $summary['items']->isEmpty(),
         ]);
     }
 }
