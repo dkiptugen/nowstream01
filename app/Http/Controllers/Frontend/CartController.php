@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Services\MerchCartService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -36,18 +38,53 @@ class CartController extends Controller
             ->with('variants')
             ->findOrFail($validated['product_id']);
 
+        if ($product->variants->isNotEmpty() && empty($validated['variant_id'])) {
+            $message = 'Please choose a product variant.';
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['message' => $message], 422);
+            }
+
+            return redirect()->back()->with('error', $message);
+        }
+
         $variant = !empty($validated['variant_id'])
             ? $product->variants()->whereKey($validated['variant_id'])->firstOrFail()
             : null;
 
         try {
             $cart = $this->cartService->addItem($request->user(), $product, $variant, (int) ($validated['quantity'] ?? 1));
+        } catch (ModelNotFoundException $exception) {
+            $message = 'This product option is no longer available.';
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['message' => $message], 404);
+            }
+
+            return redirect()->back()->with('error', $message);
         } catch (\RuntimeException $exception) {
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json(['message' => $exception->getMessage()], 422);
             }
 
             return redirect()->back()->with('error', $exception->getMessage());
+        } catch (\Throwable $exception) {
+            Log::error('Unable to add merchandise item to cart.', [
+                'user_id' => $request->user()?->id,
+                'product_id' => $validated['product_id'] ?? null,
+                'variant_id' => $validated['variant_id'] ?? null,
+                'message' => $exception->getMessage(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ]);
+
+            $message = 'Unable to add this item to cart right now.';
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json(['message' => $message], 500);
+            }
+
+            return redirect()->back()->with('error', $message);
         }
 
         if ($request->expectsJson() || $request->ajax()) {

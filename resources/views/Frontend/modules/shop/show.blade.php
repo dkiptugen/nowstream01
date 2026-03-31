@@ -134,6 +134,22 @@
             headerCartCount.classList.toggle('d-none', Number(count) <= 0);
         };
 
+        const parseResponsePayload = async (response) => {
+            const contentType = response.headers.get('content-type') || '';
+
+            if (contentType.includes('application/json')) {
+                return response.json();
+            }
+
+            const text = await response.text();
+
+            return {
+                message: text && text.trim()
+                    ? text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+                    : 'Unable to add item to cart.',
+            };
+        };
+
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
 
@@ -157,7 +173,7 @@
                     body: formData,
                 });
 
-                const payload = await response.json();
+                const payload = await parseResponsePayload(response);
 
                 if (!response.ok) {
                     throw new Error(payload.message || 'Unable to add item to cart.');
