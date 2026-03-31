@@ -99,8 +99,8 @@
                     </li>
                                 </ul>
                                 <div class="footer-search">
-                                    <form action="#">
-                                        <input type="text" placeholder="Find Favorite Shows & Streams">
+                                    <form action="{{ route('search') }}" method="GET">
+                                        <input type="text" name="query" placeholder="Find Favorite Shows & Streams" value="{{ request('query') }}">
                                         <button><i class="fas fa-search"></i></button>
                                     </form>
                                 </div>

@@ -1,89 +1,236 @@
 @extends('Frontend.includes.layout')
+
 @section('content')
+<style>
+    .search-page {
+        padding: 7rem 0 4rem;
+        min-height: 70vh;
+    }
 
-<div class="d-flex align-items-center justify-content-center my-5">
-    <div class="container">
-        <div class="row mt-md-5 mt-2">
-            <div class="col-md mx-auto">
-                <div class="form-body mb-3 mt-md-5">
-                    <form class="row g-3" id="searchForm">
-                        <div class="col-12">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-                        </div>
-                    </form>
+    .search-shell {
+        max-width: 1180px;
+    }
+
+    .search-hero,
+    .search-group,
+    .search-empty {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        border-radius: 24px;
+        box-shadow: 0 24px 70px rgba(2, 6, 23, 0.35);
+    }
+
+    .search-input {
+        width: 100%;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 16px;
+        padding: 1rem 1.1rem;
+        background: rgba(15, 23, 42, 0.8);
+        color: #fff;
+    }
+
+    .search-btn {
+        border: 0;
+        border-radius: 16px;
+        padding: 1rem 1.4rem;
+        background: #ef4444;
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .search-kicker {
+        color: #f87171;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .search-title {
+        color: #fff;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        margin-bottom: 0.75rem;
+    }
+
+    .search-muted {
+        color: #cbd5e1;
+    }
+
+    .search-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        background: rgba(248, 113, 113, 0.12);
+        color: #fecaca;
+        font-size: 0.92rem;
+    }
+
+    .search-group__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .search-group__title {
+        color: #fff;
+        font-size: 1.35rem;
+        margin: 0;
+    }
+
+    .search-card {
+        display: block;
+        height: 100%;
+        padding: 1rem;
+        border-radius: 18px;
+        background: rgba(30, 41, 59, 0.58);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        color: inherit;
+        text-decoration: none;
+        transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .search-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(248, 113, 113, 0.42);
+        text-decoration: none;
+    }
+
+    .search-card__media {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        border-radius: 14px;
+        object-fit: cover;
+        background: linear-gradient(135deg, #1e293b, #334155);
+        margin-bottom: 0.9rem;
+    }
+
+    .search-card__type {
+        display: inline-block;
+        margin-bottom: 0.65rem;
+        padding: 0.32rem 0.65rem;
+        border-radius: 999px;
+        background: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+        font-size: 0.76rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .search-card__title {
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+    }
+
+    .search-card__description,
+    .search-card__meta {
+        color: #cbd5e1;
+        font-size: 0.92rem;
+        margin: 0;
+    }
+
+    .search-card__meta {
+        margin-top: 0.6rem;
+        color: #94a3b8;
+    }
+
+    @media (max-width: 767.98px) {
+        .search-page {
+            padding-top: 6rem;
+        }
+
+        .search-group__header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<section class="search-page">
+    <div class="container search-shell">
+        <div class="search-hero p-4 p-lg-5 mb-4">
+            <p class="search-kicker">Search</p>
+            <h1 class="search-title">Find anything across Nowstream.</h1>
+            <p class="search-muted mb-4">Events, live streams, videos, podcasts, radio, TV, merchandise and channels in one place.</p>
+
+            <form action="{{ route('search') }}" method="GET" class="row g-3 align-items-end">
+                <div class="col-lg-9">
+                    <label for="search-query" class="search-muted d-block mb-2">Search term</label>
+                    <input
+                        id="search-query"
+                        type="text"
+                        name="query"
+                        class="search-input"
+                        value="{{ $query }}"
+                        placeholder="Search events, videos, podcasts, merch..."
+                    >
                 </div>
+                <div class="col-lg-3">
+                    <button type="submit" class="search-btn w-100">Search</button>
+                </div>
+            </form>
 
-                <div class="mt-4">
-                    <div class="card-body">
-                        <h5 class="">Search Results For <span id="searchQuery">Football</span></h5>
-                        <ul class="nav nav-pills mb-3" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link active" data-bs-toggle="pill" href="#primary-pills-stream" role="tab"
-                                    aria-selected="true">
-                                    <div class="d-flex align-items-center">
-                                        <div class="tab-icon"><i class="bx bx-tv font-18 me-1"></i>
-                                        </div>
-                                        <div class="tab-title">Live Streams</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" data-bs-toggle="pill" href="#primary-pills-video" role="tab"
-                                    aria-selected="false" tabindex="-1">
-                                    <div class="d-flex align-items-center">
-                                        <div class="tab-icon"><i class="bx bx-video font-18 me-1"></i>
-                                        </div>
-                                        <div class="tab-title">Videos</div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link" data-bs-toggle="pill" href="#primary-pills-channel" role="tab"
-                                    aria-selected="false" tabindex="-1">
-                                    <div class="d-flex align-items-center">
-                                        <div class="tab-icon"><i class="bx bx-tv font-18 me-1"></i>
-                                        </div>
-                                        <div class="tab-title">Channels</div>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="pills-tabContent">
-                            <div class="tab-pane fade show active" id="primary-pills-stream" role="tabpanel">
-                                <div class="row" id="streamResults">
-                                    @foreach ($streams as $stream)
-                                        <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-4">
-                                            @include('Frontend.includes.components.cards.stream-card')
-                                        </div>
-                                    @endforeach
+            @if($query !== '')
+                <div class="mt-4 d-flex flex-wrap gap-3 align-items-center">
+                    <span class="search-count">{{ number_format($totalResults) }} results</span>
+                    <span class="search-muted">Results for "{{ $query }}"</span>
+                </div>
+            @endif
+        </div>
+
+        @if($query === '')
+            <div class="search-empty p-4 p-lg-5">
+                <h2 class="text-white h4 mb-2">Start with a title, artist, event or keyword.</h2>
+                <p class="search-muted mb-0">The search page groups results by content type so it is easier to scan what the app already has.</p>
+            </div>
+        @elseif($sections->isEmpty())
+            <div class="search-empty p-4 p-lg-5">
+                <h2 class="text-white h4 mb-2">No results found.</h2>
+                <p class="search-muted mb-0">Try a different title, a shorter phrase, or a broader keyword.</p>
+            </div>
+        @else
+            <div class="d-grid gap-4">
+                @foreach($sections as $section)
+                    <div class="search-group p-4">
+                        <div class="search-group__header">
+                            <h2 class="search-group__title">{{ $section['title'] }}</h2>
+                            <span class="search-count">{{ $section['count'] }} found</span>
+                        </div>
+
+                        <div class="row g-4">
+                            @foreach($section['items'] as $item)
+                                <div class="col-12 col-md-6 col-xl-3">
+                                    <a href="{{ $item['url'] }}" class="search-card">
+                                        @if(!empty($item['image']))
+                                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="search-card__media">
+                                        @else
+                                            <div class="search-card__media"></div>
+                                        @endif
+
+                                        <span class="search-card__type">{{ $item['type'] }}</span>
+                                        <h3 class="search-card__title">{{ $item['title'] }}</h3>
+
+                                        @if(!empty($item['description']))
+                                            <p class="search-card__description">{{ \Illuminate\Support\Str::limit(strip_tags($item['description']), 110) }}</p>
+                                        @endif
+
+                                        @if(!empty($item['meta']))
+                                            <p class="search-card__meta">{{ $item['meta'] }}</p>
+                                        @endif
+                                    </a>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" id="primary-pills-video" role="tabpanel">
-                                <div class="row" id="videoResults">
-                                    @foreach ($videos as $video)
-                                        <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-4">
-                                            @include('Frontend.includes.components.cards.video-card')
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="primary-pills-channel" role="tabpanel">
-                                <div class="row" id="channelResults">
-                                    @foreach ($channels as $channel)
-                                        <div class="col-12 col-lg-3 col-md-6 col-xl-3 col-xxl-3 mb-4">
-                                            @include('Frontend.includes.components.cards.channels')
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
+                            @endforeach
                         </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-        </div>
+        @endif
     </div>
-</div>
-@endsection
-
-@section('scripts')
+</section>
 @endsection

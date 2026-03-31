@@ -478,8 +478,8 @@
                         <div class="modal fade" id="search-modal" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
-                                    <form>
-                                        <input type="text" placeholder="Search here...">
+                                    <form action="{{ route('search') }}" method="GET">
+                                        <input type="text" name="query" placeholder="Search here..." value="{{ request('query') }}">
                                         <button><i class="fas fa-search"></i></button>
                                     </form>
                                 </div>
