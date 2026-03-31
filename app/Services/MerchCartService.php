@@ -33,7 +33,7 @@ class MerchCartService
             'variant_id' => $variant?->id,
         ]);
 
-        $item->quantity = ($item->exists ? $item->quantity : 0) + $quantity;
+        $item->quantity = $quantity;
         $this->assertInventory($product, $variant, $item->quantity);
         $item->save();
 
