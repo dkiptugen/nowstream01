@@ -264,27 +264,31 @@
                             <span class="search-count">{{ $section['count'] }} found</span>
                         </div>
 
-                        <div class="row g-4">
+                            <div class="row g-4">
                             @foreach($section['items'] as $item)
                                 <div class="col-12 col-md-6 col-xl-3">
-                                    <a href="{{ $item['url'] }}" class="search-card">
-                                        @if(!empty($item['image']))
-                                            <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="search-card__media">
-                                        @else
-                                            <div class="search-card__media"></div>
-                                        @endif
+                                    @if(isset($item['product']) && $item['product'] instanceof \App\Models\Product)
+                                        @include('Frontend.modules.shop.partials.product-card', ['product' => $item['product']])
+                                    @else
+                                        <a href="{{ $item['url'] }}" class="search-card">
+                                            @if(!empty($item['image']))
+                                                <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="search-card__media">
+                                            @else
+                                                <div class="search-card__media"></div>
+                                            @endif
 
-                                        <span class="search-card__type">{{ $item['type'] }}</span>
-                                        <h3 class="search-card__title">{{ $item['title'] }}</h3>
+                                            <span class="search-card__type">{{ $item['type'] }}</span>
+                                            <h3 class="search-card__title">{{ $item['title'] }}</h3>
 
-                                        @if(!empty($item['description']))
-                                            <p class="search-card__description">{{ \Illuminate\Support\Str::limit(strip_tags($item['description']), 110) }}</p>
-                                        @endif
+                                            @if(!empty($item['description']))
+                                                <p class="search-card__description">{{ \Illuminate\Support\Str::limit(strip_tags($item['description']), 110) }}</p>
+                                            @endif
 
-                                        @if(!empty($item['meta']))
-                                            <p class="search-card__meta">{{ $item['meta'] }}</p>
-                                        @endif
-                                    </a>
+                                            @if(!empty($item['meta']))
+                                                <p class="search-card__meta">{{ $item['meta'] }}</p>
+                                            @endif
+                                        </a>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

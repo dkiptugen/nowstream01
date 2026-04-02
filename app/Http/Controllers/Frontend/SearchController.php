@@ -118,6 +118,7 @@ class SearchController extends Controller
                 $payable = $product->payable?->event_name ?? $product->payable?->title;
 
                 return [
+                    'product' => $product,
                     'title' => $product->name,
                     'description' => $product->description,
                     'meta' => collect([
