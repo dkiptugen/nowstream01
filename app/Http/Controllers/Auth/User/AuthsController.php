@@ -162,12 +162,12 @@
 							                          ]);
 							$at       = new AfricasTalking();
 							$phoneNew = '0'.substr ($this->removeSpaces ($phone), -9);
-							$at->send_sms ('streamer', $phoneNew,
+							$at->send_sms ('baze', $phoneNew,
 							               'Welcome to streamer.co.ke . Kindly update your profile to enjoy a better experience.');
 						}
 					$otp = $this->generateOTP ();
 					$at  = new AfricasTalking();
-					$at->send_sms ('streamer', $phone, 'Use '.$otp." to verify your access");
+					$at->send_sms ('baze', $phone, 'Use '.$otp." to verify your access");
 					$user->verification_key = $otp;
 					$user->save ();
 
@@ -197,12 +197,12 @@
 							                          ]);
 							$at       = new AfricasTalking();
 							$phoneNew = '0'.substr ($this->removeSpaces ($phone), -9);
-							$at->send_sms ('streamer', $phoneNew,
+							$at->send_sms ('baze', $phoneNew,
 							               'Welcome to streamer.co.ke . Kindly update your profile to enjoy a better experience.');
 						}
 					$otp = $this->generateOTP ();
 					$at  = new AfricasTalking();
-					$at->send_sms ('streamer', $phone, 'Use '.$otp." to verify your access");
+					$at->send_sms ('baze', $phone, 'Use '.$otp." to verify your access");
 					$user->verification_key = $otp;
 					$user->save ();
 
