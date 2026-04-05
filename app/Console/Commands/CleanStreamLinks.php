@@ -17,7 +17,7 @@ class CleanStreamLinks extends Command
      * @var string
      */
         protected $signature = 'streams:clean
-        {--group=livestream : Content group to scan}
+        {--group=livestream,tv,radio : Comma-separated content groups to scan}
         {--limit=0 : Maximum number of rows to scan}
         {--timeout=15 : HTTP timeout in seconds}
         {--include-disabled : Also scan records already marked disabled}
@@ -32,14 +32,17 @@ class CleanStreamLinks extends Command
 
         public function handle(): int
             {
-                $group           = (string)$this->option('group');
+                $groups          = collect(explode(',', (string) $this->option('group')))
+                    ->map(fn ($group) => trim($group))
+                    ->filter()
+                    ->values();
                 $limit           = max((int)$this->option('limit'), 0);
                 $timeout         = max((int)$this->option('timeout'), 1);
                 $dryRun          = (bool)$this->option('dry-run');
                 $includeDisabled = (bool)$this->option('include-disabled');
 
                 $query = Content::query()
-                                ->where('content_group', $group)
+                                ->whereIn('content_group', $groups->all())
                                 ->where(function ($builder)
                                     {
                                         $builder
@@ -62,11 +65,11 @@ class CleanStreamLinks extends Command
 
                 if ($contents->isEmpty())
                     {
-                        $this->warn("No content found for content_group [{$group}].");
+                        $this->warn('No content found for content_group(s) [' . $groups->join(', ') . '].');
                         return self::SUCCESS;
                     }
 
-                $this->info("Scanning {$contents->count()} content item(s) in group [{$group}]...");
+                $this->info("Scanning {$contents->count()} content item(s) in group(s) [" . $groups->join(', ') . ']...');
 
                 $checked  = 0;
                 $disabled = 0;
@@ -129,7 +132,11 @@ class CleanStreamLinks extends Command
                         return null;
                     }
 
-                return filter_var($url, FILTER_VALIDATE_URL) ? $url : null;
+                if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                    return null;
+                }
+
+                return $this->normalizeUpstreamUrl($url);
             }
 
     /**
@@ -182,6 +189,25 @@ class CleanStreamLinks extends Command
                                'Range'      => 'bytes=0-0',
                            ])
                            ->send(strtoupper($method), $url);
+            }
+
+        private function normalizeUpstreamUrl(string $url): string
+            {
+                $parts = parse_url($url);
+
+                if (!$parts || empty($parts['scheme']) || strtolower($parts['scheme']) !== 'http') {
+                    return $url;
+                }
+
+                $port = (int) ($parts['port'] ?? 80);
+
+                if (!in_array($port, [80, 443], true)) {
+                    return $url;
+                }
+
+                $httpsUrl = preg_replace('/^http:/i', 'https:', $url, 1);
+
+                return $httpsUrl ?? $url;
             }
 
         private function responseLooksHealthy(?Response $response, string $url, bool $inspectBody): bool

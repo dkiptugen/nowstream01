@@ -247,7 +247,17 @@ class StreamController extends Controller
 			return $url;
 		}
 
+		$host = (string) ($parts['host'] ?? '');
+		$port = (int) ($parts['port'] ?? 80);
+
+		// Many streaming providers expose custom radio/TV ports over plain HTTP only.
+		// Only auto-upgrade standard web ports, otherwise preserve the upstream scheme.
+		if (!in_array($port, [80, 443], true)) {
+			return $url;
+		}
+
 		$httpsUrl = preg_replace('/^http:/i', 'https:', $url, 1);
+
 		return $httpsUrl ?? $url;
 	}
 
