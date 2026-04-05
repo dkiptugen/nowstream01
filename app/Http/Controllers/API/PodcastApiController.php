@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PodcastApiController extends Controller
 {
+    private const JSON_FLAGS = JSON_INVALID_UTF8_SUBSTITUTE;
 
     /**
      * List Podcasts
@@ -25,10 +26,15 @@ class PodcastApiController extends Controller
             ->latest()
             ->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $podcasts
-        ]);
+        return response()->json(
+            [
+                'success' => true,
+                'data' => $podcasts
+            ],
+            200,
+            [],
+            self::JSON_FLAGS
+        );
     }
 
 
@@ -55,12 +61,17 @@ class PodcastApiController extends Controller
             ->limit(6)
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'podcast' => $podcast,
-            'episodes' => $episodes,
-            'related' => $related
-        ]);
+        return response()->json(
+            [
+                'success' => true,
+                'podcast' => $podcast,
+                'episodes' => $episodes,
+                'related' => $related
+            ],
+            200,
+            [],
+            self::JSON_FLAGS
+        );
     }
 
 
@@ -78,10 +89,15 @@ class PodcastApiController extends Controller
             ->orderByDesc('created_at')
             ->paginate(20);
 
-        return response()->json([
-            'success' => true,
-            'data' => $episodes
-        ]);
+        return response()->json(
+            [
+                'success' => true,
+                'data' => $episodes
+            ],
+            200,
+            [],
+            self::JSON_FLAGS
+        );
     }
 
 
