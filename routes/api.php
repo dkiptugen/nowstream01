@@ -1,6 +1,7 @@
 <?php
 
 	use App\Http\Controllers\API\APIController;
+	use App\Http\Controllers\API\ContentCommentApiController;
 	use App\Http\Controllers\API\MobileAuthController;
 	use App\Http\Controllers\API\TvAppContentApiController;
 	use App\Http\Controllers\Api\CartApiController;
@@ -36,6 +37,7 @@
 		Route::get('regions', [TvAppContentApiController::class, 'regions']);
 		Route::get('regions/{regionId}/contents', [TvAppContentApiController::class, 'regionContents']);
 	});
+	Route::get('content/{contentId}/comments', [ContentCommentApiController::class, 'index']);
 	/*
 	|--------------------------------------------------------------------------
 	| API Routes
@@ -69,5 +71,6 @@
 		Route::delete('cart/{cartItem}', [CartApiController::class, 'destroy']);
 		Route::post('checkout/orders', [OrderApiController::class, 'store']);
 		Route::get('checkout/orders/{order}', [OrderApiController::class, 'show']);
+		Route::post('content/{contentId}/comments', [ContentCommentApiController::class, 'store']);
 	});
     Route::post('content/{content}/failure', [APIController::class, 'disableContent'])->name('api.disable-content');

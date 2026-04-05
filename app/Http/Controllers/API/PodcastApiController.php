@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Content;
 use App\Models\WatchHistory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class PodcastApiController extends Controller
 {
@@ -29,7 +30,15 @@ class PodcastApiController extends Controller
         return response()->json(
             [
                 'success' => true,
-                'data' => $podcasts
+                'data' => collect($podcasts->items())
+                    ->map(fn (Content $podcast) => $this->serializePodcast($podcast))
+                    ->values(),
+                'pagination' => [
+                    'current_page' => $podcasts->currentPage(),
+                    'last_page' => $podcasts->lastPage(),
+                    'per_page' => $podcasts->perPage(),
+                    'total' => $podcasts->total(),
+                ],
             ],
             200,
             [],
@@ -64,9 +73,13 @@ class PodcastApiController extends Controller
         return response()->json(
             [
                 'success' => true,
-                'podcast' => $podcast,
-                'episodes' => $episodes,
+                'podcast' => $this->serializePodcast($podcast),
+                'episodes' => $episodes
+                    ->map(fn (Content $episode) => $this->serializeEpisode($episode, $podcast))
+                    ->values(),
                 'related' => $related
+                    ->map(fn (Content $item) => $this->serializePodcast($item))
+                    ->values(),
             ],
             200,
             [],
@@ -92,7 +105,15 @@ class PodcastApiController extends Controller
         return response()->json(
             [
                 'success' => true,
-                'data' => $episodes
+                'data' => collect($episodes->items())
+                    ->map(fn (Content $episode) => $this->serializeEpisode($episode, $podcast))
+                    ->values(),
+                'pagination' => [
+                    'current_page' => $episodes->currentPage(),
+                    'last_page' => $episodes->lastPage(),
+                    'per_page' => $episodes->perPage(),
+                    'total' => $episodes->total(),
+                ],
             ],
             200,
             [],
@@ -128,5 +149,78 @@ class PodcastApiController extends Controller
         return response()->json([
             'success' => true
         ]);
+    }
+
+    private function serializePodcast(Content $podcast): array
+    {
+        return [
+            'uuid' => $podcast->uuid,
+            'slug' => $podcast->slug,
+            'title' => $this->sanitizeString($podcast->title),
+            'description' => $this->sanitizeString($podcast->description),
+            'thumbnail_url' => $this->assetUrl($podcast->thumbnail_url),
+            'content_group' => $podcast->content_group,
+            'author' => $this->sanitizeString($podcast->author),
+            'language' => $this->sanitizeString($podcast->language),
+            'country' => $this->sanitizeString($podcast->country),
+            'views' => (int) ($podcast->views ?? 0),
+        ];
+    }
+
+    private function serializeEpisode(Content $episode, Content $podcast): array
+    {
+        $thumbnail = $this->assetUrl($episode->thumbnail_url) ?? $this->assetUrl($podcast->thumbnail_url);
+
+        return [
+            'uuid' => $episode->uuid,
+            'slug' => $episode->slug,
+            'title' => $this->sanitizeString($episode->title),
+            'description' => $this->sanitizeString($episode->description),
+            'thumbnail_url' => $thumbnail,
+            'content_group' => $episode->content_group,
+            'src' => $this->episodePlaybackUrl($episode),
+            'playback_url' => $this->episodePlaybackUrl($episode),
+            'podcast_title' => $this->sanitizeString($podcast->title),
+            'author' => $this->sanitizeString($episode->author ?: $podcast->author),
+            'type' => 'audio',
+        ];
+    }
+
+    private function episodePlaybackUrl(Content $episode): ?string
+    {
+        if ($episode->stream_video_link || $episode->stream_url) {
+            return URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
+                'streamId' => $episode->uuid,
+            ]);
+        }
+
+        if (!empty($episode->content_path)) {
+            return $this->assetUrl($episode->content_path);
+        }
+
+        return null;
+    }
+
+    private function assetUrl(?string $path): ?string
+    {
+        if (!is_string($path) || trim($path) === '') {
+            return null;
+        }
+
+        $path = trim($path);
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+
+        return Storage::disk(config('filesystems.default'))->url($path);
+    }
+
+    private function sanitizeString($value): ?string
+    {
+        if (!is_string($value) || $value === '') {
+            return null;
+        }
+
+        return iconv('UTF-8', 'UTF-8//IGNORE', $value) ?: null;
     }
 }
