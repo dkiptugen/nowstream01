@@ -5,22 +5,14 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 
 class TvAppContentResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $playbackUrl = null;
-
-        if (in_array($this->content_group, ['livestream', 'tv', 'radio', 'podcast_episode'], true)
-            && ($this->stream_video_link || $this->stream_url)) {
-            $playbackUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
-                'streamId' => $this->uuid,
-            ]);
-        } elseif ($this->content_group === 'video' && !empty($this->content_path)) {
-            $playbackUrl = Storage::disk(config('filesystems.default'))->url($this->content_path);
-        }
+        $thumbnailUrl = $this->resolveAssetUrl($this->thumbnail_url);
+        $streamUrl = $this->resolveStreamUrl();
+        $playbackUrl = $this->resolvePlaybackUrl($streamUrl);
 
         return [
             'uuid' => $this->uuid,
@@ -28,7 +20,7 @@ class TvAppContentResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'content_group' => $this->content_group,
-            'thumbnail_url' => $this->thumbnail_url,
+            'thumbnail_url' => $thumbnailUrl,
             'duration' => $this->duration,
             'language' => $this->language,
             'country' => $this->country,
@@ -38,8 +30,8 @@ class TvAppContentResource extends JsonResource
             'status' => (int) $this->status,
             'start_time' => optional($this->start_time)->toISOString(),
             'end_time' => optional($this->end_time)->toISOString(),
-            'stream_url' => $this->stream_url,
-            'stream_video_link' => $this->stream_video_link,
+            'stream_url' => $streamUrl,
+            'stream_video_link' => $streamUrl,
             'playback_url' => $playbackUrl,
             'event' => $this->whenLoaded('event', function () {
                 if (!$this->event) {
@@ -76,5 +68,43 @@ class TvAppContentResource extends JsonResource
                 ];
             }),
         ];
+    }
+
+    private function resolvePlaybackUrl(?string $streamUrl): ?string
+    {
+        if (in_array($this->content_group, ['livestream', 'tv', 'radio', 'podcast_episode'], true)) {
+            return $streamUrl;
+        }
+
+        if ($this->content_group === 'video' && !empty($this->content_path)) {
+            return $this->resolveAssetUrl($this->content_path);
+        }
+
+        return null;
+    }
+
+    private function resolveStreamUrl(): ?string
+    {
+        $url = $this->stream_video_link ?: $this->stream_url;
+
+        if (!is_string($url) || trim($url) === '') {
+            return null;
+        }
+
+        return trim($url);
+    }
+
+    private function resolveAssetUrl(?string $path): ?string
+    {
+        if (!is_string($path) || trim($path) === '') {
+            return null;
+        }
+
+        $path = trim($path);
+        if (preg_match('/^https?:\/\//i', $path)) {
+            return $path;
+        }
+
+        return Storage::disk(config('filesystems.default'))->url($path);
     }
 }
