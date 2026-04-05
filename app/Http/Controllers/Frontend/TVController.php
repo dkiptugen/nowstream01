@@ -9,6 +9,7 @@ use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
 
 class TVController extends Controller
 {
@@ -175,6 +176,9 @@ class TVController extends Controller
             $genres = $tv->genre ?? [];
 
             $comments = $tv->comments()->with('user')->orderBy('created_at', 'asc')->get();
+            $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
+                'streamId' => $tv->id,
+            ]);
 
             // Randomized related TVs
             $related = Cache::remember("tv_related_{$uuid}", now()->addDay(), function () use ($uuid, $genres) {
@@ -193,7 +197,7 @@ class TVController extends Controller
                 return $query->inRandomOrder()->limit(16)->get(); // randomized
             });
 
-            return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments'));
+            return view('Frontend.modules.tvs.show', compact('tv', 'related', 'comments', 'streamProxyUrl'));
         } catch (\Exception $e) {
             abort(404, 'TV not found');
         }

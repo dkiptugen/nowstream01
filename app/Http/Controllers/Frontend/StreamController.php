@@ -62,14 +62,22 @@ class StreamController extends Controller
 
 	public function proxyStream(int $streamId)
 	{
-		$stream = Content::findOrFail($streamId);
-		$masterUrl = $this->normalizeUpstreamUrl($stream->stream_video_link);
+		$stream = $this->cachedStream($streamId);
+		$masterUrl = $this->resolveProxySourceUrl($stream);
+		$rangeHeader = (string) request()->header('Range', '');
 
 		try {
+			if ($rangeHeader === '') {
+				$cachedPlaylist = $this->getCachedPlaylistResponse($this->playlistCacheKey($streamId, $masterUrl));
+				if ($cachedPlaylist !== null) {
+					return $cachedPlaylist;
+				}
+			}
+
 			$response = Http::withOptions(['stream' => true, 'timeout' => 30])
 				->withHeaders([
 					'Accept' => 'application/vnd.apple.mpegurl, application/x-mpegURL, application/octet-stream',
-					'Range' => request()->header('Range', ''),
+					'Range' => $rangeHeader,
 				])
 				->get($masterUrl);
 
@@ -83,10 +91,12 @@ class StreamController extends Controller
 			if ($isPlaylist) {
 				$rewritten = $this->rewritePlaylistUrls((string) $response->body(), $masterUrl, $streamId);
 
-				return response($rewritten, 200)->withHeaders([
-					'Content-Type' => 'application/vnd.apple.mpegurl',
-					'Cache-Control' => 'no-cache, no-store, must-revalidate',
-				]);
+				return $this->cachePlaylistResponse(
+					$this->playlistCacheKey($streamId, $masterUrl),
+					$rewritten,
+					'application/vnd.apple.mpegurl',
+					$rangeHeader === ''
+				);
 			}
 
 			return $this->streamUpstreamResponse($response, $masterUrl);
@@ -108,8 +118,9 @@ class StreamController extends Controller
 			abort(400, 'Invalid src parameter');
 		}
 
-		$stream = Content::findOrFail($streamId);
-		$originHost = parse_url((string) $stream->stream_video_link, PHP_URL_HOST);
+		$stream = $this->cachedStream($streamId);
+		$originUrl = $this->resolveProxySourceUrl($stream);
+		$originHost = parse_url($originUrl, PHP_URL_HOST);
 		$assetHost = parse_url($assetUrl, PHP_URL_HOST);
 
 		if (!$originHost || !$assetHost || !hash_equals((string) $originHost, (string) $assetHost)) {
@@ -117,11 +128,19 @@ class StreamController extends Controller
 		}
 
 		$assetUrl = $this->normalizeUpstreamUrl($assetUrl);
+		$rangeHeader = (string) $request->header('Range', '');
 
 		try {
+			if ($rangeHeader === '') {
+				$cachedPlaylist = $this->getCachedPlaylistResponse($this->playlistCacheKey($streamId, $assetUrl));
+				if ($cachedPlaylist !== null) {
+					return $cachedPlaylist;
+				}
+			}
+
 			$response = Http::withOptions(['stream' => true, 'timeout' => 30])
 				->withHeaders([
-					'Range' => $request->header('Range', ''),
+					'Range' => $rangeHeader,
 					'Accept' => 'application/vnd.apple.mpegurl, application/x-mpegURL, video/mp2t, application/octet-stream',
 				])
 				->get($assetUrl);
@@ -135,10 +154,12 @@ class StreamController extends Controller
 
 			if ($isPlaylist) {
 				$rewritten = $this->rewritePlaylistUrls((string) $response->body(), $assetUrl, $streamId);
-				return response($rewritten, 200)->withHeaders([
-					'Content-Type' => 'application/vnd.apple.mpegurl',
-					'Cache-Control' => 'no-cache, no-store, must-revalidate',
-				]);
+				return $this->cachePlaylistResponse(
+					$this->playlistCacheKey($streamId, $assetUrl),
+					$rewritten,
+					'application/vnd.apple.mpegurl',
+					$rangeHeader === ''
+				);
 			}
 
 			return $this->streamUpstreamResponse($response, $assetUrl);
@@ -250,9 +271,99 @@ class StreamController extends Controller
 			'Content-Length' => $response->header('Content-Length'),
 			'Content-Range' => $response->header('Content-Range'),
 			'Accept-Ranges' => 'bytes',
-			'Cache-Control' => 'no-cache, no-store, must-revalidate',
+			'Cache-Control' => $this->segmentCacheControlHeader($url),
 			'Connection' => 'keep-alive',
+			'ETag' => $response->header('ETag'),
+			'Last-Modified' => $response->header('Last-Modified'),
 		]));
+	}
+
+	private function cachedStream(int $streamId): Content
+	{
+		return Cache::remember(
+			"stream_proxy_meta_{$streamId}",
+			now()->addMinutes(10),
+			fn () => Content::findOrFail($streamId)
+		);
+	}
+
+	private function resolveProxySourceUrl(Content $content): string
+	{
+		$url = (string) ($content->stream_video_link ?: $content->stream_url);
+
+		if ($url === '') {
+			abort(404, 'Stream source not found');
+		}
+
+		return $this->normalizeUpstreamUrl($url);
+	}
+
+	private function playlistCacheKey(int $streamId, string $url): string
+	{
+		return 'stream_playlist:' . $streamId . ':' . sha1($url);
+	}
+
+	private function getCachedPlaylistResponse(string $cacheKey)
+	{
+		$cached = Cache::get($cacheKey);
+
+		if (!is_array($cached) || !isset($cached['body'], $cached['content_type'])) {
+			return null;
+		}
+
+		return response($cached['body'], 200)->withHeaders([
+			'Content-Type' => $cached['content_type'],
+			'Cache-Control' => $this->playlistCacheControlHeader(),
+			'X-Nowstream-Cache' => 'HIT',
+		]);
+	}
+
+	private function cachePlaylistResponse(string $cacheKey, string $body, string $contentType, bool $storeInCache)
+	{
+		if ($storeInCache) {
+			Cache::put($cacheKey, [
+				'body' => $body,
+				'content_type' => $contentType,
+			], now()->addSeconds($this->playlistCacheTtlSeconds()));
+		}
+
+		return response($body, 200)->withHeaders([
+			'Content-Type' => $contentType,
+			'Cache-Control' => $this->playlistCacheControlHeader(),
+			'X-Nowstream-Cache' => $storeInCache ? 'MISS' : 'BYPASS',
+		]);
+	}
+
+	private function playlistCacheTtlSeconds(): int
+	{
+		$ttl = (int) config('custom.STREAM.PLAYLIST_CACHE_TTL_SECONDS', 3);
+
+		return max(1, $ttl);
+	}
+
+	private function segmentCacheTtlSeconds(): int
+	{
+		$ttl = (int) config('custom.STREAM.SEGMENT_CACHE_TTL_SECONDS', 120);
+
+		return max(10, $ttl);
+	}
+
+	private function playlistCacheControlHeader(): string
+	{
+		$ttl = $this->playlistCacheTtlSeconds();
+
+		return "public, max-age={$ttl}, s-maxage={$ttl}, stale-while-revalidate=10";
+	}
+
+	private function segmentCacheControlHeader(string $url): string
+	{
+		if (str_contains($url, '.m3u8')) {
+			return $this->playlistCacheControlHeader();
+		}
+
+		$ttl = $this->segmentCacheTtlSeconds();
+
+		return "public, max-age={$ttl}, s-maxage={$ttl}, stale-while-revalidate=30";
 	}
 
 

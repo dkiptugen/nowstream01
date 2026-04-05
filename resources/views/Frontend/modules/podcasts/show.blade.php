@@ -1,21 +1,6 @@
 @php use Carbon\Carbon; @endphp
 @extends('Frontend.includes.layout')
 @section('content')
-@php
-$episodeHistory = $episodeHistory ?? collect();
-$playlist = $podcast->episodes->map(function($ep) use ($podcast, $episodeHistory) {
-return [
-'src' => $ep->stream_url,
-'title' => $ep->title,
-'podcast' => $podcast->title,
-'thumbnail' => $podcast->thumbnail_url,
-'type' => 'audio',
-'uuid' => $ep->uuid,
-'resume_at' => (int) optional($episodeHistory->get($ep->uuid))->watch_duration,
-];
-});
-@endphp  
-
 <!-- main-area -->
 <main> 
     <!-- movie-details-area -->
@@ -28,7 +13,7 @@ return [
                         <div class="col-xl-4 col-lg-4">
                             <div class="movie-details-img">
                                 <img src="{{ $podcast->thumbnail_url }}" class="img-fluid" alt="{{ $podcast->title }}">
-                                <span class="popup-video" onclick='window.playGlobalAudio(@json($playlist), 0)'>
+                                <span class="popup-video" onclick='window.playGlobalAudio(@json($podcastPlaylist), 0)'>
                                     <img src="{{ asset('assets/img/images/play_icon.png') }}" alt="Play Podcast" style="cursor: pointer;">
                                 </span>
 
@@ -60,7 +45,7 @@ return [
                                             </span>
                                             <span class="ms-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"
-                                                onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
+                                                onclick='playGlobalAudio(@json($podcastPlaylist), 0)' style="cursor: pointer;">
                                                 Play All
                                             </span>
                                         </li>
@@ -140,7 +125,7 @@ return [
                                                 @foreach($podcast->episodes as $index => $episode)
                                                  <li>
                                                     <a href="javascript:void(0)"
-                                                        onclick='playGlobalAudio(@json($playlist), {{ $index }})'>
+                                                        onclick='playGlobalAudio(@json($podcastPlaylist), {{ $index }})'>
                                                         <i class="fas fa-play"></i>
                                                         {{ $episode->title }}
                                                     </a>

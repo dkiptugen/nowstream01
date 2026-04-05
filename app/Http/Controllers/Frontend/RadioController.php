@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class RadioController extends Controller
@@ -214,12 +215,17 @@ class RadioController extends Controller
                 ->take(16)
                 ->values();
 
+            $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
+                'streamId' => $radio->id,
+            ]);
+
 
             return view('Frontend.modules.radios.show', compact(
                 'radio',
                 'related',
                 'comments',
-                'genres'
+                'genres',
+                'streamProxyUrl'
             ));
         } catch (\Throwable $e) {
             Log::error('Radio show failed.', [

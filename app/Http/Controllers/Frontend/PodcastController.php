@@ -7,6 +7,7 @@ use App\Models\Content;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
 use App\Traits\CacheHelper;
 use App\Models\WatchHistory;
 use Illuminate\Support\Facades\Auth;
@@ -152,6 +153,20 @@ class PodcastController extends Controller
             $podcast->episodes       = $episodes;
             $podcast->episodes_count = $episodes->count();
 
+            $podcastPlaylist = $episodes->map(function ($episode) use ($podcast, $episodeHistory) {
+                return [
+                    'src' => URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
+                        'streamId' => $episode->id,
+                    ]),
+                    'title' => $episode->title,
+                    'podcast' => $podcast->title,
+                    'thumbnail' => $podcast->thumbnail_url,
+                    'type' => 'audio',
+                    'uuid' => $episode->uuid,
+                    'resume_at' => (int) optional($episodeHistory->get($episode->uuid))->watch_duration,
+                ];
+            })->values();
+
 
             /**
              * 3. Comments (short cache – frequently changing)
@@ -206,7 +221,8 @@ class PodcastController extends Controller
                 'videos',
                 'episodes',
                 'comments',
-                'episodeHistory'
+                'episodeHistory',
+                'podcastPlaylist'
             ));
         } catch (\Exception $e) {
             abort(404, 'Podcast not found');

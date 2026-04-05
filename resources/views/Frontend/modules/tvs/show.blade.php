@@ -11,7 +11,7 @@
 					<div id="videoWrap" class="tv-wrap">
 						<video
 							id="player"
-							data-stream="{{ $tv->stream_url }}"
+							data-stream="{{ $streamProxyUrl }}"
 							playsinline
 							controls
 							poster="{{ $tv->thumbnail_url }}">
