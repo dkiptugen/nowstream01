@@ -26,34 +26,33 @@ class PodcastController extends Controller
     {
         $perPage = 30;
         $page    = $request->get('page', 1);
+        $cacheTtl = now()->addMinutes(10);
 
         /**
          * Stable random seed (changes every 10 minutes)
          * Prevents reshuffling during scroll
          */
-        $seed = now()->format('YmdHi'); // time-based seed
-
-        $cacheKey = "podcasts_page_{$page}_seed_{$seed}";
+        $cacheKey = "frontend:podcasts:index:page:{$page}:per_page:{$perPage}";
 
 
         /**
          * Normal Page Load (Cached global blocks)
          */
-        $channels = Cache::remember('channels_global', 600, function () {
+        $channels = Cache::remember('channels_global', now()->addMinutes(10), function () {
             return $this->get_channels();
         });
 
-        $videos = Cache::remember('videos_global', 600, function () {
+        $videos = Cache::remember('videos_global', now()->addMinutes(10), function () {
             return $this->get_videos(6);
         });
 
-        $categories = Cache::remember('podcast_categories', 3600, function () {
+        $categories = Cache::remember('podcast_categories', now()->addHours(6), function () {
             return Category::where('type', 'podcast')
                 ->limit(6)
                 ->get();
         });
 
-        $topPodcasts = Cache::remember('top_podcasts_global', 600, function () {
+        $topPodcasts = Cache::remember('top_podcasts_global', now()->addMinutes(10), function () {
             return Content::where('content_group', 'podcast')
                 ->whereNull('parent_id')
                 ->where('status', 1)
@@ -65,21 +64,24 @@ class PodcastController extends Controller
          * AJAX (Infinite Scroll)
          */
 
-        $podcasts = Cache::remember("podcasts_page_{$page}", now()->addMinutes(10), function () use ($perPage) {
+        $podcasts = Cache::remember($cacheKey, $cacheTtl, function () use ($perPage, $page) {
             return Content::where('content_group', 'podcast')
                 ->whereNull('parent_id')
                 ->where('status', 1)
                 ->latest()
-                ->paginate($perPage);
+                ->paginate($perPage, ['*'], 'page', $page);
         });
 
         // AJAX request
         if ($request->ajax()) {
+            $html = Cache::remember(
+                "{$cacheKey}:html",
+                $cacheTtl,
+                fn() => view('Frontend.includes.components.partials.podcast-list', compact('podcasts'))->render()
+            );
+
             return response()->json([
-                'html'    => view(
-                    'Frontend.includes.components.partials.podcast-list',
-                    compact('podcasts')
-                )->render(),
+                'html'    => $html,
                 'hasMore' => $podcasts->hasMorePages(),
                 'nextPageUrl' => $podcasts->nextPageUrl(),
             ]);

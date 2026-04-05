@@ -22,17 +22,19 @@ class TVController extends Controller
             {
                 $perPage = 30;
                 $page    = $request->get('page', 1);
+                $cacheTtl = now()->addMinutes(10);
 
 
                 // Cache key depends on page and filters
-                $cacheKey = "tvs_page_{$page}";
+                $cacheKey = "frontend:tvs:index:page:{$page}:per_page:{$perPage}";
 
                 // Paginated TVs
-                $tvs = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($perPage, $page)
+                $tvs = Cache::remember($cacheKey, $cacheTtl, function () use ($perPage, $page)
                     {
                         $query = Content::query()
                                         ->where('content_group', 'tv')
-                                        ->whereNotNull('stream_url');
+                                        ->whereNotNull('stream_url')
+                                        ->where('status', 1);
 
 
                         // Page explicitly passed (same pattern as radios)
@@ -48,11 +50,14 @@ class TVController extends Controller
                 // AJAX request
                 if ($request->ajax())
                     {
+                        $html = Cache::remember(
+                            "{$cacheKey}:html",
+                            $cacheTtl,
+                            fn() => view('Frontend.includes.components.partials.tv-items', compact('tvs'))->render()
+                        );
+
                         return response()->json([
-                            'html'        => view(
-                                'Frontend.includes.components.partials.tv-items',
-                                compact('tvs')
-                            )->render(),
+                            'html'        => $html,
                             'hasMore'     => $tvs->hasMorePages(),
                             'nextPageUrl' => $tvs->nextPageUrl(),
                         ]);
@@ -62,8 +67,9 @@ class TVController extends Controller
                 // Static / global data
                 $tv_countries = Cache::remember(
                     'tv_countries',
-                    3600,
+                    now()->addHours(6),
                     fn() => Content::where('content_group', 'tv')
+                                   ->where('status', 1)
                                    ->whereNotNull('country')
                                    ->distinct()
                                    ->pluck('country')
@@ -71,7 +77,7 @@ class TVController extends Controller
 
                 $categories = Cache::remember(
                     'tv_categories',
-                    3600,
+                    now()->addHours(6),
                     fn() => Category::where('type', 'like', '%tv%')->get()
                 );
 
@@ -81,6 +87,7 @@ class TVController extends Controller
                         $genreViews = [];
 
                         Content::where('content_group', 'tv')
+                               ->where('status', 1)
                                ->whereNotNull('genre')
                                ->select('genre', 'views')
                                ->chunk(500, function ($contents) use (&$genreViews)

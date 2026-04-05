@@ -23,13 +23,14 @@ class RadioController extends Controller
             {
                 $perPage = 30;
                 $page    = $request->get('page', 1);
+                $cacheTtl = now()->addMinutes(10);
 
                 /**
                  * Radios pagination (page cache)
                  */
                 $radios = Cache::remember(
-                    "radios_page_{$page}",
-                    now()->addMinutes(10),
+                    "frontend:radios:index:page:{$page}:per_page:{$perPage}",
+                    $cacheTtl,
                     function () use ($perPage, $page)
                         {
                             return Content::where('content_group', 'radio')
@@ -131,11 +132,14 @@ class RadioController extends Controller
                 // AJAX request
                 if ($request->ajax())
                     {
+                        $html = Cache::remember(
+                            "frontend:radios:index:page:{$page}:per_page:{$perPage}:html",
+                            $cacheTtl,
+                            fn() => view('Frontend.includes.components.partials.radio-items', compact('radios'))->render()
+                        );
+
                         return response()->json([
-                            'html'        => view(
-                                'Frontend.includes.components.partials.radio-items',
-                                compact('radios')
-                            )->render(),
+                            'html'        => $html,
                             'hasMore'     => $radios->hasMorePages(),
                             'nextPageUrl' => $radios->nextPageUrl(),
                         ]);
