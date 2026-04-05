@@ -12,6 +12,8 @@
 						<video
 							id="player"
 							data-stream="{{ $streamProxyUrl }}"
+							data-stream-type="{{ $tv->type }}"
+							data-stream-source="{{ $tv->stream_url }}"
 							playsinline
 							controls
 							poster="{{ $tv->thumbnail_url }}">
@@ -295,6 +297,8 @@
 
         const streamUrl = video.dataset.stream;
         if (!streamUrl) return;
+        const streamTypeHint = (video.dataset.streamType || '').toLowerCase();
+        const streamSourceHint = (video.dataset.streamSource || '').toLowerCase();
 
         const player = new Plyr(video, {});
 
@@ -304,7 +308,13 @@
         const reconnectDelay = 3000;
 
         function getMediaType(url) {
-            const ext = url.split('.').pop().toLowerCase();
+            if (streamTypeHint.includes('mpegurl') || streamSourceHint.includes('.m3u8')) {
+                return 'hls';
+            }
+            if (streamTypeHint.includes('mp4') || streamSourceHint.includes('.mp4')) {
+                return 'video/mp4';
+            }
+            const ext = url.split('?')[0].split('.').pop().toLowerCase();
             if (ext === 'm3u8') return 'hls';
             if (ext === 'mp4') return 'video/mp4';
             return '';
