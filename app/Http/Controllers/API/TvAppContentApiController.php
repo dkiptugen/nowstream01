@@ -12,6 +12,7 @@ use App\Models\Content;
 use App\Models\Event;
 use App\Models\Region;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TvAppContentApiController extends Controller
     {
@@ -41,7 +42,7 @@ class TvAppContentApiController extends Controller
                 $limit  = $this->resolveLimit($request, 12, 50);
                 $groups = $this->resolveGroups($request->query('group'), self::FEATURED_GROUPS);
                 $regionId = $this->resolveRegionId($request);
-
+                Log::error("Data",$request->all());
                 return response()->api([
                     'featured' => $this->buildFeaturedPayload($limit, $regionId),
                     'events'   => TvAppEventResource::collection($this->fetchEvents($limit)),
