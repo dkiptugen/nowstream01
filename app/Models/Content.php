@@ -208,6 +208,11 @@
                     return $this->belongsTo(Microsite::class, 'microsite_id','uuid');
                 }
 
+            public function region()
+                {
+                    return $this->belongsTo(Region::class, 'region_id');
+                }
+
 
             protected static function booted()
                 {

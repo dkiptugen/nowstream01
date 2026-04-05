@@ -64,6 +64,17 @@ class TvAppContentResource extends JsonResource
                     ];
                 })->values();
             }),
+            'region' => $this->whenLoaded('region', function () {
+                if (!$this->region) {
+                    return null;
+                }
+
+                return [
+                    'id' => (int) $this->region->id,
+                    'name' => $this->region->name,
+                    'code' => $this->region->code,
+                ];
+            }),
         ];
     }
 }
