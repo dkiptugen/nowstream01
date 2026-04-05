@@ -1,6 +1,7 @@
 <?php
 
 	use App\Http\Controllers\API\APIController;
+	use App\Http\Controllers\API\TvAppContentApiController;
 	use App\Http\Controllers\Api\CartApiController;
 	use App\Http\Controllers\Api\MerchandiseApiController;
 	use App\Http\Controllers\Api\OrderApiController;
@@ -22,6 +23,14 @@
 		// Record watch history
 		Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
 
+	});
+
+	Route::prefix('tv-app')->group(function () {
+		Route::get('featured', [TvAppContentApiController::class, 'featured']);
+		Route::get('categories', [TvAppContentApiController::class, 'categories']);
+		Route::get('categories/{slug}/contents', [TvAppContentApiController::class, 'categoryContents']);
+		Route::get('events', [TvAppContentApiController::class, 'events']);
+		Route::get('events/{slug}/contents', [TvAppContentApiController::class, 'eventContents']);
 	});
 	/*
 	|--------------------------------------------------------------------------
