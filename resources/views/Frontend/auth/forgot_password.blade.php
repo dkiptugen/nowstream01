@@ -7,7 +7,7 @@
                     <div class="text-center">
                                 <img src="{{ asset('assets/img/logo/logo2.png') }}" width="100" alt="" />
                     </div>
-                    <h4 class="mt-5 font-weight-bold">Forgot Password?</h4>
+                    <h4 class="mt-5 fw-bold">Forgot Password?</h4>
                     <p class="text-muted">Enter your registered email ID to reset the password</p>
                     <div class="my-4">
                         <label class="form-label">Email id</label>

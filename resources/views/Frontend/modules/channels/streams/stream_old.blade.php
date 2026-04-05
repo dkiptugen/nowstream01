@@ -53,7 +53,7 @@
 			</div>
 			<div class="card radius-5 single-video-author box mb-3">
 				<div class="">
-					<div class="float-right d-flex">
+					<div class="float-end d-flex">
 						<button class="btn btn-danger btn-sm mx-2" type="button">
 							<strong>HD</strong></button>
 
@@ -81,8 +81,8 @@
 					<img class="ratio1" src="{{ $channel ? $channel->thumbnail : 'Unknown' }}" alt="">
 					<p><a href="{{ url("/channel/{$channel->id}/{$channel->name}") }}"><strong>
 								{{ $channel ? $channel->name : 'Unknown' }}
-							</strong></a> <span title="" data-placement="top" data-toggle="tooltip"
-							data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span></p>
+							</strong></a> <span title="" data-bs-placement="top" data-bs-toggle="tooltip"
+							data-bs-title="Verified"><i class="fas fa-check-circle text-success"></i></span></p>
 					<small>Started Streaming 12min ago</small>
 				</div>
 			</div>

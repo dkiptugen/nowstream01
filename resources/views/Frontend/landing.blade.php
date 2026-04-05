@@ -205,7 +205,7 @@
                                 @endif
 
                                 <form action="{{ route('stream.find') }}" method="POST"
-                                    class="form-inline w-100 d-md-flex">
+                                    class="w-100 d-flex flex-column flex-md-row align-items-stretch">
                                     @csrf
                                     <div class="input-group w-100">
                                         <input type="text" class="form-control w-100 rounded-end-0" name="stream_token"

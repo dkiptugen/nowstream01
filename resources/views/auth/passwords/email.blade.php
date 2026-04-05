@@ -15,7 +15,7 @@
                     <div class="text-center">
                         <img src="{{asset('/logo1.png')}}" width="200" alt="">
                     </div>
-                    <h4 class="mt-5 font-weight-bold">{{ __('Forgot Password?') }}</h4>
+                    <h4 class="mt-5 fw-bold">{{ __('Forgot Password?') }}</h4>
                     <p class="text-muted">Enter your registered email ID to reset the password</p>
                     <form method="POST" action="{{ route('password.email') }}">
                         @csrf

@@ -30,7 +30,7 @@
                                         <li>
                                             <span class="channel"><i class="far fa-user"></i> {{ $channel ? $channel->name : 'Unknown' }}</span>
                                             <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
-                                            <span class="views ml-2"><i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views</span>
+                                            <span class="views ms-2"><i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views</span>
                                         </li>
                                     </ul>
                                 </div>

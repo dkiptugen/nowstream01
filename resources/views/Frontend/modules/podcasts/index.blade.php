@@ -21,9 +21,9 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     @foreach($categories as $category)
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="{{ $category->slug }}-tab" data-toggle="tab" href="#{{ $category->slug }}" role="tab" aria-controls="{{ $category->slug }}" aria-selected="false">
+                        <button class="nav-link" id="{{ $category->slug }}-tab" data-bs-toggle="tab" data-bs-target="#{{ $category->slug }}" type="button" role="tab" aria-controls="{{ $category->slug }}" aria-selected="false">
                             {{ ucfirst($category->name) }}
-                        </a>
+                        </button>
                     </li>
                     @endforeach
 

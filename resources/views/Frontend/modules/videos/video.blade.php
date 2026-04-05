@@ -96,7 +96,7 @@
 				</div>
 				<div class="card radius-5 single-video-author box mb-3">
 					<div class="">
-						<div class="float-right d-flex align-items-center">
+						<div class="float-end d-flex align-items-center">
 
 							@if(Auth::check())
 							<div id="favorite-btn">
@@ -172,8 +172,8 @@
 						<p><a href="#"><strong>
 
 									{{ $channel ? $channel->name : 'Unknown' }}
-								</strong></a> <span title="" data-placement="top" data-toggle="tooltip"
-								data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
+								</strong></a> <span title="" data-bs-placement="top" data-bs-toggle="tooltip"
+								data-bs-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
 						</p>
 						<small>Started Streaming 12min ago</small>
 					</div>

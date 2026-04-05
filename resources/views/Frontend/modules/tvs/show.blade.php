@@ -440,7 +440,7 @@
 
                     let newComment = `
                         <div class="media py-3 border-bottom border-dark">
-                            <img src="${avatar}" class="mr-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;">
+                            <img src="${avatar}" class="me-3 rounded-circle" style="width:42px;height:42px;object-fit:cover;">
                             <div class="media-body">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <strong class="text-white" style="font-size: 14px;">${name}</strong>

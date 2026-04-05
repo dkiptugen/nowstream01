@@ -721,7 +721,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                     ></div>
                 @endforelse
             </div>
-            <div class="row no-gutters">
+            <div class="row g-0">
                 <div class="col-xl-8">
                     <div class="clean-hero__content">
                         <div class="clean-hero__carousel">

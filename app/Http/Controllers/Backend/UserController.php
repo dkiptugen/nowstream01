@@ -11,7 +11,11 @@ use App\Models\Role;
 use App\Models\SystemUser;
 use App\Models\User;
 use App\Traits\Meta;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Redirector;
 
 class UserController extends Controller
 {
@@ -56,9 +60,9 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \App\Http\Requests\StoreUser  $request
+     * @param StoreUser $request
      *
-     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector|void
+     * @return array|Application|RedirectResponse|Response|Redirector|void
      */
         public function store(StoreUser $request)
             {

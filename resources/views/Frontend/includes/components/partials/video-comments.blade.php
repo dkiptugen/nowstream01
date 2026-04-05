@@ -3,7 +3,7 @@
 
         {{-- Header --}}
         <div class="card-header yt-comments-header border-0 pb-2">
-            <h6 class="mb-0 font-weight-bold text-white">
+            <h6 class="mb-0 fw-bold text-white">
                 Comments (<span id="comment-count">{{ $comments->count() }}</span>)
             </h6>
         </div>
@@ -18,7 +18,7 @@
                     </div>
                 @else
                     @foreach($comments as $comment)
-                        <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
+                        <div class="d-flex py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
                            @php
     $user = $comment->user;
     $initials = collect(explode(' ', $user->name))
@@ -28,25 +28,25 @@
 
 @if($user->image)
     <img src="{{ asset($user->image) }}"
-         class="mr-3 rounded-circle"
+         class="me-3 rounded-circle flex-shrink-0"
          style="width:42px;height:42px;object-fit:cover;"
          onerror="this.onerror=null;this.style.display='none';this.nextElementSibling.style.display='flex';">
 @endif
 
-<div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+<div class="me-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center flex-shrink-0"
      style="width:42px;height:42px;font-weight:bold; {{ $user->image ? 'display:none;' : 'display:flex;' }}">
     {{ $initials }}
 </div>
 
                             
-                            <div class="media-body">
+                            <div class="flex-grow-1">
                                 <strong class="text-white">{{ $comment->user->name }}</strong>
-                                <small class="text-light-50 ml-2">{{ $comment->created_at->diffForHumans() }}</small>
+                                <small class="text-light-50 ms-2">{{ $comment->created_at->diffForHumans() }}</small>
 
                                 <div class="text-light mt-1">{{ $comment->comment }}</div>
 
                                 <div class="mt-2 yt-actions">
-                                    <a href="#" class="comment-like-btn mr-3">👍 
+                                    <a href="#" class="comment-like-btn me-3">👍 
                                         <span class="likes-count">{{ $comment->likes()->where('type','like')->count() }}</span>
                                     </a>
                                     <a href="#" class="comment-dislike-btn">👎 
@@ -70,11 +70,9 @@
                     @csrf
                     <div class="input-group">
                         <input type="text" name="comment" id="comment-input" class="form-control bg-dark text-light border-dark" placeholder="Add a comment..." required>
-                        <div class="input-group-append">
-                            <button class="btn btn-sm btn-send" id="comment-submit-btn">
-                                <i class="fa fa-paper-plane"></i>
-                            </button>
-                        </div>
+                        <button class="btn btn-sm btn-send" id="comment-submit-btn">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
                     </div>
                 </form>
             @else
@@ -125,20 +123,20 @@ document.addEventListener('DOMContentLoaded', function () {
     .join('');
 
 const html = `
-<div class="media py-3 border-bottom border-dark" data-comment-id="${tempId}">
-    <img src="${userImage}" class="mr-3 rounded-circle"
+<div class="d-flex py-3 border-bottom border-dark" data-comment-id="${tempId}">
+    <img src="${userImage}" class="me-3 rounded-circle flex-shrink-0"
          style="width:42px;height:42px;object-fit:cover;"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-    <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+    <div class="me-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center flex-shrink-0"
          style="width:42px;height:42px;font-weight:bold; display: none;">
         ${userInitials}
     </div>
-    <div class="media-body">
+    <div class="flex-grow-1">
         <strong class="text-white">${userName}</strong>
-        <small class="text-light-50 ml-2">just now</small>
+        <small class="text-light-50 ms-2">just now</small>
         <div class="text-light mt-1">${safeText.innerHTML}</div>
         <div class="mt-2 yt-actions">
-            <a href="#" class="comment-like-btn mr-3">👍 <span class="likes-count">0</span></a>
+            <a href="#" class="comment-like-btn me-3">👍 <span class="likes-count">0</span></a>
             <a href="#" class="comment-dislike-btn">👎 <span class="dislikes-count">0</span></a>
         </div>
     </div>
@@ -186,7 +184,7 @@ list.insertAdjacentHTML('beforeend', html);
 
         e.preventDefault();
         const btnEl = likeBtn || dislikeBtn;
-        const commentEl = btnEl.closest('.media');
+        const commentEl = btnEl.closest('[data-comment-id]');
         const commentId = commentEl.dataset.commentId;
         if (commentId.startsWith('temp-')) return;
         const type = likeBtn ? 'like' : 'dislike';

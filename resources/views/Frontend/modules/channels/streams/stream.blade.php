@@ -92,7 +92,7 @@
 				</div>
 				<div class="card radius-5 single-stream-author box mb-3">
 					<div class="">
-						<div class="float-right d-flex align-items-center">
+						<div class="float-end d-flex align-items-center">
 
 							@if(Auth::check())
 							<div id="favorite-btn">
@@ -123,8 +123,8 @@
 						<p><a href="#"><strong>
 
 
-								</strong></a> <span title="" data-placement="top" data-toggle="tooltip"
-								data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
+								</strong></a> <span title="" data-bs-placement="top" data-bs-toggle="tooltip"
+								data-bs-title="Verified"><i class="fas fa-check-circle text-success"></i></span>
 						</p>
 						<small>Started Streaming 12min ago</small>
 					</div>
@@ -588,14 +588,14 @@
 						let safeText = $('<div>').text(commentText).html();
 
 						let newComment = `
-                    <div class="media py-3 border-bottom border-dark">
-                        <img src="${avatar}" class="mr-3 rounded-circle"
+                    <div class="d-flex py-3 border-bottom border-dark">
+                        <img src="${avatar}" class="me-3 rounded-circle flex-shrink-0"
                              style="width:42px;height:42px;object-fit:cover;" alt="avatar">
 
-                        <div class="media-body">
+                        <div class="flex-grow-1">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center flex-wrap">
-                                    <strong class="mr-2 text-white" style="font-size: 14px;">
+                                    <strong class="me-2 text-white" style="font-size: 14px;">
                                         ${name}
                                     </strong>
                                     <small class="text-light-50" style="font-size: 12px;">
@@ -609,8 +609,8 @@
                             </div>
 
                             <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
-                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-up"></i> Like</a>
-                                <a href="javascript:void(0)" class="mr-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
+                                <a href="javascript:void(0)" class="me-3"><i class="fa fa-thumbs-up"></i> Like</a>
+                                <a href="javascript:void(0)" class="me-3"><i class="fa fa-thumbs-down"></i> Dislike</a>
                                 <a href="javascript:void(0)"><i class="fa fa-reply"></i> Reply</a>
                             </div>
                         </div>

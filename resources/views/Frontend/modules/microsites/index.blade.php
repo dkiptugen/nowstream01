@@ -59,7 +59,7 @@
                                         Watch Now</button>
                                 </div>
                             </form>
-                            <p class="w-100 text-left text-light mt-2 mb-0">Already Bought? Enter Stream Token
+                            <p class="w-100 text-start text-light mt-2 mb-0">Already Bought? Enter Stream Token
                                 Or Phone Number
                                 To Watch.
                             </p>
@@ -121,13 +121,13 @@
                 <!-- <div class="ucm-nav-wrap">
                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" id="tvShow-tab" data-toggle="tab" href="#tvShow" role="tab" aria-controls="tvShow" aria-selected="true">TV Shows</a>
+                                        <a class="nav-link active" id="tvShow-tab" data-bs-toggle="tab" href="#tvShow" role="tab" aria-controls="tvShow" aria-selected="true">TV Shows</a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="movies-tab" data-toggle="tab" href="#movies" role="tab" aria-controls="movies" aria-selected="false">Movies</a>
+                                        <a class="nav-link" id="movies-tab" data-bs-toggle="tab" href="#movies" role="tab" aria-controls="movies" aria-selected="false">Movies</a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" id="anime-tab" data-toggle="tab" href="#anime" role="tab" aria-controls="anime" aria-selected="false">Anime</a>
+                                        <a class="nav-link" id="anime-tab" data-bs-toggle="tab" href="#anime" role="tab" aria-controls="anime" aria-selected="false">Anime</a>
                                     </li>
                                 </ul>
                             </div> -->
@@ -172,7 +172,7 @@
                                 <li><span class="quality">hd</span></li>
                                 <li>
                                     <span class="rating"><i class="fas fa-thumbs-up"></i> 3.5</span>
-                                    <span class="views ml-2">
+                                    <span class="views ms-2">
                                         <i class="fas fa-eye"></i> {{ $video->views ?? 0 }} views
                                     </span>
                                 </li>

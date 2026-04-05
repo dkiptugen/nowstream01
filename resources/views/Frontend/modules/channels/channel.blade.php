@@ -21,14 +21,14 @@
 				<nav class="navbar navbar-expand-lg navbar-light d-flex justify-content-between">
 					<b class="channel">
 						{{ $channel->name }}
-						<span title data-placement="top" data-toggle="tooltip" data-original-title="Verified">
+						<span title data-bs-placement="top" data-bs-toggle="tooltip" data-bs-title="Verified">
 							<i class="fas fa-check-circle text-success"></i>
 						</span>
 					</b>
 
 					<ul class="navbar-nav">
 						<li class="nav-item active">
-							<div class="float-right d-flex">
+							<div class="float-end d-flex">
 								@if(Auth::check())
 									<div id="subscription-controls-{{ $channel->id }}">
 										@if(Auth::user()->subscribedChannels->contains($channel->id))

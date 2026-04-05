@@ -28,7 +28,7 @@ $combinedRates = collect($eventRates ?? [])
 					<div class="movie-details-content">
 						<h5>Top Event</h5>
 						<h2>
-							{{ $event->event_name }} @if($event->has_livestream) <span class="badge badge-danger">Live</span> @endif
+							{{ $event->event_name }} @if($event->has_livestream) <span class="badge text-bg-danger">Live</span> @endif
 						</h2>
 						<div class="banner-meta">
 							<ul>
@@ -76,7 +76,7 @@ $combinedRates = collect($eventRates ?? [])
 										<td class="align-content-center">
 											{{ ucfirst($rate->name) }}
 											@if($isStreamRate)
-												<span class="badge badge-info ms-2">Stream</span>
+												<span class="badge text-bg-info ms-2">Stream</span>
 											@endif
 										</td>
 										<td class="align-content-center">
@@ -85,31 +85,31 @@ $combinedRates = collect($eventRates ?? [])
 										<td class="align-content-center text-end">
 											@if($isStreamRate)
 												@if($eventStream && ($paidStreamOrder || $legacyStreamAccess))
-													<a class="btn btn-sm btn-primary p-2 pl-3"
+													<a class="btn btn-sm btn-primary p-2 ps-3"
 														href="{{ route('stream.show', ['uuid' => $eventStream->uuid, 'slug' => $eventStream->slug]) }}">
 														Watch Stream <i class='fas fa-play'></i>
 													</a>
 												@elseif($event->has_livestream && $eventStream)
-													<a class="btn btn-sm btn-success p-2 pl-3"
+													<a class="btn btn-sm btn-success p-2 ps-3"
 														href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
 														Buy Stream Link <i class='fas fa-link'></i>
 													</a>
 												@else
-													<span class="badge badge-secondary">Stream unavailable</span>
+													<span class="badge text-bg-secondary">Stream unavailable</span>
 												@endif
 											@else
 												@if($ticket)
-													<a class="btn btn-sm btn-primary p-2 pl-3"
+													<a class="btn btn-sm btn-primary p-2 ps-3"
 														href="{{ route('ticket.download', ['uuid' => $ticket->uuid]) }}">
 														Download Ticket <i class='fas fa-download'></i>
 													</a>
 												@elseif($paidOrder)
-													<a class="btn btn-sm btn-primary p-2 pl-3"
+													<a class="btn btn-sm btn-primary p-2 ps-3"
 														href="{{ route('event.success', ['eventId' => $event->uuid]) }}">
 														View Ticket <i class='fas fa-ticket-alt'></i>
 													</a>
 												@else
-													<a class="btn btn-sm btn-success p-2 pl-3"
+													<a class="btn btn-sm btn-success p-2 ps-3"
 														href="{{ route('event.pay', ['eventId' => $event->uuid, 'rate_id' => $rate->id]) }}">
 														Buy Ticket <i class='fas fa-link'></i>
 													</a>

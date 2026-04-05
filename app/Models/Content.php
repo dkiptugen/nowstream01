@@ -215,7 +215,7 @@
                     static::created(function ($content)
                         {
 
-                            if ($content->content_group !== 'stream')
+                            if ($content->content_group !== 'livestream')
                                 {
                                     return;
                                 }

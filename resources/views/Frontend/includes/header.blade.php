@@ -367,8 +367,8 @@
 
                                 <div class="header-action d-none d-md-block">
                                     <ul>
-                                        <li class="header-search"><a href="#" data-toggle="modal"
-                                                data-target="#search-modal"><i class="fas fa-search"></i></a></li>
+                                        <li class="header-search"><a href="#" data-bs-toggle="modal"
+                                                data-bs-target="#search-modal"><i class="fas fa-search"></i></a></li>
                                         <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
                                         <li class="header-search"><a href="{{ route('watch.content') }}"><i class="fas fa-history"></i></a></li>
                                         <li class="header-search">
@@ -475,8 +475,8 @@
                         <!-- End Mobile Menu -->
 
                         <!-- Modal Search -->
-                        <div class="modal fade" id="search-modal" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                        <div class="modal fade" id="search-modal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="{{ route('search') }}" method="GET">
                                         <input type="text" name="query" placeholder="Search here..." value="{{ request('query') }}">

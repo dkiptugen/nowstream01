@@ -3,7 +3,7 @@
 
         {{-- Header --}}
         <div class="card-header yt-comments-header border-0 pb-2">
-            <h6 class="mb-0 font-weight-bold text-white">
+            <h6 class="mb-0 fw-bold text-white">
                 Comments
                 <span class="text-light-50">
                     (<span id="comment-count">{{ $comments->count() }}</span>)
@@ -30,28 +30,28 @@
                             ->join('');
                     @endphp
 
-                    <div class="media py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
+                    <div class="d-flex py-3 border-bottom border-dark" data-comment-id="{{ $comment->id }}">
 
                         {{-- Avatar --}}
                         @if($commentUser && $commentUser->image)
                             <img
                                 src="{{ asset($commentUser->image) }}"
-                                class="mr-3 rounded-circle"
+                                class="me-3 rounded-circle flex-shrink-0"
                                 style="width:42px;height:42px;object-fit:cover;"
                                 alt="{{ ucfirst($commentUser->name ?? 'Unknown') }}"
                             >
                         @else
-                            <div class="mr-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center"
+                            <div class="me-3 rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center flex-shrink-0"
                                  style="width:42px;height:42px;font-weight:bold;">
                                 {{ $initials }}
                             </div>
                         @endif
 
                         {{-- Content --}}
-                        <div class="media-body">
+                        <div class="flex-grow-1">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="d-flex align-items-center flex-wrap">
-                                    <strong class="mr-2 text-white" style="font-size: 14px;">
+                                    <strong class="me-2 text-white" style="font-size: 14px;">
                                         {{ ucfirst($comment_user->name ?? 'Unknown') }}
                                     </strong>
                                     <small class="text-light-50" style="font-size: 12px;">
@@ -66,14 +66,14 @@
 
                             {{-- Actions --}}
                             <div class="mt-2 d-flex align-items-center yt-actions" style="font-size: 13px;">
-                                <a href="javascript:void(0)" class="mr-3 btn-like">
+                                <a href="javascript:void(0)" class="me-3 btn-like">
                                     <i class="fa fa-thumbs-up"></i> Like
                                     <span class="likes-count">
                                         {{ $comment->likes()->where('type','like')->count() }}
                                     </span>
                                 </a>
 
-                                <a href="javascript:void(0)" class="mr-3 btn-dislike">
+                                <a href="javascript:void(0)" class="me-3 btn-dislike">
                                     <i class="fa fa-thumbs-down"></i> Dislike
                                     <span class="dislikes-count">
                                         {{ $comment->likes()->where('type','dislike')->count() }}
@@ -103,7 +103,7 @@
                   method="POST">
                 @csrf
 
-                <div class="media align-items-start">
+                <div class="d-flex align-items-start gap-3">
                     @php
                         $user = auth()->user();
                         $userInitials = collect(explode(' ', $user->name ?? 'U'))
@@ -124,7 +124,7 @@
                         </div>
                     @endif
 
-                    <div class="media-body">
+                    <div class="flex-grow-1">
                         <div class="input-group">
                             <input type="text"
                                    name="comment"
@@ -133,11 +133,9 @@
                                    placeholder="Add a comment..."
                                    required>
 
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-sm btn-send" id="comment-submit-btn">
-                                    <i class="fa fa-paper-plane"></i>
-                                </button>
-                            </div>
+                            <button type="submit" class="btn btn-sm btn-send" id="comment-submit-btn">
+                                <i class="fa fa-paper-plane"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -176,8 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".yt-actions").forEach(actionsEl => {
 
-        const mediaEl = actionsEl.closest(".media");
-        const commentId = mediaEl?.dataset?.commentId;
+        const commentEl = actionsEl.closest("[data-comment-id]");
+        const commentId = commentEl?.dataset?.commentId;
 
         if (!commentId) return;
 

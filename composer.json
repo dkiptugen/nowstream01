@@ -28,6 +28,7 @@
         "league/flysystem-aws-s3-v3": "^3.31",
         "meilisearch/meilisearch-php": "^1.16",
         "mgcodeur/laravel-currency-converter": "^1.0",
+        "nativephp/mobile": "^3.1",
         "ovac/idoc": "^2.1",
         "predis/predis": "^3.3",
         "spatie/laravel-activitylog": "^4.10",

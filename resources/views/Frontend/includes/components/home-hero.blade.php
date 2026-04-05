@@ -12,13 +12,13 @@
 									{{ session('error') }}
 								</div>
 							@endif 
-							<form action="{{ route('stream.find') }}" method="POST" class="form-inline">
+							<form action="{{ route('stream.find') }}" method="POST" class="d-flex flex-column flex-sm-row align-items-stretch gap-2">
 							    @csrf
 							    <input type="text" name="stream_token" class="form-control mt-4" placeholder="Enter Stream Token eg EWEEESU9">
 							    <button type="submit" class="btn btn-danger mt-4">Submit To Watch</button>
 							</form>
 							<div class="d-flex justify-content-end flex-column">
-								<p class="mt-3 w-100 text-left">Dont have a stream Token? <a
+								<p class="mt-3 w-100 text-start">Dont have a stream Token? <a
 										href="{{url('/events')}}">Purchase</a></p>
 							</div>
 						</div>

@@ -55,10 +55,10 @@ return [
                                     <ul>
                                         <li class="quality">
                                             <span>{{ $podcast->explicit == 1 ? 'PG 18' : 'GA' }}</span>
-                                            <span class="ml-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
+                                            <span class="ms-2 btn-primary"> <i class="far fa-eye"></i> {{ $podcast->views }},
                                                 {{ str_pad($displayViews, 3, '0', STR_PAD_LEFT) }}
                                             </span>
-                                            <span class="ml-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
+                                            <span class="ms-2 btn-primary">{{ $podcast->language ?? 'N/A' }}</span>
                                             <span class="popup-video"
                                                 onclick='playGlobalAudio(@json($playlist), 0)' style="cursor: pointer;">
                                                 Play All
@@ -128,7 +128,7 @@ return [
                             <div class="accordion" id="accordionExample">
                                 <div class="card">
                                     <div class="card-header" id="headingOne">
-                                        <button class="btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                        <button class="w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                             <span class="season">By {{ $podcast->author }}</span>
                                             <span class="video-count">{{ $podcast->episodes_count}} Full Episodes</span>
                                         </button>
