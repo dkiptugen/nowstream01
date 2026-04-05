@@ -985,8 +985,8 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                         class="clean-shelf-card"
                         role="button"
                         tabindex="0"
-                        onclick="playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}')"
-                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playSingleAudio('{{ $item->stream_url }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}'); }"
+                        onclick="playSingleAudio('{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('stream.view', now()->addMinutes(30), ['streamId' => $item->uuid]) }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}')"
+                        onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); playSingleAudio('{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('stream.view', now()->addMinutes(30), ['streamId' => $item->uuid]) }}', '{{ addslashes($item->title) }}', 'Live radio', '{{ $imageForContent($item) }}', '{{ $item->uuid }}'); }"
                     >
                         <div class="clean-shelf-card__media">
                             <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">

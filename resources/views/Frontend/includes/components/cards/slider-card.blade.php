@@ -1,7 +1,7 @@
 @if ($item->content_group === 'radio')
 <div class="w-100"
     onclick="playSingleAudio(
-        '{{ $item->stream_url }}',
+        '{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('stream.view', now()->addMinutes(30), ['streamId' => $item->uuid]) }}',
         '{{ addslashes($item->title) }}',
         'Live item',
         '{{ $item->thumbnail_url ?? asset('assets/img/default-thumbnail.jpg') }}',
