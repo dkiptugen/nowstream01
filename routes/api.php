@@ -26,6 +26,7 @@
 	});
 
 	Route::prefix('tv-app')->group(function () {
+		Route::get('home', [TvAppContentApiController::class, 'home']);
 		Route::get('featured', [TvAppContentApiController::class, 'featured']);
 		Route::get('categories', [TvAppContentApiController::class, 'categories']);
 		Route::get('categories/{slug}/contents', [TvAppContentApiController::class, 'categoryContents']);

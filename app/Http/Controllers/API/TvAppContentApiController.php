@@ -18,38 +18,33 @@ class TvAppContentApiController extends Controller
         private const DEFAULT_GROUPS  = ['livestream', 'tv', 'radio', 'podcast', 'video'];
         private const FEATURED_GROUPS = ['livestream', 'tv', 'podcast', 'video'];
 
+        public function home(Request $request)
+            {
+                $limit    = $this->resolveLimit($request, 12, 50);
+                $groups   = $this->resolveGroups($request->query('group'));
+                $regionId = $this->resolveRegionId($request);
+
+                return response()->api([
+                    'featured'   => $this->buildFeaturedPayload($limit, $regionId),
+                    'categories' => TvAppCategoryResource::collection($this->fetchCategories($groups, $regionId)),
+                    'regions'    => TvAppRegionResource::collection($this->fetchRegions($groups)),
+                    'events'     => TvAppEventResource::collection($this->fetchEvents($limit)),
+                ], 'TV app home fetched successfully.', 200, [
+                    'groups'    => $groups,
+                    'region_id' => $regionId,
+                    'limit'     => $limit,
+                ]);
+            }
+
         public function featured(Request $request)
             {
                 $limit  = $this->resolveLimit($request, 12, 50);
                 $groups = $this->resolveGroups($request->query('group'), self::FEATURED_GROUPS);
                 $regionId = $this->resolveRegionId($request);
 
-                $payload = collect($groups)->mapWithKeys(function (string $group) use ($limit, $regionId)
-                    {
-                        $query = Content::query()
-                                        ->where('content_group', $group)
-                                        ->where('status', 1)
-                                        ->with(['event', 'categories', 'region'])
-                                        ->orderByDesc('views');
-
-                        if ($regionId !== null) {
-                            $query->where('region_id', $regionId);
-                        }
-
-                        $items = $query->limit($limit)->get();
-
-                        return [$group => TvAppContentResource::collection($items)];
-                    })->all();
-
-                $events = Event::query()
-                               ->where('status', 1)
-                               ->orderByDesc('views')
-                               ->limit($limit)
-                               ->get();
-
                 return response()->api([
-                    'featured' => $payload,
-                    'events'   => TvAppEventResource::collection($events),
+                    'featured' => $this->buildFeaturedPayload($limit, $regionId),
+                    'events'   => TvAppEventResource::collection($this->fetchEvents($limit)),
                 ], 'Featured TV app content fetched successfully.', 200, [
                     'region_id' => $regionId,
                 ]);
@@ -60,32 +55,8 @@ class TvAppContentApiController extends Controller
                 $groups = $this->resolveGroups($request->query('group'));
                 $regionId = $this->resolveRegionId($request);
 
-                $categories = Category::query()
-                                      ->whereHas('contents', function ($query) use ($groups, $regionId)
-                                          {
-                                              $query
-                                                  ->where('status', 1)
-                                                  ->whereIn('content_group', $groups);
-
-                                              if ($regionId !== null) {
-                                                  $query->where('region_id', $regionId);
-                                              }
-                                          })
-                                      ->withCount(['contents' => function ($query) use ($groups, $regionId)
-                                          {
-                                              $query
-                                                  ->where('status', 1)
-                                                  ->whereIn('content_group', $groups);
-
-                                              if ($regionId !== null) {
-                                                  $query->where('region_id', $regionId);
-                                              }
-                                          }])
-                                      ->orderBy('name')
-                                      ->get();
-
                 return response()->api(
-                    TvAppCategoryResource::collection($categories),
+                    TvAppCategoryResource::collection($this->fetchCategories($groups, $regionId)),
                     'Categories fetched successfully.',
                     200,
                     [
@@ -137,14 +108,14 @@ class TvAppContentApiController extends Controller
                 $perPage = $this->resolveLimit($request, 20, 100);
 
                 $events = Event::query()
-                               ->where('status', 1)
-                               ->withCount(['streams' => function ($query)
-                                   {
-                                       $query->where('status', 1);
-                                   }])
-                               ->orderByDesc('views')
-                               ->orderBy('start_time')
-                               ->paginate($perPage);
+                    ->where('status', 1)
+                    ->withCount(['streams' => function ($query)
+                        {
+                            $query->where('status', 1);
+                        }])
+                    ->orderByDesc('views')
+                    ->orderBy('start_time')
+                    ->paginate($perPage);
 
                 return response()->api(
                     TvAppEventResource::collection($events->items()),
@@ -192,24 +163,8 @@ class TvAppContentApiController extends Controller
             {
                 $groups = $this->resolveGroups($request->query('group'));
 
-                $regions = Region::query()
-                                 ->whereHas('contents', function ($query) use ($groups)
-                                     {
-                                         $query
-                                             ->where('status', 1)
-                                             ->whereIn('content_group', $groups);
-                                     })
-                                 ->withCount(['contents' => function ($query) use ($groups)
-                                     {
-                                         $query
-                                             ->where('status', 1)
-                                             ->whereIn('content_group', $groups);
-                                     }])
-                                 ->orderBy('name')
-                                 ->get();
-
                 return response()->api(
-                    TvAppRegionResource::collection($regions),
+                    TvAppRegionResource::collection($this->fetchRegions($groups)),
                     'Regions fetched successfully.',
                     200,
                     ['groups' => $groups]
@@ -273,6 +228,83 @@ class TvAppContentApiController extends Controller
                     'next_page_url'  => $paginator->nextPageUrl(),
                     'prev_page_url'  => $paginator->previousPageUrl(),
                 ];
+            }
+
+        private function buildFeaturedPayload(int $limit, ?int $regionId): array
+            {
+                return collect(self::FEATURED_GROUPS)->mapWithKeys(function (string $group) use ($limit, $regionId)
+                    {
+                        $query = Content::query()
+                                        ->where('content_group', $group)
+                                        ->where('status', 1)
+                                        ->with(['event', 'categories', 'region'])
+                                        ->orderByDesc('views');
+
+                        if ($regionId !== null) {
+                            $query->where('region_id', $regionId);
+                        }
+
+                        return [$group => TvAppContentResource::collection($query->limit($limit)->get())];
+                    })->all();
+            }
+
+        private function fetchCategories(array $groups, ?int $regionId)
+            {
+                return Category::query()
+                               ->whereHas('contents', function ($query) use ($groups, $regionId)
+                                   {
+                                       $query
+                                           ->where('status', 1)
+                                           ->whereIn('content_group', $groups);
+
+                                       if ($regionId !== null) {
+                                           $query->where('region_id', $regionId);
+                                       }
+                                   })
+                               ->withCount(['contents' => function ($query) use ($groups, $regionId)
+                                   {
+                                       $query
+                                           ->where('status', 1)
+                                           ->whereIn('content_group', $groups);
+
+                                       if ($regionId !== null) {
+                                           $query->where('region_id', $regionId);
+                                       }
+                                   }])
+                               ->orderBy('name')
+                               ->get();
+            }
+
+        private function fetchRegions(array $groups)
+            {
+                return Region::query()
+                             ->whereHas('contents', function ($query) use ($groups)
+                                 {
+                                     $query
+                                         ->where('status', 1)
+                                         ->whereIn('content_group', $groups);
+                                 })
+                             ->withCount(['contents' => function ($query) use ($groups)
+                                 {
+                                     $query
+                                         ->where('status', 1)
+                                         ->whereIn('content_group', $groups);
+                                 }])
+                             ->orderBy('name')
+                             ->get();
+            }
+
+        private function fetchEvents(int $limit)
+            {
+                return Event::query()
+                            ->where('status', 1)
+                            ->withCount(['streams' => function ($query)
+                                {
+                                    $query->where('status', 1);
+                                }])
+                            ->orderByDesc('views')
+                            ->limit($limit)
+                            ->get();
             }
 
         private function resolveRegionId(Request $request): ?int
