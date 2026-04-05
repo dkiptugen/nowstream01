@@ -1,6 +1,7 @@
 <?php
 
 	use App\Http\Controllers\API\APIController;
+	use App\Http\Controllers\API\MobileAuthController;
 	use App\Http\Controllers\API\TvAppContentApiController;
 	use App\Http\Controllers\Api\CartApiController;
 	use App\Http\Controllers\Api\MerchandiseApiController;
@@ -47,6 +48,14 @@
 	*/
 
 	Route::post('auth',[APIController::class,'login']);
+	Route::get('auth/social/{provider}/redirect', [MobileAuthController::class, 'socialRedirect'])
+		->whereIn('provider', ['facebook', 'google', 'twitter', 'x'])
+		->name('api.auth.social.redirect');
+	Route::get('auth/social/{provider}/callback', [MobileAuthController::class, 'socialCallback'])
+		->whereIn('provider', ['facebook', 'google', 'twitter', 'x'])
+		->name('api.auth.social.callback');
+	Route::post('auth/phone/request-otp', [MobileAuthController::class, 'requestPhoneOtp']);
+	Route::post('auth/phone/verify-otp', [MobileAuthController::class, 'verifyPhoneOtp']);
 	Route::get('products', [MerchandiseApiController::class, 'index']);
 	Route::get('products/{product}', [MerchandiseApiController::class, 'show']);
 	Route::middleware(['auth:sanctum','passkey', 'force_json', 'cors'])->group(function () {

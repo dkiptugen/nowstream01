@@ -77,5 +77,10 @@
                     return $this->hasOne(Cart::class);
                 }
 
+            public function providers()
+                {
+                    return $this->hasMany(Provider::class);
+                }
+
 
         }
