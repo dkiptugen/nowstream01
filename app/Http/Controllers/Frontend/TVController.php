@@ -177,7 +177,7 @@ class TVController extends Controller
 
             $comments = $tv->comments()->with('user')->orderBy('created_at', 'asc')->get();
             $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
-                'streamId' => $tv->id,
+                'streamId' => $tv->uuid,
             ]);
 
             // Randomized related TVs

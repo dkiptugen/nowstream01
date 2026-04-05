@@ -156,7 +156,7 @@ class PodcastController extends Controller
             $podcastPlaylist = $episodes->map(function ($episode) use ($podcast, $episodeHistory) {
                 return [
                     'src' => URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
-                        'streamId' => $episode->id,
+                        'streamId' => $episode->uuid,
                     ]),
                     'title' => $episode->title,
                     'podcast' => $podcast->title,

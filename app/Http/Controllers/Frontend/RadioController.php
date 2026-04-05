@@ -216,7 +216,7 @@ class RadioController extends Controller
                 ->values();
 
             $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
-                'streamId' => $radio->id,
+                'streamId' => $radio->uuid,
             ]);
 
 

@@ -40,7 +40,7 @@ class StreamController extends Controller
 {
     use Meta;
 
-    public function proxy_stream(int $streamId)
+    public function proxy_stream(string $streamId)
     {
         return $this->proxyStream($streamId);
     }
@@ -60,7 +60,7 @@ class StreamController extends Controller
 	}
 
 
-	public function proxyStream(int $streamId)
+	public function proxyStream(string $streamId)
 	{
 		$stream = $this->cachedStream($streamId);
 		$masterUrl = $this->resolveProxySourceUrl($stream);
@@ -106,7 +106,7 @@ class StreamController extends Controller
 		}
 	}
 
-	public function proxyAsset(Request $request, int $streamId)
+	public function proxyAsset(Request $request, string $streamId)
 	{
 		$encoded = (string) $request->query('src', '');
 		if ($encoded === '') {
@@ -169,7 +169,7 @@ class StreamController extends Controller
 		}
 	}
 
-	private function rewritePlaylistUrls(string $playlist, string $baseUrl, int $streamId): string
+	private function rewritePlaylistUrls(string $playlist, string $baseUrl, string $streamId): string
 	{
 		$lines = preg_split('/\r\n|\r|\n/', $playlist) ?: [];
 		$rewritten = [];
@@ -278,7 +278,7 @@ class StreamController extends Controller
 		]));
 	}
 
-	private function cachedStream(int $streamId): Content
+	private function cachedStream(string $streamId): Content
 	{
 		return Cache::remember(
 			"stream_proxy_meta_{$streamId}",
@@ -298,7 +298,7 @@ class StreamController extends Controller
 		return $this->normalizeUpstreamUrl($url);
 	}
 
-	private function playlistCacheKey(int $streamId, string $url): string
+	private function playlistCacheKey(string $streamId, string $url): string
 	{
 		return 'stream_playlist:' . $streamId . ':' . sha1($url);
 	}
@@ -550,7 +550,7 @@ class StreamController extends Controller
 		if (!is_null($checkSub)) {
 			if ($checkSub->status == 1) {
 				if ($stream) {
-					return redirect()->route('stream.show', ['streamId' => $stream->id, 'slug' => $stream->slug]);
+            return redirect()->route('stream.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug]);
 				}
 			}
 		}
@@ -606,7 +606,7 @@ class StreamController extends Controller
 
 			if ($subscription->status == 1) {
 				if ($stream) {
-					return redirect()->route('stream.show', ['streamId' => $stream->id, 'slug' => $stream->slug]);
+					return redirect()->route('stream.show', ['uuid' => $stream->uuid, 'slug' => $stream->slug]);
 				} else {
 					return redirect()->back()->with('error', 'Content not found for the given event ID.');
 				}
@@ -686,7 +686,7 @@ public function freeShow($slug = "")
         // Comments are dynamic per stream — do NOT cache
         $comments = $stream->comments()->with('user')->latest()->get();
         $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes($this->streamProxyTtlMinutes()), [
-            'streamId' => $stream->id,
+            'streamId' => $stream->uuid,
         ]);
 
         return view('Frontend.modules.channels.streams.stream', compact(
@@ -772,7 +772,7 @@ public function show($uuid, $slug = "")
         // Comments are dynamic per stream — do NOT cache
         $comments = $stream->comments()->with('user')->latest()->get();
         $streamProxyUrl = URL::temporarySignedRoute('stream.view', now()->addMinutes($this->streamProxyTtlMinutes()), [
-            'streamId' => $stream->id,
+            'streamId' => $stream->uuid,
         ]);
 
         return view('Frontend.modules.channels.streams.stream', compact(
