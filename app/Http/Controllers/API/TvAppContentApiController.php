@@ -190,4 +190,9 @@ class TvAppContentApiController extends Controller
                             ->limit($limit)
                             ->get();
             }
+        public function regions(Request $request)
+            {
+                Log::info('Fetching TV app regions',$request->all());
+            }
+
     }
