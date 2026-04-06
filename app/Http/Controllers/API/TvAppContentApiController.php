@@ -167,7 +167,7 @@ class TvAppContentApiController extends Controller
                 $query->orderByDesc('views');
                 $query->limit($request->query('per_page', 12));
 
-                return  response()->json($query->get()->toArray());
+                return  response()->json($query->get());
             }
 
         private function fetchCategories(array $groups, ?int $regionId)
