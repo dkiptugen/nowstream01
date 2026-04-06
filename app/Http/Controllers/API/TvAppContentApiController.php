@@ -136,14 +136,17 @@ class TvAppContentApiController extends Controller
             {
                 return collect(self::FEATURED_GROUPS)->mapWithKeys(function (string $group) use ($limit, $regionId) {
                     $query = Content::query()
+                                    ->with(['event', 'categories', 'region'])
                                     ->where('content_group', $group)
                                     ->where('status', 1)
-                                    ->with(['event', 'categories', 'region'])
-                                    ->orderByDesc('views');
+                                    ->whereNotNull('stream_url')
+
+                                   ;
 
                     if ($regionId !== null) {
                         $query->where('region_id', $regionId);
                     }
+                    $query->orderByDesc('views');
 
                     return [$group => TvAppContentResource::collection($query->limit($limit)->get())];
                 })->all();
