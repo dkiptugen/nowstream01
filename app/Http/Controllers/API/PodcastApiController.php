@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 
 class PodcastApiController extends Controller
@@ -11,7 +12,7 @@ class PodcastApiController extends Controller
             {
                 return response()->json(['message' => 'Hello from API!']);
             }
-        public function show()
+        public function show(Request $request, $slug)
             {
                 return response()->json(['message' => 'Hello from API!']);
             }
