@@ -39,6 +39,7 @@ class TvAppContentApiController extends Controller
                     ]
                 );
 
+
                 return response()->api($payload, 'TV app home fetched successfully.', 200, [
                     'groups'    => $groups,
                     'region_id' => $regionId,
