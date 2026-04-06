@@ -18,12 +18,12 @@ use Illuminate\Support\Facades\Log;
 class TvAppContentApiController extends Controller
     {
         private const DEFAULT_GROUPS  = ['livestream', 'tv', 'radio', 'podcast', 'video'];
-        private const FEATURED_GROUPS = ['livestream','video','tv','radio','music','movie'];
+        private const FEATURED_GROUPS = ['livestream', 'video', 'tv', 'radio', 'music', 'movie'];
         private const CACHE_TTL       = 600; // 10 minutes
 
         public function home(Request $request)
             {
-                Log::info('Fetching TV app home',$request->all());
+               // Log::info('Fetching TV app home', $request->all());
                 $limit    = $this->resolveLimit($request, 12, 50);
                 $groups   = $this->resolveGroups($request->query('group'));
                 $regionId = $this->resolveRegionId($request);
@@ -38,6 +38,7 @@ class TvAppContentApiController extends Controller
                         'categories' => TvAppCategoryResource::collection($this->fetchCategories($groups, $regionId)),
                         'regions'    => TvAppRegionResource::collection($this->fetchRegions($groups)),
                         'events'     => TvAppEventResource::collection($this->fetchEvents($limit)),
+                        'podcasts'   => $this->get_podcasts($request,$regionId),
                     ]
                 );
 
@@ -106,16 +107,17 @@ class TvAppContentApiController extends Controller
 
         private function resolveLimit(Request $request, int $default, int $max): int
             {
-                $value = (int) $request->query('per_page', $request->query('limit', $default));
+                $value = (int)$request->query('per_page', $request->query('limit', $default));
                 return max(1, min($value, $max));
             }
 
         private function resolveRegionId(Request $request): ?int
             {
                 $regionId = $request->query('region_id');
-                if ($regionId === null || $regionId === '') {
-                    return null;
-                }
+                if ($regionId === null || $regionId === '')
+                    {
+                        return null;
+                    }
                 return (int)$regionId;
             }
 
@@ -134,39 +136,59 @@ class TvAppContentApiController extends Controller
 
         private function buildFeaturedPayload(int $limit, ?int $regionId): array
             {
-                Log::info('region',[$regionId,self::FEATURED_GROUPS]);
-                return collect(self::FEATURED_GROUPS)->mapWithKeys(function (string $group) use ($limit, $regionId) {
-                    $query = Content::query()
-                                    ->with([ 'categories', 'region'])
-                                    ->where('content_group', $group)
-                                    ->where('status', 1)
-                                    ->whereNotNull('stream_url')
-                    ;
+                // Log::info('region',[$regionId,self::FEATURED_GROUPS]);
+                return collect(self::FEATURED_GROUPS)->mapWithKeys(function (string $group) use ($limit, $regionId)
+                    {
+                        $query = Content::query()
+                                        ->with(['categories', 'region'])
+                                        ->where('content_group', $group)
+                                        ->where('status', 1)
+                                        ->whereNotNull('stream_url');
 
-                    if ($regionId !== null) {
+                        if ($regionId !== null)
+                            {
+                                $query->where('region_id', $regionId);
+                            }
+                        $query->orderByDesc('views');
+
+                        return [$group => TvAppContentResource::collection($query->limit($limit)->get())];
+                    })->all();
+            }
+
+        public function get_podcasts(Request $request, $regionId = null)
+            {
+                $query = Content::query()
+                                ->with(['categories', 'region','children'])
+                                ->where('content_group', 'podcast')
+                                ->where('status', 1)
+                                ->whereNotNull('stream_url');
+                if ($regionId !== null)
+                    {
                         $query->where('region_id', $regionId);
                     }
-                    $query->orderByDesc('views');
-
-                    return [$group => TvAppContentResource::collection($query->limit($limit)->get())];
-                })->all();
+                $query->orderByDesc('views');
+                return $this->paginationMeta($query->paginate($request->query('per_page', 12)));
             }
 
         private function fetchCategories(array $groups, ?int $regionId)
             {
                 return Category::query()
-                               ->whereHas('contents', function ($query) use ($groups, $regionId) {
-                                   $query->where('status', 1)->whereIn('content_group', $groups);
-                                   if ($regionId !== null) {
-                                       $query->where('region_id', $regionId);
-                                   }
-                               })
-                               ->withCount(['contents' => function ($query) use ($groups, $regionId) {
-                                   $query->where('status', 1)->whereIn('content_group', $groups);
-                                   if ($regionId !== null) {
-                                       $query->where('region_id', $regionId);
-                                   }
-                               }])
+                               ->whereHas('contents', function ($query) use ($groups, $regionId)
+                                   {
+                                       $query->where('status', 1)->whereIn('content_group', $groups);
+                                       if ($regionId !== null)
+                                           {
+                                               $query->where('region_id', $regionId);
+                                           }
+                                   })
+                               ->withCount(['contents' => function ($query) use ($groups, $regionId)
+                                   {
+                                       $query->where('status', 1)->whereIn('content_group', $groups);
+                                       if ($regionId !== null)
+                                           {
+                                               $query->where('region_id', $regionId);
+                                           }
+                                   }])
                                ->orderBy('name')
                                ->get();
             }
@@ -174,12 +196,14 @@ class TvAppContentApiController extends Controller
         private function fetchRegions(array $groups)
             {
                 return Region::query()
-                             ->whereHas('contents', function ($query) use ($groups) {
-                                 $query->where('status', 1)->whereIn('content_group', $groups);
-                             })
-                             ->withCount(['contents' => function ($query) use ($groups) {
-                                 $query->where('status', 1)->whereIn('content_group', $groups);
-                             }])
+                             ->whereHas('contents', function ($query) use ($groups)
+                                 {
+                                     $query->where('status', 1)->whereIn('content_group', $groups);
+                                 })
+                             ->withCount(['contents' => function ($query) use ($groups)
+                                 {
+                                     $query->where('status', 1)->whereIn('content_group', $groups);
+                                 }])
                              ->orderBy('name')
                              ->get();
             }
@@ -193,35 +217,39 @@ class TvAppContentApiController extends Controller
                             ->limit($limit)
                             ->get();
             }
+
         public function regions(Request $request)
             {
                 $code = strtoupper($request->query('code', ''));
 
-                if (empty($code)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Region code is required.',
-                    ], 400);
-                }
+                if (empty($code))
+                    {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Region code is required.',
+                        ], 400);
+                    }
 
                 $cacheKey = "region_{$code}";
 
-                $region = Cache::tags(['region'])->rememberForever($cacheKey, function () use ($code) {
-                    return Region::query()
-                                 ->whereRaw('UPPER(code) = ?', [$code])
-                                 ->first();
-                });
+                $region = Cache::tags(['region'])->rememberForever($cacheKey, function () use ($code)
+                    {
+                        return Region::query()
+                                     ->whereRaw('UPPER(code) = ?', [$code])
+                                     ->first();
+                    });
 
-                if (!$region) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Region not found.',
-                    ], 404);
-                }
+                if (!$region)
+                    {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Region not found.',
+                        ], 404);
+                    }
 
                 return response()->json([
                     'success' => true,
-                    'data' => $region,
+                    'data'    => $region,
                 ]);
             }
 
