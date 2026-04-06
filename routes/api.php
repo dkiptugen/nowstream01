@@ -30,8 +30,6 @@
             // Single podcast
             Route::get('/{slug}', [PodcastApiController::class, 'show']);
 
-            // Podcast episodes
-            Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
 
             // Record watch history
             Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
