@@ -21,6 +21,7 @@ class PodcastApiController extends Controller
      */
         public function index(Request $request)
             {
+                dd($request->all());
                 $perPage = (int) $request->get('per_page', 20);
                 $cacheKey = "podcasts:index:perPage:$perPage";
                 dd($cacheKey);
