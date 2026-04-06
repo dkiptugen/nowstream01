@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\URL;
 
 class PodcastApiController extends Controller
     {
-        private const JSON_FLAGS = JSON_INVALID_UTF8_SUBSTITUTE;
+
         private const CACHE_TTL = 600; // 10 minutes
 
     /**
@@ -21,10 +21,10 @@ class PodcastApiController extends Controller
      */
         public function index(Request $request)
             {
-                dd($request->all());
+                //dd($request->all());
                 $perPage = (int) $request->get('per_page', 20);
                 $cacheKey = "podcasts:index:perPage:$perPage";
-                dd($cacheKey);
+                //dd($cacheKey);
                 $podcasts = Cache::tags(['podcasts'])->remember($cacheKey, self::CACHE_TTL, function () use ($perPage) {
                     return Content::where('content_group', '=','podcast')
                                   ->whereNull('parent_id')
@@ -32,7 +32,7 @@ class PodcastApiController extends Controller
                                   ->latest()
                                   ->paginate($perPage);
                 });
-                dd($podcasts);
+                //d($podcasts);
                 return $this->jsonPaginatedResponse($podcasts, fn($podcast) => $this->serializePodcast($podcast));
             }
 
@@ -188,6 +188,6 @@ class PodcastApiController extends Controller
                         'per_page' => $paginator->perPage(),
                         'total' => $paginator->total(),
                     ],
-                ], 200, [], self::JSON_FLAGS);
+                ]);
             }
     }
