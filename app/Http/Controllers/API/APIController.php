@@ -34,8 +34,8 @@
 						{
 							if (Hash::check ($request->password, $user->password))
 								{
-									if ($user->status == 1)
-										{
+									/*if ($user->status == 1)
+										{*/
 											$token = $user->createToken ('authToken');
 
 
@@ -45,10 +45,10 @@
 											                           "message" => "User ", "data" => $response
 											]);
 
-										}
+									/*	}
 									return response ()->json (["status"  => "False", "responseCode" => 422,
 									                           "message" => "User not active", "data" => []
-									]);
+									]);*/
 								}
 							else
 								{
