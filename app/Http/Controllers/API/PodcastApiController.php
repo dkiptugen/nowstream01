@@ -115,6 +115,7 @@ class PodcastApiController extends Controller
 
         private function serializePodcast(Content $podcast): array
             {
+                dd($podcast);
                 return [
                     'uuid' => $podcast->uuid,
                     'slug' => $podcast->slug,
