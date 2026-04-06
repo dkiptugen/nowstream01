@@ -167,14 +167,14 @@ class TvAppContentApiController extends Controller
                 $query->orderByDesc('views');
                 $query->limit($request->query('per_page', 12));
 
-                return  response()->json($query->get());
+                return  $query->get();
             }
-        public function get_podcast_episodes(Request $request, string $slug)
+        public function get_podcast_episodes( string $slug)
             {
                 $podcast = Content::with('children')
                                 ->findBySlug($slug);
 
-                return  response()->json($podcast);
+                return  $podcast;
             }
 
         private function fetchCategories(array $groups, ?int $regionId)
