@@ -31,7 +31,7 @@ class PodcastApiController extends Controller
                                   ->latest()
                                   ->paginate($perPage);
                 });
-
+                dd($podcasts);
                 return $this->jsonPaginatedResponse($podcasts, fn($podcast) => $this->serializePodcast($podcast));
             }
 
