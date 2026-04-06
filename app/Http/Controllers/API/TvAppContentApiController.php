@@ -146,10 +146,10 @@ class TvAppContentApiController extends Controller
                                         ->where('status', 1)
                                         ->whereNotNull('stream_url');
 
-                        if ($regionId !== null)
+                        /*if ($regionId !== null)
                             {
                                 $query->where('region_id', $regionId);
-                            }
+                            }*/
                         $query->orderByDesc('views');
 
                         return [$group => TvAppContentResource::collection($query->limit($limit)->get())];
