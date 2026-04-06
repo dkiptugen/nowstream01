@@ -165,7 +165,8 @@ class TvAppContentApiController extends Controller
                                 ->whereNotNull('stream_url');
 
                 $query->orderByDesc('views');
-                return $this->paginationMeta($query->paginate($request->query('per_page', 12)));
+                $data =$query->paginate($request->query('per_page', 12));
+                return  response()->json([$this->paginationMeta($data),"data"=>$data]);
             }
 
         private function fetchCategories(array $groups, ?int $regionId)
