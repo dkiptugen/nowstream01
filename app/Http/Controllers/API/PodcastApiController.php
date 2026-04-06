@@ -21,19 +21,7 @@ class PodcastApiController extends Controller
      */
         public function index(Request $request)
             {
-                //dd($request->all());
-                $perPage = (int) $request->get('per_page', 20);
-                $cacheKey = "podcasts:index:perPage:$perPage";
-                //dd($cacheKey);
-                $podcasts = Cache::tags(['podcasts'])->remember($cacheKey, self::CACHE_TTL, function () use ($perPage) {
-                    return Content::where('content_group', '=','podcast')
-                                  ->whereNull('parent_id')
-                                  ->where('status', 1)
-                                  ->latest()
-                                  ->paginate($perPage);
-                });
-                //d($podcasts);
-                return $this->jsonPaginatedResponse($podcasts, fn($podcast) => $this->serializePodcast($podcast));
+
             }
 
     /**
@@ -41,31 +29,7 @@ class PodcastApiController extends Controller
      */
         public function show($slug)
             {
-                dd($slug);
-                $podcast = Content::where('slug', $slug)
-                                  ->where('content_group', 'podcast')
-                                  ->firstOrFail();
 
-                // Increment views
-                Content::where('uuid', $podcast->uuid)->increment('views');
-
-                $episodes = Content::where('parent_id', $podcast->uuid)
-                                   ->where('content_group', 'podcast_episode')
-                                   ->orderByDesc('created_at')
-                                   ->get();
-
-                $related = Content::where('content_group', 'podcast')
-                                  ->where('uuid', '!=', $podcast->uuid)
-                                  ->inRandomOrder()
-                                  ->limit(6)
-                                  ->get();
-
-                return response()->json([
-                    'success' => true,
-                    'podcast' => $this->serializePodcast($podcast),
-                    'episodes' => $episodes->map(fn($e) => $this->serializeEpisode($e, $podcast))->values(),
-                    'related' => $related->map(fn($r) => $this->serializePodcast($r))->values(),
-                ], 200, [], self::JSON_FLAGS);
             }
 
     /**
@@ -73,22 +37,7 @@ class PodcastApiController extends Controller
      */
         public function episodes($slug)
             {
-                dd($slug);
-                $podcast = Content::where('slug', $slug)
-                                  ->where('content_group', 'podcast')
-                                  ->firstOrFail();
 
-                $perPage = 20;
-                $cacheKey = "podcasts:episodes:podcast:{$podcast->uuid}:perPage:$perPage";
-
-                $episodes = Cache::tags(['podcasts'])->remember($cacheKey, self::CACHE_TTL, function () use ($podcast, $perPage) {
-                    return Content::where('parent_id', $podcast->uuid)
-                                  ->where('content_group', 'podcast_episode')
-                                  ->orderByDesc('created_at')
-                                  ->paginate($perPage);
-                });
-
-                return $this->jsonPaginatedResponse($episodes, fn($e) => $this->serializeEpisode($e, $podcast));
             }
 
     /**
@@ -96,98 +45,38 @@ class PodcastApiController extends Controller
      */
         public function recordWatchHistory(Request $request)
             {
-                $user = Auth::user();
-                if (!$user) {
-                    return response()->json(['success' => false], 401);
-                }
 
-                $podcast = Content::findOrFail($request->podcast_id);
-
-                WatchHistory::updateOrCreate(
-                    ['user_id' => $user->id, 'content_id' => $podcast->uuid],
-                    ['watched_at' => now(), 'watch_duration' => (int) ($request->watch_duration ?? 0)]
-                );
-
-                return response()->json(['success' => true]);
             }
 
     /* ---------------- Helpers ---------------- */
 
-        private function serializePodcast(Content $podcast): array
+        private function serializePodcast(Content $podcast)
             {
-                dd($podcast);
-                return [
-                    'uuid' => $podcast->uuid,
-                    'slug' => $podcast->slug,
-                    'title' => $this->sanitizeString($podcast->title),
-                    'description' => $this->sanitizeString($podcast->description),
-                    'thumbnail_url' => $this->assetUrl($podcast->thumbnail_url),
-                    'content_group' => $podcast->content_group,
-                    'author' => $this->sanitizeString($podcast->author),
-                    'language' => $this->sanitizeString($podcast->language),
-                    'country' => $this->sanitizeString($podcast->country),
-                    'views' => (int) ($podcast->views ?? 0),
-                ];
+
             }
 
-        private function serializeEpisode(Content $episode, Content $podcast): array
+        private function serializeEpisode(Content $episode, Content $podcast)
             {
-                $thumbnail = $this->assetUrl($episode->thumbnail_url) ?? $this->assetUrl($podcast->thumbnail_url);
 
-                return [
-                    'uuid' => $episode->uuid,
-                    'slug' => $episode->slug,
-                    'title' => $this->sanitizeString($episode->title),
-                    'description' => $this->sanitizeString($episode->description),
-                    'thumbnail_url' => $thumbnail,
-                    'content_group' => $episode->content_group,
-                    'src' => $this->episodePlaybackUrl($episode),
-                    'playback_url' => $this->episodePlaybackUrl($episode),
-                    'podcast_title' => $this->sanitizeString($podcast->title),
-                    'author' => $this->sanitizeString($episode->author ?: $podcast->author),
-                    'type' => 'audio',
-                ];
             }
 
-        private function episodePlaybackUrl(Content $episode): ?string
+        private function episodePlaybackUrl(Content $episode)
             {
-                if ($episode->stream_video_link || $episode->stream_url) {
-                    return URL::temporarySignedRoute('stream.view', now()->addMinutes(30), [
-                        'id' => $episode->uuid, // make sure your route expects 'id'
-                    ]);
-                }
 
-                if (!empty($episode->content_path)) {
-                    return $this->assetUrl($episode->content_path);
-                }
-
-                return null;
             }
 
         private function assetUrl(?string $path): ?string
             {
-                if (!is_string($path) || trim($path) === '') return null;
-                if (preg_match('/^https?:\/\//i', $path)) return $path;
-                return Storage::disk(config('filesystems.default'))->url($path);
+
             }
 
-        private function sanitizeString($value): ?string
+        private function sanitizeString($value)
             {
-                if (!is_string($value) || $value === '') return null;
-                return iconv('UTF-8', 'UTF-8//IGNORE', $value) ?: null;
+
             }
 
         private function jsonPaginatedResponse($paginator, $transform)
             {
-                return response()->json([
-                    'success' => true,
-                    'data' => collect($paginator->items())->map($transform)->values(),
-                    'pagination' => [
-                        'current_page' => $paginator->currentPage(),
-                        'last_page' => $paginator->lastPage(),
-                        'per_page' => $paginator->perPage(),
-                        'total' => $paginator->total(),
-                    ],
-                ]);
+
             }
     }
