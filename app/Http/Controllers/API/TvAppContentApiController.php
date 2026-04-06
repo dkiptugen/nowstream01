@@ -311,7 +311,7 @@ class TvAppContentApiController extends Controller
         private function resolveRegionId(Request $request): ?int
             {
                 $regionId = $request->query('region_id');
-
+                Log::error("Data",[$regionId]);
                 if ($regionId === null || $regionId === '') {
                     return null;
                 }
