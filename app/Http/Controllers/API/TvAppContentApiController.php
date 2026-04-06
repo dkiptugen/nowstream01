@@ -38,7 +38,7 @@ class TvAppContentApiController extends Controller
                         'categories' => TvAppCategoryResource::collection($this->fetchCategories($groups, $regionId)),
                         'regions'    => TvAppRegionResource::collection($this->fetchRegions($groups)),
                         'events'     => TvAppEventResource::collection($this->fetchEvents($limit)),
-                        'podcasts'   => $this->get_podcasts($request,$regionId),
+                        'podcasts'   => $this->get_podcasts($request),
                     ]
                 );
 
@@ -62,6 +62,7 @@ class TvAppContentApiController extends Controller
                     self::CACHE_TTL,
                     fn() => [
                         'featured' => $this->buildFeaturedPayload($limit, $regionId),
+                        'podcasts' => $this->get_podcasts($request),
                         'events'   => TvAppEventResource::collection($this->fetchEvents($limit)),
                     ]
                 );
