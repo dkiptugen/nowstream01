@@ -11,21 +11,7 @@
 	use Illuminate\Support\Facades\Route;
 	use App\Http\Controllers\Api\PodcastApiController;
 
-	Route::prefix('podcasts')->group(function () {
 
-		// List podcasts
-		Route::get('/', [PodcastApiController::class, 'index']);
-
-		// Single podcast
-		Route::get('/{slug}', [PodcastApiController::class, 'show']);
-
-		// Podcast episodes
-		Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
-
-		// Record watch history
-		Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
-
-	});
 
 	Route::prefix('tv-app')->group(function () {
 		Route::get('home', [TvAppContentApiController::class, 'home']);
@@ -36,6 +22,21 @@
 		Route::get('events/{slug}/contents', [TvAppContentApiController::class, 'eventContents']);
 		Route::get('regions', [TvAppContentApiController::class, 'regions']);
 		Route::get('regions/{regionId}/contents', [TvAppContentApiController::class, 'regionContents']);
+        Route::prefix('podcasts')->group(function () {
+
+            // List podcasts
+            Route::get('/', [PodcastApiController::class, 'index']);
+
+            // Single podcast
+            Route::get('/{slug}', [PodcastApiController::class, 'show']);
+
+            // Podcast episodes
+            Route::get('/{slug}/episodes', [PodcastApiController::class, 'episodes']);
+
+            // Record watch history
+            Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
+
+        });
 	});
 	Route::get('content/{contentId}/comments', [ContentCommentApiController::class, 'index']);
 	/*
