@@ -41,6 +41,7 @@ class PodcastApiController extends Controller
      */
         public function show($slug)
             {
+                dd($slug);
                 $podcast = Content::where('slug', $slug)
                                   ->where('content_group', 'podcast')
                                   ->firstOrFail();
