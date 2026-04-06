@@ -22,6 +22,8 @@
 		Route::get('events/{slug}/contents', [TvAppContentApiController::class, 'eventContents']);
 		Route::get('regions', [TvAppContentApiController::class, 'regions']);
 		Route::get('regions/{regionId}/contents', [TvAppContentApiController::class, 'regionContents']);
+        Route::get('podcasts', [TvAppContentApiController::class, 'get_podcasts']);
+        Route::get('podcast/{slug}/episodes', [TvAppContentApiController::class, 'get_podcast_episodes']);
 
 	});
 	Route::get('content/{contentId}/comments', [ContentCommentApiController::class, 'index']);
