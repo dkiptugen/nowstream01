@@ -22,19 +22,7 @@
 		Route::get('events/{slug}/contents', [TvAppContentApiController::class, 'eventContents']);
 		Route::get('regions', [TvAppContentApiController::class, 'regions']);
 		Route::get('regions/{regionId}/contents', [TvAppContentApiController::class, 'regionContents']);
-        Route::prefix('podcasts')->group(function () {
 
-            // List podcasts
-            Route::get('/', [PodcastApiController::class, 'index']);
-
-            // Single podcast
-            Route::get('/{slug}', [PodcastApiController::class, 'show']);
-
-
-            // Record watch history
-            Route::post('/watch-history', [PodcastApiController::class, 'recordWatchHistory']);
-
-        });
 	});
 	Route::get('content/{contentId}/comments', [ContentCommentApiController::class, 'index']);
 	/*

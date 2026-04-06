@@ -13,6 +13,7 @@ use App\Models\Event;
 use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class TvAppContentApiController extends Controller
     {
@@ -22,6 +23,7 @@ class TvAppContentApiController extends Controller
 
         public function home(Request $request)
             {
+                Log::info('Fetching TV app home',$request->all());
                 $limit    = $this->resolveLimit($request, 12, 50);
                 $groups   = $this->resolveGroups($request->query('group'));
                 $regionId = $this->resolveRegionId($request);
@@ -198,4 +200,9 @@ class TvAppContentApiController extends Controller
                             ->limit($limit)
                             ->get();
             }
+        public function get_event_streams($eventId)
+            {
+
+            }
+
     }
