@@ -62,7 +62,7 @@ class TvAppContentApiController extends Controller
                     self::CACHE_TTL,
                     fn() => [
                         'featured' => $this->buildFeaturedPayload($limit, $regionId),
-                        'podcasts' => $this->get_podcasts($request),
+                        'podcasts' => $this->get_podcasts($request)->toArray(),
                         'events'   => TvAppEventResource::collection($this->fetchEvents($limit)),
                     ]
                 );
@@ -165,8 +165,9 @@ class TvAppContentApiController extends Controller
                                 ->whereNotNull('stream_url');
 
                 $query->orderByDesc('views');
-                $data =$query->paginate($request->query('per_page', 12));
-                return  response()->json($data->items());
+                $query->limit($request->query('per_page', 12));
+
+                return  response()->json($query->get()->toArray());
             }
 
         private function fetchCategories(array $groups, ?int $regionId)
