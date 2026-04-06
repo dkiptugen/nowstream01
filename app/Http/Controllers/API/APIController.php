@@ -29,7 +29,7 @@
 								'errors' => $validator->errors ()->all ()
 							], 422);
 						}
-					$user = SystemUser::where ('email', $request->email)->first ();
+					$user = User::where ('email', $request->email)->first ();
 					if ($user)
 						{
 							if (Hash::check ($request->password, $user->password))
