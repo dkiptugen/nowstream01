@@ -192,7 +192,34 @@ class TvAppContentApiController extends Controller
             }
         public function regions(Request $request)
             {
-                Log::info('Fetching TV app regions',$request->all());
+                $code = strtoupper($request->query('code', ''));
+
+                if (empty($code)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Region code is required.',
+                    ], 400);
+                }
+
+                $cacheKey = "region_{$code}";
+
+                $region = Cache::tags(['region'])->rememberForever($cacheKey, function () use ($code) {
+                    return Region::query()
+                                 ->whereRaw('UPPER(code) = ?', [$code])
+                                 ->first();
+                });
+
+                if (!$region) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Region not found.',
+                    ], 404);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'data' => $region,
+                ]);
             }
 
     }
