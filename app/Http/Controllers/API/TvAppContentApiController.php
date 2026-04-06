@@ -138,7 +138,7 @@ class TvAppContentApiController extends Controller
                     $query = Content::query()
                                     ->with(['event', 'categories', 'region'])
                                     ->where('content_group', $group)
-                                    ->where('status', 1)
+                                    //->where('status', 1)
                                     ->whereNotNull('stream_url')
 
                                    ;
