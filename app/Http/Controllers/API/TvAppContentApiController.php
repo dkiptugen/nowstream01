@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 class TvAppContentApiController extends Controller
     {
         private const DEFAULT_GROUPS  = ['livestream', 'tv', 'radio', 'podcast', 'video'];
-        private const FEATURED_GROUPS = ['livestream', 'tv', 'podcast', 'video'];
+        private const FEATURED_GROUPS = ['livestream','video','tv','radio','music','movie'];
         private const CACHE_TTL       = 600; // 10 minutes
 
         public function home(Request $request)
