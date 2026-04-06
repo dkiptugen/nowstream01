@@ -134,7 +134,7 @@ class TvAppContentApiController extends Controller
 
         private function buildFeaturedPayload(int $limit, ?int $regionId): array
             {
-                Log::info('region',[$regionId]);
+                Log::info('region',[$regionId,self::FEATURED_GROUPS]);
                 return collect(self::FEATURED_GROUPS)->mapWithKeys(function (string $group) use ($limit, $regionId) {
                     $query = Content::query()
                                     ->with([ 'categories', 'region'])
