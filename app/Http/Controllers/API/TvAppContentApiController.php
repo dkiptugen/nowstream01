@@ -155,17 +155,14 @@ class TvAppContentApiController extends Controller
                     })->all();
             }
 
-        public function get_podcasts(Request $request, $regionId = null)
+        public function get_podcasts(Request $request)
             {
                 $query = Content::query()
                                 ->with(['categories', 'region','children'])
                                 ->where('content_group', 'podcast')
                                 ->where('status', 1)
                                 ->whereNotNull('stream_url');
-                if ($regionId !== null)
-                    {
-                        $query->where('region_id', $regionId);
-                    }
+
                 $query->orderByDesc('views');
                 return $this->paginationMeta($query->paginate($request->query('per_page', 12)));
             }
