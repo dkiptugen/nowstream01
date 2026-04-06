@@ -62,7 +62,7 @@ class TvAppContentApiController extends Controller
                     self::CACHE_TTL,
                     fn() => [
                         'featured' => $this->buildFeaturedPayload($limit, $regionId),
-                        'podcasts' => $this->get_podcasts($request)->toArray(),
+                        'podcasts' => $this->get_podcasts($request),
                         'events'   => TvAppEventResource::collection($this->fetchEvents($limit)),
                     ]
                 );
