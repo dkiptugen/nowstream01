@@ -23,12 +23,12 @@ class PodcastApiController extends Controller
             {
                 $perPage = (int) $request->get('per_page', 20);
                 $cacheKey = "podcasts:index:perPage:$perPage";
-
+                dd($cacheKey);
                 $podcasts = Cache::tags(['podcasts'])->remember($cacheKey, self::CACHE_TTL, function () use ($perPage) {
                     return Content::where('content_group', '=','podcast')
                                   ->whereNull('parent_id')
                                   ->where('status', 1)
-                                  //->latest()
+                                  ->latest()
                                   ->paginate($perPage);
                 });
                 dd($podcasts);
