@@ -905,33 +905,42 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-track {
-            grid-auto-columns: minmax(58vw, 58vw);
-            gap: 12px;
+            grid-auto-columns: minmax(46vw, 46vw);
+            gap: 10px;
         }
 
         .clean-track--event {
-            grid-auto-columns: minmax(64vw, 64vw);
+            grid-auto-columns: minmax(54vw, 54vw);
         }
 
         .clean-track--video {
-            grid-auto-columns: minmax(72vw, 72vw);
+            grid-auto-columns: minmax(62vw, 62vw);
         }
 
         .clean-shelf-card__body,
         .clean-video-card__body,
         .clean-genre-card {
-            padding: 12px;
+            padding: 10px;
         }
 
         .clean-shelf-card__title,
         .clean-video-card__title {
-            font-size: 14px;
+            font-size: 13px;
+            margin-bottom: 6px;
         }
 
         .clean-shelf-card__meta,
         .clean-video-card__meta {
-            font-size: 11px;
-            gap: 8px;
+            font-size: 10px;
+            gap: 6px;
+        }
+
+        .clean-badge {
+            top: 10px;
+            left: 10px;
+            min-height: 24px;
+            padding: 5px 8px;
+            font-size: 9px;
         }
     }
 

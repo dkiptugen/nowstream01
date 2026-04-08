@@ -201,6 +201,99 @@
 				aspect-ratio: 16 / 9 !important;
 				height: auto;
 			}
+
+			@media (max-width: 991px) {
+				.page-wrapper {
+					padding-top: 108px;
+				}
+
+				.page-content section > .row {
+					row-gap: 18px;
+				}
+
+				.card.radius-5 {
+					border-radius: 18px;
+					overflow: hidden;
+					background: rgba(10, 18, 28, 0.84);
+					backdrop-filter: blur(14px);
+				}
+
+				.card-body {
+					padding: 16px;
+				}
+
+				.card-body h2 {
+					font-size: clamp(1.5rem, 6vw, 2rem);
+					line-height: 1.12;
+				}
+
+				.single-video-author {
+					padding: 14px;
+				}
+
+				.single-video-author .float-end {
+					float: none !important;
+					justify-content: flex-start;
+					flex-wrap: wrap;
+					gap: 8px;
+					margin-bottom: 14px;
+				}
+
+				.single-video-author img.ratio1 {
+					width: 48px;
+					height: 48px;
+					border-radius: 14px;
+					object-fit: cover;
+					margin-bottom: 10px;
+				}
+
+				#favorite-btn .btn,
+				.single-video-author .btn {
+					min-height: 38px;
+					border-radius: 999px;
+				}
+			}
+
+			@media (max-width: 767px) {
+				.page-wrapper {
+					padding-top: 96px;
+				}
+
+				.page-content {
+					padding-left: 12px;
+					padding-right: 12px;
+				}
+
+				.card-body {
+					padding: 14px;
+				}
+
+				.card-body h2 {
+					font-size: 1.35rem;
+					margin-bottom: 6px;
+				}
+
+				.card-body p,
+				.card-body small,
+				.single-video-author small {
+					font-size: 12px;
+				}
+
+				.single-video-author,
+				.card.radius-5.box {
+					padding: 12px;
+				}
+
+				.d-flex.scrolling {
+					gap: 12px;
+					overflow-x: auto;
+					padding-bottom: 6px;
+				}
+
+				.d-flex.scrolling > div {
+					min-width: 132px;
+				}
+			}
 		</style>
 		@endsection
 		@section('footer')

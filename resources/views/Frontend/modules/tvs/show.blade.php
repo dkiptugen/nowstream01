@@ -265,6 +265,118 @@
         letter-spacing: 1px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
+
+    @media (max-width: 991px) {
+        .movie-details-area {
+            padding-top: 124px;
+            padding-bottom: 44px;
+        }
+
+        .tv-comments-row {
+            gap: 18px;
+        }
+
+        .tv-wrap {
+            border-radius: 18px;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+        }
+
+        .movie-details-content {
+            padding: 0 6px;
+        }
+
+        .movie-details-content h5 {
+            margin-bottom: 8px;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        .movie-details-content h2 {
+            font-size: clamp(1.6rem, 7vw, 2.2rem);
+            line-height: 1.08;
+            margin-bottom: 12px;
+        }
+
+        .banner-meta ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .banner-meta li {
+            width: auto;
+        }
+
+        .banner-meta .quality span,
+        .banner-meta .category a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            font-size: 11px;
+        }
+
+        .movie-details-content p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .movie-details-prime ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .movie-details-prime ul li {
+            margin-right: 0;
+        }
+
+        .movie-details-prime .share a,
+        .movie-details-prime .watch button {
+            min-height: 40px;
+            border-radius: 999px;
+        }
+
+        .yt-comments-card {
+            border-radius: 18px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .movie-details-area {
+            padding-top: 108px;
+        }
+
+        .movie-details-content {
+            padding: 0;
+        }
+
+        .movie-details-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .movie-details-content p {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+
+        .live-badge {
+            top: 12px;
+            left: 12px;
+            font-size: 10px;
+            padding: 4px 7px;
+            border-radius: 999px;
+        }
+    }
 </style>
 @endsection
 

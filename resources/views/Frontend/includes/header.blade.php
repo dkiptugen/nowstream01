@@ -392,9 +392,9 @@
                 opacity: 0;
             }
 
-            body.mobile-menu-visible #sticky-header,
-            #sticky-header.sticky-menu {
+            body.mobile-menu-visible #sticky-header {
                 opacity: 1;
+                transform: translateY(0);
             }
 
             .menu-wrap {
@@ -412,6 +412,7 @@
             }
 
             .menu-nav {
+                display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 12px;
@@ -419,6 +420,7 @@
             }
 
             .mobile-nav-toggler {
+                position: relative;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -430,6 +432,20 @@
                 color: #ffffff;
                 font-size: 22px;
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                flex: 0 0 auto;
+                float: none;
+                cursor: pointer;
+                z-index: 4;
+            }
+
+            .menu-nav .logo {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+
+            .menu-nav .logo a {
+                display: inline-flex;
+                align-items: center;
             }
 
             .mobile-menu {
@@ -1120,7 +1136,6 @@
             <div class="container custom-container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="mobile-nav-toggler" aria-label="Open menu"><i class="bx bx-grid-alt"></i></div>
                         <div class="menu-wrap">
                             <nav class="menu-nav show">
                                 <div class="logo">
@@ -1128,6 +1143,7 @@
                                         <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
                                     </a>
                                 </div>
+                                <div class="mobile-nav-toggler" aria-label="Open menu"><i class="bx bx-grid-alt"></i></div>
                                 @include('Frontend.includes.nav')
 
                                 <div class="header-action d-none d-md-block">

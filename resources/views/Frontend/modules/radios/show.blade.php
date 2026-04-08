@@ -396,6 +396,109 @@
     z-index: 10;
 }
 
+		@media (max-width: 991px) {
+			.movie-details-area {
+				padding-top: 124px;
+				padding-bottom: 44px;
+			}
+
+			.radio-wrap {
+				border-radius: 18px;
+				background: linear-gradient(180deg, rgba(8, 17, 28, 0.9), rgba(8, 17, 28, 0.72));
+				box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+			}
+
+			.movie-details-content {
+				padding: 0 6px;
+			}
+
+			.movie-details-content h5 {
+				margin-bottom: 8px;
+				font-size: 12px;
+				letter-spacing: 0.12em;
+				text-transform: uppercase;
+				color: rgba(255, 255, 255, 0.62);
+			}
+
+			.movie-details-content h2 {
+				font-size: clamp(1.6rem, 7vw, 2.1rem);
+				line-height: 1.08;
+				margin-bottom: 12px;
+			}
+
+			.banner-meta ul {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+				margin-bottom: 12px;
+			}
+
+			.banner-meta .quality span,
+			.banner-meta .category a,
+			.banner-meta .release-time span {
+				display: inline-flex;
+				align-items: center;
+				min-height: 32px;
+				padding: 6px 10px;
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.06);
+				font-size: 11px;
+			}
+
+			.movie-details-content p {
+				font-size: 14px;
+				line-height: 1.6;
+			}
+
+			.movie-details-prime ul {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 10px;
+				margin-top: 14px;
+			}
+
+			.movie-details-prime ul li {
+				margin-right: 0;
+			}
+
+			.yt-comments-card {
+				border-radius: 18px;
+			}
+		}
+
+		@media (max-width: 767px) {
+			.movie-details-area {
+				padding-top: 108px;
+			}
+
+			.movie-details-content {
+				padding: 0;
+			}
+
+			.movie-details-content h2 {
+				font-size: 1.5rem;
+			}
+
+			.movie-details-content p {
+				display: -webkit-box;
+				-webkit-line-clamp: 4;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+				margin-bottom: 0;
+			}
+
+			.live-badge {
+				top: 12px;
+				left: 12px;
+				padding: 0;
+				border-radius: 999px;
+			}
+
+			.live-badge img {
+				height: 16px;
+			}
+		}
+
 	</style>
 	@endsection
 	@section('footer')
