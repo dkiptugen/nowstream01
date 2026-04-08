@@ -1615,8 +1615,7 @@
                 <div class="header-shell">
                     <div class="header-topbar d-none d-lg-block">
                         <div class="header-topbar__inner">
-                            <div class="header-topbar__left">
-                                <span class="header-topbar__eyebrow">Nowstream</span>
+                            <div class="header-topbar__left"> 
                                 <a href="{{ route('events') }}" class="header-utility-link"><i class="bx bx-calendar-event"></i><span>Live Events</span></a>
                                 <a href="{{ route('tvs') }}" class="header-utility-link"><i class="bx bx-tv"></i><span>Live TV</span></a>
                             </div>
@@ -1688,8 +1687,7 @@
                                     <div class="mobile-menu__topbar">
                                         <div class="mobile-menu__brand">
                                             <span class="mobile-menu__brand-mark"><i class="bx bx-layer"></i></span>
-                                            <div class="mobile-menu__brand-copy">
-                                                <p class="mobile-menu__eyebrow">Nowstream</p>
+                                            <div class="mobile-menu__brand-copy"> 
                                                 <h2 class="mobile-menu__title">Browse the app</h2>
                                             </div>
                                         </div>
