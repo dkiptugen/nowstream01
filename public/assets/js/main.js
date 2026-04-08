@@ -37,6 +37,13 @@ if ($('.mobile-menu').length) {
 	var mobileMenuContent = $('.menu-area .main-menu').html();
 	$('.mobile-menu .menu-box .menu-outer').append(mobileMenuContent);
 
+	$('.mobile-menu .menu-outer .navigation > li > a').each(function () {
+		var $link = $(this);
+		if (!$link.find('.parent-icon').length) {
+			$link.prepend('<div class="parent-icon"><i class="bx bx-chevron-right"></i></div>');
+		}
+	});
+
 	//Dropdown Button
 	$('.mobile-menu li.menu-item-has-children .dropdown-btn').on('click', function () {
 		$(this).toggleClass('open');
@@ -68,6 +75,43 @@ $(window).on('scroll', function () {
 		$('.scroll-to-target').addClass('open');
 	}
 });
+
+if ($('#sticky-header').length) {
+	let lastScrollTop = $(window).scrollTop();
+	const mobileBreakpoint = 767;
+
+	const syncMobileHeader = function () {
+		const $header = $('#sticky-header');
+		const scrollTop = $(window).scrollTop();
+		const isMobile = window.innerWidth <= mobileBreakpoint;
+		const scrollingDown = scrollTop > lastScrollTop;
+		const delta = Math.abs(scrollTop - lastScrollTop);
+
+		if (!isMobile) {
+			$header.removeClass('is-mobile-hidden');
+			lastScrollTop = scrollTop;
+			return;
+		}
+
+		if (scrollTop <= 12 || $('body').hasClass('mobile-menu-visible')) {
+			$header.removeClass('is-mobile-hidden');
+			lastScrollTop = scrollTop;
+			return;
+		}
+
+		if (delta > 6) {
+			$header.toggleClass('is-mobile-hidden', scrollingDown && scrollTop > 96);
+			if (!scrollingDown) {
+				$header.removeClass('is-mobile-hidden');
+			}
+		}
+
+		lastScrollTop = scrollTop;
+	};
+
+	$(window).on('scroll resize', syncMobileHeader);
+	syncMobileHeader();
+}
 
 
 /*=============================================

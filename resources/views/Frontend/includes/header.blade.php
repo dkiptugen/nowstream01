@@ -81,6 +81,26 @@
             margin-right: 0 !important;
         }
 
+        .parent-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #8fd7ff;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-link:hover .parent-icon,
+        .nav-link:focus .parent-icon,
+        .menu-item-has-children:hover > .nav-link .parent-icon {
+            background: rgba(255, 210, 79, 0.16);
+            color: #ffd24f;
+            transform: translateY(-1px);
+        }
+
         .theme-switcher-menu .submenu {
             min-width: 180px;
             padding: 10px;
@@ -358,13 +378,358 @@
                 padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
             }
 
+            #sticky-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1045;
+                transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease;
+            }
+
+            #sticky-header.is-mobile-hidden {
+                transform: translateY(calc(-100% - 8px));
+                opacity: 0;
+            }
+
+            body.mobile-menu-visible #sticky-header,
+            #sticky-header.sticky-menu {
+                opacity: 1;
+            }
+
             .menu-wrap {
-                padding: 14px 0;
+                padding: 12px 0;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 24px;
+                background: rgba(7, 15, 24, 0.84);
+                backdrop-filter: blur(18px);
+                box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
             }
 
             .logo img.logo-icon {
                 max-height: 34px;
                 width: auto;
+            }
+
+            .menu-nav {
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 0 14px;
+            }
+
+            .mobile-nav-toggler {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                margin-left: auto;
+                border-radius: 16px;
+                background: linear-gradient(180deg, rgba(255, 210, 79, 0.18), rgba(255, 210, 79, 0.06));
+                color: #ffffff;
+                font-size: 22px;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+
+            .mobile-menu {
+                width: min(100%, 380px);
+                padding-right: 0;
+                z-index: 1055;
+            }
+
+            .menu-backdrop {
+                z-index: 1050;
+                background: rgba(4, 10, 16, 0.74);
+                backdrop-filter: blur(10px);
+            }
+
+            .mobile-menu .menu-box {
+                background:
+                    radial-gradient(circle at top, rgba(24, 92, 145, 0.22), transparent 34%),
+                    linear-gradient(180deg, #07111a 0%, #091520 100%);
+                box-shadow: -16px 0 44px rgba(0, 0, 0, 0.34);
+            }
+
+            .mobile-menu .nav-logo {
+                padding: 0;
+            }
+
+            .mobile-menu__panel {
+                padding: 22px 18px 16px;
+            }
+
+            .mobile-menu__topbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+
+            .mobile-menu__brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .mobile-menu__brand-mark {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                border-radius: 16px;
+                background: linear-gradient(180deg, rgba(255, 210, 79, 0.24), rgba(143, 215, 255, 0.16));
+                color: #ffffff;
+                font-size: 22px;
+            }
+
+            .mobile-menu__brand-copy {
+                min-width: 0;
+            }
+
+            .mobile-menu__eyebrow {
+                margin: 0 0 4px;
+                color: #8fd7ff;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+
+            .mobile-menu__title {
+                margin: 0;
+                color: #ffffff;
+                font-size: 18px;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .mobile-menu .close-btn {
+                position: static;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.08);
+                color: #ffffff;
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .mobile-menu__account {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 14px;
+                padding: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.04);
+            }
+
+            .mobile-menu__account-main {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .mobile-menu__avatar,
+            .mobile-menu__avatar-fallback {
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                object-fit: cover;
+            }
+
+            .mobile-menu__avatar-fallback {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255, 210, 79, 0.16);
+                color: #ffd24f;
+                font-size: 18px;
+            }
+
+            .mobile-menu__account-copy {
+                min-width: 0;
+            }
+
+            .mobile-menu__account-name,
+            .mobile-menu__account-meta {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .mobile-menu__account-name {
+                color: #ffffff;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            .mobile-menu__account-meta {
+                color: rgba(235, 242, 250, 0.68);
+                font-size: 11px;
+            }
+
+            .mobile-menu__account-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: #ffd24f;
+                font-size: 12px;
+                font-weight: 700;
+                white-space: nowrap;
+            }
+
+            .mobile-menu__shortcuts {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .mobile-menu__shortcut {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                min-height: 86px;
+                padding: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.04);
+                color: #f3f7fb;
+            }
+
+            .mobile-menu__shortcut-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 34px;
+                height: 34px;
+                border-radius: 12px;
+                background: rgba(143, 215, 255, 0.12);
+                color: #8fd7ff;
+                font-size: 18px;
+            }
+
+            .mobile-menu__shortcut-label {
+                font-size: 12px;
+                font-weight: 700;
+                line-height: 1.25;
+            }
+
+            .mobile-menu .menu-outer {
+                padding: 0 18px 18px;
+            }
+
+            .mobile-menu .navigation {
+                display: grid;
+                gap: 10px;
+            }
+
+            .mobile-menu .navigation li,
+            .mobile-menu .navigation > li:last-child,
+            .mobile-menu .navigation li > ul > li:first-child {
+                border: 0;
+            }
+
+            .mobile-menu .navigation li > a {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-height: 56px;
+                padding: 14px 18px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 18px;
+                background: rgba(255, 255, 255, 0.035);
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+            .mobile-menu .navigation li > a .parent-icon {
+                flex: 0 0 auto;
+                width: 34px;
+                height: 34px;
+                border-radius: 12px;
+                background: rgba(143, 215, 255, 0.12);
+                color: #8fd7ff;
+            }
+
+            .mobile-menu .navigation li > a .menu-title {
+                flex: 1 1 auto;
+                min-width: 0;
+            }
+
+            .mobile-menu .navigation li.current > a,
+            .mobile-menu .navigation li > a:hover,
+            .mobile-menu .navigation li > a:focus {
+                background: linear-gradient(180deg, rgba(255, 210, 79, 0.14), rgba(255, 210, 79, 0.05));
+                color: #ffffff;
+            }
+
+            .mobile-menu .navigation li.current > a .parent-icon,
+            .mobile-menu .navigation li > a:hover .parent-icon,
+            .mobile-menu .navigation li > a:focus .parent-icon {
+                background: rgba(255, 210, 79, 0.16);
+                color: #ffd24f;
+            }
+
+            .mobile-menu .navigation li ul {
+                margin-top: 10px;
+                padding-left: 12px;
+            }
+
+            .mobile-menu .navigation li ul li > a {
+                margin-left: 0;
+                min-height: 48px;
+                padding: 12px 16px;
+                font-size: 13px;
+                border-radius: 16px;
+            }
+
+            .mobile-menu .navigation li.menu-item-has-children .dropdown-btn {
+                right: 14px;
+                top: 12px;
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .mobile-menu .social-links {
+                padding: 0 18px 26px;
+                text-align: left;
+            }
+
+            .mobile-menu .social-links ul {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .mobile-menu .social-links li {
+                margin: 0;
+            }
+
+            .mobile-menu .social-links li a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.06);
             }
 
             .breadcrumb-area {
@@ -755,7 +1120,7 @@
             <div class="container custom-container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="mobile-nav-toggler"><i class="fas fa-bars"></i></div>
+                        <div class="mobile-nav-toggler" aria-label="Open menu"><i class="bx bx-grid-alt"></i></div>
                         <div class="menu-wrap">
                             <nav class="menu-nav show">
                                 <div class="logo">
@@ -768,12 +1133,12 @@
                                 <div class="header-action d-none d-md-block">
                                     <ul>
                                         <li class="header-search"><a href="#" data-bs-toggle="modal"
-                                                data-bs-target="#search-modal"><i class="fas fa-search"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="fas fa-heart"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('watch.content') }}"><i class="fas fa-history"></i></a></li>
+                                                data-bs-target="#search-modal"><i class="bx bx-search-alt-2"></i></a></li>
+                                        <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="bx bx-heart"></i></a></li>
+                                        <li class="header-search"><a href="{{ route('watch.content') }}"><i class="bx bx-history"></i></a></li>
                                         <li class="header-search">
                                             <a href="{{ route('cart.index') }}" class="header-cart-link">
-                                                <i class="fas fa-shopping-cart"></i>
+                                                <i class="bx bx-cart-alt"></i>
                                                 <span id="header-cart-count" class="header-cart-count {{ ($headerCartCount ?? 0) > 0 ? '' : 'd-none' }}">
                                                     {{ $headerCartCount ?? 0 }}
                                                 </span>
@@ -850,12 +1215,60 @@
 
                         <!-- Mobile Menu  -->
                         <div class="mobile-menu">
-                            <div class="close-btn"><i class="fas fa-times"></i></div>
-
                             <nav class="menu-box">
-                                <div class="nav-logo"><a href="{{url('/')}}">
-                                        <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Streamer Logo">
-                                    </a>
+                                <div class="mobile-menu__panel">
+                                    <div class="mobile-menu__topbar">
+                                        <div class="mobile-menu__brand">
+                                            <span class="mobile-menu__brand-mark"><i class="bx bx-layer"></i></span>
+                                            <div class="mobile-menu__brand-copy">
+                                                <p class="mobile-menu__eyebrow">Nowstream</p>
+                                                <h2 class="mobile-menu__title">Browse the app</h2>
+                                            </div>
+                                        </div>
+                                        <div class="close-btn"><i class="bx bx-x"></i></div>
+                                    </div>
+
+                                    <div class="mobile-menu__account">
+                                        <div class="mobile-menu__account-main">
+                                            @auth
+                                                <img src="{{ Auth::user()->image ?? asset('avatar.png') }}" class="mobile-menu__avatar" alt="{{ Auth::user()->name }}">
+                                                <div class="mobile-menu__account-copy">
+                                                    <span class="mobile-menu__account-name">{{ Auth::user()->name }}</span>
+                                                    <span class="mobile-menu__account-meta">Your profile and history</span>
+                                                </div>
+                                            @else
+                                                <span class="mobile-menu__avatar-fallback"><i class="bx bx-user"></i></span>
+                                                <div class="mobile-menu__account-copy">
+                                                    <span class="mobile-menu__account-name">Welcome back</span>
+                                                    <span class="mobile-menu__account-meta">Sign in to save your picks</span>
+                                                </div>
+                                            @endauth
+                                        </div>
+                                        <a href="{{ auth()->check() ? route('profile.show') : route('user.login') }}" class="mobile-menu__account-link">
+                                            <span>{{ auth()->check() ? 'Open' : 'Login' }}</span>
+                                            <i class="bx bx-chevron-right"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="mobile-menu__shortcuts">
+                                        <a href="#" class="mobile-menu__shortcut" data-bs-toggle="modal" data-bs-target="#search-modal">
+                                            <span class="mobile-menu__shortcut-icon"><i class="bx bx-search-alt-2"></i></span>
+                                            <span class="mobile-menu__shortcut-label">Search</span>
+                                        </a>
+                                        <a href="{{ route('video.myfavorite') }}" class="mobile-menu__shortcut">
+                                            <span class="mobile-menu__shortcut-icon"><i class="bx bx-heart"></i></span>
+                                            <span class="mobile-menu__shortcut-label">Favorites</span>
+                                        </a>
+                                        <a href="{{ route('cart.index') }}" class="mobile-menu__shortcut">
+                                            <span class="mobile-menu__shortcut-icon"><i class="bx bx-cart-alt"></i></span>
+                                            <span class="mobile-menu__shortcut-label">Cart</span>
+                                        </a>
+                                    </div>
+
+                                    <div class="nav-logo d-none"><a href="{{url('/')}}">
+                                            <img src="{{ asset('logo1.png') }}" class="logo-icon" alt="Streamer Logo">
+                                        </a>
+                                    </div>
                                 </div>
                                 <div class="menu-outer">
                                     <!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header-->

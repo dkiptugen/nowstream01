@@ -22,7 +22,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ url('all-videos') }}">
                 <div class="parent-icon me-1">
-                    <i class="bx bx-video"></i>
+                    <i class="bx bx-camera-movie"></i>
                 </div>
                 <div class="menu-title">Videos</div>
             </a>
@@ -31,7 +31,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ url('radios') }}">
                 <div class="parent-icon me-1">
-                    <i class="bx bx-radio"></i>
+                    <i class="bx bx-broadcast"></i>
                 </div>
                 <div class="menu-title">Radios</div>
             </a>
@@ -40,7 +40,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ url('podcasts') }}">
                 <div class="parent-icon me-1">
-                    <i class="bx bx-microphone"></i>
+                    <i class="bx bx-microphone-alt"></i>
                 </div>
                 <div class="menu-title">Podcasts</div>
             </a>
@@ -49,7 +49,7 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ route('shop.index') }}">
                 <div class="parent-icon me-1">
-                    <i class="bx bx-store"></i>
+                    <i class="bx bx-store-alt"></i>
                 </div>
                 <div class="menu-title">Shop</div>
             </a>
