@@ -354,6 +354,10 @@
         }
 
         @media (max-width: 767px) {
+            body {
+                padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+            }
+
             .menu-wrap {
                 padding: 14px 0;
             }
@@ -403,6 +407,120 @@
             .footer-search form {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .page-footer {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1040;
+                padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
+                pointer-events: none;
+            }
+
+            .page-footer__dock {
+                display: grid;
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+                align-items: stretch;
+                gap: 6px;
+                margin: 0;
+                padding: 10px 8px;
+                list-style: none;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 26px;
+                background: rgba(7, 15, 24, 0.92);
+                backdrop-filter: blur(18px);
+                box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+                pointer-events: auto;
+            }
+
+            .page-footer__item {
+                min-width: 0;
+            }
+
+            .page-footer__link,
+            .page-footer__toggle {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                min-height: 58px;
+                width: 100%;
+                padding: 6px 4px;
+                border: 0;
+                border-radius: 18px;
+                background: transparent;
+                color: rgba(235, 242, 250, 0.74);
+                text-align: center;
+                transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            }
+
+            .page-footer__link:hover,
+            .page-footer__link:focus,
+            .page-footer__toggle:hover,
+            .page-footer__toggle:focus,
+            .page-footer__item.is-active .page-footer__link,
+            .page-footer__item.is-active .page-footer__toggle {
+                background: linear-gradient(180deg, rgba(255, 210, 79, 0.2), rgba(255, 210, 79, 0.08));
+                color: #ffffff;
+                transform: translateY(-1px);
+            }
+
+            .page-footer__icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 30px;
+                height: 30px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.06);
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .page-footer__item.is-active .page-footer__icon,
+            .page-footer__toggle[aria-expanded="true"] .page-footer__icon {
+                background: rgba(255, 210, 79, 0.18);
+                color: #ffd24f;
+            }
+
+            .page-footer__label {
+                display: block;
+                max-width: 100%;
+                overflow: hidden;
+                color: inherit;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.02em;
+                line-height: 1.1;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .page-footer__avatar {
+                width: 30px;
+                height: 30px;
+                border-radius: 12px;
+                object-fit: cover;
+            }
+
+            .page-footer__menu {
+                min-width: 180px;
+                margin-bottom: 14px !important;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 18px;
+                background: rgba(7, 15, 24, 0.96);
+                box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+            }
+
+            .page-footer__menu .dropdown-item {
+                color: #f3f7fb;
+            }
+
+            .page-footer__menu .dropdown-item i {
+                margin-right: 8px;
             }
         }
     </style>

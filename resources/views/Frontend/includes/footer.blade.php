@@ -153,96 +153,78 @@
 <div class="overlay toggle-icon"></div>
 <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
 
+@php
+    $bottomNavItems = [
+        [
+            'label' => 'Home',
+            'icon' => 'bx bx-home-alt-2',
+            'url' => url('/'),
+            'active' => request()->routeIs('home'),
+        ],
+        [
+            'label' => 'Events',
+            'icon' => 'bx bx-calendar-event',
+            'url' => url('events'),
+            'active' => request()->is('events') || request()->is('event/*'),
+        ],
+        [
+            'label' => 'Videos',
+            'icon' => 'bx bx-video',
+            'url' => url('all-videos'),
+            'active' => request()->is('all-videos') || request()->is('video/*'),
+        ],
+        [
+            'label' => 'Live',
+            'icon' => 'bx bx-broadcast',
+            'url' => url('tvs'),
+            'active' => request()->is('tvs') || request()->is('tv/*') || request()->is('channels') || request()->is('streams'),
+        ],
+        [
+            'label' => 'Shop',
+            'icon' => 'bx bx-store-alt',
+            'url' => route('shop.index'),
+            'active' => request()->routeIs('shop.*') || request()->routeIs('cart.*'),
+        ],
+    ];
+@endphp
+
 <footer class="page-footer d-md-none">
+    <ul class="page-footer__dock">
+        @foreach ($bottomNavItems as $item)
+            <li class="page-footer__item {{ $item['active'] ? 'is-active' : '' }}">
+                <a class="page-footer__link" href="{{ $item['url'] }}">
+                    <span class="page-footer__icon"><i class="{{ $item['icon'] }}"></i></span>
+                    <span class="page-footer__label">{{ $item['label'] }}</span>
+                </a>
+            </li>
+        @endforeach
 
-    <ul class="d-flex justify-content-between px-0 d-md-none">
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('/') }}">
-                <div class="parent-icon"><i class="bx bx-home"></i>
+        <li class="page-footer__item {{ request()->routeIs('profile.show') || request()->routeIs('user.login') || request()->routeIs('user.register') ? 'is-active' : '' }}">
+            @guest
+                <a class="page-footer__link" href="{{ route('user.login') }}">
+                    <span class="page-footer__icon"><i class="bx bx-user"></i></span>
+                    <span class="page-footer__label">Login</span>
+                </a>
+            @else
+                <div class="dropdown dropup">
+                    <button class="page-footer__toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="page-footer__icon">
+                            <img src="{{ Auth::user()->image ?? asset('avatar.png') }}" class="page-footer__avatar" alt="{{ Auth::user()->name }}">
+                        </span>
+                        <span class="page-footer__label">Me</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end page-footer__menu">
+                        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('profile.show') }}"><i class="bx bx-user fs-5"></i><span>Profile</span></a></li>
+                        <li><div class="dropdown-divider mb-0"></div></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="bx bx-log-out-circle fs-5"></i><span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="menu-title">Home</div>
-            </a>
-
+            @endguest
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('events') }}">
-                <div class="parent-icon"><i class="bx bx-calendar"></i>
-                </div>
-                <div class="menu-title">Events</div>
-            </a>
-
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('all-videos') }}">
-                <div class="parent-icon"><i class="bx bx-video"></i>
-                </div>
-                <div class="menu-title">Videos</div>
-            </a>
-
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('channels') }}">
-                <div class="parent-icon"><i class='bx bx-tv'></i>
-                </div>
-                <div class="menu-title">Channels</div>
-            </a>
-
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href=" {{ url('streams') }}">
-                <div class="parent-icon"><i class="bx bx-video-recording"></i>
-                </div>
-                <div class="menu-title">Streams</div>
-            </a>
-
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{ route('shop.index') }}">
-                <div class="parent-icon"><i class='bx bx-store'></i>
-                </div>
-                <div class="menu-title">Shop</div>
-            </a>
-
-        </li>
-        <div class="user-box dropdown px-3">
-            <a class="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                @guest 
-                <a href="{{ route('user.login') }}">
-                <img src="{{ asset('avatar.png') }}" class="user-img" alt="user avatar">
-                <div class="user-info">
-                    <p class="user-name mb-0">Login</p>
-                </div>
-            </a>
-                @else
-               
-                <img src="{{ Auth::user()->image ??  asset('avatar.png')}} " class="user-img" alt="user avatar">
-                <div class="user-info">
-                    <p class="user-name mb-0">{{ Auth::user()->name }}</p>
-                </div>
-                @endguest
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                @guest
-                @if (Route::has('login'))
-                <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.login') }}"><i class="bx bx-log-in-circle fs-5"></i><span>Login</span></a></li>
-                @endif
-                @if (Route::has('register'))
-                <li><a class="dropdown-item d-flex align-items-center" href="{{ route('user.register') }}"><i class="bx bx-user-plus fs-5"></i><span>Register</span></a></li>
-                @endif
-                @else
-                <li><a class="dropdown-item d-flex align-items-center" href="{{ route('profile.show') }}"><i class="bx bx-user fs-5"></i><span>Profile</span></a></li>
-                <li>
-                    <div class="dropdown-divider mb-0"></div>
-                </li>
-                <li>
-                    <a class="dropdown-item d-flex align-items-center" href="{{ route('user.logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        <i class="bx bx-log-out-circle"></i><span>Logout</span>
-                    </a>
-                </li>
-                @endguest
-            </ul>
-        </div>
 
         <form id="logout-form" action="{{ route('user.logout') }}" method="POST" style="display: none;">
             @csrf
