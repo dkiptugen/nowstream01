@@ -3,68 +3,172 @@
 @section('content')
 <style>
     .search-page {
-        padding: 7rem 0 4rem;
+        padding: 112px 0 64px;
         min-height: 70vh;
+        background:
+            radial-gradient(circle at top, rgba(24, 92, 145, 0.16), transparent 28%),
+            linear-gradient(180deg, #06111d 0%, #08131b 30%, #050b11 100%);
     }
 
     .search-shell {
-        max-width: 1180px;
+        max-width: 1240px;
     }
 
     .search-hero,
     .search-group,
     .search-empty {
-        background: rgba(15, 23, 42, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.14);
-        border-radius: 24px;
-        box-shadow: 0 24px 70px rgba(2, 6, 23, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(9, 19, 29, 0.94), rgba(7, 15, 24, 0.9));
+        box-shadow: 0 28px 64px rgba(0, 0, 0, 0.22);
     }
 
-    .search-input {
-        width: 100%;
-        border: 1px solid rgba(148, 163, 184, 0.18);
-        border-radius: 16px;
-        padding: 1rem 1.1rem;
-        background: rgba(15, 23, 42, 0.8);
-        color: #fff;
-    }
-
-    .search-btn {
-        border: 0;
-        border-radius: 16px;
-        padding: 1rem 1.4rem;
-        background: #ef4444;
-        color: #fff;
-        font-weight: 700;
+    .search-hero {
+        padding: 28px;
     }
 
     .search-kicker {
-        color: #f87171;
-        letter-spacing: 0.18em;
+        margin: 0 0 8px;
+        color: #8fd7ff;
+        letter-spacing: 0.16em;
         text-transform: uppercase;
-        font-size: 0.78rem;
-        margin-bottom: 0.75rem;
+        font-size: 0.72rem;
+        font-weight: 700;
     }
 
     .search-title {
         color: #fff;
-        font-size: clamp(2rem, 4vw, 3.2rem);
-        margin-bottom: 0.75rem;
+        font-size: clamp(2rem, 4vw, 3.3rem);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+        margin-bottom: 0.85rem;
     }
 
     .search-muted {
-        color: #cbd5e1;
+        color: rgba(231, 238, 247, 0.72);
+    }
+
+    .search-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 1.4rem;
+    }
+
+    .search-field {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1 1 auto;
+        min-height: 58px;
+        padding: 0 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .search-field i {
+        color: #8fd7ff;
+        font-size: 20px;
+    }
+
+    .search-input {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: #fff;
+        padding: 0;
+        font-size: 15px;
+    }
+
+    .search-input:focus {
+        outline: none;
+    }
+
+    .search-btn {
+        border: 0;
+        border-radius: 18px;
+        min-height: 58px;
+        padding: 0 1.35rem;
+        background: linear-gradient(135deg, #ffd24f, #f7a400);
+        color: #09131d;
+        font-weight: 800;
+        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .search-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .search-count,
+    .search-summary__query {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 0.9rem;
     }
 
     .search-count {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.45rem 0.85rem;
+        background: rgba(143, 215, 255, 0.12);
+        color: #d7f0ff;
+    }
+
+    .search-summary__query {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(231, 238, 247, 0.72);
+    }
+
+    .search-empty {
+        padding: 28px;
+    }
+
+    .search-empty h2 {
+        color: #ffffff;
+        font-size: 1.3rem;
+        margin-bottom: 8px;
+    }
+
+    .search-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .search-tab {
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 999px;
-        background: rgba(248, 113, 113, 0.12);
-        color: #fecaca;
-        font-size: 0.92rem;
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        color: #cbd5e1;
+        font-weight: 700;
+    }
+
+    .search-tab.active,
+    .search-tab:hover,
+    .search-tab:focus {
+        background: rgba(255, 210, 79, 0.14);
+        border-color: rgba(255, 210, 79, 0.3);
+        color: #fff;
+    }
+
+    .search-tab-pane {
+        display: none;
+    }
+
+    .search-tab-pane.active {
+        display: block;
+    }
+
+    .search-group {
+        padding: 24px;
     }
 
     .search-group__header {
@@ -84,10 +188,10 @@
     .search-card {
         display: block;
         height: 100%;
-        padding: 1rem;
-        border-radius: 18px;
-        background: rgba(30, 41, 59, 0.58);
-        border: 1px solid rgba(148, 163, 184, 0.12);
+        padding: 0.9rem;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         color: inherit;
         text-decoration: none;
         transition: transform 0.18s ease, border-color 0.18s ease;
@@ -95,14 +199,14 @@
 
     .search-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(248, 113, 113, 0.42);
+        border-color: rgba(143, 215, 255, 0.3);
         text-decoration: none;
     }
 
     .search-card__media {
         width: 100%;
         aspect-ratio: 16 / 10;
-        border-radius: 14px;
+        border-radius: 16px;
         object-fit: cover;
         background: linear-gradient(135deg, #1e293b, #334155);
         margin-bottom: 0.9rem;
@@ -110,12 +214,12 @@
 
     .search-card__type {
         display: inline-block;
-        margin-bottom: 0.65rem;
+        margin-bottom: 0.6rem;
         padding: 0.32rem 0.65rem;
         border-radius: 999px;
-        background: rgba(239, 68, 68, 0.12);
-        color: #fca5a5;
-        font-size: 0.76rem;
+        background: rgba(143, 215, 255, 0.12);
+        color: #d7f0ff;
+        font-size: 0.72rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -140,60 +244,60 @@
         color: #94a3b8;
     }
 
-    .search-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .search-tab {
-        border: 1px solid rgba(148, 163, 184, 0.14);
-        border-radius: 999px;
-        padding: 0.7rem 1rem;
-        background: rgba(15, 23, 42, 0.72);
-        color: #cbd5e1;
-        font-weight: 600;
-    }
-
-    .search-tab.active,
-    .search-tab:hover,
-    .search-tab:focus {
-        background: #ef4444;
-        border-color: #ef4444;
-        color: #fff;
-    }
-
-    .search-tab-pane {
-        display: none;
-    }
-
-    .search-tab-pane.active {
-        display: block;
-    }
-
     @media (max-width: 767.98px) {
         .search-page {
-            padding-top: 6rem;
+            padding-top: 96px;
+            padding-bottom: 52px;
         }
 
+        .search-hero,
+        .search-group,
+        .search-empty {
+            border-radius: 22px;
+        }
+
+        .search-hero,
+        .search-group,
+        .search-empty {
+            padding: 20px;
+        }
+
+        .search-toolbar,
         .search-group__header {
-            align-items: flex-start;
             flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-btn {
+            width: 100%;
+        }
+
+        .search-card {
+            padding: 0.8rem;
+            border-radius: 18px;
+        }
+
+        .search-card__title {
+            font-size: 0.94rem;
+        }
+
+        .search-card__description,
+        .search-card__meta {
+            font-size: 0.85rem;
         }
     }
 </style>
 
 <section class="search-page">
     <div class="container search-shell">
-        <div class="search-hero p-4 p-lg-5 mb-4">
+        <div class="search-hero mb-4">
             <p class="search-kicker">Search</p>
             <h1 class="search-title">Find anything across Nowstream.</h1>
-            <p class="search-muted mb-4">Events, live streams, videos, podcasts, radio, TV, merchandise and channels in one place.</p>
+            <p class="search-muted mb-0">Events, live streams, videos, podcasts, radio, TV, merchandise and channels in one place.</p>
 
-            <form action="{{ route('search') }}" method="GET" class="row g-3 align-items-end">
-                <div class="col-lg-9">
-                    <label for="search-query" class="search-muted d-block mb-2">Search term</label>
+            <form action="{{ route('search') }}" method="GET" class="search-toolbar">
+                <label class="search-field" for="search-query">
+                    <i class="bx bx-search-alt-2"></i>
                     <input
                         id="search-query"
                         type="text"
@@ -202,28 +306,26 @@
                         value="{{ $query }}"
                         placeholder="Search events, videos, podcasts, merch..."
                     >
-                </div>
-                <div class="col-lg-3">
-                    <button type="submit" class="search-btn w-100">Search</button>
-                </div>
+                </label>
+                <button type="submit" class="search-btn">Search</button>
             </form>
 
             @if($query !== '')
-                <div class="mt-4 d-flex flex-wrap gap-3 align-items-center">
+                <div class="search-summary">
                     <span class="search-count">{{ number_format($totalResults) }} results</span>
-                    <span class="search-muted">Results for "{{ $query }}"</span>
+                    <span class="search-summary__query">For "{{ $query }}"</span>
                 </div>
             @endif
         </div>
 
         @if($query === '')
-            <div class="search-empty p-4 p-lg-5">
-                <h2 class="text-white h4 mb-2">Start with a title, artist, event or keyword.</h2>
-                <p class="search-muted mb-0">The search page groups results by content type so it is easier to scan what the app already has.</p>
+            <div class="search-empty">
+                <h2>Start with a title, artist, event or keyword.</h2>
+                <p class="search-muted mb-0">Results are grouped by content type so it is easier to scan what the app already has.</p>
             </div>
         @elseif($sections->isEmpty())
-            <div class="search-empty p-4 p-lg-5">
-                <h2 class="text-white h4 mb-2">No results found.</h2>
+            <div class="search-empty">
+                <h2>No results found.</h2>
                 <p class="search-muted mb-0">Try a different title, a shorter phrase, or a broader keyword.</p>
             </div>
         @else
@@ -258,40 +360,40 @@
                         role="tabpanel"
                         aria-labelledby="search-tab-{{ \Illuminate\Support\Str::slug($section['title']) }}"
                     >
-                        <div class="search-group p-4">
-                        <div class="search-group__header">
-                            <h2 class="search-group__title">{{ $section['title'] }}</h2>
-                            <span class="search-count">{{ $section['count'] }} found</span>
-                        </div>
+                        <div class="search-group">
+                            <div class="search-group__header">
+                                <h2 class="search-group__title">{{ $section['title'] }}</h2>
+                                <span class="search-count">{{ $section['count'] }} found</span>
+                            </div>
 
-                            <div class="row g-4">
-                            @foreach($section['items'] as $item)
-                                <div class="col-12 col-md-6 col-xl-3">
-                                    @if(isset($item['product']) && $item['product'] instanceof \App\Models\Product)
-                                        @include('Frontend.modules.shop.partials.product-card', ['product' => $item['product']])
-                                    @else
-                                        <a href="{{ $item['url'] }}" class="search-card">
-                                            @if(!empty($item['image']))
-                                                <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="search-card__media">
-                                            @else
-                                                <div class="search-card__media"></div>
-                                            @endif
+                            <div class="row g-3 g-lg-4">
+                                @foreach($section['items'] as $item)
+                                    <div class="col-6 col-md-4 col-xl-3">
+                                        @if(isset($item['product']) && $item['product'] instanceof \App\Models\Product)
+                                            @include('Frontend.modules.shop.partials.product-card', ['product' => $item['product']])
+                                        @else
+                                            <a href="{{ $item['url'] }}" class="search-card">
+                                                @if(!empty($item['image']))
+                                                    <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="search-card__media">
+                                                @else
+                                                    <div class="search-card__media"></div>
+                                                @endif
 
-                                            <span class="search-card__type">{{ $item['type'] }}</span>
-                                            <h3 class="search-card__title">{{ $item['title'] }}</h3>
+                                                <span class="search-card__type">{{ $item['type'] }}</span>
+                                                <h3 class="search-card__title">{{ $item['title'] }}</h3>
 
-                                            @if(!empty($item['description']))
-                                                <p class="search-card__description">{{ \Illuminate\Support\Str::limit(strip_tags($item['description']), 110) }}</p>
-                                            @endif
+                                                @if(!empty($item['description']))
+                                                    <p class="search-card__description">{{ \Illuminate\Support\Str::limit(strip_tags($item['description']), 90) }}</p>
+                                                @endif
 
-                                            @if(!empty($item['meta']))
-                                                <p class="search-card__meta">{{ $item['meta'] }}</p>
-                                            @endif
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
+                                                @if(!empty($item['meta']))
+                                                    <p class="search-card__meta">{{ $item['meta'] }}</p>
+                                                @endif
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
                 @endforeach
