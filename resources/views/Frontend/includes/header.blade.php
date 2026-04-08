@@ -1549,6 +1549,81 @@
     background: #2b2f38;
     object-fit: contain !important;
 }
+
+        /* Global radius normalization */
+        .header-action.header-action--desktop .header-search > a,
+        .header-mobile-button,
+        .mobile-nav-toggler,
+        .parent-icon,
+        .theme-switcher-menu .submenu,
+        .theme-switcher-option,
+        .search-modal .modal-content,
+        .search-modal__field,
+        .search-modal__submit,
+        .search-modal__close,
+        .menu-wrap,
+        .mobile-menu .menu-box,
+        .mobile-menu__brand-mark,
+        .mobile-menu__account,
+        .mobile-menu__avatar,
+        .mobile-menu__avatar-fallback,
+        .mobile-menu__shortcut,
+        .mobile-menu__shortcut-icon,
+        .mobile-menu .navigation li > a,
+        .mobile-menu .navigation li ul li > a,
+        .mobile-menu .navigation li.menu-item-has-children .dropdown-btn,
+        .mobile-menu .social-links li a,
+        .page-footer__dock,
+        .page-footer__link,
+        .page-footer__toggle,
+        .page-footer__icon,
+        .page-footer__avatar,
+        .page-footer__menu,
+        .nowstream-media-card,
+        .nowstream-event-card__image,
+        .clean-panel,
+        .clean-live-item,
+        .clean-live-item img,
+        .clean-link-card,
+        .clean-link-card__icon,
+        .clean-shelf-card,
+        .clean-video-card,
+        .clean-genre-card,
+        .events-hero__inner,
+        .events-hero__stat,
+        .events-section__notice,
+        .tv-hero__inner,
+        .search-hero,
+        .search-group,
+        .search-empty,
+        .search-field,
+        .search-btn,
+        .search-card,
+        .search-card__media,
+        .yt-comments-card,
+        .tv-wrap,
+        .radio-wrap,
+        .card.radius-5 {
+            border-radius: calc(var(--reduced-radius, 16px) / 2);
+        }
+
+        .header-cart-count,
+        .header-action.header-action--desktop .header-btn .btn,
+        .search-count,
+        .search-summary__query,
+        .search-tab,
+        .search-modal__chip,
+        .events-section__notice,
+        .tv-hero__chip,
+        .clean-chip,
+        .clean-meta span,
+        .clean-btn,
+        .clean-badge,
+        .page-footer__menu .dropdown-item,
+        .mobile-menu__account-link,
+        .mobile-menu__shortcut-label {
+            border-radius: 999px !important;
+        }
     </style>
 
 <!-- Google tag (gtag.js) -->
