@@ -377,6 +377,10 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         contain-intrinsic-size: 1px 180px;
     }
 
+    .clean-discover-bar {
+        display: none;
+    }
+
     .clean-link-card {
         min-height: 84px;
         padding: 14px 15px;
@@ -787,9 +791,41 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
             display: block;
         }
 
+        .clean-discover-bar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .clean-discover-search,
+        .clean-discover-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 46px;
+            padding: 0 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #f5f8fb;
+        }
+
+        .clean-discover-search i,
+        .clean-discover-link i {
+            color: #8fd7ff;
+            font-size: 18px;
+        }
+
+        .clean-discover-search span,
+        .clean-discover-link span {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
         .clean-link-grid,
         .clean-genre-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .clean-eyebrow {
@@ -804,22 +840,16 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-hero__description {
-            margin-top: 12px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            font-size: 13px;
-            line-height: 1.5;
+            display: none;
         }
 
         .clean-meta {
             gap: 8px;
-            margin-top: 16px;
+            margin-top: 14px;
         }
 
-        .clean-meta span:nth-child(n+4),
-        .clean-meta .clean-chip:nth-child(n+5) {
+        .clean-meta span:nth-child(n+3),
+        .clean-meta .clean-chip:nth-child(n+4) {
             display: none;
         }
 
@@ -831,12 +861,15 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-actions {
-            margin-top: 18px;
+            margin-top: 14px;
+            gap: 10px;
         }
 
         .clean-btn {
-            width: 100%;
-            min-height: 46px;
+            width: auto;
+            min-height: 42px;
+            padding: 10px 16px;
+            font-size: 12px;
         }
 
         .clean-live-item {
@@ -858,28 +891,29 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-link-card {
-            min-height: auto;
-            padding: 12px;
+            min-height: 72px;
+            padding: 12px 10px;
         }
 
         .clean-link-card__icon {
             width: 30px;
             height: 30px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-radius: 10px;
             font-size: 16px;
         }
 
         .clean-link-card__title {
-            font-size: 14px;
+            font-size: 12px;
+            line-height: 1.2;
         }
 
         .clean-link-card__meta {
-            font-size: 11px;
+            display: none;
         }
 
         .clean-section {
-            margin-top: 24px;
+            margin-top: 20px;
         }
 
         .clean-section__eyebrow,
@@ -888,33 +922,33 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-section__title {
-            font-size: 1.2rem;
+            font-size: 1.05rem;
         }
 
         .clean-section__head {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .clean-slider__button {
-            width: 38px;
-            height: 38px;
+            display: none;
         }
 
         .clean-slider__controls {
-            justify-content: space-between;
+            width: auto;
+            justify-content: flex-end;
         }
 
         .clean-track {
-            grid-auto-columns: minmax(46vw, 46vw);
-            gap: 10px;
+            grid-auto-columns: minmax(42vw, 42vw);
+            gap: 8px;
         }
 
         .clean-track--event {
-            grid-auto-columns: minmax(54vw, 54vw);
+            grid-auto-columns: minmax(52vw, 52vw);
         }
 
         .clean-track--video {
-            grid-auto-columns: minmax(62vw, 62vw);
+            grid-auto-columns: minmax(58vw, 58vw);
         }
 
         .clean-shelf-card__body,
@@ -938,15 +972,23 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         .clean-badge {
             top: 10px;
             left: 10px;
-            min-height: 24px;
-            padding: 5px 8px;
+            min-height: 22px;
+            padding: 4px 7px;
             font-size: 9px;
         }
     }
 
     @media (max-width: 380px) {
         .clean-link-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .clean-link-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .clean-track {
+            grid-auto-columns: minmax(48vw, 48vw);
         }
     }
 </style>
@@ -1103,6 +1145,17 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 @endforelse
             </div>
         </section>
+
+        <div class="clean-discover-bar">
+            <a href="#" class="clean-discover-search" data-bs-toggle="modal" data-bs-target="#search-modal">
+                <i class="bx bx-search-alt-2"></i>
+                <span>Search shows, channels, podcasts</span>
+            </a>
+            <a href="{{ route('videos') }}" class="clean-discover-link">
+                <i class="bx bx-play-circle"></i>
+                <span>Start</span>
+            </a>
+        </div>
 
         <div class="clean-link-grid">
             @foreach($quickLinks as $link)

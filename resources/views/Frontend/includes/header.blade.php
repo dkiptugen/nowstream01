@@ -64,6 +64,194 @@
             padding-right: clamp(16px, 3vw, 28px);
         }
 
+        #sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1045;
+            transition: transform 0.28s ease, opacity 0.28s ease, background-color 0.28s ease, box-shadow 0.28s ease;
+        }
+
+        #sticky-header.is-header-hidden {
+            transform: translateY(calc(-100% - 8px));
+            opacity: 0;
+        }
+
+        .menu-area {
+            padding: 0;
+            background: transparent;
+        }
+
+        .menu-area .menu-wrap {
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            border: 0;
+            border-radius: 0;
+            backdrop-filter: none;
+        }
+
+        .header-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .header-topbar,
+        .header-mainbar {
+            width: 100%;
+        }
+
+        .header-topbar {
+            background: rgba(5, 12, 18, 0.96);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .header-topbar__inner,
+        .header-mainbar__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            min-width: 0;
+        }
+
+        .header-topbar__inner {
+            min-height: 44px;
+        }
+
+        .header-mainbar {
+            background: transparent;
+            transition: background-color 0.28s ease, border-color 0.28s ease, backdrop-filter 0.28s ease;
+        }
+
+        .header-mainbar__inner {
+            min-height: 82px;
+        }
+
+        .header-topbar__left,
+        .header-topbar__right,
+        .header-mainbar__right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .header-mainbar__left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .header-mobile-actions {
+            display: none;
+        }
+
+        .header-mobile-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f5f8fb;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .header-topbar__eyebrow,
+        .header-utility-link {
+            color: rgba(232, 240, 248, 0.78);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .header-topbar__eyebrow {
+            white-space: nowrap;
+        }
+
+        .header-utility-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-utility-link i {
+            color: #8fd7ff;
+            font-size: 14px;
+        }
+
+        .header-utility-link:hover,
+        .header-utility-link:focus {
+            color: #ffffff;
+        }
+
+        .header-mainbar .logo {
+            flex: 0 0 auto;
+        }
+
+        .header-mainbar .logo a {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .header-mainbar .navbar-wrap {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .header-action.header-action--desktop {
+            display: block;
+        }
+
+        .header-action.header-action--desktop > ul {
+            gap: 10px;
+        }
+
+        .header-action.header-action--desktop .header-search > a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #f5f7fb;
+        }
+
+        .header-action.header-action--desktop .header-search > a:hover,
+        .header-action.header-action--desktop .header-search > a:focus {
+            background: rgba(255, 210, 79, 0.14);
+            color: #ffd24f;
+        }
+
+        .header-action.header-action--desktop .header-btn .btn {
+            min-height: 42px;
+            padding: 0 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffd24f, #f7a400);
+            color: #09131d;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        #sticky-header.sticky-menu .header-mainbar {
+            background: rgba(7, 15, 24, 0.92);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+        }
+
         .menu-wrap,
         .menu-nav {
             min-width: 0;
@@ -318,13 +506,50 @@
         }
 
         @media (max-width: 991px) {
+            .header-topbar {
+                display: none;
+            }
+
+            .header-mainbar {
+                background: transparent;
+            }
+
+            .header-mainbar__inner {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                align-items: center;
+                gap: 10px;
+                min-height: auto;
+                padding: 0 12px;
+            }
+
             .menu-area .container.custom-container {
                 padding-left: 16px;
                 padding-right: 16px;
             }
 
-            .mobile-nav-toggler {
-                margin-left: auto;
+            .header-mobile-actions {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .header-mobile-actions--right {
+                justify-content: flex-end;
+            }
+
+            .header-mainbar__left,
+            .header-mainbar__right {
+                display: contents;
+            }
+
+            .header-mainbar .logo {
+                justify-self: center;
+            }
+
+            .header-mainbar .navbar-wrap,
+            .header-action.header-action--desktop {
+                display: none !important;
             }
 
             .breadcrumb-area {
@@ -378,20 +603,6 @@
                 padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
             }
 
-            #sticky-header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 1045;
-                transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease, background-color 0.28s ease;
-            }
-
-            #sticky-header.is-mobile-hidden {
-                transform: translateY(calc(-100% - 8px));
-                opacity: 0;
-            }
-
             body.mobile-menu-visible #sticky-header {
                 opacity: 1;
                 transform: translateY(0);
@@ -400,10 +611,14 @@
             .menu-wrap {
                 padding: 12px 0;
                 border: 1px solid rgba(255, 255, 255, 0.08);
-                border-radius: 24px;
-                background: rgba(7, 15, 24, 0.84);
+                border-radius: 22px;
+                background: rgba(7, 15, 24, 0.9);
                 backdrop-filter: blur(18px);
                 box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+            }
+
+            .header-mainbar__inner {
+                padding: 0 10px;
             }
 
             .logo img.logo-icon {
@@ -411,41 +626,21 @@
                 width: auto;
             }
 
-            .menu-nav {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                padding: 0 14px;
-            }
-
             .mobile-nav-toggler {
                 position: relative;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                width: 44px;
-                height: 44px;
-                margin-left: auto;
-                border-radius: 16px;
+                width: 42px;
+                height: 42px;
+                margin-left: 0;
+                border-radius: 14px;
                 background: linear-gradient(180deg, rgba(255, 210, 79, 0.18), rgba(255, 210, 79, 0.06));
                 color: #ffffff;
-                font-size: 22px;
+                font-size: 20px;
                 box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-                flex: 0 0 auto;
-                float: none;
                 cursor: pointer;
                 z-index: 4;
-            }
-
-            .menu-nav .logo {
-                min-width: 0;
-                flex: 1 1 auto;
-            }
-
-            .menu-nav .logo a {
-                display: inline-flex;
-                align-items: center;
             }
 
             .mobile-menu {
@@ -1134,100 +1329,74 @@
     <header>
         <div id="sticky-header" class="menu-area transparent-header">
             <div class="container custom-container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="menu-wrap">
-                            <nav class="menu-nav show">
-                                <div class="logo">
-                                    <a href="{{url('/')}}">
-                                        <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
-                                    </a>
-                                </div>
-                                <div class="mobile-nav-toggler" aria-label="Open menu"><i class="bx bx-grid-alt"></i></div>
-                                @include('Frontend.includes.nav')
-
-                                <div class="header-action d-none d-md-block">
-                                    <ul>
-                                        <li class="header-search"><a href="#" data-bs-toggle="modal"
-                                                data-bs-target="#search-modal"><i class="bx bx-search-alt-2"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('video.myfavorite') }}"><i class="bx bx-heart"></i></a></li>
-                                        <li class="header-search"><a href="{{ route('watch.content') }}"><i class="bx bx-history"></i></a></li>
-                                        <li class="header-search">
-                                            <a href="{{ route('cart.index') }}" class="header-cart-link">
-                                                <i class="bx bx-cart-alt"></i>
-                                                <span id="header-cart-count" class="header-cart-count {{ ($headerCartCount ?? 0) > 0 ? '' : 'd-none' }}">
-                                                    {{ $headerCartCount ?? 0 }}
-                                                </span>
-                                            </a>
-                                        </li>
-
-                                        <li class="menu-item-has-children header-lang d-none">
-                                            <a class="d-flex align-items-center nav-link  gap-3 dropdown-toggle-nocaret"
-                                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                @guest
-
-                                                <div class="user-info">
-                                                    <a class="dropdown-item d-flex align-items-center pe-3"
-                                                        href="{{ route('user.login') }}">
-                                                        <div class="icon text-white"><i class="flaticon-globe"></i>
-                                                            Login</div>
-                                                    </a>
-                                                </div>
-                                                @else
-                                                <img src="{{ Auth::user()->image ?? asset('avatar.png')}} "
-                                                    class="user-img" alt="user avatar">
-                                                <div class="user-info">
-                                                    <p class="user-name mb-0">
-                                                        {{ Auth::user()->name }}
-                                                    </p>
-                                                </div>
-                                                @endguest
-                                            </a>
-                                            <ul class="submenu d-none">
-                                                @guest
-                                                @if (Route::has('login'))
-                                                <li><a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('user.login') }}"><i
-                                                            class="bx bx-log-in-circle fs-5"></i><span>Login</span></a>
-                                                </li>
-                                                @endif
-                                                @if (Route::has('register'))
-                                                <li><a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('user.register') }}"><i
-                                                            class="bx bx-user-plus fs-5"></i><span>Register</span></a>
-                                                </li>
-                                                @endif
-                                                @else
-                                                <li><a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('profile.show') }}"><i
-                                                            class="bx bx-user fs-5"></i><span>Profile</span></a></li>
-                                                <li>
-                                                    <div class="dropdown-divider mb-0"></div>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('user.logout') }}"
-                                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                                        <i class="bx bx-log-out-circle"></i><span>Logout</span>
-                                                    </a>
-                                                </li>
-                                                @endguest
-                                            </ul>
-                                        </li>
-
-                                        <form id="logout-form" action="{{ route('user.logout') }}" method="POST"
-                                            style="display: none;">
-                                            @csrf
-                                        </form>
-                                        <li class="header-btn">
-                                            <a href="{{ route('events') }}"
-                                                class="btn btn-danger btn-sm shadow-sm px-2 d-inline-flex align-items-center gap-2 border-0 rounded-0"
-                                                aria-label="buttons">Buy Ticket</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </nav>
+                <div class="header-shell">
+                    <div class="header-topbar d-none d-lg-block">
+                        <div class="header-topbar__inner">
+                            <div class="header-topbar__left">
+                                <span class="header-topbar__eyebrow">Nowstream</span>
+                                <a href="{{ route('events') }}" class="header-utility-link"><i class="bx bx-calendar-event"></i><span>Live Events</span></a>
+                                <a href="{{ route('tvs') }}" class="header-utility-link"><i class="bx bx-tv"></i><span>Live TV</span></a>
+                            </div>
+                            <div class="header-topbar__right">
+                                <a href="{{ route('video.myfavorite') }}" class="header-utility-link"><i class="bx bx-heart"></i><span>Favorites</span></a>
+                                <a href="{{ route('watch.content') }}" class="header-utility-link"><i class="bx bx-history"></i><span>History</span></a>
+                                <a href="{{ auth()->check() ? route('profile.show') : route('user.login') }}" class="header-utility-link"><i class="bx bx-user"></i><span>{{ auth()->check() ? 'Account' : 'Login' }}</span></a>
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="header-mainbar">
+                        <div class="menu-wrap">
+                            <div class="header-mainbar__inner">
+                                <div class="header-mobile-actions d-lg-none">
+                                    <div class="mobile-nav-toggler" aria-label="Open menu"><i class="bx bx-grid-alt"></i></div>
+                                </div>
+
+                                <div class="header-mainbar__left">
+                                    <div class="logo">
+                                        <a href="{{url('/')}}">
+                                            <img src="{{ asset('assets/img/logo/logo.png') }}" class="logo-icon" alt="Streamer Logo" height="40">
+                                        </a>
+                                    </div>
+                                    @include('Frontend.includes.nav')
+                                </div>
+
+                                <div class="header-mainbar__right">
+                                    <div class="header-mobile-actions header-mobile-actions--right d-lg-none">
+                                        <a href="#" class="header-mobile-button" data-bs-toggle="modal" data-bs-target="#search-modal" aria-label="Search">
+                                            <i class="bx bx-search-alt-2"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="header-action header-action--desktop d-none d-lg-block">
+                                        <ul>
+                                            <li class="header-search"><a href="#" data-bs-toggle="modal"
+                                                    data-bs-target="#search-modal"><i class="bx bx-search-alt-2"></i></a></li>
+                                            <li class="header-search">
+                                                <a href="{{ route('cart.index') }}" class="header-cart-link">
+                                                    <i class="bx bx-cart-alt"></i>
+                                                    <span id="header-cart-count" class="header-cart-count {{ ($headerCartCount ?? 0) > 0 ? '' : 'd-none' }}">
+                                                        {{ $headerCartCount ?? 0 }}
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="header-btn">
+                                                <a href="{{ route('events') }}"
+                                                    class="btn btn-danger btn-sm shadow-sm px-2 d-inline-flex align-items-center gap-2 border-0"
+                                                    aria-label="buttons">Buy Ticket</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <form id="logout-form" action="{{ route('user.logout') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                         <!-- Mobile Menu  -->
                         <div class="mobile-menu">
