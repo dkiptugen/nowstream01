@@ -295,20 +295,30 @@ class RadioController extends Controller
 
         private function resolveRadio(string $slug): ?Content
             {
-                $slugifiedTitle = Str::slug($slug);
+                $normalizedSlug  = $this->normalizeComparableSlug($slug);
+                $slugifiedInput  = Str::slug($slug);
+                $titleCandidates = array_values(array_unique(array_filter([
+                    trim(str_replace('-', ' ', $slug)),
+                    trim(str_replace(['-', '_'], ' ', $slugifiedInput)),
+                ])));
 
                 $baseQuery = Content::query()
-                                    ->where('content_group', 'radio')
-                                    ->where(function ($query) use ($slug, $slugifiedTitle)
-                                        {
-                                            $query
-                                                ->where('slug', $slug)
-                                                ->orWhere('old_id', $slug)
-                                                ->orWhereRaw('LOWER(slug) = ?', [strtolower($slug)])
-                                                ->orWhereRaw('LOWER(old_id) = ?', [strtolower($slug)])
-                                                ->orWhereRaw('LOWER(REPLACE(title, \" \", \"-\")) = ?', [strtolower($slug)])
-                                                ->orWhereRaw('LOWER(REPLACE(title, \" \", \"-\")) = ?', [strtolower($slugifiedTitle)]);
-                                        });
+                    ->where('content_group', 'radio')
+                    ->where(function ($query) use ($slug, $slugifiedInput, $titleCandidates)
+                        {
+                            $query
+                                ->where('slug', $slug)
+                                ->orWhere('old_id', $slug)
+                                ->orWhereRaw('LOWER(slug) = ?', [strtolower($slug)])
+                                ->orWhereRaw('LOWER(old_id) = ?', [strtolower($slug)])
+                                ->orWhereRaw('LOWER(slug) = ?', [strtolower($slugifiedInput)])
+                                ->orWhereRaw('LOWER(old_id) = ?', [strtolower($slugifiedInput)]);
+
+                            foreach ($titleCandidates as $candidate)
+                                {
+                                    $query->orWhereRaw('LOWER(title) = ?', [strtolower($candidate)]);
+                                }
+                        });
 
                 $activeRadio = (clone $baseQuery)
                     ->where('status', 1)
@@ -319,6 +329,52 @@ class RadioController extends Controller
                         return $activeRadio;
                     }
 
-                return $baseQuery->first();
+                $matchedByDirectLookup = $baseQuery->first();
+
+                if ($matchedByDirectLookup)
+                    {
+                        return $matchedByDirectLookup;
+                    }
+
+                $similarRadios = Content::query()
+                    ->where('content_group', 'radio')
+                    ->whereNotNull('title')
+                    ->where(function ($query) use ($titleCandidates)
+                        {
+                            foreach ($titleCandidates as $candidate)
+                                {
+                                    $query->orWhere('title', 'like', '%' . $candidate . '%');
+                                }
+                        })
+                    ->orderByDesc('status')
+                    ->limit(25)
+                    ->get();
+
+                return $similarRadios->first(function (Content $radio) use ($normalizedSlug)
+                    {
+                        $variants = array_filter([
+                            $radio->slug,
+                            $radio->old_id,
+                            $radio->title,
+                        ]);
+
+                        foreach ($variants as $variant)
+                            {
+                                if ($this->normalizeComparableSlug((string) $variant) === $normalizedSlug)
+                                    {
+                                        return true;
+                                    }
+                            }
+
+                        return false;
+                    });
+            }
+
+        private function normalizeComparableSlug(string $value): string
+            {
+                $normalized = Str::ascii($value);
+                $normalized = preg_replace('/[^A-Za-z0-9]+/', '-', $normalized) ?? $value;
+
+                return trim(Str::lower($normalized), '-');
             }
     }
