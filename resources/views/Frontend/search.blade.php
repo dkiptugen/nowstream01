@@ -253,13 +253,29 @@
         .search-hero,
         .search-group,
         .search-empty {
-            border-radius: 22px;
+            border-radius: 14px;
         }
 
         .search-hero,
         .search-group,
         .search-empty {
-            padding: 20px;
+            padding: 14px;
+        }
+
+        .search-kicker {
+            margin-bottom: 6px;
+            font-size: 0.62rem;
+        }
+
+        .search-title {
+            font-size: 1.35rem;
+            line-height: 1.1;
+            margin-bottom: 0.45rem;
+        }
+
+        .search-muted {
+            font-size: 0.88rem;
+            line-height: 1.45;
         }
 
         .search-toolbar,
@@ -268,22 +284,128 @@
             align-items: stretch;
         }
 
+        .search-toolbar {
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .search-field {
+            min-height: 48px;
+            padding: 0 12px;
+            border-radius: 12px;
+        }
+
+        .search-field i {
+            font-size: 17px;
+        }
+
+        .search-input {
+            font-size: 14px;
+        }
+
         .search-btn {
             width: 100%;
+            min-height: 48px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .search-summary {
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .search-count,
+        .search-summary__query {
+            min-height: 30px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
+
+        .search-tabs {
+            gap: 0.45rem;
+            margin-bottom: 0.9rem;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 2px;
+            scrollbar-width: none;
+        }
+
+        .search-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .search-tab {
+            flex: 0 0 auto;
+            padding: 0.55rem 0.8rem;
+            font-size: 0.78rem;
         }
 
         .search-card {
-            padding: 0.8rem;
-            border-radius: 18px;
+            display: grid;
+            grid-template-columns: 72px minmax(0, 1fr);
+            align-items: center;
+            gap: 10px;
+            padding: 0.55rem;
+            border-radius: 12px;
+        }
+
+        .search-card__media {
+            aspect-ratio: 1 / 1;
+            margin-bottom: 0;
+            border-radius: 10px;
+        }
+
+        .search-card__type {
+            margin-bottom: 0.35rem;
+            padding: 0;
+            background: transparent;
+            color: #8fd7ff;
+            font-size: 0.62rem;
+            letter-spacing: 0.12em;
         }
 
         .search-card__title {
-            font-size: 0.94rem;
+            font-size: 0.86rem;
+            line-height: 1.3;
+            margin-bottom: 0.2rem;
         }
 
         .search-card__description,
         .search-card__meta {
+            font-size: 0.75rem;
+            line-height: 1.35;
+        }
+
+        .search-card__description {
+            display: none;
+        }
+
+        .search-card__meta {
+            margin-top: 0.25rem;
+        }
+
+        .search-group__header {
+            gap: 8px;
+            margin-bottom: 0.9rem;
+        }
+
+        .search-group__title,
+        .search-empty h2 {
+            font-size: 1rem;
+        }
+
+        .search-empty p {
             font-size: 0.85rem;
+        }
+
+        .row.g-3.g-lg-4 {
+            --bs-gutter-x: 0.75rem;
+            --bs-gutter-y: 0.75rem;
+        }
+
+        .row.g-3.g-lg-4 > [class*="col-"] {
+            width: 100%;
         }
     }
 </style>
