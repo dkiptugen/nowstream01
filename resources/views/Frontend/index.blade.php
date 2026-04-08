@@ -82,7 +82,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         border-right: 0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 0;
-        min-height: 620px;
+        min-height: 720px;
         background-color: #09131d;
         box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
     }
@@ -130,18 +130,18 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
-        min-height: 620px;
-        padding: 64px 56px 56px;
+        min-height: 720px;
+        padding: 88px 56px 72px;
     }
 
     .clean-hero__carousel {
         position: relative;
-        min-height: 620px;
+        min-height: 720px;
     }
 
     .clean-hero__copy {
         position: absolute;
-        inset: 56px auto 56px 56px;
+        inset: 80px auto 72px 56px;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -643,20 +643,20 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
     @media (max-width: 1199px) {
         .clean-hero {
-            min-height: auto;
+            min-height: 640px;
         }
 
         .clean-hero__content {
-            min-height: auto;
-            padding: 42px 34px 24px;
+            min-height: 640px;
+            padding: 56px 34px 44px;
         }
 
         .clean-hero__carousel {
-            min-height: auto;
+            min-height: 640px;
         }
 
         .clean-hero__copy {
-            inset: 42px auto 24px 34px;
+            inset: 54px auto 44px 34px;
             max-width: calc(100% - 68px);
         }
 
@@ -690,11 +690,12 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-hero__content {
-            padding-bottom: 12px;
+            min-height: 620px;
+            padding: 52px 34px 40px;
         }
 
         .clean-hero__copy {
-            inset: 36px 34px 16px 34px;
+            inset: 48px 34px 40px 34px;
             width: auto;
             max-width: none;
         }
@@ -746,16 +747,16 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
         .clean-hero {
             border-radius: 0;
-            min-height: 500px;
+            min-height: 580px;
         }
 
         .clean-hero__content {
-            min-height: 500px;
-            padding: 26px 18px 26px;
+            min-height: 580px;
+            padding: 34px 18px 34px;
         }
 
         .clean-hero__copy {
-            inset: 26px 18px 26px 18px;
+            inset: 34px 18px 34px 18px;
             max-width: none;
         }
 
@@ -874,7 +875,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 380px) {
         .clean-link-grid {
             grid-template-columns: 1fr;
         }
