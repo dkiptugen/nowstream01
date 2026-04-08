@@ -1,14 +1,13 @@
-
-                    <div class="col-xl-4 col-lg-4 col-6 grid-item grid-sizer">
+                    <div class="col-12 col-sm-6 col-lg-4 grid-item grid-sizer nowstream-grid-card">
                           @php 
                         $thumbnail = $video->thumbnail_url ? Storage::disk(config('filesystems.default'))->url($video->thumbnail_url) : asset('frontend-assets/images/default.png');
                     @endphp
-                        <div class="movie-item mb-60 shadow-sm bg-dark">
+                        <div class="movie-item mb-4 mb-lg-5 shadow-sm bg-dark nowstream-media-card">
                             <div class="movie-poster mb-0">
                                 <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
                                     <img src="{{ $thumbnail }}"
                                          alt="{{ $video->title }}"
-                                         class="w-100 d-block"
+                                         class="w-100 d-block nowstream-media-card__image"
                                          style="object-fit: cover; aspect-ratio: 16/9;"
                                          loading="lazy">
                                     <div class="play fs-40">
@@ -16,15 +15,15 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="movie-content p-2">
+                            <div class="movie-content p-3">
                                 <div class="top">
-                                    <h5 class="title mt-0">
+                                    <h5 class="title mt-0 nowstream-media-card__title">
                                         <a href="{{ route('video.show', ['uuid' => $video->uuid, 'slug' => $video->slug]) }}">
                                             {{ ucfirst($video->title) }}
                                         </a>
                                     </h5>
                                 </div>
-                                <div class="bottom">
+                                <div class="bottom nowstream-media-card__meta">
                                     <ul>
                                         <li><span class="quality">hd</span></li>
                                         <li>

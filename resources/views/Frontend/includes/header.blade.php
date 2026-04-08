@@ -45,8 +45,40 @@
             overflow-y: scroll !important;
         }
 
+        body {
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
         .navbar-wrap>ul>li>a {
             display: inline-flex;
+        }
+
+        .menu-area .container.custom-container {
+            width: min(100%, 1440px);
+            padding-left: clamp(16px, 3vw, 28px);
+            padding-right: clamp(16px, 3vw, 28px);
+        }
+
+        .menu-wrap,
+        .menu-nav {
+            min-width: 0;
+        }
+
+        .header-action ul {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .header-action ul li {
+            margin-right: 0 !important;
         }
 
         .theme-switcher-menu .submenu {
@@ -122,6 +154,256 @@
 
         .header-cart-count.d-none {
             display: none !important;
+        }
+
+        .breadcrumb-area .container,
+        .movie-area .container,
+        .top-rated-movie .container,
+        .newsletter-area .container,
+        .footer-top-wrap .container,
+        .copyright-wrap .container {
+            padding-left: clamp(16px, 3vw, 28px);
+            padding-right: clamp(16px, 3vw, 28px);
+        }
+
+        .breadcrumb-content .title {
+            overflow-wrap: anywhere;
+        }
+
+        .breadcrumb-content .breadcrumb,
+        .ucm-nav-wrap .nav,
+        .footer-menu nav,
+        .quick-link-list ul {
+            flex-wrap: wrap;
+        }
+
+        .ucm-nav-wrap .nav {
+            gap: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .ucm-nav-wrap .nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ucm-nav-wrap .nav-item {
+            flex: 0 0 auto;
+        }
+
+        .tr-movie-active {
+            row-gap: 20px;
+        }
+
+        .nowstream-grid-card {
+            position: relative !important;
+        }
+
+        .nowstream-media-card {
+            height: 100%;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .nowstream-media-card__image {
+            width: 100%;
+            display: block;
+        }
+
+        .nowstream-media-card__title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            overflow-wrap: anywhere;
+        }
+
+        .nowstream-media-card__meta ul,
+        .nowstream-media-card__meta li {
+            min-width: 0;
+        }
+
+        .nowstream-media-card__meta .channel,
+        .nowstream-media-card__meta .views,
+        .nowstream-media-card__meta .rating {
+            overflow-wrap: anywhere;
+        }
+
+        .section-title .title,
+        .episode-top-wrap .title {
+            overflow-wrap: anywhere;
+        }
+
+        .newsletter-inner-wrap,
+        .footer-menu-wrap,
+        .footer-quick-link-wrap {
+            overflow: hidden;
+        }
+
+        .newsletter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .newsletter-form input {
+            flex: 1 1 220px;
+            min-width: 0;
+        }
+
+        .newsletter-form .btn {
+            flex: 0 0 auto;
+        }
+
+        .footer-menu .navigation,
+        .quick-link-list ul,
+        .footer-social ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+        }
+
+        .footer-search form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-search input {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .footer-search button {
+            flex: 0 0 auto;
+        }
+
+        .mobile-menu .navigation li > a,
+        .mobile-menu .submenu li > a {
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 1199px) {
+            .menu-wrap {
+                padding: 16px 0;
+            }
+
+            .header-btn .btn {
+                min-height: 40px;
+            }
+
+            .breadcrumb-area {
+                padding: 128px 0 72px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .menu-area .container.custom-container {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .mobile-nav-toggler {
+                margin-left: auto;
+            }
+
+            .breadcrumb-area {
+                padding: 120px 0 56px;
+            }
+
+            .breadcrumb-content {
+                text-align: left;
+            }
+
+            .breadcrumb-content .title {
+                font-size: clamp(2rem, 8vw, 2.8rem);
+                line-height: 1.1;
+            }
+
+            .breadcrumb-content .breadcrumb {
+                justify-content: flex-start;
+                gap: 6px 10px;
+            }
+
+            .section-title,
+            .episode-top-wrap,
+            .newsletter-content,
+            .footer-logo,
+            .footer-search,
+            .copyright-text,
+            .payment-method-img {
+                text-align: left !important;
+            }
+
+            .row.align-items-end.mb-60,
+            .episode-top-wrap {
+                margin-bottom: 28px !important;
+            }
+
+            .newsletter-inner-wrap,
+            .footer-menu-wrap {
+                padding: 28px 22px;
+            }
+
+            .newsletter-content h4,
+            .section-title .title,
+            .episode-top-wrap .title {
+                font-size: clamp(1.5rem, 6vw, 2rem);
+                line-height: 1.15;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .menu-wrap {
+                padding: 14px 0;
+            }
+
+            .logo img.logo-icon {
+                max-height: 34px;
+                width: auto;
+            }
+
+            .breadcrumb-area {
+                padding: 112px 0 44px;
+            }
+
+            .movie-area,
+            .top-rated-movie,
+            .newsletter-area {
+                padding-top: 52px;
+                padding-bottom: 52px;
+            }
+
+            .tr-movie-active {
+                row-gap: 16px;
+            }
+
+            .nowstream-media-card {
+                border-radius: 16px;
+            }
+
+            .movie-content {
+                padding-top: 12px;
+            }
+
+            .newsletter-form > * {
+                width: 100%;
+            }
+
+            .newsletter-form .btn {
+                justify-content: center;
+            }
+
+            .footer-menu .navigation,
+            .quick-link-list ul,
+            .footer-social ul {
+                gap: 10px 14px;
+            }
+
+            .footer-search form {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 

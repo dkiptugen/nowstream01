@@ -146,6 +146,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         flex-direction: column;
         justify-content: flex-end;
         max-width: 640px;
+        width: min(100%, 640px);
         opacity: 0;
         transform: translateY(18px);
         transition: opacity 0.55s ease, transform 0.55s ease;
@@ -219,6 +220,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         color: rgba(236, 242, 249, 0.84);
         font-size: 15px;
         line-height: 1.75;
+        overflow-wrap: anywhere;
     }
 
     .clean-meta {
@@ -376,6 +378,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         color: #ffffff;
         font-size: 18px;
         font-weight: 700;
+        overflow-wrap: anywhere;
     }
 
     .clean-link-card__meta {
@@ -426,6 +429,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         font-weight: 700;
         letter-spacing: 0.08em;
         text-transform: uppercase;
+        white-space: nowrap;
     }
 
     .clean-track {
@@ -642,6 +646,72 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
     }
 
+    @media (max-width: 991px) {
+        .clean-home {
+            padding-bottom: 56px;
+        }
+
+        .clean-home .container {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .clean-hero::before {
+            background:
+                linear-gradient(180deg, rgba(5, 10, 15, 0.9) 0%, rgba(5, 10, 15, 0.62) 42%, rgba(5, 10, 15, 0.9) 100%),
+                linear-gradient(180deg, rgba(8, 17, 28, 0.15) 0%, rgba(8, 17, 28, 0.78) 100%);
+        }
+
+        .clean-hero__content {
+            padding-bottom: 12px;
+        }
+
+        .clean-hero__copy {
+            inset: 36px 34px 16px 34px;
+            width: auto;
+            max-width: none;
+        }
+
+        .clean-hero__title {
+            font-size: clamp(2.3rem, 8vw, 4rem);
+        }
+
+        .clean-actions {
+            gap: 12px;
+        }
+
+        .clean-btn {
+            flex: 1 1 220px;
+        }
+
+        .clean-hero__aside {
+            padding: 0 34px 34px;
+        }
+
+        .clean-panel {
+            max-width: none;
+        }
+
+        .clean-link-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .clean-section {
+            margin-top: 30px;
+        }
+
+        .clean-section__head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .clean-slider__controls {
+            width: 100%;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+    }
+
     @media (max-width: 767px) {
         .clean-home {
             padding-top: 0;
@@ -652,20 +722,22 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-hero__content {
-            padding: 28px 22px 18px;
+            padding: 24px 18px 8px;
         }
 
         .clean-hero__copy {
-            inset: 28px 22px 18px 22px;
+            inset: 24px 18px 12px 18px;
             max-width: none;
         }
 
         .clean-hero__aside {
-            padding: 0 22px 22px;
+            padding: 0 18px 18px;
         }
 
         .clean-panel {
             max-width: none;
+            padding: 18px;
+            border-radius: 20px;
         }
 
         .clean-link-grid,
@@ -673,26 +745,86 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
             grid-template-columns: 1fr;
         }
 
-        .clean-section__head {
-            align-items: flex-start;
-            flex-direction: column;
+        .clean-eyebrow {
+            margin-bottom: 14px;
+            letter-spacing: 0.14em;
+        }
+
+        .clean-hero__description {
+            margin-top: 14px;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .clean-meta {
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .clean-meta span,
+        .clean-chip {
+            min-height: 34px;
+            padding: 8px 12px;
+            font-size: 11px;
+        }
+
+        .clean-actions {
+            margin-top: 20px;
+        }
+
+        .clean-btn {
+            width: 100%;
+            min-height: 46px;
+        }
+
+        .clean-live-item {
+            grid-template-columns: 52px minmax(0, 1fr);
+            gap: 10px;
+        }
+
+        .clean-live-item img {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+        }
+
+        .clean-link-card,
+        .clean-shelf-card,
+        .clean-video-card,
+        .clean-genre-card {
+            border-radius: 18px;
+        }
+
+        .clean-link-card {
+            min-height: auto;
+            padding: 16px;
+        }
+
+        .clean-section__sub {
+            font-size: 13px;
         }
 
         .clean-slider__controls {
-            width: 100%;
-            justify-content: flex-end;
+            justify-content: space-between;
         }
 
         .clean-track {
-            grid-auto-columns: minmax(164px, 164px);
+            grid-auto-columns: minmax(74vw, 74vw);
+            gap: 14px;
         }
 
         .clean-track--event {
-            grid-auto-columns: minmax(210px, 210px);
+            grid-auto-columns: minmax(78vw, 78vw);
         }
 
         .clean-track--video {
-            grid-auto-columns: minmax(270px, 270px);
+            grid-auto-columns: minmax(84vw, 84vw);
+        }
+
+        .clean-shelf-card__body,
+        .clean-video-card__body,
+        .clean-genre-card {
+            padding: 14px;
         }
     }
 </style>
