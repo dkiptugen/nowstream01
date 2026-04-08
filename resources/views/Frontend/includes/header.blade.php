@@ -440,6 +440,8 @@
                 font-size: 13px;
                 font-weight: 700;
                 letter-spacing: 0.01em;
+        align-items: center;
+        gap: 6px;
             }
 
             .navbar-wrap > ul.navigation > li > a:hover,
