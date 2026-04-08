@@ -131,7 +131,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         flex-direction: column;
         justify-content: flex-end;
         min-height: 620px;
-        padding: 56px;
+        padding: 64px 56px 56px;
     }
 
     .clean-hero__carousel {
@@ -203,8 +203,8 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
     .clean-hero__title {
         max-width: 640px;
         margin: 0;
-        font-size: clamp(2.6rem, 4vw, 4.7rem);
-        line-height: 0.98;
+        font-size: clamp(2.8rem, 4.2vw, 4.9rem);
+        line-height: 1.02;
         letter-spacing: -0.04em;
         color: #ffffff;
         text-shadow: 0 18px 45px rgba(0, 0, 0, 0.34);
@@ -219,7 +219,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         margin: 18px 0 0;
         color: rgba(236, 242, 249, 0.84);
         font-size: 15px;
-        line-height: 1.75;
+        line-height: 1.8;
         overflow-wrap: anywhere;
     }
 
@@ -286,46 +286,68 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         display: flex;
         align-items: flex-end;
         height: 100%;
-        padding: 32px 32px 40px 0;
+        padding: 32px 32px 40px 12px;
     }
 
     .clean-panel {
         width: 100%;
-        max-width: 340px;
+        max-width: 320px;
         margin-left: auto;
-        padding: 22px;
+        padding: 18px;
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        background: rgba(8, 17, 28, 0.8);
-        backdrop-filter: blur(18px);
+        border-radius: 22px;
+        background: linear-gradient(180deg, rgba(7, 15, 24, 0.86), rgba(7, 15, 24, 0.74));
+        backdrop-filter: blur(16px);
+        box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
     }
 
     .clean-panel__title {
-        margin: 0 0 18px;
+        margin: 0 0 14px;
         color: #ffffff;
-        font-size: 17px;
+        font-size: 15px;
         font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .clean-panel__eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        color: #8fd7ff;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .clean-panel__eyebrow::before {
+        content: "";
+        width: 18px;
+        height: 1px;
+        background: rgba(143, 215, 255, 0.5);
     }
 
     .clean-live-list {
         display: grid;
-        gap: 12px;
+        gap: 10px;
     }
 
     .clean-live-item {
         display: grid;
-        grid-template-columns: 58px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 10px;
         align-items: center;
-        padding: 10px;
-        border-radius: 16px;
-        background: rgba(255, 255, 255, 0.04);
+        padding: 8px 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.045);
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .clean-live-item img {
-        width: 58px;
-        height: 58px;
-        border-radius: 14px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
         object-fit: cover;
     }
 
@@ -349,17 +371,17 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
     .clean-link-grid {
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 22px;
+        gap: 12px;
+        margin-top: 18px;
         content-visibility: auto;
         contain-intrinsic-size: 1px 180px;
     }
 
     .clean-link-card {
-        min-height: 108px;
-        padding: 18px;
+        min-height: 84px;
+        padding: 14px 15px;
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 22px;
+        border-radius: 18px;
         background: linear-gradient(180deg, rgba(15, 31, 45, 0.9), rgba(8, 17, 28, 0.92));
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         transition: transform 0.22s ease, border-color 0.22s ease;
@@ -374,17 +396,22 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
     }
 
     .clean-link-card__title {
-        margin: 0 0 8px;
+        margin: 0 0 4px;
         color: #ffffff;
-        font-size: 18px;
+        font-size: 15px;
         font-weight: 700;
         overflow-wrap: anywhere;
     }
 
     .clean-link-card__meta {
         margin: 0;
-        font-size: 13px;
-        line-height: 1.6;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .clean-panel--mobile {
+        display: none;
+        margin-top: 14px;
     }
 
     .clean-section {
@@ -719,46 +746,57 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
         .clean-hero {
             border-radius: 0;
+            min-height: 500px;
         }
 
         .clean-hero__content {
-            padding: 24px 18px 8px;
+            min-height: 500px;
+            padding: 26px 18px 26px;
         }
 
         .clean-hero__copy {
-            inset: 24px 18px 12px 18px;
+            inset: 26px 18px 26px 18px;
             max-width: none;
         }
 
         .clean-hero__aside {
-            padding: 0 18px 18px;
+            display: none;
         }
 
         .clean-panel {
             max-width: none;
-            padding: 18px;
-            border-radius: 20px;
+            padding: 16px;
+            border-radius: 18px;
+        }
+
+        .clean-panel--mobile {
+            display: block;
         }
 
         .clean-link-grid,
         .clean-genre-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .clean-eyebrow {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             letter-spacing: 0.14em;
         }
 
+        .clean-hero__title {
+            font-size: clamp(2.2rem, 10vw, 3.2rem);
+            max-width: 100%;
+        }
+
         .clean-hero__description {
-            margin-top: 14px;
+            margin-top: 12px;
             font-size: 14px;
-            line-height: 1.65;
+            line-height: 1.6;
         }
 
         .clean-meta {
             gap: 8px;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .clean-meta span,
@@ -769,7 +807,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-actions {
-            margin-top: 20px;
+            margin-top: 18px;
         }
 
         .clean-btn {
@@ -778,14 +816,14 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-live-item {
-            grid-template-columns: 52px minmax(0, 1fr);
-            gap: 10px;
+            grid-template-columns: 42px minmax(0, 1fr);
+            gap: 8px;
         }
 
         .clean-live-item img {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
         }
 
         .clean-link-card,
@@ -797,7 +835,15 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
         .clean-link-card {
             min-height: auto;
-            padding: 16px;
+            padding: 12px;
+        }
+
+        .clean-link-card__title {
+            font-size: 14px;
+        }
+
+        .clean-link-card__meta {
+            font-size: 11px;
         }
 
         .clean-section__sub {
@@ -825,6 +871,12 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         .clean-video-card__body,
         .clean-genre-card {
             padding: 14px;
+        }
+    }
+
+    @media (max-width: 520px) {
+        .clean-link-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -929,6 +981,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                 <div class="col-xl-4">
                     <div class="clean-hero__aside">
                         <div class="clean-panel">
+                            <div class="clean-panel__eyebrow">Live Now</div>
                             <h2 class="clean-panel__title">Live Now in {{ $country_name ?? 'your region' }}</h2>
 
                             <div class="clean-live-list">
@@ -953,6 +1006,31 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <section class="clean-panel clean-panel--mobile">
+            <div class="clean-panel__eyebrow">Live Now</div>
+            <h2 class="clean-panel__title">Live Now in {{ $country_name ?? 'your region' }}</h2>
+
+            <div class="clean-live-list">
+                @forelse($heroLiveChannels as $item)
+                    <a href="{{ route('tv.show', $item->slug) }}" class="clean-live-item">
+                        <img src="{{ $imageForContent($item) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" fetchpriority="low">
+                        <div>
+                            <strong>{{ ucfirst($item->title) }}</strong>
+                            <small>Live TV</small>
+                        </div>
+                    </a>
+                @empty
+                    <div class="clean-live-item">
+                        <img src="{{ asset('frontend-assets/images/default.png') }}" alt="Nowstream" loading="lazy" decoding="async" fetchpriority="low">
+                        <div>
+                            <strong>Content is loading</strong>
+                            <small>Check back for fresh live picks</small>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </section>
 
