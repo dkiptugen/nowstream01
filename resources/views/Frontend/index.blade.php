@@ -20,11 +20,11 @@ $videoShelf = $videoShelf ?? collect($videos ?? [])->take(8)->values();
 $podcastShelf = $podcastShelf ?? collect($podcasts ?? [])->take(12)->values();
 $latestPodcastShelf = $latestPodcastShelf ?? collect($topPodcasts ?? [])->take(12)->values();
 $quickLinks = collect($quickLinks ?? [
-    ['title' => 'Live TV', 'meta' => 'Top channels in ' . ($country_name ?? 'your region'), 'route' => route('tvs')],
-    ['title' => 'Radio', 'meta' => 'Streaming stations and talk audio', 'route' => route('radios')],
-    ['title' => 'Videos', 'meta' => 'Fresh clips, replays, and on-demand', 'route' => route('videos')],
-    ['title' => 'Podcasts', 'meta' => 'Interviews, stories, and series', 'route' => route('podcasts')],
-    ['title' => 'Events', 'meta' => 'Major live nights and ticketed streams', 'route' => route('events')],
+    ['title' => 'Live TV', 'meta' => 'Channels', 'icon' => 'bx bx-tv', 'route' => route('tvs')],
+    ['title' => 'Radio', 'meta' => 'Live audio', 'icon' => 'bx bx-broadcast', 'route' => route('radios')],
+    ['title' => 'Videos', 'meta' => 'Watch now', 'icon' => 'bx bx-camera-movie', 'route' => route('videos')],
+    ['title' => 'Podcasts', 'meta' => 'Listen', 'icon' => 'bx bx-microphone-alt', 'route' => route('podcasts')],
+    ['title' => 'Events', 'meta' => 'Tickets', 'icon' => 'bx bx-calendar-event', 'route' => route('events')],
 ]);
 
 $routeForContent = function ($item) {
@@ -385,6 +385,19 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         background: linear-gradient(180deg, rgba(15, 31, 45, 0.9), rgba(8, 17, 28, 0.92));
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
         transition: transform 0.22s ease, border-color 0.22s ease;
+    }
+
+    .clean-link-card__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        background: rgba(143, 215, 255, 0.12);
+        color: #8fd7ff;
+        font-size: 18px;
     }
 
     .clean-link-card:hover,
@@ -780,8 +793,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-eyebrow {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             letter-spacing: 0.14em;
+            font-size: 10px;
         }
 
         .clean-hero__title {
@@ -791,13 +805,22 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
         .clean-hero__description {
             margin-top: 12px;
-            font-size: 14px;
-            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .clean-meta {
             gap: 8px;
             margin-top: 16px;
+        }
+
+        .clean-meta span:nth-child(n+4),
+        .clean-meta .clean-chip:nth-child(n+5) {
+            display: none;
         }
 
         .clean-meta span,
@@ -839,6 +862,14 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
             padding: 12px;
         }
 
+        .clean-link-card__icon {
+            width: 30px;
+            height: 30px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
         .clean-link-card__title {
             font-size: 14px;
         }
@@ -847,8 +878,26 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
             font-size: 11px;
         }
 
+        .clean-section {
+            margin-top: 24px;
+        }
+
+        .clean-section__eyebrow,
         .clean-section__sub {
-            font-size: 13px;
+            display: none;
+        }
+
+        .clean-section__title {
+            font-size: 1.2rem;
+        }
+
+        .clean-section__head {
+            margin-bottom: 12px;
+        }
+
+        .clean-slider__button {
+            width: 38px;
+            height: 38px;
         }
 
         .clean-slider__controls {
@@ -856,22 +905,33 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         }
 
         .clean-track {
-            grid-auto-columns: minmax(74vw, 74vw);
-            gap: 14px;
+            grid-auto-columns: minmax(58vw, 58vw);
+            gap: 12px;
         }
 
         .clean-track--event {
-            grid-auto-columns: minmax(78vw, 78vw);
+            grid-auto-columns: minmax(64vw, 64vw);
         }
 
         .clean-track--video {
-            grid-auto-columns: minmax(84vw, 84vw);
+            grid-auto-columns: minmax(72vw, 72vw);
         }
 
         .clean-shelf-card__body,
         .clean-video-card__body,
         .clean-genre-card {
-            padding: 14px;
+            padding: 12px;
+        }
+
+        .clean-shelf-card__title,
+        .clean-video-card__title {
+            font-size: 14px;
+        }
+
+        .clean-shelf-card__meta,
+        .clean-video-card__meta {
+            font-size: 11px;
+            gap: 8px;
         }
     }
 
@@ -916,10 +976,10 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                                     $splitPoint = (int) ceil(count($titleWords) / 2);
                                     $titleStart = implode(' ', array_slice($titleWords, 0, $splitPoint));
                                     $titleEnd = implode(' ', array_slice($titleWords, $splitPoint));
-                                    $heroDescription = Str::limit(trim(strip_tags($heroEvent->description ?? 'Live events, top TV, radio, podcasts, and on-demand video in one place.')), 170);
+                                    $heroDescription = Str::limit(trim(strip_tags($heroEvent->description ?? 'Watch the biggest live moments and jump straight into what is on.')), 92);
                                 @endphp
                                 <div class="clean-hero__copy {{ $index === 0 ? 'is-active' : '' }}" data-hero-copy>
-                                    <div class="clean-eyebrow">Nowstream Home</div>
+                                    <div class="clean-eyebrow">Now Playing</div>
                                     <h1 class="clean-hero__title">
                                         {{ $titleStart }}
                                         @if($titleEnd)
@@ -930,19 +990,19 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                                     <p class="clean-hero__description">{{ $heroDescription }}</p>
 
                                     <div class="clean-meta">
-                                        <span>Featured event</span>
+                                        <span>Featured</span>
                                         @if($heroEvent->start_time)
-                                            <span>{{ Carbon::parse($heroEvent->start_time)->format('M d, Y') }}</span>
+                                            <span>{{ Carbon::parse($heroEvent->start_time)->format('M d') }}</span>
                                         @endif
                                         @if($heroEvent->venue)
                                             <span>{{ $heroEvent->venue }}</span>
                                         @endif
-                                        <span>{{ $topevents->count() }} event picks</span>
+                                        <span>{{ $topevents->count() }} picks</span>
                                     </div>
 
                                     <div class="clean-actions">
-                                        <a href="{{ route('event.show', $heroEvent->slug) }}" class="clean-btn clean-btn--primary">Watch Event</a>
-                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--ghost">Browse Live TV</a>
+                                        <a href="{{ route('event.show', $heroEvent->slug) }}" class="clean-btn clean-btn--primary">Play</a>
+                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--ghost">Browse</a>
                                     </div>
 
                                     <div class="clean-hero__controls">
@@ -966,12 +1026,12 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                                 </div>
                             @empty
                                 <div class="clean-hero__copy is-active" data-hero-copy>
-                                    <div class="clean-eyebrow">Nowstream Home</div>
+                                    <div class="clean-eyebrow">Now Playing</div>
                                     <h1 class="clean-hero__title">Live TV, radio, <span>events, and video</span></h1>
-                                    <p class="clean-hero__description">Live events, top TV, radio, podcasts, and on-demand video in one place.</p>
+                                    <p class="clean-hero__description">Find something to watch fast.</p>
                                     <div class="clean-actions">
-                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--primary">Browse Live TV</a>
-                                        <a href="{{ route('videos') }}" class="clean-btn clean-btn--ghost">Watch Videos</a>
+                                        <a href="{{ route('tvs') }}" class="clean-btn clean-btn--primary">Browse</a>
+                                        <a href="{{ route('videos') }}" class="clean-btn clean-btn--ghost">Videos</a>
                                     </div>
                                 </div>
                             @endforelse
@@ -983,7 +1043,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
                     <div class="clean-hero__aside">
                         <div class="clean-panel">
                             <div class="clean-panel__eyebrow">Live Now</div>
-                            <h2 class="clean-panel__title">Live Now in {{ $country_name ?? 'your region' }}</h2>
+                            <h2 class="clean-panel__title">{{ $country_name ?? 'Your region' }}</h2>
 
                             <div class="clean-live-list">
                                 @forelse($heroLiveChannels as $item)
@@ -1012,7 +1072,7 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
 
         <section class="clean-panel clean-panel--mobile">
             <div class="clean-panel__eyebrow">Live Now</div>
-            <h2 class="clean-panel__title">Live Now in {{ $country_name ?? 'your region' }}</h2>
+            <h2 class="clean-panel__title">{{ $country_name ?? 'Your region' }}</h2>
 
             <div class="clean-live-list">
                 @forelse($heroLiveChannels as $item)
@@ -1038,6 +1098,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <div class="clean-link-grid">
             @foreach($quickLinks as $link)
                 <a href="{{ $link['route'] }}" class="clean-link-card">
+                    @if(!empty($link['icon']))
+                        <span class="clean-link-card__icon"><i class="{{ $link['icon'] }}"></i></span>
+                    @endif
                     <h2 class="clean-link-card__title">{{ $link['title'] }}</h2>
                     <p class="clean-link-card__meta">{{ $link['meta'] }}</p>
                 </a>
@@ -1047,9 +1110,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="events">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Pay Per View</p>
-                    <h2 class="clean-section__title">Trending Events</h2>
-                    <p class="clean-section__sub">The biggest live nights, all in one clean row.</p>
+                    <p class="clean-section__eyebrow">Live</p>
+                    <h2 class="clean-section__title">Events</h2>
+                    <p class="clean-section__sub">Big live nights.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="events" aria-label="Previous trending events">
@@ -1096,9 +1159,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
             <section class="clean-section clean-slider" data-slider="featured-videos">
                 <div class="clean-section__head">
                     <div>
-                        <p class="clean-section__eyebrow">Watch Now</p>
-                        <h2 class="clean-section__title">Trending Videos</h2>
-                        <p class="clean-section__sub">A sharper, lighter presentation for your on-demand highlights.</p>
+                        <p class="clean-section__eyebrow">Watch</p>
+                        <h2 class="clean-section__title">Videos</h2>
+                        <p class="clean-section__sub">Top picks.</p>
                     </div>
                     <div class="clean-slider__controls">
                         <button type="button" class="clean-slider__button" data-slider-prev="featured-videos" aria-label="Previous trending videos">
@@ -1136,9 +1199,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="tv">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Country Picks</p>
-                    <h2 class="clean-section__title">Top TV in {{ $country_name ?? 'your region' }}</h2>
-                    <p class="clean-section__sub">Fast access to the channels people are already watching.</p>
+                    <p class="clean-section__eyebrow">Live</p>
+                    <h2 class="clean-section__title">TV in {{ $country_name ?? 'your region' }}</h2>
+                    <p class="clean-section__sub">Popular channels.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="tv" aria-label="Previous live TV items">
@@ -1175,9 +1238,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="radio">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Listen Live</p>
-                    <h2 class="clean-section__title">Trending Radios</h2>
-                    <p class="clean-section__sub">Live audio stations presented with the same visual order as video.</p>
+                    <p class="clean-section__eyebrow">Listen</p>
+                    <h2 class="clean-section__title">Radio</h2>
+                    <p class="clean-section__sub">Live stations.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="radio" aria-label="Previous radio items">
@@ -1220,9 +1283,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="latest-videos">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Fresh Drops</p>
+                    <p class="clean-section__eyebrow">New</p>
                     <h2 class="clean-section__title">Latest Videos</h2>
-                    <p class="clean-section__sub">Recently added clips and uploads, without the heavy old homepage chrome.</p>
+                    <p class="clean-section__sub">Just added.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="latest-videos" aria-label="Previous latest videos">
@@ -1259,9 +1322,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="genres">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Explore</p>
-                    <h2 class="clean-section__title">Browse By Genre</h2>
-                    <p class="clean-section__sub">A cleaner way into the long tail of your TV catalog.</p>
+                    <p class="clean-section__eyebrow">Browse</p>
+                    <h2 class="clean-section__title">Genres</h2>
+                    <p class="clean-section__sub">Jump in fast.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="genres" aria-label="Previous genres">
@@ -1286,9 +1349,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="podcasts">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Listen Later</p>
-                    <h2 class="clean-section__title">Trending Podcasts</h2>
-                    <p class="clean-section__sub">Long-form listening gets its own cleaner shelf instead of feeling buried.</p>
+                    <p class="clean-section__eyebrow">Listen</p>
+                    <h2 class="clean-section__title">Podcasts</h2>
+                    <p class="clean-section__sub">Top shows.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="podcasts" aria-label="Previous podcasts">
@@ -1325,9 +1388,9 @@ $imageForContent = fn ($item) => $item->thumbnail_url ?: asset('frontend-assets/
         <section class="clean-section clean-slider" data-slider="latest-podcasts">
             <div class="clean-section__head">
                 <div>
-                    <p class="clean-section__eyebrow">Just Added</p>
+                    <p class="clean-section__eyebrow">New</p>
                     <h2 class="clean-section__title">Latest Podcasts</h2>
-                    <p class="clean-section__sub">Recent podcast additions with the same shelf rhythm as the rest of the home.</p>
+                    <p class="clean-section__sub">Recently added.</p>
                 </div>
                 <div class="clean-slider__controls">
                     <button type="button" class="clean-slider__button" data-slider-prev="latest-podcasts" aria-label="Previous latest podcasts">
