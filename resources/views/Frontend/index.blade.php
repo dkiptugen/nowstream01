@@ -5,9 +5,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-$heroEvents = $heroEvents ?? (($topevents ?? collect())->take(3)->values());
+$heroEvents = $heroEvents ?? (($topevents ?? collect())->take(1)->values());
 if ($heroEvents->isEmpty() && isset($events)) {
-    $heroEvents = collect($events)->take(3)->values();
+    $heroEvents = collect($events)->take(1)->values();
 }
 
 $heroGenres = $heroGenres ?? collect($genres ?? [])->filter()->unique()->take(8)->values();

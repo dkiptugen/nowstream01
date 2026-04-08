@@ -252,6 +252,143 @@
             box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
         }
 
+        .header-topbar,
+        .header-mainbar {
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+        }
+
+        .header-topbar__inner,
+        .header-mainbar__inner {
+            width: min(100%, 1440px);
+            margin: 0 auto;
+            padding-left: clamp(16px, 3vw, 28px);
+            padding-right: clamp(16px, 3vw, 28px);
+        }
+
+        .parent-icon,
+        .header-mobile-button,
+        .mobile-nav-toggler,
+        .header-action.header-action--desktop .header-search > a {
+            padding: 0;
+            text-align: center;
+        }
+
+        .parent-icon i,
+        .header-mobile-button i,
+        .mobile-nav-toggler i,
+        .header-action.header-action--desktop .header-search > a i {
+            display: block;
+            line-height: 1;
+        }
+
+        .search-modal .modal-dialog {
+            max-width: 720px;
+            margin: 72px auto 24px;
+        }
+
+        .search-modal .modal-content {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 26px;
+            background: rgba(8, 19, 29, 0.96);
+            box-shadow: 0 28px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .search-modal__shell {
+            padding: 22px;
+        }
+
+        .search-modal__eyebrow {
+            margin: 0 0 10px;
+            color: #8fd7ff;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .search-modal__title {
+            margin: 0 0 16px;
+            color: #ffffff;
+            font-size: clamp(1.35rem, 2vw, 1.9rem);
+            font-weight: 700;
+            line-height: 1.12;
+        }
+
+        .search-modal__form {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .search-modal__field {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 58px;
+            padding: 0 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-modal__field i {
+            color: #8fd7ff;
+            font-size: 20px;
+        }
+
+        .search-modal__field input {
+            width: 100%;
+            min-width: 0;
+            border: 0;
+            background: transparent;
+            color: #f5f8fb;
+            font-size: 15px;
+        }
+
+        .search-modal__field input::placeholder {
+            color: rgba(231, 238, 247, 0.54);
+        }
+
+        .search-modal__field input:focus {
+            outline: none;
+        }
+
+        .search-modal__submit {
+            min-height: 58px;
+            padding: 0 20px;
+            border: 0;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ffd24f, #f7a400);
+            color: #09131d;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .search-modal__suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .search-modal__chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(245, 248, 251, 0.82);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
         @media (min-width: 992px) {
             .header-topbar {
                 background: #08131d;
@@ -721,7 +858,8 @@
             .header-mainbar__inner {
                 grid-template-columns: 42px 1fr 42px;
                 gap: 8px;
-                padding: 0 8px;
+                padding-left: 10px;
+                padding-right: 10px;
             }
 
             .logo img.logo-icon {
@@ -756,6 +894,34 @@
             .mobile-nav-toggler {
                 cursor: pointer;
                 z-index: 4;
+            }
+
+            .search-modal .modal-dialog {
+                margin: 16px;
+                max-width: none;
+            }
+
+            .search-modal__shell {
+                padding: 18px;
+            }
+
+            .search-modal__title {
+                margin-bottom: 14px;
+                font-size: 1.2rem;
+            }
+
+            .search-modal__form {
+                grid-template-columns: 1fr;
+            }
+
+            .search-modal__field,
+            .search-modal__submit {
+                min-height: 52px;
+                border-radius: 16px;
+            }
+
+            .search-modal__submit {
+                width: 100%;
             }
 
             .mobile-menu {
@@ -1588,13 +1754,26 @@
                         <!-- End Mobile Menu -->
 
                         <!-- Modal Search -->
-                        <div class="modal fade" id="search-modal" tabindex="-1" aria-hidden="true">
+                        <div class="modal fade search-modal" id="search-modal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="{{ route('search') }}" method="GET">
-                                        <input type="text" name="query" placeholder="Search here..." value="{{ request('query') }}">
-                                        <button><i class="fas fa-search"></i></button>
-                                    </form>
+                                    <div class="search-modal__shell">
+                                        <p class="search-modal__eyebrow">Quick Search</p>
+                                        <h2 class="search-modal__title">Find channels, videos, podcasts, and live shows fast.</h2>
+                                        <form action="{{ route('search') }}" method="GET" class="search-modal__form">
+                                            <label class="search-modal__field" for="search-modal-input">
+                                                <i class="bx bx-search-alt-2"></i>
+                                                <input id="search-modal-input" type="text" name="query" placeholder="Search content, channel, event..." value="{{ request('query') }}">
+                                            </label>
+                                            <button class="search-modal__submit" type="submit">Search</button>
+                                        </form>
+                                        <div class="search-modal__suggestions">
+                                            <span class="search-modal__chip">Live TV</span>
+                                            <span class="search-modal__chip">Radio</span>
+                                            <span class="search-modal__chip">Events</span>
+                                            <span class="search-modal__chip">Podcasts</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
