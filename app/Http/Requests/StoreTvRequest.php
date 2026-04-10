@@ -16,7 +16,8 @@
         /**
          * Authorization
          */
-            public function authorize(): bool
+            public function authorize()
+            : bool
                 {
                     return $this->user()?->can('create_tv') ?? false;
                 }
@@ -24,24 +25,29 @@
         /**
          * Prepare input before validation
          */
-            protected function prepareForValidation(): void
+            protected function prepareForValidation()
+            : void
                 {
                     $genres = $this->input('genres');
 
                     // Handle Tagify JSON or comma-separated input
-                    if (is_string($genres)) {
-                        $decoded = json_decode($genres, true);
+                    if (is_string($genres))
+                        {
+                            $decoded = json_decode($genres, true);
 
-                        if (json_last_error() === JSON_ERROR_NONE) {
-                            $genres = collect($decoded)->pluck('value')->toArray();
-                        } else {
-                            $genres = explode(',', $genres);
+                            if (json_last_error() === JSON_ERROR_NONE)
+                                {
+                                    $genres = collect($decoded)->pluck('value')->toArray();
+                                }
+                            else
+                                {
+                                    $genres = explode(',', $genres);
+                                }
                         }
-                    }
 
                     $this->merge([
                                      'genres' => collect($genres ?? [])
-                                         ->map(fn ($genre) => trim(strtolower($genre)))
+                                         ->map(fn($genre) => trim(strtolower($genre)))
                                          ->filter()
                                          ->unique()
                                          ->values()
@@ -52,27 +58,28 @@
         /**
          * Validation rules
          */
-            public function rules(): array
+            public function rules()
+            : array
                 {
                     return [
                         'title'       => ['required', 'string', 'max:255'],
                         'description' => ['nullable', 'string'],
 
-                        'thumbnail'   => [
+                        'thumbnail' => [
                             'required',
                             'image',
                             'mimes:jpeg,png,jpg,webp',
                             'max:2048'
                         ],
 
-                        'region_id'   => ['required', 'integer', 'exists:regions,id'],
+                        'region_id' => ['required', 'integer', 'exists:regions,id'],
 
-                        'genres'      => ['nullable', 'array'],
-                        'genres.*'    => ['string', 'max:50'],
+                        'genres'   => ['nullable', 'array'],
+                        'genres.*' => ['string', 'max:50'],
 
                         'language_id' => ['required', 'integer', 'exists:languages,id'],
 
-                        'stream_url'  => ['required', 'url']
+                        'stream_url' => ['required', 'url']
                     ];
                 }
 
@@ -83,7 +90,7 @@
                 {
                     $data = parent::validated();
 
-                    $disk = config('filesystems.default');
+                    $disk    = config('filesystems.default');
                     $manager = new ImageManager(new Driver());
 
                     /*
@@ -92,22 +99,23 @@
                     |--------------------------------------------------------------------------
                     */
 
-                    if ($this->hasFile('thumbnail')) {
+                    if ($this->hasFile('thumbnail'))
+                        {
 
-                        $image = $manager->read($this->file('thumbnail')->getRealPath());
+                            $image = $manager->read($this->file('thumbnail')->getRealPath());
 
-                        $image->scaleDown(width: 512, height: 512);
+                            $image->scaleDown(width: 512, height: 512);
 
-                        $path = "nowstream/tv/logo/" . Str::uuid() . ".webp";
+                            $path = "nowstream/tv/logo/" . Str::uuid() . ".webp";
 
-                        Storage::disk($disk)->put(
-                            $path,
-                            (string) $image->toWebp(90),
-                            ['visibility' => 'public']
-                        );
+                            Storage::disk($disk)->put(
+                                $path,
+                                (string)$image->toWebp(90),
+                                ['visibility' => 'public']
+                            );
 
-                        $data['logo'] = $path;
-                    }
+                            $data['logo'] = $path;
+                        }
                     unset($data['thumbnail']);
                     /*
                     |--------------------------------------------------------------------------
@@ -115,11 +123,11 @@
                     |--------------------------------------------------------------------------
                     */
 
-                    $data['category'] = Category::where('uuid', $this->category_id)->value('name');
-                    $data['language'] = Language::where('id', $this->language_id)->value('name');
-
+                    $data['category']       = Category::where('uuid', $this->category_id)->value('name');
+                    $data['language']       = Language::where('id', $this->language_id)->value('name');
+                    $data['content_group']  = 'tv';
                     $data['system_user_id'] = $this->user()->id;
-                    $data['status'] = 1;
+                    $data['status']         = 1;
 
                     return $data;
                 }
