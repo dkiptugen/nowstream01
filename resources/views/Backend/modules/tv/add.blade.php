@@ -53,7 +53,7 @@
                             <input type="text" name="stream_url" id="stream_url" class="form-control" />
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <button type="submit" class="btn btn-sm btn-primary">Add Video</button>
+                            <button type="submit" class="btn  btn-primary">Add TV</button>
                         </div>
                     </form>
                 </div>

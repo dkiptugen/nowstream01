@@ -10,15 +10,15 @@
             </div>
             <div class="card shadow-lg border">
                 <div class="card-body">
-                    <form action="" class="form " method="post">
+                    <form action="" class="form" method="post">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
-                            <input type="text" name="title" id="title" class="form-control" required>
+                            <input type="text" name="title" id="title" class="form-control" required value="{{ $tv->title??old('title') }}">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea rows="4" name="description" id="description" class="form-control"></textarea>
+                            <textarea rows="4" name="description" id="description" class="form-control">{{ $tv->description??old('description') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="thumbnail" class="form-label">Thumbnail</label> <input
@@ -34,7 +34,7 @@
                                 <label for="country" class="form-label">Country</label>
                                 <select name="country" id="country" class="js-choice form-control">
                                     @foreach($regions as $region)
-                                        <option value="{{ $region->id }}">{{ $region->name }}</option>
+                                        <option value="{{ $region->id }}" @selected($tv->region_id == $region->id)>{{ $region->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -42,7 +42,7 @@
                                 <label for="country" class="form-label">Language</label>
                                 <select name="language" id="language" class="js-choice form-control">
                                     @foreach($languages as $language)
-                                        <option value="{{ $language->id }}">{{ $language->name }}</option>
+                                        <option value="{{ $language->id }}" @selected($tv->language_id == $language->id)>{{ $language->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -50,10 +50,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="stream_url" class="form-label">Stream Url</label>
-                            <input type="text" name="stream_url" id="stream_url" class="form-control" />
+                            <input type="text" name="stream_url" id="stream_url" class="form-control" value="{{ $tv->stream_url??old('stream_url') }}" />
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <button type="submit" class="btn btn-sm btn-primary">Add Video</button>
+                            <button type="submit" class="btn btn-primary">Edit TV</button>
                         </div>
                     </form>
                 </div>
