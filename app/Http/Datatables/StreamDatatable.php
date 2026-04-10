@@ -86,13 +86,13 @@ class StreamDatatable
         private function button($post, $request)
             {
                 $button = null;
-                if ($request->user()->can('edit_channel_stream'))
+                if ($request->user()->can('edit_stream'))
                     {
                         $button .= '<a class="text text-dark" href="' . route('stream.edit', ['stream'=> $post->id]) . '" data-toggle="tooltip" title="Edit User">
                 <i class="bx bx-pencil"></i> Edit
                 </a>';
                     }
-                if ($request->user()->can('destroy_channel_stream'))
+                if ($request->user()->can('destroy_stream'))
                     {
                         $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
