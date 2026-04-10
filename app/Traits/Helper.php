@@ -131,8 +131,11 @@
 	     */
 		    public function thumbnail_tag($thumbnail, $class, $style = "")
                 {
+                    $thumbnailUrl = $thumbnail
+                        ? Storage::disk(config('filesystems.default'))->url($thumbnail)
+                        : null;
                     return '<div class="w-100 h-100">
-								<img src="' . (Storage::disk(config('filesystems.default'))->url($thumbnail))??NULL . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
+								<img src="' . $thumbnailUrl . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
 							</div>';
                 }
 
