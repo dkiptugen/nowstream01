@@ -67,7 +67,7 @@
                         'title'       => ['required', 'string', 'max:255'],
                         'description' => ['nullable', 'string'],
                         'thumbnail' => [
-                            'required',
+                            'nullable',
                             'image',
                             'mimes:jpeg,png,jpg,webp',
                             'max:2048'
