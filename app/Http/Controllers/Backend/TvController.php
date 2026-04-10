@@ -62,7 +62,7 @@
                         }
                     catch (\Exception $e)
                         {
-                            Log::error('TV Update', [$e->getMessage(), $e->getStackTrace()]);
+                            Log::error('TV Update', [$e->getMessage(), $e->getTrace()]);
                             return self::failed('TV', "TV failed to update", route('backend.tv.index'));
                         }
                 }
@@ -105,7 +105,7 @@
                         }
                     catch (\Exception $e)
                         {
-                            Log::error('TV Update', [$e->getMessage(), $e->getStackTrace()]);
+                            Log::error('TV Update', [$e->getMessage(), $e->getTrace()]);
                             return self::failed('TV', "TV failed to update", route('backend.tv.index'));
                         }
                 }
