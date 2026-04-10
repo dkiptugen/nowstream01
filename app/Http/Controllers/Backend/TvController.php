@@ -54,11 +54,6 @@
                     $valid = $request->validated();
                     try
                         {
-                            if ($request->hasFile('thumbnail'))
-                                {
-                                    $valid['thumbnail_url'] = $request->file('thumbnail')
-                                                                      ->store('tv/thumbnails', config('filesystems.default'));
-                                }
                             if (Content::create($valid))
                                 {
                                     return self::success('TV', "TV created successfully", route('backend.tv.index'));
@@ -101,11 +96,6 @@
                     $valid = $request->validated();
                     try
                         {
-                            if ($request->hasFile('thumbnail'))
-                                {
-                                    $valid['thumbnail_url'] = $request->file('thumbnail')
-                                                                      ->store('tv/thumbnails', config('filesystems.default'));
-                                }
                             if ($tv->update($valid))
                                 {
                                     return self::success('TV', "TV updated successfully", route('backend.tv.index'));
