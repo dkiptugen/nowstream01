@@ -7,6 +7,7 @@
     use App\Http\Datatables\TvDatatable;
     use App\Http\Requests\StoreTvRequest;
     use App\Http\Requests\UpdateTvRequest;
+    use App\Models\Category;
     use App\Models\Content;
     use App\Models\Language;
     use App\Models\Region;
@@ -39,8 +40,9 @@
          */
             public function create()
                 {
-                    $this->data['regions']   = Region::get();
-                    $this->data['languages'] = Language::get();
+                    $this->data['regions']    = Region::get();
+                    $this->data['languages']  = Language::get();
+                    $this->data['categories'] = Category::get();
                     return view('Backend.modules.tv.add', $this->data);
                 }
 
@@ -55,18 +57,18 @@
                             if ($request->hasFile('thumbnail'))
                                 {
                                     $valid['thumbnail_url'] = $request->file('thumbnail')
-                                                                  ->store('tv/thumbnails', config('filesystems.default'));
+                                                                      ->store('tv/thumbnails', config('filesystems.default'));
                                 }
-                            if(Content::create($valid))
+                            if (Content::create($valid))
                                 {
-                                    return self::success('TV',"TV created successfully",route('backend.tv.index'));
+                                    return self::success('TV', "TV created successfully", route('backend.tv.index'));
                                 }
-                            return self::failed('TV',"TV failed to create",route('backend.tv.index'));
+                            return self::failed('TV', "TV failed to create", route('backend.tv.index'));
                         }
                     catch (\Exception $e)
                         {
-                            Log::error('TV Update',[$e->getMessage(),$e->getStackTrace()]);
-                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                            Log::error('TV Update', [$e->getMessage(), $e->getStackTrace()]);
+                            return self::failed('TV', "TV failed to update", route('backend.tv.index'));
                         }
                 }
 
@@ -84,9 +86,10 @@
          */
             public function edit(Content $tv)
                 {
-                    $this->data['tv']        = $tv;
-                    $this->data['regions']   = Region::get();
-                    $this->data['languages'] = Language::get();
+                    $this->data['tv']         = $tv;
+                    $this->data['regions']    = Region::get();
+                    $this->data['languages']  = Language::get();
+                    $this->data['categories'] = Category::get();
                     return view('Backend.modules.tv.edit', $this->data);
                 }
 
@@ -103,17 +106,17 @@
                                     $valid['thumbnail_url'] = $request->file('thumbnail')
                                                                       ->store('tv/thumbnails', config('filesystems.default'));
                                 }
-                            if($tv->update($valid))
+                            if ($tv->update($valid))
                                 {
-                                    return self::success('TV',"TV updated successfully",route('backend.tv.index'));
+                                    return self::success('TV', "TV updated successfully", route('backend.tv.index'));
 
                                 }
-                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                            return self::failed('TV', "TV failed to update", route('backend.tv.index'));
                         }
                     catch (\Exception $e)
                         {
-                            Log::error('TV Update',[$e->getMessage(),$e->getStackTrace()]);
-                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                            Log::error('TV Update', [$e->getMessage(), $e->getStackTrace()]);
+                            return self::failed('TV', "TV failed to update", route('backend.tv.index'));
                         }
                 }
 
@@ -124,16 +127,16 @@
                 {
                     try
                         {
-                            if($tv->delete())
+                            if ($tv->delete())
                                 {
-                                    return self::success('TV',"TV deleted successfully",route('backend.tv.index'));
+                                    return self::success('TV', "TV deleted successfully", route('backend.tv.index'));
                                 }
-                            return self::failed('TV',"TV failed to delete",route('backend.tv.index'));
+                            return self::failed('TV', "TV failed to delete", route('backend.tv.index'));
                         }
                     catch (\Exception $e)
                         {
-                            Log::error('TV Delete',[$e->getMessage(),$e->getStackTrace()]);
-                            return self::failed('TV',"TV failed to delete",route('backend.tv.index'));
+                            Log::error('TV Delete', [$e->getMessage(), $e->getStackTrace()]);
+                            return self::failed('TV', "TV failed to delete", route('backend.tv.index'));
                         }
                 }
 
