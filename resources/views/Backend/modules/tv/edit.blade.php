@@ -10,7 +10,7 @@
             </div>
             <div class="card shadow-lg border">
                 <div class="card-body">
-                    <form action="" class="form" method="post">
+                    <form action="{{ route('backend.tv.update', ['tv' => $tv->uuid]) }}" class="form" method="post">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
