@@ -69,8 +69,8 @@
                                 </select>
                             </div>
                             <div class="col-md-8 col-12">
-                                <label for="genres" class="control-label col-form-label">Genres</label>
-                                <input type="text" name="genres" id="genres" class="form-control tags-input" value="{{ old('genres', collect($tv->genre ?? [])->implode(',')) }}">
+                                <label for="genre" class="control-label col-form-label">Genres</label>
+                                <input type="text" name="genre" id="genre" class="form-control tags-input" value="{{ old('genre', collect($tv->genre ?? [])->implode(',')) }}">
                             </div>
                         </div>
                         <div class="mb-3">
