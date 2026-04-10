@@ -37,8 +37,7 @@ class TvDatatable
                     {
                         $search = $request->input('search.value');
                         $query
-                            ->where('name', 'LIKE', "%{$search}%")
-                            ->orWhere('title', 'LIKE', "%{$search}%")
+                            ->where('title', 'LIKE', "%{$search}%")
                             ->orWhere('description', 'LIKE', "%{$search}%");
 
                         $totalFiltered = (clone $query)->count();
