@@ -23,4 +23,6 @@ import "./modules/choices.js";
 
 import "./modules/echo.js";
 
+import "./modules/tagify.js";
+
 import "./modules/custom.js";

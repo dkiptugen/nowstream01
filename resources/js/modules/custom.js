@@ -107,20 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // ========== TAGS INPUT ==========
-    const tagsInput = document.querySelector('.tags-input');
-    const restrictedTags = ['the star', 'star news', 'the star online', 'thestaronline', 'the star kenya', 'thestar', 'thestardigital', 'the star digital', 'star', 'the star newspaper', 'star news kenya', 'the star news', 'the star', 'mpasho'];
-
-    if (tagsInput) {
-        tagsInput.addEventListener('beforeItemAdd', e => {
-            const tag = e.item.toLowerCase().trim();
-            if (restrictedTags.includes(tag) || tag.includes('star')) {
-                e.cancel = true;
-                alert(`The tag "${tag}" is not allowed.`);
-            }
-        });
-    }
-
     // ========== THEME TOGGLE ==========
     const toggleBtn = document.getElementById('theme-toggle');
     const applyTheme = theme => {
