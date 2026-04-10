@@ -23,12 +23,12 @@
 		                'Content-Type' => 'application/json'
 	                ];
 					//dd($headers);
-	                
+
 	                $options = [
 		                'verify' => app_path("Resources/cacert.pem"),
 		                'http_errors' => false,
 	                ];
-	                
+
 	                switch (strtolower($method)) {
 		                case 'post':
 				                $response = Http::withHeaders($headers)
@@ -51,28 +51,28 @@
 		                default:
 				                throw new \InvalidArgumentException('Invalid HTTP method specified.');
 		                }
-	                
+
 	                if ($response->successful()) {
 		                return $response->object();
 	                }
-	                
+
 	                return $response->object();
                 }
 		    public function invoke_server_2($link, $dt, $token, $method = 'post')
 			    {
 				    $ch = curl_init();
-				    
+
 				    $headers = [
 					    'Content-Type: application/json',
 					    'Authorization: Bearer ' . $token,
 				    ];
-				    
+
 				    curl_setopt($ch, CURLOPT_URL, $link);
 				    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 				    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 				    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
 				    curl_setopt($ch, CURLOPT_CAINFO, app_path("Resources/cacert.pem"));
-				    
+
 				    switch (strtolower($method)) {
 					    case 'post':
 							    curl_setopt($ch, CURLOPT_POST, true);
@@ -91,24 +91,24 @@
 					    default:
 							    throw new \InvalidArgumentException('Invalid HTTP method specified.');
 					    }
-				    
+
 				    $response = curl_exec($ch);
 				    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				    
+
 				    if (curl_errno($ch)) {
 					    throw new \Exception('cURL error: ' . curl_error($ch));
 				    }
-				    
+
 				    curl_close($ch);
-				    
+
 				    if ($httpCode >= 200 && $httpCode < 300) {
 					    return json_decode($response, false);
 				    }
-				    
+
 				    return $response;
 			    }
-	    
-	    
+
+
 	    /**
 	     * @param  string  $msisdn
 	     * @param          $prefix
@@ -121,7 +121,7 @@
                 {
                     return $prefix . substr($msisdn, -($size));
                 }
-	    
+
 	    /**
 	     * @param $thumbnail
 	     * @param $class
@@ -132,10 +132,10 @@
 		    public function thumbnail_tag($thumbnail, $class, $style = "")
                 {
                     return '<div class="w-100 h-100">
-								<img src="' . Storage::disk(config('filesystems.default'))->url($thumbnail) . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
+								<img src="' . (Storage::disk(config('filesystems.default'))->url($thumbnail))??NULL . '" class="' . $class . '" style="object-fit: cover; object-position: center; ' . $style . '" />
 							</div>';
                 }
-	    
+
 	    /**
 	     * @param $text
 	     * @param $url
@@ -148,7 +148,7 @@
                 {
                     return '<div class="w-100 h-100"><a href="' . $url . '" class="' . $class . '" style="' . $style . '" >' . $text . '</a></div>';
                 }
-	    
+
 	    /**
 	     * @param $actions
 	     *
@@ -162,7 +162,7 @@
                     endforeach;
                     return $x;
                 }
-	    
+
 	    /**
 	     * @param $data
 	     * @param $key
@@ -176,7 +176,7 @@
 				    $encrypted = openssl_encrypt($data, 'AES-256-CBC', base64_decode($key), 0, $iv);
 				    return base64_encode($encrypted);
 			    }
-		    
+
 		    public function decrypt($encryptedData, $key, $salt)
 			    {
 				    $iv = substr(hash('sha256', $salt), 0, 16);
