@@ -23,9 +23,11 @@
                                       class="form-control">{{ $tv->description??old('description') }}</textarea>
                         </div>
                         <div class="mb-3 row align-items-center">
+                            <div class="col-2 col-md-1">
                             <img src="{{ $tv->thumbnail_url }}" alt="{{ $tv->title }}" class="img-fluid img-thumbnail" width="150"
                                  height="150">
-                            <div class="form-input ms-3">
+                            </div>
+                            <div class="form-input col-10 col-md-11">
                                 <label for="thumbnail" class="form-label">Thumbnail</label> <input
                                     type="file" name="thumbnail" id=""
                                     class="form-control @error('thumbnail') is-invalid @enderror"> <small
