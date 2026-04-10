@@ -1,4 +1,5 @@
 import Tagify from '@yaireo/tagify';
+import '@yaireo/tagify/dist/tagify.css';
 
 const input = document.querySelector('.tags-input');
 
@@ -12,22 +13,33 @@ if (input) {
 
     const tagify = new Tagify(input, {
         duplicates: false,
-        transformTag: (tagData) => {
+        dropdown: {
+            enabled: 0
+        },
+
+        transformTag(tagData) {
             tagData.value = tagData.value.toLowerCase().trim();
+        },
+
+        validate(tagData) {
+
+            const tag = tagData.value.toLowerCase().trim();
+
+            if (restrictedTags.includes(tag)) {
+                return `The tag "${tag}" is not allowed`;
+            }
+
+            if (/\bstar\b/i.test(tag)) {
+                return `The tag "${tag}" contains a restricted word`;
+            }
+
+            return true;
         }
     });
 
-    tagify.on('beforeAddTag', (e) => {
-        const tag = e.detail.data.value;
-
-        if (restrictedTags.includes(tag) || tag.includes('star')) {
-
-            e.detail.data.class = 'tagify--invalid';
-
-            alert(`The tag "${tag}" is not allowed.`);
-
-            e.preventDefault(); // cancel adding the tag
-        }
+    // Optional: show toast-like error instead of alert
+    tagify.on('invalid', e => {
+        console.warn(e.detail.message);
     });
 
 }
