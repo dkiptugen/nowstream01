@@ -73,7 +73,7 @@
                             'max:2048'
                         ],
                         'region_id' => ['required', 'integer', 'exists:regions,id'],
-                        'category_id' => ['required','integer','exists:categories,uuid'],
+                        'category_id' => ['required','uuid','exists:categories,uuid'],
                         'genre'   => ['nullable', 'array'],
                         'genre.*' => ['string', 'max:50'],
 
