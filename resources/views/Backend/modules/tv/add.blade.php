@@ -20,7 +20,9 @@
                             <label for="description" class="form-label">Description</label>
                             <textarea rows="4" data-ckeditor name="description" id="description" class="form-control"></textarea>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 d-flex align-items-center">
+                            <img src="{{ $tv->thumbnail_url }}" alt="{{ $tv->title }}" class="img-fluid" width="150" height="150" >
+                            <div class="">
                             <label for="thumbnail" class="form-label">Thumbnail</label> <input
                                 type="file" name="thumbnail" id=""
                                 class="form-control @error('thumbnail') is-invalid @enderror"> <small
@@ -28,6 +30,7 @@
                             @error('thumbnail')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            </div>
                         </div>
                         <div class="row mb-3 g-3">
                             <div class="col">
