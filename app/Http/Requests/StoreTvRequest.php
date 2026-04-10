@@ -115,7 +115,7 @@
                     |--------------------------------------------------------------------------
                     */
 
-                    $data['category'] = Category::where('id', $this->category_id)->value('name');
+                    $data['category'] = Category::where('uuid', $this->category_id)->value('name');
                     $data['language'] = Language::where('id', $this->language_id)->value('name');
 
                     $data['system_user_id'] = $this->user()->id;
