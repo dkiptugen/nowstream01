@@ -88,13 +88,13 @@ class StreamDatatable
                 $button = null;
                 if ($request->user()->can('edit_stream'))
                     {
-                        $button .= '<a class="text text-dark" href="' . route('stream.edit', ['stream'=> $post->id]) . '" data-toggle="tooltip" title="Edit User">
+                        $button .= '<a class="text text-dark" href="' . route('backend.stream.edit', ['stream'=> $post->id]) . '" data-toggle="tooltip" title="Edit User">
                 <i class="bx bx-pencil"></i> Edit
                 </a>';
                     }
                 if ($request->user()->can('destroy_stream'))
                     {
-                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
+                        $button .= '<form id="delete-form-' . $post->id . '" action="' . route('backend.stream.destroy', ['stream'=> $post->id]) . '" method="POST" class=" create-form my-0 py-0">
                 <input type="hidden" name="_token" value="' . csrf_token() . '" />
                 <input type="hidden" name="_method" value="DELETE" class="my-0 py-0" />
                 <button type="submit" class="btn btn-link text-dark" data-toggle="tooltip" title="Delete Content"><i class="bx bx-trash"></i> Delete</button>
