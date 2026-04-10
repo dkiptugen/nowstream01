@@ -10,7 +10,7 @@
             </div>
             <div class="card shadow-lg border">
                 <div class="card-body">
-                    <form action="{{ route('backend.tv.store') }}" class="form " method="post" enctype="multipart/form-data">
+                    <form action="{{ route('backend.tv.store') }}" class="form create-form" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
