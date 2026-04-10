@@ -41,7 +41,7 @@
                         <div class="row mb-3 g-3">
                             <div class="col">
                                 <label for="country" class="form-label">Country</label>
-                                <select name="country" id="country" class="js-choice form-control">
+                                <select name="region_id" id="country" class="js-choice form-control">
                                     @foreach($regions as $region)
                                         <option
                                             value="{{ $region->id }}" @selected($tv->region_id == $region->id)>{{ $region->name }}</option>
@@ -50,7 +50,7 @@
                             </div>
                             <div class="col">
                                 <label for="language" class="form-label">Language</label>
-                                <select name="language" id="language" class="js-choice form-control">
+                                <select name="language_id" id="language" class="js-choice form-control">
                                     @foreach($languages as $language)
                                         <option
                                             value="{{ $language->id }}" @selected($tv->language_id == $language->id)>{{ $language->name }}</option>
