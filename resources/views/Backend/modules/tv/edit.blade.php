@@ -16,12 +16,12 @@
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" name="title" id="title" class="form-control" required
-                                   value="{{ $tv->title??old('title') }}">
+                                   value="{{ old('title',$tv->title) }}">
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea rows="4" name="description" id="description" data-ckeditor
-                                      class="form-control">{{ $tv->description??old('description') }}</textarea>
+                                      class="form-control">{{ old('description',$tv->description) }}</textarea>
                         </div>
                         <div class="mb-3 row align-items-center">
                             <div class="col-2 col-md-1">
@@ -59,10 +59,24 @@
                             </div>
 
                         </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-md-4 col-12">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="category_id" id="category" class="js-choice form-control">
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" @selected($tv->category_id == $category->id)> {{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-8 col-12">
+                                <label for="genres" class="control-label col-form-label">Genres</label>
+                                <input type="text" name="genres" id="genres" class="form-control tags-input" value="{{ old('genres', collect($tv->genres ?? [])->implode(',')) }}">
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label for="stream_url" class="form-label">Stream Url</label>
                             <input type="text" name="stream_url" id="stream_url" class="form-control"
-                                   value="{{ $tv->stream_url??old('stream_url') }}"/>
+                                   value="{{ old('stream_url',$tv->stream_url) }}"/>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
                             <button type="submit" class="btn btn-primary">Edit TV</button>
