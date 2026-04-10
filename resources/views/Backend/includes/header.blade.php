@@ -95,7 +95,7 @@
                                 </a>
 
                                 <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown" aria-label="Open account menu" aria-expanded="false">
-                                    <img src="{{ asset('assets/img/avatar.png')
+                                    <img src="{{ asset('avatar.png')
 }}" class="avatar img-fluid rounded me-1" alt="{{ Auth::guard('admin')->user()->name }}" /> <span class="text-dark">{{ Auth::guard('admin')->user()->name }}</span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end">
