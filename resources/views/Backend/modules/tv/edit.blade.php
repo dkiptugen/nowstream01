@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea rows="4" name="description" id="description" class="form-control">{{ $tv->description??old('description') }}</textarea>
+                            <textarea rows="4" name="description" id="description" data-ckeditor class="form-control">{{ $tv->description??old('description') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="thumbnail" class="form-label">Thumbnail</label> <input

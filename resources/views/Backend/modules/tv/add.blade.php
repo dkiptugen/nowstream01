@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
-                            <textarea rows="4" name="description" id="description" class="form-control"></textarea>
+                            <textarea rows="4" data-ckeditor name="description" id="description" class="form-control"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="thumbnail" class="form-label">Thumbnail</label> <input
