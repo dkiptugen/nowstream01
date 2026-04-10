@@ -56,7 +56,7 @@
                                 <label for="category" class="form-label">Category</label>
                                 <select name="category_id" id="category" class="js-choice form-control">
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->uuid }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
