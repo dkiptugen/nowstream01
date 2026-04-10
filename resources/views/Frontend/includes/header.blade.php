@@ -40,6 +40,8 @@
     <link rel="stylesheet" href="{{ asset('assets')}}/css/default.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/style.css">
     <link rel="stylesheet" href="{{ asset('assets')}}/css/responsive.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5018480182296800"
+            crossorigin="anonymous"></script>
     <style>
         .page-wrapper {
             overflow-y: scroll !important;
@@ -1717,7 +1719,7 @@
                 <div class="header-shell">
                     <div class="header-topbar d-none d-lg-block">
                         <div class="header-topbar__inner">
-                            <div class="header-topbar__left"> 
+                            <div class="header-topbar__left">
                                 <a href="{{ route('events') }}" class="header-utility-link"><i class="bx bx-calendar-event"></i><span>Live Events</span></a>
                                 <a href="{{ route('tvs') }}" class="header-utility-link"><i class="bx bx-tv"></i><span>Live TV</span></a>
                             </div>
@@ -1789,7 +1791,7 @@
                                     <div class="mobile-menu__topbar">
                                         <div class="mobile-menu__brand">
                                             <span class="mobile-menu__brand-mark"><i class="bx bx-layer"></i></span>
-                                            <div class="mobile-menu__brand-copy"> 
+                                            <div class="mobile-menu__brand-copy">
                                                 <h2 class="mobile-menu__title">Browse the app</h2>
                                             </div>
                                         </div>
