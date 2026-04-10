@@ -28,25 +28,25 @@
             protected function prepareForValidation()
             : void
                 {
-                    $genres = $this->input('genres');
+                    $genre = $this->input('genre');
 
                     // Handle Tagify JSON or comma-separated input
-                    if (is_string($genres))
+                    if (is_string($genre))
                         {
-                            $decoded = json_decode($genres, true);
+                            $decoded = json_decode($genre, true);
 
                             if (json_last_error() === JSON_ERROR_NONE)
                                 {
-                                    $genres = collect($decoded)->pluck('value')->toArray();
+                                    $genre = collect($decoded)->pluck('value')->toArray();
                                 }
                             else
                                 {
-                                    $genres = explode(',', $genres);
+                                    $genre = explode(',', $genre);
                                 }
                         }
 
                     $this->merge([
-                                     'genres' => collect($genres ?? [])
+                                     'genre' => collect($genre ?? [])
                                          ->map(fn($genre) => trim(strtolower($genre)))
                                          ->filter()
                                          ->unique()
@@ -73,10 +73,9 @@
                         ],
 
                         'region_id' => ['required', 'integer', 'exists:regions,id'],
-
-                        'genres'   => ['nullable', 'array'],
-                        'genres.*' => ['string', 'max:50'],
-
+                        'category_id' => ['required','integer','exists:categories,uuid'],
+                        'genre'   => ['nullable', 'array'],
+                        'genre.*' => ['string', 'max:50'],
                         'language_id' => ['required', 'integer', 'exists:languages,id'],
 
                         'stream_url' => ['required', 'url']
@@ -124,7 +123,7 @@
                     */
 
                     $data['category']       = Category::where('uuid', $this->category_id)->value('name');
-                    $data['language']       = Language::where('id', $this->language_id)->value('name');
+                    $data['language']       = Language::where('id', $this->language_id)->value('code');
                     $data['content_group']  = 'tv';
                     $data['system_user_id'] = $this->user()->id;
                     $data['status']         = 1;

@@ -49,7 +49,7 @@
                                 </select>
                             </div>
                             <div class="col">
-                                <label for="country" class="form-label">Language</label>
+                                <label for="language" class="form-label">Language</label>
                                 <select name="language" id="language" class="js-choice form-control">
                                     @foreach($languages as $language)
                                         <option
@@ -64,13 +64,13 @@
                                 <label for="category" class="form-label">Category</label>
                                 <select name="category_id" id="category" class="js-choice form-control">
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" @selected($tv->category_id == $category->id)> {{ $category->name }}</option>
+                                        <option value="{{ $category->uuid }}" @selected($tv->category_id == $category->uuid)> {{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-8 col-12">
                                 <label for="genres" class="control-label col-form-label">Genres</label>
-                                <input type="text" name="genres" id="genres" class="form-control tags-input" value="{{ old('genres', collect($tv->genres ?? [])->implode(',')) }}">
+                                <input type="text" name="genres" id="genres" class="form-control tags-input" value="{{ old('genres', collect($tv->genre ?? [])->implode(',')) }}">
                             </div>
                         </div>
                         <div class="mb-3">
