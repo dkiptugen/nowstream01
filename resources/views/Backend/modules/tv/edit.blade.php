@@ -22,10 +22,10 @@
                             <textarea rows="4" name="description" id="description" data-ckeditor
                                       class="form-control">{{ $tv->description??old('description') }}</textarea>
                         </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <img src="{{ $tv->thumbnail_url }}" alt="{{ $tv->title }}" class="img-fluid" width="150"
+                        <div class="mb-3 row align-items-center">
+                            <img src="{{ $tv->thumbnail_url }}" alt="{{ $tv->title }}" class="img-fluid img-thumbnail" width="150"
                                  height="150">
-                            <div class="form-input">
+                            <div class="form-input ms-3">
                                 <label for="thumbnail" class="form-label">Thumbnail</label> <input
                                     type="file" name="thumbnail" id=""
                                     class="form-control @error('thumbnail') is-invalid @enderror"> <small
