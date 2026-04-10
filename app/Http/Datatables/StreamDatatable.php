@@ -56,7 +56,7 @@ class StreamDatatable
                                 $nestedData['stream_key']  = $post->stream_key;
                                 $nestedData['stream_url']  = $post->stream_url;
                                 $nestedData['stream_link'] = $post->stream_video_link;
-                                $nestedData["thumbnail"]   = $this->thumbnail_tag($post->thumbnail_url, 'img-fluid', 'height:50px; width:50px');
+                                $nestedData["thumbnail"]   = $post->thumbnail_url;
                                 $nestedData['start_time']  = $post->start_time;
                                 $nestedData['end_time']    = $post->end_time;
                                 $nestedData['is_ended']    = (bool)$post->ended;
