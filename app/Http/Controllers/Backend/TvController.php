@@ -67,7 +67,7 @@
                     $this->data['tv']        = $tv;
                     $this->data['regions']   = Region::get();
                     $this->data['languages'] = Language::get();
-                    return view('Backend.modules.tv.add', $this->data);
+                    return view('Backend.modules.tv.edit', $this->data);
                 }
 
         /**
