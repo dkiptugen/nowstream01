@@ -12,6 +12,7 @@
                 <div class="card-body">
                     <form action="{{ route('backend.tv.update', ['tv' => $tv->uuid]) }}" class="form" method="post">
                         @csrf
+                        @method('put')
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" name="title" id="title" class="form-control" required
