@@ -114,7 +114,7 @@
                                 ['visibility' => 'public']
                             );
 
-                            $data['logo'] = $path;
+                            $data['thumbnail_url'] =  Storage::disk($disk)->url($path);
                         }
                     unset($data['thumbnail']);
                     /*
