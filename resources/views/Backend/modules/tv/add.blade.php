@@ -10,7 +10,7 @@
             </div>
             <div class="card shadow-lg border">
                 <div class="card-body">
-                    <form action="" class="form " method="post">
+                    <form action="{{ route('backend.tv.store') }}" class="form " method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
@@ -35,14 +35,14 @@
                         <div class="row mb-3 g-3">
                             <div class="col">
                                 <label for="country" class="form-label">Country</label>
-                                <select name="country" id="country" class="js-choice form-control">
+                                <select name="region" id="country" class="js-choice form-control">
                                     @foreach($regions as $region)
                                         <option value="{{ $region->id }}">{{ $region->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col">
-                                <label for="country" class="form-label">Language</label>
+                                <label for="language" class="form-label">Language</label>
                                 <select name="language" id="language" class="js-choice form-control">
                                     @foreach($languages as $language)
                                         <option value="{{ $language->id }}">{{ $language->name }}</option>
@@ -50,6 +50,20 @@
                                 </select>
                             </div>
 
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-md-4 col-12">
+                                <label for="category" class="form-label">Category</label>
+                                <select name="category_id" id="category" class="js-choice form-control">
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-8 col-12">
+                                <label for="genres" class="control-label col-form-label">Genres</label>
+                                <input type="text" name="genres" id="genres" class="form-control tags-input">
+                            </div>
                         </div>
                         <div class="mb-3">
                             <label for="stream_url" class="form-label">Stream Url</label>

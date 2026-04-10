@@ -5,6 +5,8 @@
     use App\Http\Controllers\Controller;
     use App\Http\Datatables\StreamDatatable;
     use App\Http\Datatables\TvDatatable;
+    use App\Http\Requests\StoreTvRequest;
+    use App\Http\Requests\UpdateTvRequest;
     use App\Models\Content;
     use App\Models\Language;
     use App\Models\Region;
@@ -45,9 +47,27 @@
         /**
          * Store a newly created resource in storage.
          */
-            public function store(Request $request)
+            public function store(StoreTvRequest $request)
                 {
-                    //
+                    $valid = $request->validated();
+                    try
+                        {
+                            if ($request->hasFile('thumbnail'))
+                                {
+                                    $valid['thumbnail_url'] = $request->file('thumbnail')
+                                                                  ->store('tv/thumbnails', config('filesystems.default'));
+                                }
+                            if(Content::create($valid))
+                                {
+                                    return self::success('TV',"TV created successfully",route('backend.tv.index'));
+                                }
+                            return self::failed('TV',"TV failed to create",route('backend.tv.index'));
+                        }
+                    catch (\Exception $e)
+                        {
+                            Log::error('TV Update',[$e->getMessage(),$e->getStackTrace()]);
+                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                        }
                 }
 
         /**
@@ -73,9 +93,28 @@
         /**
          * Update the specified resource in storage.
          */
-            public function update(Request $request, Content $tv)
+            public function update(UpdateTvRequest $request, Content $tv)
                 {
-                    //
+                    $valid = $request->validated();
+                    try
+                        {
+                            if ($request->hasFile('thumbnail'))
+                                {
+                                    $valid['thumbnail_url'] = $request->file('thumbnail')
+                                                                      ->store('tv/thumbnails', config('filesystems.default'));
+                                }
+                            if($tv->update($valid))
+                                {
+                                    return self::success('TV',"TV updated successfully",route('backend.tv.index'));
+
+                                }
+                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                        }
+                    catch (\Exception $e)
+                        {
+                            Log::error('TV Update',[$e->getMessage(),$e->getStackTrace()]);
+                            return self::failed('TV',"TV failed to update",route('backend.tv.index'));
+                        }
                 }
 
         /**
